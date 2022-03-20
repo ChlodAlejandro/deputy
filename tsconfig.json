@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "module": "None",
+        "moduleResolution": "Node",
+        "target": "es6",
+        "lib": [
+            "ES6",
+            "DOM"
+        ],
+        "noImplicitAny": true,
+        "allowJs": true,
+        "checkJs": true,
+        "noEmit": true,
+        "typeRoots": [
+            "./node_modules/types-mediawiki"
+        ]
+    },
+    "include": [
+        "./src/**/*.js"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}

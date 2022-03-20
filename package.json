@@ -3,13 +3,6 @@
     "description": "[task tracking](https://trello.com/b/UmI82e0y/deputy)",
     "version": "0.1.0",
     "main": "src/deputy.js",
-    "devDependencies": {
-        "@types/node": "^17.0.21",
-        "eslint": "^8.11.0",
-        "eslint-plugin-jsdoc": "^38.0.6",
-        "types-mediawiki": "^1.2.0",
-        "typescript": "^4.6.2"
-    },
     "scripts": {
         "test": "jest"
     },
@@ -28,5 +21,13 @@
     "bugs": {
         "url": "https://github.com/ChlodAlejandro/deputy/issues"
     },
-    "homepage": "https://github.com/ChlodAlejandro/deputy#readme"
+    "homepage": "https://github.com/ChlodAlejandro/deputy#readme",
+    "devDependencies": {
+        "@types/node": "^17.0.21",
+        "eslint": "^8.11.0",
+        "eslint-config-wikimedia": "^0.22.1",
+        "eslint-plugin-jsdoc": "^38.0.6",
+        "types-mediawiki": "^1.2.0",
+        "typescript": "^4.6.2"
+    }
 }

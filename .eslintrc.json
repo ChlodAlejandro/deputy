@@ -1,0 +1,40 @@
+{
+    "root": true,
+    "env": {
+        "es6": true,
+        "node": false,
+        "browser": true
+    },
+    "plugins": [
+        "jsdoc"
+    ],
+    "extends": [
+        "wikimedia/client-es6",
+        "wikimedia/jquery",
+        "wikimedia/mediawiki",
+        "plugin:jsdoc/recommended"
+    ],
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "ecmaFeatures": {
+            "impliedStrict": true
+        }
+    },
+    "rules": {
+        "jsdoc/require-returns-type": "off",
+        "jsdoc/require-param-type": "off",
+        "jsdoc/require-jsdoc": [
+            "error",
+            {
+                "contexts":
+                [
+                    "ClassDeclaration",
+                    "ClassProperty",
+                    "FunctionDeclaration",
+                    "MethodDefinition"
+                ]
+            }
+        ]
+    },
+    "ignorePatterns": [ "*.d.ts" ]
+}
