@@ -1,0 +1,16 @@
+{
+    "env": {
+        "es6": true,
+        "browser": false,
+        "node": true
+    },
+    "rules": {
+        "@typescript-eslint/no-var-requires": "off",
+        "no-console": "off",
+        "compat/compat": "off"
+    },
+    "globals": {
+        "process":  "readonly",
+        "__dirname": "readonly"
+    }
+}

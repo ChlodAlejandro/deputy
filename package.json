@@ -5,7 +5,8 @@
     "main": "src/deputy.js",
     "scripts": {
         "test": "jest",
-        "dev": "http-server src/ -p 45000 -d -i -c-1 --cors --no-dotfiles"
+        "build": "tsc && babel src --out-dir build --extensions \".ts\"",
+        "dev": "node scripts/dev.js"
     },
     "repository": {
         "type": "git",
@@ -24,18 +25,25 @@
     },
     "homepage": "https://github.com/ChlodAlejandro/deputy#readme",
     "devDependencies": {
+        "@babel/cli": "^7.17.6",
+        "@babel/core": "^7.17.8",
+        "@babel/preset-env": "^7.16.11",
+        "@babel/preset-typescript": "^7.16.7",
+        "@typescript-eslint/eslint-plugin": "^5.16.0",
+        "@typescript-eslint/parser": "^5.16.0",
+        "chalk": "^4.1.2",
+        "chokidar": "^3.5.3",
         "eslint": "^8.11.0",
         "eslint-config-wikimedia": "^0.22.1",
         "eslint-plugin-jsdoc": "^38.0.6",
+        "expect-puppeteer": "^6.1.0",
         "http-server": "^14.1.0",
         "jest": "^27.5.1",
         "jest-puppeteer": "^6.1.0",
         "oojs-ui": "^0.43.2",
         "puppeteer": "^13.5.1",
-        "types-mediawiki": "^1.2.0"
-    },
-    "dependencies": {
-        "expect-puppeteer": "^6.1.0"
+        "types-mediawiki": "^1.2.0",
+        "typescript": "^4.6.2"
     },
     "browserslist": [
         "cover 95%"

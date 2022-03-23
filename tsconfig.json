@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "lib": ["esnext", "dom"],
+        "outDir": "./build",
+        "noImplicitAny": true,
+        "module": "None",
+        "moduleResolution": "Node",
+        "typeRoots": [
+            "./node_modules/types-mediawiki/",
+            "./types/"
+        ],
+        "types": [
+            "node",
+            "jest"
+        ],
+        "noEmit": true
+    },
+    "include": [
+        "./src/**/*.ts",
+        "./node_modules/types-mediawiki/**/*",
+        "./types/**/*"
+    ]
+}

@@ -8,3 +8,6 @@ Thumbs.db
 
 # Dependencies
 node_modules
+
+# Built files
+build

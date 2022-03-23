@@ -1,5 +1,6 @@
 {
     "root": true,
+    "parser": "@typescript-eslint/parser",
     "env": {
         "es6": true,
         "node": false,
@@ -9,10 +10,11 @@
         "jsdoc"
     ],
     "extends": [
+        "plugin:@typescript-eslint/recommended",
+        "plugin:jsdoc/recommended",
         "wikimedia/client-es6",
         "wikimedia/jquery",
-        "wikimedia/mediawiki",
-        "plugin:jsdoc/recommended"
+        "wikimedia/mediawiki"
     ],
     "parserOptions": {
         "ecmaVersion": 6,
@@ -34,7 +36,8 @@
                     "MethodDefinition"
                 ]
             }
-        ]
+        ],
+        "no-unused-vars": "warn"
     },
     "ignorePatterns": [ "*.d.ts" ]
 }
