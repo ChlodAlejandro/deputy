@@ -1,7 +1,5 @@
 declare global {
-
-    const OO: any;
-
+	const OO: any;
 }
 
 export {};

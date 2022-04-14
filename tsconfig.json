@@ -11,10 +11,8 @@
             "./types/"
         ],
         "types": [
-            "node",
             "jest"
-        ],
-        "noEmit": true
+        ]
     },
     "include": [
         "./src/**/*.ts",

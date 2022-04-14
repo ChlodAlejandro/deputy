@@ -11,6 +11,7 @@
     ],
     "extends": [
         "plugin:@typescript-eslint/recommended",
+        "plugin:compat/recommended",
         "plugin:jsdoc/recommended",
         "wikimedia/client-es6",
         "wikimedia/jquery",
@@ -23,6 +24,7 @@
         }
     },
     "rules": {
+        "@typescript-eslint/no-explicit-any": "off",
         "jsdoc/require-returns-type": "off",
         "jsdoc/require-param-type": "off",
         "jsdoc/require-jsdoc": [
@@ -37,7 +39,13 @@
                 ]
             }
         ],
-        "no-unused-vars": "warn"
+        "compat/compat": ["error", "cover 95% and supports fetch, not IE 11"],
+        "no-unused-vars": "warn",
+        "no-undef": "off",
+        "eqeqeq": [ "warn", "smart" ],
+
+        "no-use-before-define": "off",
+        "@typescript-eslint/no-use-before-define": ["error"]
     },
     "ignorePatterns": [ "*.d.ts" ]
 }

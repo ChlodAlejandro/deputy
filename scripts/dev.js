@@ -1,14 +1,13 @@
 const path = require( 'path' );
-const httpServer = require( 'http-server' );
 const childProcess = require( 'child_process' );
 const fs = require( 'fs' );
 const chokidar = require( 'chokidar' );
 const chalk = require( 'chalk' );
+const which = require( 'which' );
+const serve = require( 'serve-handler' );
+const http = require( 'http' );
 
 const rootDirectory = path.resolve( __dirname, '..' );
-const babelBin = path.resolve( rootDirectory, 'node_modules', '.bin',
-	process.platform.startsWith( 'win' ) ? 'babel.cmd' : 'babel'
-);
 const buildDirectory = path.resolve( rootDirectory, 'build' );
 const sourceDirectory = path.resolve( rootDirectory, 'src' );
 
@@ -21,11 +20,9 @@ async function rebuild() {
 	}
 
 	const child = childProcess.spawn(
-		babelBin,
+		which.sync( 'npm' ),
 		[
-			sourceDirectory,
-			'--out-dir', buildDirectory,
-			'--extensions', '.ts'
+			'run', 'build'
 		],
 		{
 			cwd: rootDirectory
@@ -33,11 +30,15 @@ async function rebuild() {
 	);
 
 	child.stdout.on( 'data', ( d ) => {
-		console.log( chalk.yellow( '[babel] ' ) + d.toString().trim() );
+		d.toString().trim().split( '\n' ).forEach( ( line ) => {
+			console.log( chalk.yellow( '[build] ' ) + line );
+		} );
 	} );
 
 	child.stderr.on( 'data', ( d ) => {
-		console.log( chalk.yellow( '[babel] ' ) + chalk.red( d.toString().trim() ) );
+		d.toString().trim().split( '\n' ).forEach( ( line ) => {
+			console.error( chalk.yellow( '[build] ' ) + line );
+		} );
 	} );
 
 	child.on( 'error', ( err ) => {
@@ -47,7 +48,7 @@ async function rebuild() {
 	await new Promise( ( res ) => {
 		child.on( 'exit', ( code ) => {
 			if ( code !== 0 ) {
-				console.log( chalk.red( `Babel exited with code ${code}` ) );
+				console.log( chalk.red( `Build script exited with code ${code}` ) );
 			}
 			res();
 		} );
@@ -63,13 +64,19 @@ async function rebuild() {
 	console.log( chalk.blue( 'Starting development server...' ) );
 
 	// Start development server.
-	// http-server src/ -p 45000 -d -i -c-1 --cors --no-dotfiles
-	const server = httpServer.createServer( {
-		root: buildDirectory,
-		cache: -1,
-		showDir: true,
-		showDotfiles: false,
-		cors: true
+	const server = http.createServer( ( request, response ) => {
+		return serve( request, response, {
+			public: buildDirectory,
+			headers: [
+				{
+					source: '**',
+					headers: [ {
+						key: 'Access-Control-Allow-Origin',
+						value: '*'
+					} ]
+				}
+			]
+		} );
 	} );
 
 	server.listen( process.env.PORT || 45000, () => {
@@ -83,8 +90,13 @@ async function rebuild() {
 
 	watcher.on( 'change', function () {
 		console.log( chalk.blue( 'Rebuilding...' ) );
+		if ( rebuild.active ) {
+			return;
+		}
+		rebuild.active = true;
 		rebuild().then( function () {
 			console.log( chalk.green( 'Rebuild complete.' ) );
+			rebuild.active = false;
 		} );
 	} );
 }() );

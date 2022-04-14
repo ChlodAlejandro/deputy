@@ -5,7 +5,7 @@
     "main": "src/deputy.js",
     "scripts": {
         "test": "jest",
-        "build": "tsc && babel src --out-dir build --extensions \".ts\"",
+        "build": "shx mkdir -p build/i18n/ && shx cp -Rf i18n/* build/i18n/ && tsc",
         "dev": "node scripts/dev.js"
     },
     "repository": {
@@ -29,23 +29,29 @@
         "@babel/core": "^7.17.8",
         "@babel/preset-env": "^7.16.11",
         "@babel/preset-typescript": "^7.16.7",
+        "@types/jquery": "^3.5.14",
         "@typescript-eslint/eslint-plugin": "^5.16.0",
         "@typescript-eslint/parser": "^5.16.0",
         "chalk": "^4.1.2",
         "chokidar": "^3.5.3",
         "eslint": "^8.11.0",
         "eslint-config-wikimedia": "^0.22.1",
+        "eslint-plugin-compat": "^4.0.2",
         "eslint-plugin-jsdoc": "^38.0.6",
         "expect-puppeteer": "^6.1.0",
-        "http-server": "^14.1.0",
         "jest": "^27.5.1",
         "jest-puppeteer": "^6.1.0",
         "oojs-ui": "^0.43.2",
         "puppeteer": "^13.5.1",
-        "types-mediawiki": "^1.2.0",
-        "typescript": "^4.6.2"
+        "shx": "^0.3.4",
+        "types-mediawiki": "github:wikimedia-gadgets/types-mediawiki",
+        "typescript": "^4.6.2",
+        "which": "^2.0.2"
     },
     "browserslist": [
-        "cover 95%"
-    ]
+        "cover 95% and supports fetch, not IE 11"
+    ],
+    "dependencies": {
+        "serve-handler": "^6.1.3"
+    }
 }
