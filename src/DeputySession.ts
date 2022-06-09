@@ -6,6 +6,12 @@ interface SessionInformation {
 
 /**
  * Handles the active Deputy session and sets up inter-tab communication.
+ *
+ * A "Session" is a period wherein Deputy exercises a majority of its features,
+ * namely the use of inter-tab communication and database transactions for
+ * page and revision caching. Other tabs that load Deputy will recognize the
+ * started session and begin communicating with the root tab (the tab with the
+ * CCI page, and therefore the main Deputy session handler, open).
  */
 export default class DeputySession {
 
@@ -17,7 +23,13 @@ export default class DeputySession {
 		// Check if there is an active session.
 		const session = await this.getSession();
 		if ( session ) {
-			// Activate interface now (picking up from refreshed tab or window)
+			// If on the correct page,
+			// TODO: Activate interface now (picking up from refreshed tab or window)
+			// If on another page,
+			/*
+			 TODO: Detect if the current page is part of an active session, and if it is, display
+			  toolbar.
+			 */
 		} else {
 			// No active session, stand down.
 		}

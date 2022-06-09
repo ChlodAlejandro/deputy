@@ -1,6 +1,6 @@
-import DeputyStorage from './deputy.storage';
-import DeputyCommunications from './deputy.comms';
-import DeputySession from './deputy.session';
+import DeputyStorage from './DeputyStorage';
+import DeputyCommunications from './DeputyCommunications';
+import DeputySession from './DeputySession';
 
 /**
  * The main class for Deputy. Entry point for execution.

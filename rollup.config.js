@@ -28,7 +28,7 @@ function blockCommentIfy( string ) {
 }
 
 export default {
-	input: 'src/deputy.core.ts',
+	input: 'src/Deputy.ts',
 	output: {
 		dir: 'build',
 		format: 'iife',
