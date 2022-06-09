@@ -1,7 +1,7 @@
 /**
  * Handles the active Deputy session and sets up inter-tab communication.
  */
-class DeputySession {
+export default class DeputySession {
 
 	/**
 	 * Initialize session-related information. If an active session was detected,
@@ -13,5 +13,3 @@ class DeputySession {
 	}
 
 }
-
-window.deputy.constructor.DeputySession = DeputySession;

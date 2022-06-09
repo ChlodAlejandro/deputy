@@ -1,5 +1,9 @@
+import DeputyStorage from './deputy.storage';
+import DeputyCommunications from './deputy.comms';
+import DeputySession from './deputy.session';
+
 /**
- * The main class for Deputy. Handles almost everything.
+ * The main class for Deputy. Entry point for execution.
  */
 class Deputy {
 
@@ -17,9 +21,9 @@ class Deputy {
 	 */
 	version = '0.1.0';
 
-	storage: typeof window.deputy.constructor.DeputyStorage;
-	comms: typeof window.deputy.constructor.DeputyCommunications;
-	session: typeof window.deputy.constructor.DeputySession;
+	storage: DeputyStorage;
+	comms: DeputyCommunications;
+	session: DeputySession;
 
 	/**
 	 * Private constructor. To access Deputy, use `window.deputy` or Deputy.instance.
@@ -33,13 +37,13 @@ class Deputy {
 	 */
 	init() {
 		// Initialize the storage.
-		this.storage = new window.deputy.constructor.DeputyStorage();
+		this.storage = new DeputyStorage();
 		this.storage.init();
 		// Initialize communications.
-		this.comms = new window.deputy.constructor.DeputyCommunications();
+		this.comms = new DeputyCommunications();
 		this.comms.init();
 		// Initialize session.
-		this.session = new window.deputy.constructor.DeputySession();
+		this.session = new DeputySession();
 		this.session.init();
 
 		console.log( 'Loaded!' );
@@ -48,3 +52,6 @@ class Deputy {
 }
 
 window.deputy = Deputy.instance;
+mw.loader.using( [ 'mediawiki.Title' ], function () {
+	window.deputy.init();
+} );

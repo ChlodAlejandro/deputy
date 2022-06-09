@@ -1,4 +1,4 @@
-import type { DBSchema, IDBPDatabase } from 'idb';
+import { openDB, DBSchema, IDBPDatabase } from 'idb';
 
 /**
  * General key-value store. Used for storing single-variable data
@@ -82,15 +82,17 @@ interface DeputyDatabase extends DBSchema {
 /**
  * Handles all browser-stored data for Deputy.
  */
-class DeputyStorage {
+export default class DeputyStorage {
 
 	db: IDBPDatabase<DeputyDatabase>;
 
 	/**
 	 * Initialize the Deputy IndexedDB database.
+	 *
+	 * @return {void} A promise that resolves when a database connection is established.
 	 */
-	async init() {
-		this.db = await window.idb.openDB<DeputyDatabase>(
+	init(): Promise<void> {
+		return openDB<DeputyDatabase>(
 			'us-deputy', 1, {
 				upgrade( db, oldVersion, newVersion ) {
 					let currentVersion = oldVersion;
@@ -119,9 +121,9 @@ class DeputyStorage {
 					}
 				}
 			}
-		);
+		).then( ( database ) => {
+			this.db = database;
+		} );
 	}
 
 }
-
-window.deputy.constructor.DeputyStorage = DeputyStorage;

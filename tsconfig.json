@@ -4,7 +4,7 @@
         "lib": ["esnext", "dom"],
         "outDir": "./build",
         "noImplicitAny": true,
-        "module": "None",
+        "module": "ESNext",
         "moduleResolution": "Node",
         "incremental": true,
         "typeRoots": [

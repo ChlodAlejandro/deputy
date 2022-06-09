@@ -1,3 +1,5 @@
+import 'broadcastchannel-polyfill';
+
 export interface DeputySessionRequestMessage {
 	type: 'sessionRequest';
 }
@@ -16,7 +18,7 @@ export type DeputyMessage = DeputyRequestMessage | DeputyResponseMessage;
  * Handles inter-tab communication and automatically broadcasts events
  * to listeners.
  */
-class DeputyCommunications extends EventTarget {
+export default class DeputyCommunications extends EventTarget {
 
 	broadcastChannel: BroadcastChannel;
 
@@ -52,5 +54,3 @@ class DeputyCommunications extends EventTarget {
 	}
 
 }
-
-window.deputy.constructor.DeputyCommunications = DeputyCommunications;
