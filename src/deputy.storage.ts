@@ -25,7 +25,7 @@ interface DeputyCaseCacheStore {
 		/** Last time that a session was active on this case */
 		lastActive: number;
 		/** Last active section IDs for either autostart or "pick up where you left off" */
-		lastActiveSection: null|number[];
+		lastActiveSections: null|Record<string, number[]>;
 	}
 }
 
@@ -91,8 +91,8 @@ export default class DeputyStorage {
 	 *
 	 * @return {void} A promise that resolves when a database connection is established.
 	 */
-	init(): Promise<void> {
-		return openDB<DeputyDatabase>(
+	async init(): Promise<void> {
+		this.db = await openDB<DeputyDatabase>(
 			'us-deputy', 1, {
 				upgrade( db, oldVersion, newVersion ) {
 					let currentVersion = oldVersion;
@@ -121,9 +121,7 @@ export default class DeputyStorage {
 					}
 				}
 			}
-		).then( ( database ) => {
-			this.db = database;
-		} );
+		);
 	}
 
 }

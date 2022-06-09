@@ -35,20 +35,26 @@ class Deputy {
 	 * all dependencies required for Deputy to work. It's only a matter of initializing
 	 * sub-components as well.
 	 */
-	init() {
+	async init() {
 		// Initialize the storage.
 		this.storage = new DeputyStorage();
-		this.storage.init();
+		await this.storage.init();
 		// Initialize communications.
 		this.comms = new DeputyCommunications();
 		this.comms.init();
 		// Initialize session.
 		this.session = new DeputySession();
-		this.session.init();
+		await this.session.init();
 
 		console.log( 'Loaded!' );
 	}
 
+}
+
+declare global {
+	interface Window {
+		deputy: Deputy;
+	}
 }
 
 window.deputy = Deputy.instance;

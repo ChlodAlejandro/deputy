@@ -5,8 +5,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
+ * Converts standard text to block comments.
  *
- * @param string
+ * @param string The text to block comment-ify.
+ * @return {string} Block comment-ified text.
  */
 function blockCommentIfy( string ) {
 	let final = '';
