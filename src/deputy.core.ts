@@ -17,16 +17,32 @@ class Deputy {
 	 */
 	version = '0.1.0';
 
+	storage: typeof window.deputy.constructor.DeputyStorage;
+	comms: typeof window.deputy.constructor.DeputyCommunications;
+	session: typeof window.deputy.constructor.DeputySession;
+
 	/**
 	 * Private constructor. To access Deputy, use `window.deputy` or Deputy.instance.
 	 */
 	private constructor() { /* ignored */ }
 
 	/**
-	 * Initializes Deputy.
+	 * Initializes Deputy. By this point, the loader should have succeeded in loading
+	 * all dependencies required for Deputy to work. It's only a matter of initializing
+	 * sub-components as well.
 	 */
 	init() {
-		mw.notify( 'Loaded!' );
+		// Initialize the storage.
+		this.storage = new window.deputy.constructor.DeputyStorage();
+		this.storage.init();
+		// Initialize communications.
+		this.comms = new window.deputy.constructor.DeputyCommunications();
+		this.comms.init();
+		// Initialize session.
+		this.session = new window.deputy.constructor.DeputySession();
+		this.session.init();
+
+		console.log( 'Loaded!' );
 	}
 
 }

@@ -6,9 +6,11 @@
         "noImplicitAny": true,
         "module": "None",
         "moduleResolution": "Node",
+        "incremental": true,
         "typeRoots": [
             "./node_modules/types-mediawiki/",
-            "./types/"
+            "./types/",
+            "./src/"
         ],
         "types": [
             "jest"

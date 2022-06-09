@@ -45,7 +45,8 @@
         "eqeqeq": [ "warn", "smart" ],
 
         "no-use-before-define": "off",
+        "no-console": "off",
         "@typescript-eslint/no-use-before-define": ["error"]
     },
-    "ignorePatterns": [ "*.d.ts" ]
+    "ignorePatterns": [ "*.d.ts", "external/" ]
 }
