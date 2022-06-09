@@ -3,6 +3,8 @@
 
    A copyright management and investigation assistance tool.
 
+   ------------------------------------------------------------------------
+
    Copyright 2022 Chlod Aidan Alejandro
 
    Licensed under the Apache License, Version 2.0 (the "License");
