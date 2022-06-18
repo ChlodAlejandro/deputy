@@ -124,4 +124,30 @@ export default class DeputyStorage {
 		);
 	}
 
+	/**
+	 * Get a value in the `keyval` store.
+	 *
+	 * @param key The key to get
+	 */
+	async getKV( key: string ): Promise<any> {
+		return window.deputy.storage.db.get( 'keyval', key )
+			.then(
+				( keyPair ) =>
+					keyPair?.value as any
+			);
+	}
+
+	/**
+	 * Set a value in the `keyval` store.
+	 *
+	 * @param key The key to set
+	 * @param value The value to set
+	 */
+	async setKV( key: string, value: any ): Promise<true> {
+		return window.deputy.storage.db.put( 'keyval', {
+			key: key,
+			value: value
+		} ).then( () => true );
+	}
+
 }

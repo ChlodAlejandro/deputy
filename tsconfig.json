@@ -1,24 +1,20 @@
 {
     "compilerOptions": {
+        "incremental": true,
         "target": "es6",
         "lib": ["esnext", "dom"],
         "outDir": "./build",
         "noImplicitAny": true,
         "module": "ESNext",
         "moduleResolution": "Node",
-        "incremental": true,
+        "esModuleInterop": true,
         "typeRoots": [
-            "./node_modules/types-mediawiki/",
-            "./types/",
-            "./src/"
-        ],
-        "types": [
-            "jest"
+            "./node_modules/@types",
+            "./node_modules/types-mediawiki",
+            "./types"
         ]
     },
     "include": [
-        "./src/**/*.ts",
-        "./node_modules/types-mediawiki/**/*",
-        "./types/**/*"
+        "./src/**/*.ts"
     ]
 }

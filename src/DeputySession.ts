@@ -42,12 +42,8 @@ export default class DeputySession {
 	 *     A promise that resolves with the session information or `undefined` if session
 	 *     information is not available.
 	 */
-	getSession(): Promise<SessionInformation|undefined> {
-		return window.deputy.storage.db.get( 'keyval', 'session' )
-			.then(
-				( session ) =>
-					session?.value as SessionInformation|undefined
-			);
+	async getSession(): Promise<SessionInformation|undefined> {
+		return ( await window.deputy.storage.getKV( 'session' ) ) as SessionInformation|undefined;
 	}
 
 	/**
@@ -57,10 +53,7 @@ export default class DeputySession {
 	 * @return boolean `true` if successful.
 	 */
 	setSession( session: SessionInformation ): Promise<boolean> {
-		return window.deputy.storage.db.put( 'keyval', {
-			key: 'session',
-			value: session
-		} ).then( () => true );
+		return window.deputy.storage.setKV( 'session', session );
 	}
 
 }

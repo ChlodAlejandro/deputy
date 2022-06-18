@@ -88,7 +88,10 @@ async function rebuild() {
 		persistent: true
 	} );
 
-	watcher.on( 'change', function () {
+	/**
+	 *
+	 */
+	function startRebuild() {
 		console.log( chalk.blue( 'Rebuilding...' ) );
 		if ( rebuild.active ) {
 			return;
@@ -98,5 +101,24 @@ async function rebuild() {
 			console.log( chalk.green( 'Rebuild complete.' ) );
 			rebuild.active = false;
 		} );
-	} );
+	}
+
+	watcher.on( 'change', () => startRebuild() );
+
+	process.stdin.setRawMode( true );
+	process.stdin.resume();
+	process.stdin.on( 'data',
+		/**
+		 * @param {Buffer} data
+		 */
+		function ( data ) {
+			if ( data[ 0 ] === 114 ) {
+				// R
+				startRebuild();
+			} else if ( data[ 0 ] === 3 ) {
+				// Ctrl + C
+				process.exit();
+			}
+		}
+	);
 }() );

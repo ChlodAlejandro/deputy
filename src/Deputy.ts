@@ -1,6 +1,8 @@
+import './types';
 import DeputyStorage from './DeputyStorage';
 import DeputyCommunications from './DeputyCommunications';
 import DeputySession from './DeputySession';
+import DeputyCasePage from './wiki/DeputyCasePage';
 
 /**
  * The main class for Deputy. Entry point for execution.
@@ -13,6 +15,10 @@ class Deputy {
 	 * @private
 	 */
 	static readonly instance: Deputy = new Deputy();
+	readonly DeputyStorage = DeputyStorage;
+	readonly DeputySession = DeputySession;
+	readonly DeputyCommunications = DeputyCommunications;
+	readonly DeputyCasePage = DeputyCasePage;
 
 	/**
 	 * This version of Deputy.
@@ -47,17 +53,19 @@ class Deputy {
 		await this.session.init();
 
 		console.log( 'Loaded!' );
+
+		mw.hook( 'deputy.load' ).fire( this );
 	}
 
 }
 
-declare global {
-	interface Window {
-		deputy: Deputy;
-	}
-}
-
-window.deputy = Deputy.instance;
 mw.loader.using( [ 'mediawiki.Title' ], function () {
-	window.deputy.init();
+	window.deputy = Deputy.instance;
+	if ( /[?&]deputy-autorun=false(?:&|$)/.test( window.location.search ) ) {
+		window.deputy.init();
+	}
 } );
+
+// We only want to export the type, not the actual class. This cuts down on
+// code generated and also removes unnecessary exports/module code.
+export type { Deputy };
