@@ -1,7 +1,14 @@
+import DeputyHeadingButton from './ui/DeputyHeadingButton';
+
 interface SessionInformation {
-	case: string;
-	casePage: string;
-	caseSections: number[];
+	/**
+	 * A specific case page, refers to a case in the {@link DeputyCasePageCacheStore}.
+	 */
+	casePageId: number;
+	/**
+	 * The sections which were last left open.
+	 */
+	caseSections: string[];
 }
 
 /**
@@ -23,16 +30,24 @@ export default class DeputySession {
 		// Check if there is an active session.
 		const session = await this.getSession();
 		if ( session ) {
-			// If on the correct page,
-			// TODO: Activate interface now (picking up from refreshed tab or window)
-			// If on another page,
-			/*
-			 TODO: Detect if the current page is part of an active session, and if it is, display
-			  toolbar.
-			 */
+			if ( session.casePageId === window.deputy.currentPageId ) {
+				await this.initInterface();
+			} else {
+				// TODO: Show "start work" with session replacement warning
+			}
 		} else {
 			// No active session, stand down.
 		}
+	}
+
+	/**
+	 * Initialize interface components for an active session.
+	 */
+	async initInterface() {
+		document.querySelectorAll( '.mw-parser-output > h2' )
+			.forEach( ( el: HTMLElement ) => {
+				new DeputyHeadingButton().append( el );
+			} );
 	}
 
 	/**

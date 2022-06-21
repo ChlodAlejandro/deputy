@@ -19,6 +19,10 @@ describe( 'DeputyCasePage tests', () => {
 		} ) ).toBe( true );
 	} );
 
+	test( 'normalizeTitle', async () => {
+
+	} );
+
 	test( 'isCasePage', async () => {
 		// Override root page
 		await page.evaluate( () => {

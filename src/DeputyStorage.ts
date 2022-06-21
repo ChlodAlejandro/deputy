@@ -14,35 +14,20 @@ interface DeputyKeyvalStore {
 }
 
 /**
- * Case cache store. Used to store cases and relevant case information.
+ * Case page cache store. Used to store case pages and relevant case information.
+ * Each case page is a different entry here, meaning there may be multiple entries
+ * for different "pages" of a case (for particularly large cases).
  */
-interface DeputyCaseCacheStore {
-	/* `case` */
-	key: string;
+interface DeputyCasePageCacheStore {
+	/* `pageID` */
+	key: number;
 	value: {
-		/** Title of the page */
-		case: string;
+		/** Page ID of the case page */
+		pageID: number;
 		/** Last time that a session was active on this case */
 		lastActive: number;
 		/** Last active section IDs for either autostart or "pick up where you left off" */
-		lastActiveSections: null|Record<string, number[]>;
-	}
-}
-
-interface DeputyTitleCacheStore {
-	/* `id` */
-	key: string;
-	value: {
-		/** sha1(page + newline + case) */
-		id: string;
-		/** Title of the page. */
-		page: string;
-		/** Case title. */
-		case: string;
-		/** Case section */
-		caseSection: number;
-		/** Case subpage */
-		caseSubpage: string;
+		lastActiveSections: null|Record<string, string[]>;
 	}
 }
 
@@ -74,8 +59,7 @@ interface DeputyDiffCacheStore {
 
 interface DeputyDatabase extends DBSchema {
 	keyval: DeputyKeyvalStore;
-	caseCache: DeputyCaseCacheStore;
-	titleCache: DeputyTitleCacheStore;
+	casePageCache: DeputyCasePageCacheStore;
 	diffCache: DeputyDiffCacheStore;
 }
 
@@ -101,11 +85,8 @@ export default class DeputyStorage {
 							db.createObjectStore( 'keyval', {
 								keyPath: 'key'
 							} );
-							db.createObjectStore( 'caseCache', {
-								keyPath: 'case'
-							} );
-							db.createObjectStore( 'titleCache', {
-								keyPath: 'id'
+							db.createObjectStore( 'casePageCache', {
+								keyPath: 'pageID'
 							} );
 							db.createObjectStore( 'diffCache', {
 								keyPath: 'revid'

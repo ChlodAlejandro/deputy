@@ -3,6 +3,11 @@ import DeputyStorage from './DeputyStorage';
 import DeputyCommunications from './DeputyCommunications';
 import DeputySession from './DeputySession';
 import DeputyCasePage from './wiki/DeputyCasePage';
+import normalizeTitle from './util/normalizeTitle';
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import deputyStyles from './css/deputy.css';
 
 /**
  * The main class for Deputy. Entry point for execution.
@@ -19,6 +24,9 @@ class Deputy {
 	readonly DeputySession = DeputySession;
 	readonly DeputyCommunications = DeputyCommunications;
 	readonly DeputyCasePage = DeputyCasePage;
+	readonly util = {
+		normalizeTitle: normalizeTitle
+	};
 
 	/**
 	 * This version of Deputy.
@@ -26,6 +34,14 @@ class Deputy {
 	 * @type {string}
 	 */
 	version = '0.1.0';
+	/**
+	 * The current page as an mw.Title.
+	 */
+	currentPage = new mw.Title( mw.config.get( 'wgPageName' ) );
+	/**
+	 * The current page ID.
+	 */
+	currentPageId = mw.config.get( 'wgArticleId' );
 
 	storage: DeputyStorage;
 	comms: DeputyCommunications;
@@ -42,6 +58,9 @@ class Deputy {
 	 * sub-components as well.
 	 */
 	async init() {
+		// Insert CSS
+		mw.util.addCSS( deputyStyles );
+
 		// Initialize the storage.
 		this.storage = new DeputyStorage();
 		await this.storage.init();
@@ -59,7 +78,11 @@ class Deputy {
 
 }
 
-mw.loader.using( [ 'mediawiki.Title' ], function () {
+mw.loader.using( [
+	'mediawiki.Title',
+	'oojs-ui-core',
+	'oojs-ui.styles.icons-media'
+], function () {
 	window.deputy = Deputy.instance;
 	if ( /[?&]deputy-autorun=false(?:&|$)/.test( window.location.search ) ) {
 		window.deputy.init();
