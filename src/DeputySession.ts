@@ -1,5 +1,3 @@
-import DeputyHeadingButton from './ui/DeputyHeadingButton';
-
 interface SessionInformation {
 	/**
 	 * A specific case page, refers to a case in the {@link DeputyCasePageCacheStore}.
@@ -44,10 +42,14 @@ export default class DeputySession {
 	 * Initialize interface components for an active session.
 	 */
 	async initInterface() {
-		document.querySelectorAll( '.mw-parser-output > h2' )
-			.forEach( ( el: HTMLElement ) => {
-				new DeputyHeadingButton().append( el );
-			} );
+		// TODO: Do interface functions
+	}
+
+	/**
+	 *
+	 */
+	async initDeputySessionInterface() {
+		// TODO: Grey out everything except the parts we need
 	}
 
 	/**
@@ -57,8 +59,8 @@ export default class DeputySession {
 	 *     A promise that resolves with the session information or `undefined` if session
 	 *     information is not available.
 	 */
-	async getSession(): Promise<SessionInformation|undefined> {
-		return ( await window.deputy.storage.getKV( 'session' ) ) as SessionInformation|undefined;
+	async getSession(): Promise<SessionInformation | undefined> {
+		return ( await window.deputy.storage.getKV( 'session' ) ) as SessionInformation | undefined;
 	}
 
 	/**

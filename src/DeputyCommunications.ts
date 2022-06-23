@@ -47,7 +47,7 @@ export default class DeputyCommunications extends EventTarget {
 	 */
 	addEventListener<T extends DeputyMessage[ 'type' ]>(
 		type: T,
-		callback: ( event : CustomEvent<DeputyMessage & { type: T }> ) => void,
+		callback: ( event: CustomEvent<DeputyMessage & { type: T }> ) => void,
 		options?: AddEventListenerOptions | boolean
 	): void {
 		super.addEventListener( type, callback, options );

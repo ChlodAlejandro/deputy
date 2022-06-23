@@ -1,10 +1,10 @@
-h2 > .deputy.dp-heading {
+* > .deputy.dp-heading {
     position: absolute;
     opacity: 0;
     pointer-events: none;
 }
 
-h2:hover > .deputy.dp-heading:not(.dp-heading--active) {
+*:hover > .deputy.dp-heading:not(.dp-heading--active) {
     opacity: 1;
     pointer-events: all;
 }

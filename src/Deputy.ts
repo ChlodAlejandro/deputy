@@ -50,7 +50,8 @@ class Deputy {
 	/**
 	 * Private constructor. To access Deputy, use `window.deputy` or Deputy.instance.
 	 */
-	private constructor() { /* ignored */ }
+	private constructor() { /* ignored */
+	}
 
 	/**
 	 * Initializes Deputy. By this point, the loader should have succeeded in loading
@@ -84,9 +85,7 @@ mw.loader.using( [
 	'oojs-ui.styles.icons-media'
 ], function () {
 	window.deputy = Deputy.instance;
-	if ( /[?&]deputy-autorun=false(?:&|$)/.test( window.location.search ) ) {
-		window.deputy.init();
-	}
+	window.deputy.init();
 } );
 
 // We only want to export the type, not the actual class. This cuts down on

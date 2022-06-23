@@ -1,7 +1,7 @@
-import loadWikipediaPage from './util/loadWikipediaPage';
-import loadDeputyScript from './util/loadDeputyScript';
+import loadWikipediaPage from '../util/loadWikipediaPage';
+import loadDeputyScript from '../util/loadDeputyScript';
 import { jest } from '@jest/globals';
-import '../src/types';
+import '../../src/types';
 
 describe( 'Utility function tests', () => {
 
@@ -9,8 +9,8 @@ describe( 'Utility function tests', () => {
 		await loadWikipediaPage( 'Wikipedia:Sandbox' );
 		await loadDeputyScript();
 
-		jest.setTimeout( 10000 );
-	}, 30000 );
+		jest.setTimeout( 10e3 );
+	}, 30e3 );
 
 	test( 'normalizeTitle', async () => {
 		await Promise.all( [

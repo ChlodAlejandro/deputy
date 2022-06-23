@@ -20,7 +20,7 @@ export default async function () {
 				}, 10 );
 				setTimeout( () => {
 					res( false );
-				}, 30000 );
+				}, 30e3 );
 			} ).then( () => {
 				clearInterval( interval );
 			} );

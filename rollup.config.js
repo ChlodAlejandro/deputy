@@ -8,12 +8,12 @@ import * as path from 'path';
 /**
  * Converts standard text to block comments.
  *
- * @param string The text to block comment-ify.
+ * @param text The text to block comment-ify.
  * @return {string} Block comment-ified text.
  */
-function blockCommentIfy( string ) {
+function blockCommentIfy( text ) {
 	let final = '';
-	const lines = string.toString().split( '\n' );
+	const lines = text.toString().split( '\n' );
 	for ( const lineNo in lines ) {
 		const line = lines[ lineNo ];
 
