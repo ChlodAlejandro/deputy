@@ -4,6 +4,8 @@ export type ContributionSurveyHeading = HTMLHeadingElement;
 
 /**
  * Handles Deputy case pages, controls UI features, among other things.
+ * This class should be able to operate both on the standard MediaWiki
+ * parser output and the Parsoid output.
  */
 export default class DeputyCasePage {
 
@@ -41,6 +43,18 @@ export default class DeputyCasePage {
 	}
 
 	/**
+	 * The document to be used as a reference.
+	 */
+	document: Document;
+
+	/**
+	 * @param document The document to use as a reference
+	 */
+	constructor( document?: Document ) {
+		this.document = document ?? window.document;
+	}
+
+	/**
 	 * Checks if a given element is a valid contribution survey heading.
 	 *
 	 * @param el The element to check for
@@ -73,7 +87,7 @@ export default class DeputyCasePage {
 		if ( !DeputyCasePage.isCasePage() ) {
 			throw new Error( 'Current page is not a case page.' );
 		} else {
-			return ( Array.from( document.querySelectorAll(
+			return ( Array.from( this.document.querySelectorAll(
 				'.mw-parser-output h3 > .mw-headline'
 			) ) as HTMLElement[] )
 				.map( ( el ) => el.parentElement as HTMLHeadingElement )

@@ -8,10 +8,15 @@ describe( 'DeputyCasePage integration tests', () => {
 
 	beforeAll( async () => {
 		await loadWikipediaPage(
-			'Wikipedia:Contributor copyright investigations/Chlod',
-			true
+			'User:Chlod/Scripts/Deputy/tests/TestCase 01'
 		);
 		await loadDeputyScript();
+		// Override root page
+		await page.evaluate( () => {
+			window.deputy.DeputyCasePage.rootPage = new mw.Title(
+				'User:Chlod/Scripts/Deputy/tests'
+			);
+		} );
 
 		jest.setTimeout( 10e3 );
 	}, 180e3 );
@@ -28,6 +33,14 @@ describe( 'DeputyCasePage integration tests', () => {
 				() => window.deputy.DeputyCasePage.isCasePage()
 			)
 		).resolves.toBe( true );
+	} );
+
+	test( 'getCaseName', async () => {
+		await expect(
+			page.evaluate( () => {
+				return window.deputy.DeputyCasePage.getCaseName();
+			} )
+		).resolves.toBe( 'TestCase 01' );
 	} );
 
 	test( 'isContributionSurveyHeading', async () => {

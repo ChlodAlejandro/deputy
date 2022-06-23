@@ -7,7 +7,7 @@ import loadDeputyScript from '../util/loadDeputyScript';
 describe( 'DeputyCasePage unit tests', () => {
 
 	beforeAll( async () => {
-		await loadWikipediaPage( 'Wikipedia:Sandbox' );
+		await loadWikipediaPage( 'User:Chlod/Scripts/Deputy/tests/TestCase 01' );
 		await loadDeputyScript();
 
 		jest.setTimeout( 10e3 );

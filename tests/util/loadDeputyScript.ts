@@ -6,23 +6,20 @@ import * as path from 'path';
 export default async function () {
 	return page.addScriptTag( {
 		path: path.resolve( __dirname, '..', '..', 'build', 'Deputy.js' )
-	} ).then( () => {
+	} ).then( async () => {
 		// Begin waiting for script initialization.
-		const success = page.evaluate( () => {
+		const success = await page.evaluate( () => {
 			let interval: NodeJS.Timeout;
 
-			// Wait 30 seconds for initialization, die if not injected by then.
+			// Wait 60 seconds for initialization, die if not injected by then.
 			return new Promise<boolean>( ( res ) => {
-				setInterval( () => {
-					if ( window.deputy != null ) {
-						res( true );
-					}
-				}, 10 );
+				mw.hook( 'deputy.load' ).add( () => res( true ) );
 				setTimeout( () => {
 					res( false );
-				}, 30e3 );
-			} ).then( () => {
+				}, 60e3 );
+			} ).then( ( v ) => {
 				clearInterval( interval );
+				return v;
 			} );
 		} );
 
