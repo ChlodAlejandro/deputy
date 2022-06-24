@@ -9,17 +9,12 @@ export default async function () {
 	} ).then( async () => {
 		// Begin waiting for script initialization.
 		const success = await page.evaluate( () => {
-			let interval: NodeJS.Timeout;
-
 			// Wait 60 seconds for initialization, die if not injected by then.
 			return new Promise<boolean>( ( res ) => {
 				mw.hook( 'deputy.load' ).add( () => res( true ) );
 				setTimeout( () => {
 					res( false );
-				}, 60e3 );
-			} ).then( ( v ) => {
-				clearInterval( interval );
-				return v;
+				}, 60000 );
 			} );
 		} );
 

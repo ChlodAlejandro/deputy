@@ -112,16 +112,18 @@ export default class DeputyCasePage {
 	 */
 	getContributionSurveySection( sectionHeading: HTMLElement ): HTMLElement[] {
 		// Normalize "sectionHeading" to use the H3 element and not the .mw-heading span.
-		if ( sectionHeading.tagName !== 'H3' && sectionHeading.parentElement.tagName !== 'H3' ) {
-			throw new Error( 'Provided section heading is not a valid section heading.' );
-		} else if ( sectionHeading.tagName !== 'H3' ) {
-			sectionHeading = sectionHeading.parentElement;
+		if ( !this.isContributionSurveyHeading( sectionHeading ) ) {
+			if ( !this.isContributionSurveyHeading( sectionHeading.parentElement ) ) {
+				throw new Error( 'Provided section heading is not a valid section heading.' );
+			} else {
+				sectionHeading = sectionHeading.parentElement;
+			}
 		}
 
 		const sectionMembers: HTMLElement[] = [];
 
 		let nextSibling = sectionHeading.nextElementSibling as HTMLElement;
-		while ( !this.isContributionSurveyHeading( nextSibling ) ) {
+		while ( nextSibling != null && !this.isContributionSurveyHeading( nextSibling ) ) {
 			sectionMembers.push( nextSibling );
 			nextSibling = nextSibling.nextElementSibling as HTMLElement;
 		}

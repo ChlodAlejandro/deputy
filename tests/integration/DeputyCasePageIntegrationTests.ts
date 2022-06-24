@@ -7,9 +7,7 @@ import loadDeputyScript from '../util/loadDeputyScript';
 describe( 'DeputyCasePage integration tests', () => {
 
 	beforeAll( async () => {
-		await loadWikipediaPage(
-			'User:Chlod/Scripts/Deputy/tests/TestCase 01'
-		);
+		await loadWikipediaPage( 'User:Chlod/Scripts/Deputy/tests/TestCase 01' );
 		await loadDeputyScript();
 		// Override root page
 		await page.evaluate( () => {
@@ -50,78 +48,79 @@ describe( 'DeputyCasePage integration tests', () => {
 				'testHeading1', 'testHeading2', 'testHeading3',
 				'testHeading4', 'testHeading5', 'testHeading6',
 				'testHeading7', 'testHeading8', 'testHeading9'
-			].map( ( id ) => expect(
-				page.evaluate( () => {
+			].map( ( _id ) => expect(
+				page.evaluate( ( id ) => {
+					console.log( id, document.getElementById( id ) );
 					const currentPage = new window.deputy.DeputyCasePage();
 					return currentPage.isContributionSurveyHeading(
 						document.getElementById( id ).nextElementSibling as HTMLElement
 					);
-				} )
+				}, _id )
 			).resolves.toBe( true ) ) ),
 			// Heading spans (should be false)
 			...( [
 				'testHeading1', 'testHeading2', 'testHeading3',
 				'testHeading4', 'testHeading5', 'testHeading6',
 				'testHeading7', 'testHeading8', 'testHeading9'
-			].map( ( id ) => expect(
-				page.evaluate( () => {
+			].map( ( _id ) => expect(
+				page.evaluate( ( id ) => {
 					const currentPage = new window.deputy.DeputyCasePage();
 					return currentPage.isContributionSurveyHeading(
 						( document.getElementById( id ).nextElementSibling as HTMLElement )
 							.querySelector( '.mw-headline' ) as HTMLElement
 					);
-				} )
+				}, _id )
 			).resolves.toBe( false ) ) ),
 			// Other H3 headings
 			...( [
 				'testHeadingFake1'
-			].map( ( id ) => expect(
-				page.evaluate( () => {
+			].map( ( _id ) => expect(
+				page.evaluate( ( id ) => {
 					const currentPage = new window.deputy.DeputyCasePage();
 					return currentPage.isContributionSurveyHeading(
 						document.getElementById( id ).nextElementSibling as HTMLElement
 					);
-				} )
+				}, _id )
 			).resolves.toBe( false ) ) ),
 			// Other elements
 			...( [
 				'testHeading1', 'testHeading2', 'testHeading3',
 				'testHeading4', 'testHeading5', 'testHeading6',
 				'testHeading7', 'testHeading8', 'testHeading9'
-			].map( ( id ) => expect(
-				page.evaluate( () => {
+			].map( ( _id ) => expect(
+				page.evaluate( ( id ) => {
 					const currentPage = new window.deputy.DeputyCasePage();
 					return currentPage.isContributionSurveyHeading(
 						document.getElementById( id )
 					);
-				} )
+				}, _id )
 			).resolves.toBe( false ) ) )
 		] );
 	} );
 
 	test( 'findFirstContributionSurveyHeading', async () => {
-		const targetId = `i-${Math.random().toFixed( 8 ).slice( 2 )}`;
+		const _targetId = `i-${Math.random().toFixed( 8 ).slice( 2 )}`;
 
-		await page.evaluate( () => {
+		await page.evaluate( ( targetId ) => {
 			( document.getElementById( 'testHeading1' ).nextElementSibling as HTMLElement )
 				.setAttribute(
 					'data-deputy-test',
 					targetId
 				);
-		} );
+		}, _targetId );
 
 		await expect(
-			await page.evaluate(
+			page.evaluate(
 				() => ( new window.deputy.DeputyCasePage() )
 					.findFirstContributionSurveyHeading()
 					.getAttribute( 'data-deputy-test' )
 			)
-		).resolves.toBe( targetId );
+		).resolves.toBe( _targetId );
 	} );
 
 	test( 'findContributionSurveyHeadings', async () => {
 		await expect(
-			await page.evaluate(
+			page.evaluate(
 				() => ( new window.deputy.DeputyCasePage() )
 					.findContributionSurveyHeadings()
 					.length
@@ -134,13 +133,13 @@ describe( 'DeputyCasePage integration tests', () => {
 			'testHeading1', 'testHeading2', 'testHeading3',
 			'testHeading4', 'testHeading5', 'testHeading6',
 			'testHeading7', 'testHeading8', 'testHeading9'
-		].map( ( id ) => expect(
-			page.evaluate( () => {
+		].map( ( _id ) => expect(
+			page.evaluate( ( id ) => {
 				const currentPage = new window.deputy.DeputyCasePage();
 				return currentPage.getContributionSurveySection(
 					document.getElementById( id ).nextElementSibling as HTMLElement
 				).filter( ( v ) => v.tagName === 'UL' ).length;
-			} )
+			}, _id )
 		).resolves.toBe( 1 ) ) );
 	} );
 

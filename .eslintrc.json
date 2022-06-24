@@ -42,6 +42,7 @@
         "compat/compat": ["error", "cover 95% and supports fetch, not IE 11"],
         "no-unused-vars": "warn",
         "no-undef": "off",
+        "no-underscore-dangle": "off",
         "eqeqeq": [ "warn", "smart" ],
 
         "no-use-before-define": "off",

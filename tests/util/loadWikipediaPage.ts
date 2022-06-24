@@ -12,24 +12,4 @@ export default async function ( targetPage: string, testWiki = false ) {
 			timeout: 120e3
 		}
 	);
-
-	// Ban editing
-	if ( !testWiki ) {
-		await page.setRequestInterception( true );
-		page.on( 'request', ( request ) => {
-			const postData = request.postData();
-			switch ( request.method() ) {
-				case 'POST':
-					if (
-						// URL-encoded
-						/\baction=edit\b/.test( postData ) ||
-						// Form data
-						/\bname="(visualeditor)?edit"\b/.test( postData )
-					) {
-						request.abort();
-					}
-					break;
-			}
-		} );
-	}
 }
