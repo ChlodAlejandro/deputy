@@ -8,6 +8,9 @@ import normalizeTitle from './util/normalizeTitle';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import deputyStyles from './css/deputy.css';
+import getPageContent from './util/getPageContent';
+
+import deputyEnglish from '../i18n/en.json';
 
 /**
  * The main class for Deputy. Entry point for execution.
@@ -43,6 +46,7 @@ class Deputy {
 	 */
 	currentPageId = mw.config.get( 'wgArticleId' );
 
+	api: mw.Api;
 	storage: DeputyStorage;
 	comms: DeputyCommunications;
 	session: DeputySession;
@@ -50,7 +54,8 @@ class Deputy {
 	/**
 	 * Private constructor. To access Deputy, use `window.deputy` or Deputy.instance.
 	 */
-	private constructor() { /* ignored */
+	private constructor() {
+		/* ignored */
 	}
 
 	/**
@@ -59,8 +64,49 @@ class Deputy {
 	 * sub-components as well.
 	 */
 	async init() {
-		// Insert CSS
+		mw.hook( 'deputy.preload' ).fire( this );
+
+		this.api = new mw.Api();
+
+		// Inject CSS
 		mw.util.addCSS( deputyStyles );
+		// Load strings
+		let stringsLoaded = false;
+		if ( window.deputyLang ) {
+			if ( typeof window.deputyLang === 'object' ) {
+				for ( const key in window.deputyLang ) {
+					mw.messages.set( key, window.deputyLang[ key ] );
+				}
+				stringsLoaded = true;
+			} else {
+				const langFile = await getPageContent( this.api, window.deputyLang );
+				try {
+					if ( langFile.contentFormat !== 'application/json' ) {
+						// Anti-pattern, but JSON.parse throws so this catches both of those.
+						// noinspection ExceptionCaughtLocallyJS
+						throw new Error( 'Language file is not JSON' );
+					}
+
+					const langData = JSON.parse( langFile );
+					for ( const key in langData ) {
+						mw.messages.set( key, langData[ key ] );
+					}
+					stringsLoaded = true;
+				} catch ( e ) {
+					mw.notify(
+						'Deputy: Requested language page is not a valid JSON file.',
+						{ type: 'error' }
+					);
+				}
+			}
+		}
+
+		// Run if (a) no deputyLang set, or (b) language file loading fails
+		if ( !stringsLoaded ) {
+			for ( const key in deputyEnglish ) {
+				mw.messages.set( key, ( deputyEnglish as Record<string, string> )[ key ] );
+			}
+		}
 
 		// Initialize the storage.
 		this.storage = new DeputyStorage();
@@ -80,6 +126,7 @@ class Deputy {
 }
 
 mw.loader.using( [
+	'mediawiki.api',
 	'mediawiki.Title',
 	'oojs-ui-core',
 	'oojs-ui.styles.icons-media'

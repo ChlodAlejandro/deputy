@@ -7,6 +7,7 @@ declare global {
 	interface Window {
 		OO: any;
 		deputy: Deputy;
+		deputyLang?: string | Record<string, string>;
 	}
 }
 

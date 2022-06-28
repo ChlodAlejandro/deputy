@@ -1,3 +1,6 @@
+import DeputyCasePage, { ContributionSurveyHeading } from './wiki/DeputyCasePage';
+import sectionHeadingName from './util/sectionHeadingName';
+
 interface SessionInformation {
 	/**
 	 * A specific case page, refers to a case in the {@link DeputyCasePageCacheStore}.
@@ -29,27 +32,56 @@ export default class DeputySession {
 		const session = await this.getSession();
 		if ( session ) {
 			if ( session.casePageId === window.deputy.currentPageId ) {
-				await this.initInterface();
+				await this.initSessionInterface();
 			} else {
 				// TODO: Show "start work" with session replacement warning
 			}
 		} else {
-			// No active session, stand down.
+			// No active session
+			if ( DeputyCasePage.isCasePage() ) {
+				// Show session start buttons
+				this.initEntryInterface();
+			}
 		}
 	}
 
 	/**
 	 * Initialize interface components for an active session.
 	 */
-	async initInterface() {
+	async initSessionInterface() {
 		// TODO: Do interface functions
 	}
 
 	/**
-	 *
+	 * Initialize interface components for *starting* a session. This includes
+	 * the `[start CCI session]` notice at the top of each CCI page section heading.
 	 */
-	async initDeputySessionInterface() {
-		// TODO: Grey out everything except the parts we need
+	initEntryInterface(): void {
+		const casePage = new DeputyCasePage();
+		casePage.findContributionSurveyHeadings()
+			.forEach( ( heading ) => {
+				const before = document.createElement( 'span' );
+				before.classList.add( 'dp-sessionStarter-bracket' );
+				before.innerText = '[';
+
+				const link = document.createElement( 'a' );
+				link.innerText = mw.message( 'deputy.session.start' ).text();
+				link.addEventListener( 'click', () => {
+					this.startSession( heading );
+				} );
+
+				const after = document.createElement( 'span' );
+				after.classList.add( 'dp-sessionStarter-bracket' );
+				after.innerText = ']';
+
+				const container = document.createElement( 'span' );
+				container.classList.add( 'deputy', 'dp-sessionStarter' );
+				container.appendChild( before );
+				container.appendChild( link );
+				container.appendChild( after );
+
+				heading.appendChild( container );
+			} );
 	}
 
 	/**
@@ -71,6 +103,29 @@ export default class DeputySession {
 	 */
 	setSession( session: SessionInformation ): Promise<boolean> {
 		return window.deputy.storage.setKV( 'session', session );
+	}
+
+	/**
+	 * Starts a Deputy session.
+	 *
+	 * @param section
+	 */
+	startSession( section: ContributionSurveyHeading ): void {
+		const pageID = window.deputy.currentPageId;
+		const sectionName = sectionHeadingName( section );
+
+		// Save session to storage
+		window.deputy.storage.db.put( 'casePageCache', {
+			pageID: pageID,
+			lastActive: Date.now(),
+			lastActiveSections: [ sectionName ]
+		} );
+		this.setSession( {
+			casePageId: pageID,
+			caseSections: [ sectionName ]
+		} );
+
+		this.initSessionInterface();
 	}
 
 }

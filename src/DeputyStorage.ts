@@ -27,7 +27,7 @@ interface DeputyCasePageCacheStore {
 		/** Last time that a session was active on this case */
 		lastActive: number;
 		/** Last active section IDs for either autostart or "pick up where you left off" */
-		lastActiveSections: null | Record<string, string[]>;
+		lastActiveSections: string[];
 	};
 }
 

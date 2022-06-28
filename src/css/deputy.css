@@ -8,3 +8,28 @@
     opacity: 1;
     pointer-events: all;
 }
+
+.deputy.dp-sessionStarter {
+    font-size: small;
+    font-weight: normal;
+    margin-left: 0.25em;
+    vertical-align: baseline;
+    line-height: 1em;
+}
+
+
+.deputy.dp-sessionStarter::before {
+    content: '\200B';
+}
+
+.mw-content-ltr .deputy.dp-sessionStarter .dp-sessionStarter-bracket:first-of-type,
+.mw-content-rtl .deputy.dp-sessionStarter .dp-sessionStarter-bracket:not(:first-of-type) {
+    margin-right: 0.25em;
+    color: #54595d;
+}
+
+.client-js .deputy.dp-sessionStarter .dp-sessionStarter-bracket:first-of-type,
+.client-js .deputy.dp-sessionStarter .dp-sessionStarter-bracket:not(:first-of-type) {
+    margin-left: 0.25em;
+    color:#54595d
+}

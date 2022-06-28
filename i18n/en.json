@@ -1,3 +1,5 @@
 {
-    "dp-name": "Deputy"
+    "deputy.name": "Deputy",
+
+    "deputy.session.start": "start session"
 }

@@ -29,8 +29,13 @@ async function rebuild() {
 		}
 	);
 
+	let sinceDone = null;
+
 	child.stdout.on( 'data', ( d ) => {
 		d.toString().trim().split( '\n' ).forEach( ( line ) => {
+			if ( /^created .+? \d+?\.\ds/.test( line ) ) {
+				sinceDone = Date.now();
+			}
 			console.log( chalk.yellow( '[build] ' ) + line );
 		} );
 	} );
@@ -45,6 +50,7 @@ async function rebuild() {
 		console.log( chalk.yellow( '[babel] ' ) + chalk.red( err.toString() ) );
 	} );
 
+	let interval;
 	await new Promise( ( res ) => {
 		child.on( 'exit', ( code ) => {
 			if ( code !== 0 ) {
@@ -52,6 +58,15 @@ async function rebuild() {
 			}
 			res();
 		} );
+
+		interval = setInterval( () => {
+			if ( sinceDone != null && Date.now() - sinceDone > 2000 ) {
+				child.kill( 'SIGKILL' );
+				res();
+			}
+		}, 10 );
+	} ).finally( () => {
+		clearInterval( interval );
 	} );
 }
 

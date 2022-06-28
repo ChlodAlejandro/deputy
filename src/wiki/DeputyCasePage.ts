@@ -43,14 +43,20 @@ export default class DeputyCasePage {
 	}
 
 	/**
-	 * The document to be used as a reference.
+	 * The page ID of the case page.
+	 */
+	pageId: number;
+	/**
+	 * The document to use as a reference.
 	 */
 	document: Document;
 
 	/**
-	 * @param document The document to use as a reference
+	 * @param pageId The page ID of the case page.
+	 * @param document The document to be used as a reference.
 	 */
-	constructor( document?: Document ) {
+	constructor( pageId?: number, document?: Document ) {
+		this.pageId = pageId ?? window.deputy.currentPageId;
 		this.document = document ?? window.document;
 	}
 
@@ -75,6 +81,20 @@ export default class DeputyCasePage {
 	 */
 	findFirstContributionSurveyHeading(): ContributionSurveyHeading {
 		return this.findContributionSurveyHeadings()[ 0 ];
+	}
+
+	/**
+	 * Find a contribution survey heading by section name.
+	 *
+	 * @param sectionName The section name to look for
+	 * @return The <h3> element of the heading.
+	 */
+	findContributionSurveyHeading( sectionName: string ): ContributionSurveyHeading {
+		return this.findContributionSurveyHeadings()
+			.find(
+				( v ) => v.querySelector<HTMLElement>( '.mw-headline' )
+					.innerText === sectionName
+			);
 	}
 
 	/**

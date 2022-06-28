@@ -1,5 +1,6 @@
 import typescript from '@rollup/plugin-typescript';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
+import json from '@rollup/plugin-json';
 import { string } from 'rollup-plugin-string';
 import license from 'rollup-plugin-node-license';
 import * as fs from 'fs';
@@ -35,9 +36,11 @@ export default {
 		format: 'iife',
 		banner: blockCommentIfy( fs.readFileSync( path.join( __dirname, 'BANNER.txt' ) ) )
 	},
-	plugins: [ string( {
-		include: 'src/css/*.css'
-	} ), typescript(), nodeResolve( {
-		browser: true
-	} ), license() ]
+	plugins: [
+		nodeResolve( { browser: true } ),
+		typescript(),
+		json(),
+		string( { include: 'src/css/*.css' } ),
+		license()
+	]
 };

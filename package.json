@@ -60,6 +60,7 @@
         "cover 95% and supports fetch, not IE 11"
     ],
     "dependencies": {
+        "@rollup/plugin-json": "^4.1.0",
         "broadcastchannel-polyfill": "^1.0.1",
         "idb": "^7.0.1"
     }
