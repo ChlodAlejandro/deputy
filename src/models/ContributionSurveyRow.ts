@@ -1,5 +1,4 @@
 import cloneRegex from '../../tests/util/cloneRegex';
-import normalizeTitle from '../util/normalizeTitle';
 
 export enum ContributionSurveyRowStatus {
 	// The row has not been processed yet.
@@ -34,7 +33,7 @@ export default class ContributionSurveyRow {
 	 * page has been cleared and commented on by a user.
 	 */
 	static readonly rowWikitextRegex =
-		/\* ?\[\[:?(.+?)]]: ?(?:.*?(?:\[\[Special:Diff\/(\d+)\|.+?]])+|(.*$))/gm;
+		/\* ?\[\[:?(.+?)]](?:: ?)?(?:.*?(?:\[\[Special:Diff\/(\d+)\|.+?]])+|(.*$))/gm;
 
 	/**
 	 * A set of regular expressions that will match a specific contribution survey row
@@ -47,7 +46,7 @@ export default class ContributionSurveyRow {
 		>,
 		RegExp
 	> = {
-			[ ContributionSurveyRowStatus.WithViolations ]: /\{\{a?ye?}}/g,
+			[ ContributionSurveyRowStatus.WithViolations ]: /\{\{(aye|y)}}/g,
 			[ ContributionSurveyRowStatus.WithoutViolations ]: /\{\{n(ay)?}}/g,
 			[ ContributionSurveyRowStatus.Missing ]: /\{\{?}}/g
 		};
@@ -60,6 +59,24 @@ export default class ContributionSurveyRow {
 	 */
 	static isContributionSurveyRowText( text: string ): boolean {
 		return ContributionSurveyRow.rowWikitextRegex.test( text );
+	}
+
+	/**
+	 * Identifies a row's current status based on the comment's contents.
+	 *
+	 * @param comment The comment to process
+	 * @return The status of the row
+	 */
+	static identifyCommentStatus( comment: string )
+		: Exclude<ContributionSurveyRowStatus, ContributionSurveyRowStatus.Unfinished> {
+		for ( const status in ContributionSurveyRow.commentMatchRegex ) {
+			if ( ContributionSurveyRow.commentMatchRegex[
+				+status as keyof ( typeof ContributionSurveyRow )['commentMatchRegex']
+			].test( comment ) ) {
+				return +status as keyof ( typeof ContributionSurveyRow )['commentMatchRegex'];
+			}
+		}
+		return ContributionSurveyRowStatus.Unknown;
 	}
 
 	/**
@@ -118,7 +135,7 @@ export default class ContributionSurveyRow {
 			return new ContributionSurveyRow(
 				new mw.Title( rowExec[ 1 ] ),
 				null,
-				ContributionSurveyRowStatus.Unfinished,
+				this.identifyCommentStatus( rowExec[ 3 ] ),
 				rowExec[ 3 ]
 			);
 		}

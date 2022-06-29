@@ -75,18 +75,19 @@ export default class DeputyCasePage {
 	 * @return `true` if the given heading is a valid contribution survey heading.
 	 */
 	isContributionSurveyHeading( el: HTMLElement ): el is ContributionSurveyHeading {
-		return el.tagName === 'H3' &&
-			/^Pages \d+ to \d+$/.test(
+		// All headings (h1, h2, h3, h4, h5, h6)
+		return /^H\d$/.test( el.tagName ) &&
+			/(Page|Article|Local file|File)s? \d+ to \d+$/.test(
 				( this.parsoid ? el : el.querySelector<HTMLElement>( '.mw-headline' ) )
 					.innerText
 			);
 	}
 
 	/**
-	 * Finds the first contribution survey heading. This is always an <h3> element
+	 * Finds the first contribution survey heading. This is always an <h*> element
 	 * with the content matching the pattern "Pages \d+ to \d+"
 	 *
-	 * @return The <h3> element of the heading.
+	 * @return The <h*> element of the heading.
 	 */
 	findFirstContributionSurveyHeading(): ContributionSurveyHeading {
 		return this.findContributionSurveyHeadings()[ 0 ];
@@ -96,7 +97,7 @@ export default class DeputyCasePage {
 	 * Find a contribution survey heading by section name.
 	 *
 	 * @param sectionName The section name to look for
-	 * @return The <h3> element of the heading.
+	 * @return The <h*> element of the heading.
 	 */
 	findContributionSurveyHeading( sectionName: string ): ContributionSurveyHeading {
 		return this.findContributionSurveyHeadings()
@@ -108,17 +109,20 @@ export default class DeputyCasePage {
 	}
 
 	/**
-	 * Finds all contribution survey headings. These are <h3> elements
+	 * Finds all contribution survey headings. These are <h*> elements
 	 * with the content matching the pattern "Pages \d+ to \d+"
 	 *
-	 * @return The <h3> element of the heading.
+	 * @return The <h*> element of the heading.
 	 */
 	findContributionSurveyHeadings(): ContributionSurveyHeading[] {
 		if ( !DeputyCasePage.isCasePage() ) {
 			throw new Error( 'Current page is not a case page.' );
 		} else {
 			return ( Array.from( this.document.querySelectorAll(
-				'.mw-parser-output h3'
+				// All headings (h1, h2, h3, h4, h5, h6)
+				[ 1, 2, 3, 4, 5, 6 ]
+					.map( ( i ) => `.mw-parser-output h${i}` )
+					.join( ',' )
 			) ) as HTMLHeadingElement[] )
 				.filter( ( h ) => this.isContributionSurveyHeading( h ) );
 		}
@@ -140,7 +144,7 @@ export default class DeputyCasePage {
 	 * @return An array of all HTMLElements covered by the section
 	 */
 	getContributionSurveySection( sectionHeading: HTMLElement ): HTMLElement[] {
-		// Normalize "sectionHeading" to use the H3 element and not the .mw-heading span.
+		// Normalize "sectionHeading" to use the h* element and not the .mw-heading span.
 		if ( !this.isContributionSurveyHeading( sectionHeading ) ) {
 			if ( !this.isContributionSurveyHeading( sectionHeading.parentElement ) ) {
 				throw new Error( 'Provided section heading is not a valid section heading.' );

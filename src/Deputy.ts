@@ -4,16 +4,15 @@ import DeputyCommunications from './DeputyCommunications';
 import DeputySession from './DeputySession';
 import DeputyCasePage from './wiki/DeputyCasePage';
 import normalizeTitle from './util/normalizeTitle';
+import deputyEnglish from '../i18n/en.json';
+import DeputyAPI from './api/DeputyAPI';
+import sectionHeadingName from './util/sectionHeadingName';
+import ContributionSurveyRow from './models/ContributionSurveyRow';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import deputyStyles from './css/deputy.css';
 import getPageContent from './util/getPageContent';
-
-import deputyEnglish from '../i18n/en.json';
-import DeputyAPI from './api/DeputyAPI';
-import sectionHeadingName from './util/sectionHeadingName';
-
 /**
  * The main class for Deputy. Entry point for execution.
  */
@@ -30,6 +29,9 @@ class Deputy {
 	readonly DeputySession = DeputySession;
 	readonly DeputyCommunications = DeputyCommunications;
 	readonly DeputyCasePage = DeputyCasePage;
+	readonly models = {
+		ContributionSurveyRow: ContributionSurveyRow
+	};
 	readonly util = {
 		normalizeTitle: normalizeTitle,
 		getPageContent: getPageContent,

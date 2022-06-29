@@ -38,9 +38,9 @@ export default {
 	},
 	plugins: [
 		nodeResolve( { browser: true } ),
-		typescript(),
-		json(),
 		string( { include: 'src/css/*.css' } ),
+		json(),
+		typescript(),
 		license()
 	]
 };
