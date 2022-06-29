@@ -50,14 +50,22 @@ export default class DeputyCasePage {
 	 * The document to use as a reference.
 	 */
 	document: Document;
+	/**
+	 * Whether this page is a Parsoid HTML5 with RDFa markup page or not.
+	 */
+	parsoid: boolean;
 
 	/**
 	 * @param pageId The page ID of the case page.
 	 * @param document The document to be used as a reference.
+	 * @param parsoid Whether this is a Parsoid document or not.
 	 */
-	constructor( pageId?: number, document?: Document ) {
+	constructor( pageId?: number, document?: Document, parsoid?: boolean ) {
 		this.pageId = pageId ?? window.deputy.currentPageId;
 		this.document = document ?? window.document;
+		this.parsoid = parsoid ?? /mw: http:\/\/mediawiki.org\/rdf\//.test(
+			document.documentElement.getAttribute( 'prefix' )
+		);
 	}
 
 	/**
@@ -69,7 +77,8 @@ export default class DeputyCasePage {
 	isContributionSurveyHeading( el: HTMLElement ): el is ContributionSurveyHeading {
 		return el.tagName === 'H3' &&
 			/^Pages \d+ to \d+$/.test(
-				el.querySelector<HTMLElement>( '.mw-headline' ).innerText
+				( this.parsoid ? el : el.querySelector<HTMLElement>( '.mw-headline' ) )
+					.innerText
 			);
 	}
 
@@ -92,8 +101,9 @@ export default class DeputyCasePage {
 	findContributionSurveyHeading( sectionName: string ): ContributionSurveyHeading {
 		return this.findContributionSurveyHeadings()
 			.find(
-				( v ) => v.querySelector<HTMLElement>( '.mw-headline' )
-					.innerText === sectionName
+				( v ) => (
+					this.parsoid ? v : v.querySelector<HTMLElement>( '.mw-headline' )
+				).innerText === sectionName
 			);
 	}
 
@@ -108,9 +118,8 @@ export default class DeputyCasePage {
 			throw new Error( 'Current page is not a case page.' );
 		} else {
 			return ( Array.from( this.document.querySelectorAll(
-				'.mw-parser-output h3 > .mw-headline'
-			) ) as HTMLElement[] )
-				.map( ( el ) => el.parentElement as HTMLHeadingElement )
+				'.mw-parser-output h3'
+			) ) as HTMLHeadingElement[] )
 				.filter( ( h ) => this.isContributionSurveyHeading( h ) );
 		}
 	}

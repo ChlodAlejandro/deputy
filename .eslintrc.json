@@ -25,6 +25,7 @@
     },
     "rules": {
         "@typescript-eslint/no-explicit-any": "off",
+
         "jsdoc/require-returns-type": "off",
         "jsdoc/require-param-type": "off",
         "jsdoc/require-jsdoc": [
@@ -40,10 +41,14 @@
             }
         ],
         "compat/compat": ["error", "cover 95% and supports fetch, not IE 11"],
+        "max-len": ["warn", { "code": 100, "ignoreRegExpLiterals": true }],
         "no-unused-vars": "warn",
         "no-undef": "off",
         "no-underscore-dangle": "off",
         "eqeqeq": [ "warn", "smart" ],
+
+        "@typescript-eslint/no-shadow": "error",
+        "no-shadow": "off",
 
         "no-use-before-define": "off",
         "no-console": "off",

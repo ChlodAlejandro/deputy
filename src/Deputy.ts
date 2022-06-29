@@ -11,6 +11,8 @@ import deputyStyles from './css/deputy.css';
 import getPageContent from './util/getPageContent';
 
 import deputyEnglish from '../i18n/en.json';
+import DeputyAPI from './api/DeputyAPI';
+import sectionHeadingName from './util/sectionHeadingName';
 
 /**
  * The main class for Deputy. Entry point for execution.
@@ -23,12 +25,15 @@ class Deputy {
 	 * @private
 	 */
 	static readonly instance: Deputy = new Deputy();
+	readonly DeputyAPI = DeputyAPI;
 	readonly DeputyStorage = DeputyStorage;
 	readonly DeputySession = DeputySession;
 	readonly DeputyCommunications = DeputyCommunications;
 	readonly DeputyCasePage = DeputyCasePage;
 	readonly util = {
-		normalizeTitle: normalizeTitle
+		normalizeTitle: normalizeTitle,
+		getPageContent: getPageContent,
+		sectionHeadingName: sectionHeadingName
 	};
 
 	/**
@@ -46,7 +51,8 @@ class Deputy {
 	 */
 	currentPageId = mw.config.get( 'wgArticleId' );
 
-	api: mw.Api;
+	wiki: mw.Api;
+	api: DeputyAPI;
 	storage: DeputyStorage;
 	comms: DeputyCommunications;
 	session: DeputySession;
@@ -66,7 +72,7 @@ class Deputy {
 	async init() {
 		mw.hook( 'deputy.preload' ).fire( this );
 
-		this.api = new mw.Api();
+		this.wiki = new mw.Api();
 
 		// Inject CSS
 		mw.util.addCSS( deputyStyles );
@@ -79,7 +85,7 @@ class Deputy {
 				}
 				stringsLoaded = true;
 			} else {
-				const langFile = await getPageContent( this.api, window.deputyLang );
+				const langFile = await getPageContent( this.wiki, window.deputyLang );
 				try {
 					if ( langFile.contentFormat !== 'application/json' ) {
 						// Anti-pattern, but JSON.parse throws so this catches both of those.
@@ -117,6 +123,8 @@ class Deputy {
 		// Initialize session.
 		this.session = new DeputySession();
 		await this.session.init();
+
+		this.api = new DeputyAPI();
 
 		console.log( 'Loaded!' );
 
