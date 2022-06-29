@@ -15,11 +15,10 @@ describe( 'ContributionSurveyRow static unit tests', () => {
 	}, 180e3 );
 
 	test( 'ContributionSurveyRow accessible', async () => {
-		await jestPuppeteer.debug();
 		expect( await page.evaluate( () => {
 			return window.deputy.models.ContributionSurveyRow != null;
 		} ) ).toBe( true );
-	}, 180e3 );
+	} );
 
 	test( 'isContributionSurveyRowText', async () => {
 		const expectTrue: string[] = [
@@ -54,16 +53,18 @@ describe( 'ContributionSurveyRow static unit tests', () => {
 		];
 
 		return Promise.all( [
-			...expectTrue.map( async ( text ) => expect(
+			...expectTrue.map( async ( _text ) => expect(
 				page.evaluate(
-					() => window.deputy.models.ContributionSurveyRow
-						.isContributionSurveyRowText( text )
+					( text ) => window.deputy.models.ContributionSurveyRow
+						.isContributionSurveyRowText( text ) ? text : false,
+					_text
 				)
-			).resolves.toBe( true ) ),
-			...expectFalse.map( async ( text ) => expect(
+			).resolves.toBe( _text ) ),
+			...expectFalse.map( async ( _text ) => expect(
 				page.evaluate(
-					() => window.deputy.models.ContributionSurveyRow
-						.isContributionSurveyRowText( text )
+					( text ) => window.deputy.models.ContributionSurveyRow
+						.isContributionSurveyRowText( text ) ? text : false,
+					_text
 				)
 			).resolves.toBe( false ) )
 		] );
@@ -116,7 +117,7 @@ describe( 'ContributionSurveyRow static unit tests', () => {
 			expect(
 				page.evaluate( () => {
 					return window.deputy.models.ContributionSurveyRow.identifyCommentStatus(
-						'{{?}} something up'
+						'gone {{?}}'
 					);
 				} )
 			).resolves.toBe( ContributionSurveyRowStatus.Missing ),

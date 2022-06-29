@@ -1,16 +1,16 @@
-import cloneRegex from '../../tests/util/cloneRegex';
+import cloneRegex from '../util/cloneRegex';
 
 export enum ContributionSurveyRowStatus {
 	// The row has not been processed yet.
-	Unfinished,
+	Unfinished = 0,
 	// The row has a comment but cannot be parsed
-	Unknown,
+	Unknown = 1,
 	// The row has been processed and violations were found ({{y}})
-	WithViolations,
+	WithViolations = 2,
 	// The row has been processed and violations were not found ({{n}})
-	WithoutViolations,
+	WithoutViolations = 3,
 	// The row has been found but the added text is no longer in the existing revision
-	Missing
+	Missing = 4
 }
 
 /**
@@ -33,7 +33,7 @@ export default class ContributionSurveyRow {
 	 * page has been cleared and commented on by a user.
 	 */
 	static readonly rowWikitextRegex =
-		/\* ?\[\[:?(.+?)]](?:: ?)?(?:.*?(?:\[\[Special:Diff\/(\d+)\|.+?]])+|(.*$))/gm;
+		/\* ?\[\[:?(.+?)]](?:: ?)?(?:.*?(?:\[\[Special:Diff\/(\d+)\|.+?]])+|(.+$))/gm;
 
 	/**
 	 * A set of regular expressions that will match a specific contribution survey row
@@ -48,7 +48,7 @@ export default class ContributionSurveyRow {
 	> = {
 			[ ContributionSurveyRowStatus.WithViolations ]: /\{\{(aye|y)}}/g,
 			[ ContributionSurveyRowStatus.WithoutViolations ]: /\{\{n(ay)?}}/g,
-			[ ContributionSurveyRowStatus.Missing ]: /\{\{?}}/g
+			[ ContributionSurveyRowStatus.Missing ]: /\{\{\?}}/g
 		};
 
 	/**
@@ -58,7 +58,7 @@ export default class ContributionSurveyRow {
 	 * @return Whether the provided wikitext is a contribution survey row or not
 	 */
 	static isContributionSurveyRowText( text: string ): boolean {
-		return ContributionSurveyRow.rowWikitextRegex.test( text );
+		return cloneRegex( ContributionSurveyRow.rowWikitextRegex ).test( text );
 	}
 
 	/**
@@ -70,9 +70,11 @@ export default class ContributionSurveyRow {
 	static identifyCommentStatus( comment: string )
 		: Exclude<ContributionSurveyRowStatus, ContributionSurveyRowStatus.Unfinished> {
 		for ( const status in ContributionSurveyRow.commentMatchRegex ) {
-			if ( ContributionSurveyRow.commentMatchRegex[
-				+status as keyof ( typeof ContributionSurveyRow )['commentMatchRegex']
-			].test( comment ) ) {
+			if ( cloneRegex(
+				ContributionSurveyRow.commentMatchRegex[
+					+status as keyof ( typeof ContributionSurveyRow )['commentMatchRegex']
+				]
+			).test( comment ) ) {
 				return +status as keyof ( typeof ContributionSurveyRow )['commentMatchRegex'];
 			}
 		}
@@ -123,7 +125,7 @@ export default class ContributionSurveyRow {
 				diffMatch = diffRegex.exec( rowExec[ 2 ] );
 			}
 
-			const revisionData = await window.deputy.api.getExpandedRevisionData( diffs );
+			const revisionData = ( await window.deputy.api.getExpandedRevisionData( diffs ) );
 
 			return new ContributionSurveyRow(
 				new mw.Title( rowExec[ 1 ] ),

@@ -13,6 +13,7 @@ import ContributionSurveyRow from './models/ContributionSurveyRow';
 // @ts-ignore
 import deputyStyles from './css/deputy.css';
 import getPageContent from './util/getPageContent';
+import cloneRegex from './util/cloneRegex';
 /**
  * The main class for Deputy. Entry point for execution.
  */
@@ -33,8 +34,9 @@ class Deputy {
 		ContributionSurveyRow: ContributionSurveyRow
 	};
 	readonly util = {
-		normalizeTitle: normalizeTitle,
+		cloneRegex: cloneRegex,
 		getPageContent: getPageContent,
+		normalizeTitle: normalizeTitle,
 		sectionHeadingName: sectionHeadingName
 	};
 
