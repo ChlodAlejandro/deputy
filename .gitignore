@@ -12,3 +12,4 @@ node_modules
 # Built files
 build
 .rollup.cache
+tsconfig.buildinfo

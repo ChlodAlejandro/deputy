@@ -2,7 +2,7 @@
     "compilerOptions": {
         "incremental": true,
         "target": "es6",
-        "lib": ["esnext", "dom"],
+        "lib": ["dom"],
         "outDir": "./build",
         "noImplicitAny": true,
         "module": "ESNext",

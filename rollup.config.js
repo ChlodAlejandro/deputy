@@ -1,4 +1,4 @@
-import typescript from '@rollup/plugin-typescript';
+import typescript from 'rollup-plugin-typescript2';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import json from '@rollup/plugin-json';
 import { string } from 'rollup-plugin-string';
@@ -38,9 +38,9 @@ export default {
 	},
 	plugins: [
 		nodeResolve( { browser: true } ),
-		string( { include: 'src/css/*.css' } ),
-		json(),
 		typescript(),
+		json(),
+		string( { include: 'src/css/*.css' } ),
 		license()
 	]
 };

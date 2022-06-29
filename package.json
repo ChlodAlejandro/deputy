@@ -6,6 +6,7 @@
     "scripts": {
         "test": "jest",
         "build": "shx mkdir -p build/i18n/ && shx cp -Rf i18n/* build/i18n/ && rollup -c",
+        "clean": "shx rm -rf build .rollup.cache",
         "dev": "node scripts/dev.js"
     },
     "repository": {
@@ -26,7 +27,6 @@
     "homepage": "https://github.com/ChlodAlejandro/deputy#readme",
     "devDependencies": {
         "@rollup/plugin-node-resolve": "^13.3.0",
-        "@rollup/plugin-typescript": "^8.3.3",
         "@types/expect-puppeteer": "^4.4.7",
         "@types/jest": "^28.1.2",
         "@types/jest-environment-puppeteer": "^5.0.2",
@@ -53,7 +53,7 @@
         "shx": "^0.3.4",
         "ts-jest": "^28.0.5",
         "types-mediawiki": "github:wikimedia-gadgets/types-mediawiki",
-        "typescript": "^4.6.2",
+        "typescript": "^4.7.4",
         "which": "^2.0.2"
     },
     "browserslist": [
@@ -63,6 +63,7 @@
         "@chlodalejandro/parsoid": "^1.0.0",
         "@rollup/plugin-json": "^4.1.0",
         "broadcastchannel-polyfill": "^1.0.1",
-        "idb": "^7.0.1"
+        "idb": "^7.0.1",
+        "rollup-plugin-typescript2": "^0.32.1"
     }
 }
