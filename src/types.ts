@@ -11,4 +11,6 @@ declare global {
 	}
 }
 
+export type PromiseOrNot<T> = Promise<T> | T;
+
 export {};

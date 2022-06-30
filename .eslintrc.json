@@ -42,7 +42,12 @@
         ],
         "compat/compat": ["error", "cover 95% and supports fetch, not IE 11"],
         "max-len": ["warn", { "code": 100, "ignoreRegExpLiterals": true }],
-        "no-unused-vars": "warn",
+
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": ["warn", {
+            "varsIgnorePattern": "h"
+        }],
+
         "no-undef": "off",
         "no-underscore-dangle": "off",
         "eqeqeq": [ "warn", "smart" ],
@@ -50,6 +55,7 @@
         "@typescript-eslint/no-shadow": "error",
         "no-shadow": "off",
 
+        "no-return-assign": "off",
         "no-use-before-define": "off",
         "no-console": "off",
         "@typescript-eslint/no-use-before-define": ["error"]

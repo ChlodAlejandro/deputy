@@ -1,5 +1,6 @@
 import DeputyCasePage, { ContributionSurveyHeading } from './wiki/DeputyCasePage';
 import sectionHeadingName from './util/sectionHeadingName';
+import DeputyContributionSurveySection from './ui/DeputyContributionSurveySection';
 
 interface SessionInformation {
 	/**
@@ -32,7 +33,7 @@ export default class DeputySession {
 		const session = await this.getSession();
 		if ( session ) {
 			if ( session.casePageId === window.deputy.currentPageId ) {
-				await this.initSessionInterface();
+				await this.initSessionInterface( session );
 			} else {
 				// TODO: Show "start work" with session replacement warning
 			}
@@ -47,9 +48,29 @@ export default class DeputySession {
 
 	/**
 	 * Initialize interface components for an active session.
+	 *
+	 * @param session
+	 * @param casePage
 	 */
-	async initSessionInterface() {
+	async initSessionInterface(
+		session: SessionInformation,
+		casePage = new DeputyCasePage()
+	): Promise<void> {
 		// TODO: Do interface functions
+		for ( const section of session.caseSections ) {
+			const heading = casePage.findContributionSurveyHeading( section );
+
+			if ( !heading ) {
+				// The section is assumed missing.
+				const sessionIndex = session.caseSections.indexOf( section );
+				session.caseSections.splice( sessionIndex, 1 );
+				continue;
+			}
+
+			const el = new DeputyContributionSurveySection( casePage, heading );
+			await el.prepare();
+			heading.insertAdjacentElement( 'afterend', el.render() );
+		}
 	}
 
 	/**
@@ -120,12 +141,14 @@ export default class DeputySession {
 			lastActive: Date.now(),
 			lastActiveSections: [ sectionName ]
 		} );
-		this.setSession( {
+		const session = {
 			casePageId: pageID,
 			caseSections: [ sectionName ]
-		} );
+		};
+		this.setSession( session );
 
-		this.initSessionInterface();
+		// TODO: Make DeputyCasePage instantiated based on current page and use that here.
+		this.initSessionInterface( session );
 	}
 
 }

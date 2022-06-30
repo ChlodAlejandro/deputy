@@ -1,7 +1,8 @@
 import typescript from 'rollup-plugin-typescript2';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
-import json from '@rollup/plugin-json';
 import { string } from 'rollup-plugin-string';
+import commonjs from '@rollup/plugin-commonjs';
+import json from '@rollup/plugin-json';
 import license from 'rollup-plugin-node-license';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -37,6 +38,7 @@ export default {
 		banner: blockCommentIfy( fs.readFileSync( path.join( __dirname, 'BANNER.txt' ) ) )
 	},
 	plugins: [
+		commonjs(),
 		nodeResolve( { browser: true } ),
 		typescript(),
 		json(),
