@@ -1,5 +1,12 @@
 {
     "deputy.name": "Deputy",
 
-    "deputy.session.start": "start CCI session"
+    "deputy.cancel": "Cancel",
+    "deputy.save": "Save",
+
+    "deputy.session.start": "start CCI session",
+
+    "deputy.session.section.close": "Close section",
+    "deputy.session.section.closeComments": "Closing comments",
+    "deputy.session.section.closeHelp": "Your signature will automatically be appended to your closing comments."
 }

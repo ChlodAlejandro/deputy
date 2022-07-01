@@ -1,4 +1,5 @@
 import normalizeTitle from '../util/normalizeTitle';
+import DeputyCasePageWikitext from './DeputyCasePageWikitext';
 
 export type ContributionSurveyHeading = HTMLHeadingElement;
 
@@ -54,6 +55,10 @@ export default class DeputyCasePage {
 	 * Whether this page is a Parsoid HTML5 with RDFa markup page or not.
 	 */
 	parsoid: boolean;
+	/**
+	 * The wikitext handler of the page.
+	 */
+	wikitext: DeputyCasePageWikitext;
 
 	/**
 	 * @param pageId The page ID of the case page.
@@ -64,8 +69,9 @@ export default class DeputyCasePage {
 		this.pageId = pageId ?? window.deputy.currentPageId;
 		this.document = document ?? window.document;
 		this.parsoid = parsoid ?? /mw: http:\/\/mediawiki.org\/rdf\//.test(
-			document.documentElement.getAttribute( 'prefix' )
+			this.document.documentElement.getAttribute( 'prefix' )
 		);
+		this.wikitext = new DeputyCasePageWikitext( this );
 	}
 
 	/**
@@ -76,11 +82,10 @@ export default class DeputyCasePage {
 	 */
 	isContributionSurveyHeading( el: HTMLElement ): el is ContributionSurveyHeading {
 		// All headings (h1, h2, h3, h4, h5, h6)
+		const headlineElement = this.parsoid ? el : el.querySelector<HTMLElement>( '.mw-headline' );
 		return /^H\d$/.test( el.tagName ) &&
-			/(Page|Article|Local file|File)s? \d+ to \d+$/.test(
-				( this.parsoid ? el : el.querySelector<HTMLElement>( '.mw-headline' ) )
-					.innerText
-			);
+			headlineElement != null &&
+			/(Page|Article|Local file|File)s? \d+ to \d+$/.test( headlineElement.innerText );
 	}
 
 	/**
@@ -100,6 +105,8 @@ export default class DeputyCasePage {
 	 * @return The <h*> element of the heading.
 	 */
 	findContributionSurveyHeading( sectionName: string ): ContributionSurveyHeading {
+		// No need to perform .mw-headline existence check here, already
+		// done by `findContributionSurveyHeadings`
 		return this.findContributionSurveyHeadings()
 			.find(
 				( v ) => (

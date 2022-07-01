@@ -1,4 +1,5 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
+import { ExpandedRevisionData } from './api/ExpandedRevisionData';
 
 /**
  * General key-value store. Used for storing single-variable data
@@ -34,27 +35,7 @@ interface DeputyCasePageCacheStore {
 interface DeputyDiffCacheStore {
 	/* `revid` */
 	key: number;
-	value: {
-		/** Revision ID of this revision. */
-		revid: string;
-		/** Revision ID of the parent of this revision (previous revision) */
-		parentid: number;
-		/** Timestamp of this revision */
-		timestamp: Date;
-		/** User who made this revision */
-		user: string;
-		/** New and old sizes of this revision */
-		size: {
-			new: number;
-			old: number;
-		};
-		/** The HTML edit summary for this revision */
-		parsedcomment: string;
-		/** Tags of this revision */
-		tags: string[];
-		/** Supplied if the comment does not have a revision */
-		commenthidden?: '';
-	};
+	value: ExpandedRevisionData;
 }
 
 interface DeputyDatabase extends DBSchema {

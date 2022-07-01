@@ -1,6 +1,7 @@
 import DeputyCasePage, { ContributionSurveyHeading } from './wiki/DeputyCasePage';
 import sectionHeadingName from './util/sectionHeadingName';
 import DeputyContributionSurveySection from './ui/DeputyContributionSurveySection';
+import DeputyCCISessionStartLink from './ui/DeputyCCISessionStartLink';
 
 interface SessionInformation {
 	/**
@@ -81,27 +82,9 @@ export default class DeputySession {
 		const casePage = new DeputyCasePage();
 		casePage.findContributionSurveyHeadings()
 			.forEach( ( heading ) => {
-				const before = document.createElement( 'span' );
-				before.classList.add( 'dp-sessionStarter-bracket' );
-				before.innerText = '[';
-
-				const link = document.createElement( 'a' );
-				link.innerText = mw.message( 'deputy.session.start' ).text();
-				link.addEventListener( 'click', () => {
-					this.startSession( heading );
-				} );
-
-				const after = document.createElement( 'span' );
-				after.classList.add( 'dp-sessionStarter-bracket' );
-				after.innerText = ']';
-
-				const container = document.createElement( 'span' );
-				container.classList.add( 'deputy', 'dp-sessionStarter' );
-				container.appendChild( before );
-				container.appendChild( link );
-				container.appendChild( after );
-
-				heading.appendChild( container );
+				heading.appendChild(
+					DeputyCCISessionStartLink( heading, this )
+				);
 			} );
 	}
 

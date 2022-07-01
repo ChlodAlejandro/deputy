@@ -240,6 +240,53 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 		).resolves.toBe( 1 ) ) );
 	} );
 
+	describe( 'DeputyCasePageWikitext implementation unit tests', () => {
+
+		test( 'getWikitext', async () => {
+			await expect(
+				page.evaluate( () => {
+					const currentPage = new window.deputy.DeputyCasePage();
+					return currentPage.wikitext.getWikitext();
+				} )
+			).resolves.toBeTruthy();
+		} );
+
+		test( 'getSectionWikitext (number)', async () => {
+			await Promise.all( [
+				expect(
+					page.evaluate( () => {
+						const currentPage = new window.deputy.DeputyCasePage();
+						return currentPage.wikitext.getSectionWikitext( 0 );
+					} )
+				).resolves.toContain( '{{anchor|top}}' ),
+				expect(
+					page.evaluate( () => {
+						const currentPage = new window.deputy.DeputyCasePage();
+						return currentPage.wikitext.getSectionWikitext( 2 );
+					} )
+				).resolves.toContain( 'Examine the article or the diffs linked below' )
+			] );
+		} );
+
+		test( 'getSectionWikitext (string)', async () => {
+			await Promise.all( [
+				expect(
+					page.evaluate( () => {
+						const currentPage = new window.deputy.DeputyCasePage();
+						return currentPage.wikitext.getSectionWikitext( 'Text' );
+					} )
+				).resolves.toContain( 'Examine the article or the diffs linked below' ),
+				expect(
+					page.evaluate( () => {
+						const currentPage = new window.deputy.DeputyCasePage();
+						return currentPage.wikitext.getSectionWikitext( 'Pages 1 to 20' );
+					} )
+				).resolves.toContain( 'Special:Diff' )
+			] );
+		} );
+
+	} );
+
 } );
 
 // TODO: Tests for Parsoid-based DeputyCasePage

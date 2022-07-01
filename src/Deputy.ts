@@ -121,6 +121,8 @@ class Deputy {
 		// Initialize the storage.
 		this.storage = new DeputyStorage();
 		await this.storage.init();
+		// Initialize the Deputy API interface
+		this.api = new DeputyAPI();
 		// Initialize communications.
 		this.comms = new DeputyCommunications();
 		this.comms.init();

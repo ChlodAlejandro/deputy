@@ -1,4 +1,5 @@
 import cloneRegex from '../util/cloneRegex';
+import { ExpandedRevisionData } from '../api/ExpandedRevisionData';
 
 export enum ContributionSurveyRowStatus {
 	// The row has not been processed yet.
@@ -114,7 +115,7 @@ export default class ContributionSurveyRow {
 
 		if ( rowExec[ 2 ] !== null && rowExec.length !== 0 ) {
 			const diffRegex = /Special:Diff\/(\d+)/g;
-			let diffMatch = diffRegex.exec( rowExec[ 2 ] );
+			let diffMatch = diffRegex.exec( rowExec[ 0 ] );
 			while ( diffMatch != null ) {
 				if ( diffMatch[ 1 ] == null ) {
 					console.warn( 'Could not parse revision ID: ' + diffMatch[ 0 ] );
@@ -125,7 +126,28 @@ export default class ContributionSurveyRow {
 				diffMatch = diffRegex.exec( rowExec[ 2 ] );
 			}
 
-			const revisionData = ( await window.deputy.api.getExpandedRevisionData( diffs ) );
+			const revisionData: Record<number, ExpandedRevisionData> = {};
+			const toCache = [];
+			for ( const revisionID of diffs ) {
+				const cachedDiff = await window.deputy.storage.db.get( 'diffCache', revisionID );
+				if ( cachedDiff ) {
+					revisionData[ revisionID ] = cachedDiff;
+				} else {
+					toCache.push( revisionID );
+				}
+			}
+			if ( toCache.length > 0 ) {
+				const expandedData = await window.deputy.api.getExpandedRevisionData( toCache );
+				Object.assign(
+					revisionData, expandedData
+				);
+
+				for ( const revisionID in expandedData ) {
+					await window.deputy.storage.db.put(
+						'diffCache', expandedData[ revisionID ]
+					);
+				}
+			}
 
 			return new ContributionSurveyRow(
 				new mw.Title( rowExec[ 1 ] ),

@@ -1,3 +1,10 @@
+/*
+===============================================================================
+
+     GLOBAL DEPUTY CLASSES
+
+===============================================================================
+*/
 * > .deputy.dp-heading {
     position: absolute;
     opacity: 0;
@@ -9,6 +16,38 @@
     pointer-events: all;
 }
 
+.dp-loadingDots-1, .dp-loadingDots-2, .dp-loadingDots-3 {
+    display: inline-block;
+    margin: 0.1em 0.6em 0.1em 0.1em;
+    width: 0.8em;
+    height: 0.8em;
+    background-color: rgba(0, 0, 0, 50%);
+    animation: dp-loadingDots linear 3s infinite;
+    border-radius: 50%;
+}
+
+@keyframes dp-loadingDots {
+    0% { background-color: rgba(0, 0, 0, 10%); }
+    16% { background-color: rgba(0, 0, 0, 40%); }
+    32% { background-color: rgba(0, 0, 0, 10%); }
+    100% { background-color: rgba(0, 0, 0, 10%); }
+}
+
+.dp-loadingDots-1 {
+    animation-delay: -1s;
+}
+
+.dp-loadingDots-2 {
+    animation-delay: -0.5s;
+}
+
+/*
+===============================================================================
+
+     DEPUTY SESSION START LINK (DeputyCCISessionStartLink)
+
+===============================================================================
+*/
 .deputy.dp-sessionStarter {
     font-size: small;
     font-weight: normal;
@@ -32,4 +71,19 @@
 .client-js .deputy.dp-sessionStarter .dp-sessionStarter-bracket:not(:first-of-type) {
     margin-left: 0.25em;
     color:#54595d
+}
+
+/*
+===============================================================================
+
+     DEPUTY CONTRIBUTION SURVEY SECTION
+
+===============================================================================
+*/
+.deputy.dp-cs-section {
+    background-color: rgba(0, 0, 0, 3%);
+}
+
+.deputy.dp-cs-section .dp-cs-section-closingCommentsField {
+    margin-top: 8px;
 }

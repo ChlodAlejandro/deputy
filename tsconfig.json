@@ -2,7 +2,10 @@
     "compilerOptions": {
         "incremental": true,
         "target": "es6",
-        "lib": ["dom"],
+        "lib": [
+          "dom",
+          "es2015.promise"
+        ],
         "outDir": "./build",
 
         "noImplicitAny": true,
