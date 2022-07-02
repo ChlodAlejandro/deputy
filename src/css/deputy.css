@@ -87,3 +87,43 @@
 .deputy.dp-cs-section .dp-cs-section-closingCommentsField {
     margin-top: 8px;
 }
+
+.deputy.dp-cs-section .dp-cs-row {
+    margin-bottom: 8px;
+}
+
+.deputy.dp-cs-section .dp-cs-row .dp-cs-row--loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4em;
+}
+
+.deputy.dp-cs-section .dp-cs-row .dp-cs-row-status {
+    max-width: 5.4em;
+}
+
+.deputy.dp-cs-section .dp-cs-row .dp-cs-row-status .oo-ui-dropdownWidget-handle .oo-ui-labelElement-label {
+    width: 0;
+    opacity: 0;
+}
+
+.deputy.dp-cs-section .dp-cs-row .dp-cs-row-title {
+    font-weight: bold;
+    font-size: 1.2em;
+    vertical-align: middle;
+}
+
+body.mediawiki.ltr .deputy.dp-cs-section .dp-cs-row .dp-cs-row-title {
+    margin-right: 8px;
+}
+body.mediawiki.rtl .deputy.dp-cs-section .dp-cs-row .dp-cs-row-title {
+    margin-left: 8px;
+}
+
+.deputy.dp-cs-section .dp-cs-row .dp-cs-row-details {
+    color: #4a5054;
+    font-weight: bold;
+    vertical-align: baseline;
+}
+

@@ -1,8 +1,11 @@
 import { h } from 'tsx-dom';
 import DeputyContributionSurveySection from './DeputyContributionSurveySection';
 import { DeputyUIElement } from './DeputyUIElement';
-import ContributionSurveyRow from '../models/ContributionSurveyRow';
+import ContributionSurveyRow, {
+	ContributionSurveyRowStatus
+} from '../models/ContributionSurveyRow';
 import swapElements from '../util/swapElements';
+import unwrapWidget from '../util/unwrapWidget';
 
 /**
  * A specific revision for a section row.
@@ -63,11 +66,108 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 */
 	async loadData() {
 		const csRow = await this.row;
+		const possibleStatus = csRow.status;
+
+		const menuOptionIcon: Record<ContributionSurveyRowStatus, false | string> = {
+			[ ContributionSurveyRowStatus.Unfinished ]: false,
+			[ ContributionSurveyRowStatus.Unknown ]: false,
+			[ ContributionSurveyRowStatus.WithViolations ]: 'check',
+			[ ContributionSurveyRowStatus.WithoutViolations ]: 'close',
+			[ ContributionSurveyRowStatus.Missing ]: 'help'
+		};
+
+		const statusDropdownOptions = [];
+
+		for ( const status in ContributionSurveyRowStatus ) {
+			if ( isNaN( +status ) ) {
+				continue;
+			} else if (
+				+status === ContributionSurveyRowStatus.Unknown &&
+				possibleStatus === ContributionSurveyRowStatus.Unknown
+			) {
+				statusDropdownOptions.push(
+					new OO.ui.MenuOptionWidget( {
+						data: ContributionSurveyRowStatus.Unknown,
+						label: mw.message( 'deputy.session.row.status.unknown' ).text(),
+						selected: true
+					} )
+				);
+			} else {
+				const statusName = ContributionSurveyRowStatus[ status ];
+				const option = new OO.ui.MenuOptionWidget( {
+					data: status,
+					// eslint-disable-next-line mediawiki/msg-doc
+					label: mw.message(
+						'deputy.session.row.status.' +
+						statusName[ 0 ].toLowerCase() +
+						statusName.slice( 1 )
+					).text(),
+					icon: menuOptionIcon[ +status as ContributionSurveyRowStatus ],
+					selected: possibleStatus === +status,
+					disabled: +status === ContributionSurveyRowStatus.Unfinished &&
+						csRow.diffs.size > 0
+				} );
+				statusDropdownOptions.push( option );
+			}
+		}
+
+		const statusDropdown = new OO.ui.DropdownWidget( {
+			classes: [ 'dp-cs-row-status' ],
+			label: mw.message( 'deputy.session.row.status' ).text(),
+			menu: {
+				items: statusDropdownOptions
+			}
+		} );
+		// Change the icon of the dropdown when the value changes.
+		statusDropdown.getMenu().on( 'toggle', ( visible: boolean ) => {
+			if ( !visible ) {
+				// Dropdown has closed, option must have been selected.
+				const value: ContributionSurveyRowStatus =
+					statusDropdown.getMenu().findSelectedItem().getData();
+				console.log( 'dropdown change', value );
+				statusDropdown.setIcon( menuOptionIcon[ value ] === false ?
+					null :
+					menuOptionIcon[ value ]
+				);
+			}
+		} );
+		// Make the menu larger than the actual dropdown.
+		statusDropdown.getMenu().on( 'ready', () => {
+			statusDropdown.getMenu().toggleClipping( false );
+			unwrapWidget( statusDropdown.getMenu() ).style.width = '20em';
+		} );
+
+		const largestDiff = csRow.diffs.get(
+			Array.from( csRow.diffs.values() )
+				.sort( ( a, b ) => b.diffsize - a.diffsize )[ 0 ]
+				.revid
+		);
 
 		// TODO: Continue work here.
 		this.element = swapElements(
 			this.element, <div>
-				{ csRow.title.getPrefixedText() }
+				{ unwrapWidget( statusDropdown ) }
+				<a
+					class="dp-cs-row-title"
+					target="_blank"
+					href={'/wiki/' + csRow.title.getPrefixedDb()}
+				>
+					{ csRow.title.getPrefixedText() }
+				</a>
+				<span class="dp-cs-row-details">(test, {
+					mw.message(
+						'deputy.session.row.details.edits',
+						csRow.diffs.size.toString()
+					).text()
+				}, {
+					// eslint-disable-next-line mediawiki/msg-doc
+					mw.message(
+						`deputy.session.row.details.${
+							largestDiff.diffsize < 0 ? 'negative' : 'positive'
+						}Diff`,
+						largestDiff.diffsize.toString()
+					).text()
+				})</span>
 			</div> as HTMLElement
 		);
 	}

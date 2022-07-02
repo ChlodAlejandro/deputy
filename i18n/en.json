@@ -8,5 +8,16 @@
 
     "deputy.session.section.close": "Close section",
     "deputy.session.section.closeComments": "Closing comments",
-    "deputy.session.section.closeHelp": "Your signature will automatically be appended to your closing comments."
+    "deputy.session.section.closeHelp": "Your signature will automatically be appended to your closing comments.",
+
+    "deputy.session.row.status": "Current page status",
+    "deputy.session.row.status.unfinished": "Unfinished",
+    "deputy.session.row.status.unknown": "Unknown",
+    "deputy.session.row.status.withViolations": "Violations found",
+    "deputy.session.row.status.withoutViolations": "No violations found",
+    "deputy.session.row.status.missing": "Missing",
+    "deputy.session.row.details.new": "created",
+    "deputy.session.row.details.edits": "{{PLURAL:$1|$1 edit|{{FORMATNUM:$1}} edits}}",
+    "deputy.session.row.details.positiveDiff": "+{{FORMATNUM:$1}}",
+    "deputy.session.row.details.negativeDiff": "-{{FORMATNUM:$1}}"
 }

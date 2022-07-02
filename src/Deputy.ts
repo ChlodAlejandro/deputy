@@ -143,7 +143,8 @@ mw.loader.using( [
 	'mediawiki.api',
 	'mediawiki.Title',
 	'oojs-ui-core',
-	'oojs-ui.styles.icons-media'
+	'oojs-ui.styles.icons-media',
+	'oojs-ui.styles.icons-interactions'
 ], function () {
 	window.deputy = Deputy.instance;
 	window.deputy.init();

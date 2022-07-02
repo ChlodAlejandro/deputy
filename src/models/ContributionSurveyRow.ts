@@ -17,7 +17,39 @@ export enum ContributionSurveyRowStatus {
 /**
  *
  */
-export class ContributionSurveyRowRevision {
+export class ContributionSurveyRowRevision implements ExpandedRevisionData {
+
+	/** @inheritDoc */ revid: number;
+	/** @inheritDoc */ parentid: number;
+	/** @inheritDoc */ minor: boolean;
+	/** @inheritDoc */ user: string;
+	/** @inheritDoc */ timestamp: string;
+	/** @inheritDoc */ size: number;
+	/** @inheritDoc */ comment: string;
+	/** @inheritDoc */ tags: string[];
+	/** @inheritDoc */ page: {
+		pageid: number;
+		ns: number;
+		title: string;
+	};
+	/** @inheritDoc */ diffsize: number;
+	/** @inheritDoc */ parsedcomment?: string;
+
+	/**
+	 * The row that this revision belongs to.
+	 */
+	row: ContributionSurveyRow;
+
+	/**
+	 * Creates a new ContributionSurveyRowRevision
+	 *
+	 * @param row
+	 * @param revisionData
+	 */
+	constructor( row: ContributionSurveyRow, revisionData: ExpandedRevisionData ) {
+		Object.assign( this, revisionData );
+		this.row = row;
+	}
 
 }
 
@@ -89,7 +121,7 @@ export default class ContributionSurveyRow {
 	/**
 	 * The diffs included in this row.
 	 */
-	diffs?: Record<number, ContributionSurveyRowRevision>;
+	diffs?: Map<number, ContributionSurveyRowRevision>;
 	/**
 	 * The status of this row.
 	 */
@@ -114,7 +146,7 @@ export default class ContributionSurveyRow {
 		const diffs = [];
 
 		if ( rowExec[ 2 ] !== null && rowExec.length !== 0 ) {
-			const diffRegex = /Special:Diff\/(\d+)/g;
+			const diffRegex = cloneRegex( /Special:Diff\/(\d+)/g );
 			let diffMatch = diffRegex.exec( rowExec[ 0 ] );
 			while ( diffMatch != null ) {
 				if ( diffMatch[ 1 ] == null ) {
@@ -123,24 +155,36 @@ export default class ContributionSurveyRow {
 					diffs.push( +diffMatch[ 1 ] );
 				}
 
-				diffMatch = diffRegex.exec( rowExec[ 2 ] );
+				diffMatch = diffRegex.exec( rowExec[ 0 ] );
 			}
 
-			const revisionData: Record<number, ExpandedRevisionData> = {};
+			const row = new ContributionSurveyRow(
+				new mw.Title( rowExec[ 1 ] ),
+				null,
+				ContributionSurveyRowStatus.Unfinished,
+				null
+			);
+
+			const revisionData: Map<number, ContributionSurveyRowRevision> = new Map();
 			const toCache = [];
 			for ( const revisionID of diffs ) {
 				const cachedDiff = await window.deputy.storage.db.get( 'diffCache', revisionID );
 				if ( cachedDiff ) {
-					revisionData[ revisionID ] = cachedDiff;
+					revisionData.set(
+						revisionID, new ContributionSurveyRowRevision( row, cachedDiff )
+					);
 				} else {
 					toCache.push( revisionID );
 				}
 			}
 			if ( toCache.length > 0 ) {
 				const expandedData = await window.deputy.api.getExpandedRevisionData( toCache );
-				Object.assign(
-					revisionData, expandedData
-				);
+				for ( const revisionID in expandedData ) {
+					revisionData.set(
+						+revisionID,
+						new ContributionSurveyRowRevision( row, expandedData[ revisionID ] )
+					);
+				}
 
 				for ( const revisionID in expandedData ) {
 					await window.deputy.storage.db.put(
@@ -148,13 +192,9 @@ export default class ContributionSurveyRow {
 					);
 				}
 			}
+			row.diffs = revisionData;
 
-			return new ContributionSurveyRow(
-				new mw.Title( rowExec[ 1 ] ),
-				revisionData,
-				ContributionSurveyRowStatus.Unfinished,
-				null
-			);
+			return row;
 		} else {
 			return new ContributionSurveyRow(
 				new mw.Title( rowExec[ 1 ] ),
