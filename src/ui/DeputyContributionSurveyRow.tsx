@@ -6,6 +6,7 @@ import ContributionSurveyRow, {
 } from '../models/ContributionSurveyRow';
 import swapElements from '../util/swapElements';
 import unwrapWidget from '../util/unwrapWidget';
+import DeputyLoadingDots from './DeputyLoadingDots';
 
 /**
  * A specific revision for a section row.
@@ -34,7 +35,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	/**
 	 * The contribution survey row data
 	 */
-	row: Promise<ContributionSurveyRow>;
+	row: ContributionSurveyRow;
 
 	/**
 	 * This row's main root element. Does not get swapped.
@@ -56,7 +57,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 * @param row The contribution survey row data
 	 * @param section The section that this row belongs to
 	 */
-	constructor( row: Promise<ContributionSurveyRow>, section: DeputyContributionSurveySection ) {
+	constructor( row: ContributionSurveyRow, section: DeputyContributionSurveySection ) {
 		this.row = row;
 		this.section = section;
 	}
@@ -65,8 +66,8 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 * Load the revision data in and change the UI element respectively.
 	 */
 	async loadData() {
-		const csRow = await this.row;
-		const possibleStatus = csRow.status;
+		const diffs = await this.row.getDiffs();
+		const possibleStatus = this.row.status;
 
 		const menuOptionIcon: Record<ContributionSurveyRowStatus, false | string> = {
 			[ ContributionSurveyRowStatus.Unfinished ]: false,
@@ -79,9 +80,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		const statusDropdownOptions = [];
 
 		for ( const status in ContributionSurveyRowStatus ) {
-			if ( isNaN( +status ) ) {
-				continue;
-			} else if (
+			if (
 				+status === ContributionSurveyRowStatus.Unknown &&
 				possibleStatus === ContributionSurveyRowStatus.Unknown
 			) {
@@ -92,7 +91,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 						selected: true
 					} )
 				);
-			} else {
+			} else if ( isNaN( +status ) ) {
 				const statusName = ContributionSurveyRowStatus[ status ];
 				const option = new OO.ui.MenuOptionWidget( {
 					data: status,
@@ -105,7 +104,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 					icon: menuOptionIcon[ +status as ContributionSurveyRowStatus ],
 					selected: possibleStatus === +status,
 					disabled: +status === ContributionSurveyRowStatus.Unfinished &&
-						csRow.diffs.size > 0
+						diffs.size > 0
 				} );
 				statusDropdownOptions.push( option );
 			}
@@ -137,27 +136,26 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			unwrapWidget( statusDropdown.getMenu() ).style.width = '20em';
 		} );
 
-		const largestDiff = csRow.diffs.get(
-			Array.from( csRow.diffs.values() )
+		const largestDiff = diffs.get(
+			Array.from( diffs.values() )
 				.sort( ( a, b ) => b.diffsize - a.diffsize )[ 0 ]
 				.revid
 		);
 
-		// TODO: Continue work here.
 		this.element = swapElements(
 			this.element, <div>
 				{ unwrapWidget( statusDropdown ) }
 				<a
 					class="dp-cs-row-title"
 					target="_blank"
-					href={'/wiki/' + csRow.title.getPrefixedDb()}
+					href={'/wiki/' + this.row.title.getPrefixedDb()}
 				>
-					{ csRow.title.getPrefixedText() }
+					{ this.row.title.getPrefixedText() }
 				</a>
 				<span class="dp-cs-row-details">(test, {
 					mw.message(
 						'deputy.session.row.details.edits',
-						csRow.diffs.size.toString()
+						diffs.size.toString()
 					).text()
 				}, {
 					// eslint-disable-next-line mediawiki/msg-doc
@@ -176,11 +174,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 * @inheritDoc
 	 */
 	render(): HTMLElement {
-		this.element = <div class="dp-cs-row--loading">
-			<span class="dp-loadingDots-1" />
-			<span class="dp-loadingDots-2"/>
-			<span class="dp-loadingDots-3"/>
-		</div> as HTMLElement;
+		this.element = <DeputyLoadingDots /> as HTMLElement;
 		this.rootElement = <div class="dp-cs-row">
 			{ this.element }
 		</div> as HTMLElement;

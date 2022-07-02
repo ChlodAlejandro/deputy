@@ -50,11 +50,9 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		const sectionWikitext = await this.casePage.wikitext.getSectionWikitext( headingName );
 
 		const wikitextRows = sectionWikitext.split( '\n' ).filter( ( v ) => v.startsWith( '*' ) );
-		this.rows = await Promise.all(
-			wikitextRows.map( async ( rowText ) => new DeputyContributionSurveyRow(
-				ContributionSurveyRow.fromWikitext( rowText ), this
-			) )
-		);
+		this.rows = wikitextRows.map( ( rowText ) => new DeputyContributionSurveyRow(
+			new ContributionSurveyRow( rowText ), this
+		) );
 	}
 
 	/**

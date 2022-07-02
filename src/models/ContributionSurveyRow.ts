@@ -115,13 +115,13 @@ export default class ContributionSurveyRow {
 	}
 
 	/**
+	 * The original wikitext of the row.
+	 */
+	wikitext: string;
+	/**
 	 * The title of the page that this row is attached to.
 	 */
 	title: mw.Title;
-	/**
-	 * The diffs included in this row.
-	 */
-	diffs?: Map<number, ContributionSurveyRowRevision>;
 	/**
 	 * The status of this row.
 	 */
@@ -132,17 +132,35 @@ export default class ContributionSurveyRow {
 	comment?: string;
 
 	/**
-	 * Create a ContributionSurveyRow object from a wikitext line from the contribution survey.
-	 *
-	 * Example:
-	 * ```
-	 * *[[:Wikipedia:Wikipedians]] (1 edit): [[Special:Diff/974376118|(+127853)]]
-	 * ```
-	 *
-	 * @param wikitext The wikitext to parse
+	 * The diffs included in this row.
 	 */
-	static async fromWikitext( wikitext: string ): Promise<ContributionSurveyRow> {
+	private diffs?: Map<number, ContributionSurveyRowRevision>;
+
+	/**
+	 * Creates a new contribution survey row from MediaWiki parser output.
+	 *
+	 * @param wikitext The wikitext of the row
+	 */
+	constructor( wikitext: string ) {
 		const rowExec = cloneRegex( ContributionSurveyRow.rowWikitextRegex ).exec( wikitext );
+
+		this.title = new mw.Title( rowExec[ 1 ] );
+		this.status = ContributionSurveyRow.identifyCommentStatus( rowExec[ 3 ] );
+		this.comment = rowExec[ 3 ];
+	}
+
+	/**
+	 * Get the ContributionSurveyRowRevisions of this row.
+	 *
+	 * @param forceReload
+	 */
+	async getDiffs( forceReload = false ): Promise<ContributionSurveyRow['diffs']> {
+		if ( this.diffs != null && !forceReload ) {
+			return this.diffs;
+		}
+
+		const rowExec = cloneRegex( ContributionSurveyRow.rowWikitextRegex ).exec( this.wikitext );
+		const revisionData: Map<number, ContributionSurveyRowRevision> = new Map();
 		const diffs = [];
 
 		if ( rowExec[ 2 ] !== null && rowExec.length !== 0 ) {
@@ -158,20 +176,12 @@ export default class ContributionSurveyRow {
 				diffMatch = diffRegex.exec( rowExec[ 0 ] );
 			}
 
-			const row = new ContributionSurveyRow(
-				new mw.Title( rowExec[ 1 ] ),
-				null,
-				ContributionSurveyRowStatus.Unfinished,
-				null
-			);
-
-			const revisionData: Map<number, ContributionSurveyRowRevision> = new Map();
 			const toCache = [];
 			for ( const revisionID of diffs ) {
 				const cachedDiff = await window.deputy.storage.db.get( 'diffCache', revisionID );
 				if ( cachedDiff ) {
 					revisionData.set(
-						revisionID, new ContributionSurveyRowRevision( row, cachedDiff )
+						revisionID, new ContributionSurveyRowRevision( this, cachedDiff )
 					);
 				} else {
 					toCache.push( revisionID );
@@ -182,7 +192,7 @@ export default class ContributionSurveyRow {
 				for ( const revisionID in expandedData ) {
 					revisionData.set(
 						+revisionID,
-						new ContributionSurveyRowRevision( row, expandedData[ revisionID ] )
+						new ContributionSurveyRowRevision( this, expandedData[ revisionID ] )
 					);
 				}
 
@@ -192,38 +202,9 @@ export default class ContributionSurveyRow {
 					);
 				}
 			}
-			row.diffs = revisionData;
-
-			return row;
-		} else {
-			return new ContributionSurveyRow(
-				new mw.Title( rowExec[ 1 ] ),
-				null,
-				this.identifyCommentStatus( rowExec[ 3 ] ),
-				rowExec[ 3 ]
-			);
 		}
 
-	}
-
-	/**
-	 * Creates a new contribution survey row from MediaWiki parser output.
-	 *
-	 * @param title The title of the page that this row is attached to.
-	 * @param diffs The diffs included in this row.
-	 * @param status The status of this row.
-	 * @param comment The editor comments for this row (including signature)
-	 */
-	private constructor(
-		title: ContributionSurveyRow['title'],
-		diffs: ContributionSurveyRow['diffs'],
-		status: ContributionSurveyRow['status'],
-		comment: ContributionSurveyRow['comment']
-	) {
-		this.title = title;
-		this.diffs = diffs;
-		this.status = status;
-		this.comment = comment;
+		return this.diffs = revisionData;
 	}
 
 }

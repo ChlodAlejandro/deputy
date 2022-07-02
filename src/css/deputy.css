@@ -92,7 +92,7 @@
     margin-bottom: 8px;
 }
 
-.deputy.dp-cs-section .dp-cs-row .dp-cs-row--loading {
+.deputy.dp-cs-section .dp-cs-row .dp--loadingDots {
     display: flex;
     align-items: center;
     justify-content: center;
