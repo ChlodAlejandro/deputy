@@ -91,7 +91,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 						selected: true
 					} )
 				);
-			} else if ( isNaN( +status ) ) {
+			} else if ( !isNaN( +status ) ) {
 				const statusName = ContributionSurveyRowStatus[ status ];
 				const option = new OO.ui.MenuOptionWidget( {
 					data: status,
@@ -104,7 +104,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 					icon: menuOptionIcon[ +status as ContributionSurveyRowStatus ],
 					selected: possibleStatus === +status,
 					disabled: +status === ContributionSurveyRowStatus.Unfinished &&
-						diffs.size > 0
+						diffs.size === 0
 				} );
 				statusDropdownOptions.push( option );
 			}

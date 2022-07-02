@@ -123,13 +123,13 @@ export default class ContributionSurveyRow {
 	 */
 	title: mw.Title;
 	/**
-	 * The status of this row.
-	 */
-	status: ContributionSurveyRowStatus;
-	/**
 	 * Editor comments for this row (including signature)
 	 */
 	comment?: string;
+	/**
+	 * The status of this row.
+	 */
+	status: ContributionSurveyRowStatus;
 
 	/**
 	 * The diffs included in this row.
@@ -144,9 +144,12 @@ export default class ContributionSurveyRow {
 	constructor( wikitext: string ) {
 		const rowExec = cloneRegex( ContributionSurveyRow.rowWikitextRegex ).exec( wikitext );
 
+		this.wikitext = wikitext;
 		this.title = new mw.Title( rowExec[ 1 ] );
-		this.status = ContributionSurveyRow.identifyCommentStatus( rowExec[ 3 ] );
 		this.comment = rowExec[ 3 ];
+		this.status = rowExec[ 3 ] === undefined ?
+			ContributionSurveyRowStatus.Unfinished :
+			ContributionSurveyRow.identifyCommentStatus( rowExec[ 3 ] );
 	}
 
 	/**
