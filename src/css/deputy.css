@@ -80,67 +80,83 @@
 
 ===============================================================================
 */
-.deputy.dp-cs-section .dp-cs-section-closingCommentsField {
+.dp-cs-section-closingCommentsField {
     margin-top: 8px;
 }
 
-.deputy.dp-cs-section .dp-cs-row {
+.dp-cs-row {
     margin-bottom: 8px;
 }
 
-.deputy.dp-cs-section .dp-cs-row .dp--loadingDots {
+.dp-cs-row .dp--loadingDots {
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0.4em;
 }
 
-.deputy.dp-cs-section .dp-cs-row .dp-cs-row-status {
+.dp-cs-row-status {
     max-width: 5.4em;
 }
 
-.deputy.dp-cs-section .dp-cs-row .dp-cs-row-status .oo-ui-dropdownWidget-handle .oo-ui-labelElement-label {
+.dp-cs-row-status .oo-ui-dropdownWidget-handle .oo-ui-labelElement-label {
     width: 0;
     opacity: 0;
 }
 
-body.mediawiki.ltr .deputy.dp-cs-section .dp-cs-row .dp-cs-row-title,
-body.mediawiki.ltr .deputy.dp-cs-section .dp-cs-row .dp-cs-row-details {
-    margin-right: 8px;
-}
-body.mediawiki.rtl .deputy.dp-cs-section .dp-cs-row .dp-cs-row-title,
-body.mediawiki.ltr .deputy.dp-cs-section .dp-cs-row .dp-cs-row-details {
-    margin-left: 8px;
+.dp-cs-row-head > * {
+    vertical-align: middle;
 }
 
-.deputy.dp-cs-section .dp-cs-row .dp-cs-row-title {
+body.mediawiki.ltr .dp-cs-row-head > :not(:first-child):not(:last-child),
+body.mediawiki.ltr .dp-cs-row-head > :not(:first-child):not(:last-child) {
+    margin-right: 16px;
+}
+body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child),
+body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
+    margin-left: 16px;
+}
+
+.dp-cs-row-links {
+    margin-right: 0 !important;
+}
+
+.dp-cs-row-links > :not(:last-child) {
+    margin-right: 8px !important;
+}
+
+.dp-cs-row-title {
     font-weight: bold;
     font-size: 1.2em;
     vertical-align: middle;
 }
 
-.deputy.dp-cs-section .dp-cs-row .dp-cs-row-details {
+.dp-cs-row-details {
     color: #4a5054;
     font-weight: bold;
-    vertical-align: baseline;
 }
 
-.deputy.dp-cs-section .dp-cs-row-toggle .oo-ui-iconElement-icon {
+.dp-cs-row-toggle .oo-ui-iconElement-icon {
     background-size: 1em;
 }
 
-.deputy.dp-cs-section .dp-cs-row-toggle .oo-ui-buttonElement-button {
+.dp-cs-row-toggle .oo-ui-buttonElement-button {
     border-radius: 50%;
 }
 
-.deputy.dp-cs-section .dp-cs-row .history-user,
-.deputy.dp-cs-section .dp-cs-row .mw-changeslist-date {
+.dp-cs-row .history-user,
+.dp-cs-row .mw-changeslist-date {
     margin-left: 0.4em;
     margin-right: 0.2em;
 }
 
-.deputy.dp-cs-section .dp-cs-row .dp-cs-row-revisions {
+.dp-cs-row .dp-cs-row-revisions {
     padding: 16px;
     background-color: rgba(0, 0, 0, 4%);
     margin: 4px 0;
+}
+
+.dp-cs-row-revisions .mw-tag-markers .mw-tag-marker:not(:first-child),
+.dp-cs-row-detail:not(:first-child) {
+    margin-left: 0.2em;
 }

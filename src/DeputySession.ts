@@ -57,6 +57,11 @@ export default class DeputySession {
 		session: SessionInformation,
 		casePage = new DeputyCasePage()
 	): Promise<void> {
+		if ( window.location.search.indexOf( 'action=edit' ) !== -1 ) {
+			// User is editing, don't load interface.
+			return;
+		}
+
 		// TODO: Do interface functions
 		for ( const section of session.caseSections ) {
 			const heading = casePage.findContributionSurveyHeading( section );

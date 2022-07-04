@@ -10,9 +10,22 @@ import unwrapWidget from '../util/unwrapWidget';
 export class DeputyContributionSurveyRevision extends OO.EventEmitter implements DeputyUIElement {
 
 	/**
+	 * @return `true` the current revision has been checked by the user or `false` if not.
+	 */
+	get done(): boolean {
+		return this.doneCheckbox?.isSelected() ?? false;
+	}
+	/**
 	 * The revision that this UI element handles.
 	 */
 	revision: ContributionSurveyRevision;
+
+	/**
+	 * The checkbox to indicate that a diff has been checked by the user.
+	 *
+	 * @private
+	 */
+	private doneCheckbox: any;
 
 	/**
 	 * @param revision
@@ -64,34 +77,40 @@ export class DeputyContributionSurveyRevision extends OO.EventEmitter implements
 			dangerouslySetInnerHTML={this.revision.parsedcomment}
 		/>;
 
-		const doneCheckbox = new OO.ui.CheckboxInputWidget( {
+		this.doneCheckbox = new OO.ui.CheckboxInputWidget( {
 			label: mw.message( 'deputy.session.revision.assessed' ).text()
 		} );
 
-		doneCheckbox.on( 'change', ( checked: boolean ) => {
+		this.doneCheckbox.on( 'change', ( checked: boolean ) => {
 			this.emit( 'update', checked, this.revision );
 		} );
+
+		const comma = mw.message( 'comma-separator' ).text();
 
 		return <div
 			class={ ( this.revision.tags ?? [] ).map( ( v ) => 'mw-tag-' + v ).join( ' ' ) }
 		>
-			{ unwrapWidget( doneCheckbox ) }
+			{ unwrapWidget( this.doneCheckbox ) }
 			<span class="mw-changeslist-links">
 				<span><a href={
 					getRevisionDiffURL( this.revision.revid, 0 )
-				} title="Difference with latest revision">
+				} title="Difference with latest revision" target="_blank">
 					{ mw.message( 'deputy.session.revision.cur' ).text() }
 				</a></span>
 				<span><a href={
-					getRevisionDiffURL( this.revision.parentid, this.revision.revid )
-				} title="Difference with preceding revision">
+					!this.revision.parentid ?
+						null :
+						getRevisionDiffURL( this.revision.parentid, this.revision.revid )
+				} title="Difference with preceding revision" target="_blank">
 					{ mw.message( 'deputy.session.revision.prev' ).text() }
 				</a></span>
 			</span>
 			<span class="mw-changeslist-time">{ formattedTime }</span>
-			<span class="mw-changeslist-date">{ formattedTime }, { formattedDate }</span>
+			<span class="mw-changeslist-date">{ formattedTime }{
+				comma
+			}{ formattedDate }</span>
 			<span class="history-user">
-				<a class="mw-userlink" href={
+				<a class="mw-userlink" target="_blank" href={
 					mw.format(
 						mw.config.get( 'wgArticlePath' ),
 						userPage.getPrefixedDb()
@@ -100,7 +119,7 @@ export class DeputyContributionSurveyRevision extends OO.EventEmitter implements
 					class="mw-usertoollinks mw-changeslist-links"
 				>
 					<span>
-						<a class="mw-usertoollinks-talk" href={
+						<a class="mw-usertoollinks-talk" target="_blank" href={
 							mw.format(
 								mw.config.get( 'wgArticlePath' ),
 								userTalkPage.getPrefixedDb()
@@ -110,7 +129,7 @@ export class DeputyContributionSurveyRevision extends OO.EventEmitter implements
 						</a>
 					</span>
 					<span>
-						<a class="mw-usertoollinks-contribs" href={
+						<a class="mw-usertoollinks-contribs" target="_blank" href={
 							mw.format(
 								mw.config.get( 'wgArticlePath' ),
 								userContribsPage.getPrefixedDb()
@@ -155,12 +174,14 @@ export class DeputyContributionSurveyRevision extends OO.EventEmitter implements
 							)
 						}
 						title="Special:Tags"
-					>{ mw.message( 'deputy.session.revision.tags' ).text() }</a>: {
-						this.revision.tags.map( ( v ) => <span
-							class={ `mw-tag-marker mw-tag-marker-${v}` }
-							dangerouslySetInnerHTML={ mw.message( `tag-${v}` ).parse() }
-						/> )
-					}
+						target="_blank"
+					>{mw.message(
+							'deputy.session.revision.tags',
+							this.revision.tags.length.toString()
+						).text()}</a>{this.revision.tags.map( ( v ) => <span
+						class={ `mw-tag-marker mw-tag-marker-${v}` }
+						dangerouslySetInnerHTML={ mw.message( `tag-${v}` ).parse() }
+					/> )}
 				</span>
 			}
 		</div> as HTMLElement;

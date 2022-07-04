@@ -38,10 +38,20 @@ interface DeputyDiffCacheStore {
 	value: ExpandedRevisionData;
 }
 
+interface DeputyTagCacheStore {
+	/* `key` */
+	key: string;
+	value: {
+		key: string;
+		value: string;
+	}
+}
+
 interface DeputyDatabase extends DBSchema {
 	keyval: DeputyKeyvalStore;
 	casePageCache: DeputyCasePageCacheStore;
 	diffCache: DeputyDiffCacheStore;
+	tagCache: DeputyTagCacheStore;
 }
 
 /**
@@ -72,12 +82,17 @@ export default class DeputyStorage {
 							db.createObjectStore( 'diffCache', {
 								keyPath: 'revid'
 							} );
+							db.createObjectStore( 'tagCache', {
+								keyPath: 'key'
+							} );
 						}
 					};
 					while ( currentVersion < newVersion ) {
 						upgrader[ `${currentVersion}` ]();
 						console.log(
-							`[deputy] upgraded database from ${currentVersion} to ${currentVersion + 1}`
+							`[deputy] upgraded database from ${currentVersion} to ${
+								currentVersion + 1
+							}`
 						);
 						currentVersion++;
 					}

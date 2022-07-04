@@ -84,7 +84,8 @@ class Deputy {
 
 		// Inject CSS
 		mw.util.addCSS( deputyStyles );
-		// Load strings
+		// TODO: The goal is to have Deputy load the file for the current wgUserLanguage.
+		// Internationalization
 		let stringsLoaded = false;
 		if ( window.deputyLang ) {
 			if ( typeof window.deputyLang === 'object' ) {
@@ -136,8 +137,6 @@ class Deputy {
 		this.session = new DeputySession();
 		await this.session.init();
 
-		this.api = new DeputyAPI();
-
 		console.log( 'Loaded!' );
 
 		mw.hook( 'deputy.load' ).fire( this );
@@ -152,8 +151,11 @@ mw.loader.using( [
 	'mediawiki.pager.styles',
 	'mediawiki.Title',
 	'oojs-ui-core',
-	'oojs-ui.styles.icons-media',
+	'oojs-ui.styles.icons-alerts',
+	'oojs-ui.styles.icons-content',
+	'oojs-ui.styles.icons-editing-core',
 	'oojs-ui.styles.icons-interactions',
+	'oojs-ui.styles.icons-media',
 	'oojs-ui.styles.icons-movement'
 ], function () {
 	performHacks();

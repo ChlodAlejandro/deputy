@@ -27,7 +27,7 @@ export default class ContributionSurveyRow {
 	 * page has been cleared and commented on by a user.
 	 */
 	static readonly rowWikitextRegex =
-		/\* ?\[\[:?(.+?)]](?:: ?)?(?:.*?(?:\[\[Special:Diff\/(\d+)\|.+?]])+|(.+$))/gm;
+		/\*?(?:'''.''' )?\[\[:?(.+?)]](?:: ?)?(?:.*?(?:\[\[Special:Diff\/(\d+)\|.+?]])+|(.+$))/gm;
 
 	/**
 	 * A set of regular expressions that will match a specific contribution survey row
@@ -91,6 +91,23 @@ export default class ContributionSurveyRow {
 	 * The status of this row.
 	 */
 	status: ContributionSurveyRowStatus;
+
+	/**
+	 * This variable returns true when
+	 * (a) the row has a non-unfinished and non-unknown status, and
+	 * (b) there are no outstanding diffs in this row
+	 *
+	 * @return See description.
+	 */
+	get completed(): boolean {
+		if ( this.diffs == null ) {
+			throw new Error( 'Diffs have not been pulled yet' );
+		}
+
+		return this.status !== ContributionSurveyRowStatus.Unfinished &&
+			this.status !== ContributionSurveyRowStatus.Unknown &&
+			this.diffs.size === 0;
+	}
 
 	/**
 	 * The diffs included in this row.
@@ -177,9 +194,11 @@ export default class ContributionSurveyRow {
 				}
 			}
 			return acc;
-		}, [] );
+		}, [ 'tag-list-wrapper' ] );
 		await window.deputy.wiki.loadMessagesIfMissing(
-			tags.map( ( v ) => 'tag-' + v )
+			tags.map( ( v ) => 'tag-' + v ), {
+				amenableparser: true
+			}
 		);
 
 		return this.diffs = revisionData;
