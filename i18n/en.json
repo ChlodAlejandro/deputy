@@ -3,6 +3,8 @@
 
     "deputy.cancel": "Cancel",
     "deputy.save": "Save",
+    "deputy.positiveDiff": "+{{FORMATNUM:$1}}",
+    "deputy.negativeDiff": "-{{FORMATNUM:$1}}",
 
     "deputy.session.start": "start CCI session",
 
@@ -18,6 +20,15 @@
     "deputy.session.row.status.missing": "Missing",
     "deputy.session.row.details.new": "created",
     "deputy.session.row.details.edits": "{{PLURAL:$1|$1 edit|{{FORMATNUM:$1}} edits}}",
-    "deputy.session.row.details.positiveDiff": "+{{FORMATNUM:$1}}",
-    "deputy.session.row.details.negativeDiff": "-{{FORMATNUM:$1}}"
+    "deputy.session.row.revisions.open": "Open list of revisions",
+    "deputy.session.row.revisions.close": "Close list of revisions",
+
+    "deputy.session.revision.assessed": "Assessed",
+    "deputy.session.revision.cur": "cur",
+    "deputy.session.revision.prev": "prev",
+    "deputy.session.revision.talk": "talk",
+    "deputy.session.revision.contribs": "contribs",
+    "deputy.session.revision.bytes": "{{FORMATNUM:$1}} bytes",
+    "deputy.session.revision.byteChange": "{{FORMATNUM:$1}} bytes after change of this size",
+    "deputy.session.revision.tags": "Tags"
 }

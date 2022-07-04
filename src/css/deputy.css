@@ -80,10 +80,6 @@
 
 ===============================================================================
 */
-.deputy.dp-cs-section {
-    background-color: rgba(0, 0, 0, 3%);
-}
-
 .deputy.dp-cs-section .dp-cs-section-closingCommentsField {
     margin-top: 8px;
 }
@@ -108,17 +104,19 @@
     opacity: 0;
 }
 
+body.mediawiki.ltr .deputy.dp-cs-section .dp-cs-row .dp-cs-row-title,
+body.mediawiki.ltr .deputy.dp-cs-section .dp-cs-row .dp-cs-row-details {
+    margin-right: 8px;
+}
+body.mediawiki.rtl .deputy.dp-cs-section .dp-cs-row .dp-cs-row-title,
+body.mediawiki.ltr .deputy.dp-cs-section .dp-cs-row .dp-cs-row-details {
+    margin-left: 8px;
+}
+
 .deputy.dp-cs-section .dp-cs-row .dp-cs-row-title {
     font-weight: bold;
     font-size: 1.2em;
     vertical-align: middle;
-}
-
-body.mediawiki.ltr .deputy.dp-cs-section .dp-cs-row .dp-cs-row-title {
-    margin-right: 8px;
-}
-body.mediawiki.rtl .deputy.dp-cs-section .dp-cs-row .dp-cs-row-title {
-    margin-left: 8px;
 }
 
 .deputy.dp-cs-section .dp-cs-row .dp-cs-row-details {
@@ -127,3 +125,22 @@ body.mediawiki.rtl .deputy.dp-cs-section .dp-cs-row .dp-cs-row-title {
     vertical-align: baseline;
 }
 
+.deputy.dp-cs-section .dp-cs-row-toggle .oo-ui-iconElement-icon {
+    background-size: 1em;
+}
+
+.deputy.dp-cs-section .dp-cs-row-toggle .oo-ui-buttonElement-button {
+    border-radius: 50%;
+}
+
+.deputy.dp-cs-section .dp-cs-row .history-user,
+.deputy.dp-cs-section .dp-cs-row .mw-changeslist-date {
+    margin-left: 0.4em;
+    margin-right: 0.2em;
+}
+
+.deputy.dp-cs-section .dp-cs-row .dp-cs-row-revisions {
+    padding: 16px;
+    background-color: rgba(0, 0, 0, 4%);
+    margin: 4px 0;
+}

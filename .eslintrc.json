@@ -48,6 +48,7 @@
             "varsIgnorePattern": "h"
         }],
 
+        "no-dupe-class-members": "off",
         "no-undef": "off",
         "no-underscore-dangle": "off",
         "eqeqeq": [ "warn", "smart" ],

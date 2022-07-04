@@ -14,6 +14,8 @@ import ContributionSurveyRow from './models/ContributionSurveyRow';
 import deputyStyles from './css/deputy.css';
 import getPageContent from './util/getPageContent';
 import cloneRegex from './util/cloneRegex';
+import { DeputyPreferences } from './DeputyPreferences';
+import performHacks from './util/performHacks';
 /**
  * The main class for Deputy. Entry point for execution.
  */
@@ -28,6 +30,7 @@ class Deputy {
 	readonly DeputyAPI = DeputyAPI;
 	readonly DeputyStorage = DeputyStorage;
 	readonly DeputySession = DeputySession;
+	readonly DeputyPreferences = DeputyPreferences;
 	readonly DeputyCommunications = DeputyCommunications;
 	readonly DeputyCasePage = DeputyCasePage;
 	readonly models = {
@@ -58,6 +61,7 @@ class Deputy {
 	wiki: mw.Api;
 	api: DeputyAPI;
 	storage: DeputyStorage;
+	prefs: DeputyPreferences;
 	comms: DeputyCommunications;
 	session: DeputySession;
 
@@ -123,10 +127,12 @@ class Deputy {
 		await this.storage.init();
 		// Initialize the Deputy API interface
 		this.api = new DeputyAPI();
-		// Initialize communications.
+		// Initialize the Deputy preferences instance
+		this.prefs = new DeputyPreferences();
+		// Initialize communications
 		this.comms = new DeputyCommunications();
 		this.comms.init();
-		// Initialize session.
+		// Initialize session
 		this.session = new DeputySession();
 		await this.session.init();
 
@@ -141,11 +147,16 @@ class Deputy {
 
 mw.loader.using( [
 	'mediawiki.api',
+	'mediawiki.special.changeslist',
+	'mediawiki.interface.helpers.styles',
+	'mediawiki.pager.styles',
 	'mediawiki.Title',
 	'oojs-ui-core',
 	'oojs-ui.styles.icons-media',
-	'oojs-ui.styles.icons-interactions'
+	'oojs-ui.styles.icons-interactions',
+	'oojs-ui.styles.icons-movement'
 ], function () {
+	performHacks();
 	window.deputy = Deputy.instance;
 	window.deputy.init();
 } );

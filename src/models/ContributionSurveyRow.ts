@@ -1,5 +1,5 @@
 import cloneRegex from '../util/cloneRegex';
-import { ExpandedRevisionData } from '../api/ExpandedRevisionData';
+import { ContributionSurveyRevision } from './ContributionSurveyRevision';
 
 export enum ContributionSurveyRowStatus {
 	// The row has not been processed yet.
@@ -12,45 +12,6 @@ export enum ContributionSurveyRowStatus {
 	WithoutViolations = 3,
 	// The row has been found but the added text is no longer in the existing revision
 	Missing = 4
-}
-
-/**
- *
- */
-export class ContributionSurveyRowRevision implements ExpandedRevisionData {
-
-	/** @inheritDoc */ revid: number;
-	/** @inheritDoc */ parentid: number;
-	/** @inheritDoc */ minor: boolean;
-	/** @inheritDoc */ user: string;
-	/** @inheritDoc */ timestamp: string;
-	/** @inheritDoc */ size: number;
-	/** @inheritDoc */ comment: string;
-	/** @inheritDoc */ tags: string[];
-	/** @inheritDoc */ page: {
-		pageid: number;
-		ns: number;
-		title: string;
-	};
-	/** @inheritDoc */ diffsize: number;
-	/** @inheritDoc */ parsedcomment?: string;
-
-	/**
-	 * The row that this revision belongs to.
-	 */
-	row: ContributionSurveyRow;
-
-	/**
-	 * Creates a new ContributionSurveyRowRevision
-	 *
-	 * @param row
-	 * @param revisionData
-	 */
-	constructor( row: ContributionSurveyRow, revisionData: ExpandedRevisionData ) {
-		Object.assign( this, revisionData );
-		this.row = row;
-	}
-
 }
 
 /**
@@ -134,7 +95,7 @@ export default class ContributionSurveyRow {
 	/**
 	 * The diffs included in this row.
 	 */
-	private diffs?: Map<number, ContributionSurveyRowRevision>;
+	private diffs?: Map<number, ContributionSurveyRevision>;
 
 	/**
 	 * Creates a new contribution survey row from MediaWiki parser output.
@@ -147,7 +108,7 @@ export default class ContributionSurveyRow {
 		this.wikitext = wikitext;
 		this.title = new mw.Title( rowExec[ 1 ] );
 		this.comment = rowExec[ 3 ];
-		this.status = rowExec[ 3 ] === undefined ?
+		this.status = rowExec[ 3 ] == null ?
 			ContributionSurveyRowStatus.Unfinished :
 			ContributionSurveyRow.identifyCommentStatus( rowExec[ 3 ] );
 	}
@@ -163,9 +124,10 @@ export default class ContributionSurveyRow {
 		}
 
 		const rowExec = cloneRegex( ContributionSurveyRow.rowWikitextRegex ).exec( this.wikitext );
-		const revisionData: Map<number, ContributionSurveyRowRevision> = new Map();
+		const revisionData: Map<number, ContributionSurveyRevision> = new Map();
 		const diffs = [];
 
+		// Load revision information
 		if ( rowExec[ 2 ] !== null && rowExec.length !== 0 ) {
 			const diffRegex = cloneRegex( /Special:Diff\/(\d+)/g );
 			let diffMatch = diffRegex.exec( rowExec[ 0 ] );
@@ -184,7 +146,7 @@ export default class ContributionSurveyRow {
 				const cachedDiff = await window.deputy.storage.db.get( 'diffCache', revisionID );
 				if ( cachedDiff ) {
 					revisionData.set(
-						revisionID, new ContributionSurveyRowRevision( this, cachedDiff )
+						revisionID, new ContributionSurveyRevision( this, cachedDiff )
 					);
 				} else {
 					toCache.push( revisionID );
@@ -195,7 +157,7 @@ export default class ContributionSurveyRow {
 				for ( const revisionID in expandedData ) {
 					revisionData.set(
 						+revisionID,
-						new ContributionSurveyRowRevision( this, expandedData[ revisionID ] )
+						new ContributionSurveyRevision( this, expandedData[ revisionID ] )
 					);
 				}
 
@@ -206,6 +168,19 @@ export default class ContributionSurveyRow {
 				}
 			}
 		}
+
+		// Load tag messages
+		const tags = Array.from( revisionData.values() ).reduce<string[]>( ( acc, cur ) => {
+			for ( const tag of cur.tags ) {
+				if ( acc.indexOf( tag ) === -1 ) {
+					acc.push( tag );
+				}
+			}
+			return acc;
+		}, [] );
+		await window.deputy.wiki.loadMessagesIfMissing(
+			tags.map( ( v ) => 'tag-' + v )
+		);
 
 		return this.diffs = revisionData;
 	}

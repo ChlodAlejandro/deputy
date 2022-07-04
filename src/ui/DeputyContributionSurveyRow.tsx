@@ -7,13 +7,7 @@ import ContributionSurveyRow, {
 import swapElements from '../util/swapElements';
 import unwrapWidget from '../util/unwrapWidget';
 import DeputyLoadingDots from './DeputyLoadingDots';
-
-/**
- * A specific revision for a section row.
- */
-export class DeputyContributionSurveyRowRevision extends EventTarget {
-
-}
+import { DeputyContributionSurveyRevision } from './DeputyContributionSurveyRevision';
 
 /**
  * A UI element used for denoting the following aspects of a page in the contribution
@@ -45,11 +39,10 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 * This row's content element. Gets swapped when loaded.
 	 */
 	element: HTMLElement;
-
 	/**
-	 * The page's status dropdown.
+	 * A div containing DeputyContributionSurveyRowRevision UI elements.
 	 */
-	statusDropdown: any;
+	revisionList: HTMLElement;
 
 	/**
 	 * Creates a new DeputyContributionSurveyRow object.
@@ -79,18 +72,19 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 
 		const statusDropdownOptions = [];
 
+		// Build status dropdown
+
 		for ( const status in ContributionSurveyRowStatus ) {
-			if (
-				+status === ContributionSurveyRowStatus.Unknown &&
-				possibleStatus === ContributionSurveyRowStatus.Unknown
-			) {
-				statusDropdownOptions.push(
-					new OO.ui.MenuOptionWidget( {
-						data: ContributionSurveyRowStatus.Unknown,
-						label: mw.message( 'deputy.session.row.status.unknown' ).text(),
-						selected: true
-					} )
-				);
+			if ( +status === ContributionSurveyRowStatus.Unknown ) {
+				if ( possibleStatus === ContributionSurveyRowStatus.Unknown ) {
+					statusDropdownOptions.push(
+						new OO.ui.MenuOptionWidget( {
+							data: ContributionSurveyRowStatus.Unknown,
+							label: mw.message( 'deputy.session.row.status.unknown' ).text(),
+							selected: true
+						} )
+					);
+				}
 			} else if ( !isNaN( +status ) ) {
 				const statusName = ContributionSurveyRowStatus[ status ];
 				const option = new OO.ui.MenuOptionWidget( {
@@ -136,6 +130,49 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			unwrapWidget( statusDropdown.getMenu() ).style.width = '20em';
 		} );
 
+		// Build revision list
+
+		this.revisionList = document.createElement( 'div' );
+		this.revisionList.classList.add( 'dp-cs-row-revisions' );
+
+		for ( const revision of diffs.values() ) {
+			const revisionUIEl = new DeputyContributionSurveyRevision( revision );
+
+			revisionUIEl.on( 'update', console.log );
+
+			this.revisionList.appendChild( revisionUIEl.render() );
+		}
+
+		// Build revision list toggler
+
+		const revisionListToggle = new OO.ui.ButtonWidget( {
+			classes: [ 'dp-cs-row-toggle' ],
+			label: '',
+			invisibleLabel: true,
+			framed: false
+		} );
+
+		let revisionListToggleOpen = false;
+		/**
+		 * Toggles the revision list.
+		 *
+		 * @param show Whether to show the revision list or not.
+		 */
+		const toggleRevisionList = ( show = !revisionListToggleOpen ) => {
+			revisionListToggle.setIcon( show ? 'collapse' : 'expand' );
+			revisionListToggle.setLabel(
+				show ?
+					'deputy.session.row.revisions.close' :
+					'deputy.session.row.revisions.open'
+			);
+			this.revisionList.style.display = show ? 'block' : 'none';
+			revisionListToggleOpen = !revisionListToggleOpen;
+		};
+		toggleRevisionList( revisionListToggleOpen );
+		revisionListToggle.on( 'click', () => {
+			toggleRevisionList();
+		} );
+
 		const largestDiff = diffs.get(
 			Array.from( diffs.values() )
 				.sort( ( a, b ) => b.diffsize - a.diffsize )[ 0 ]
@@ -144,28 +181,34 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 
 		this.element = swapElements(
 			this.element, <div>
-				{ unwrapWidget( statusDropdown ) }
-				<a
-					class="dp-cs-row-title"
-					target="_blank"
-					href={'/wiki/' + this.row.title.getPrefixedDb()}
-				>
-					{ this.row.title.getPrefixedText() }
-				</a>
-				<span class="dp-cs-row-details">(test, {
-					mw.message(
-						'deputy.session.row.details.edits',
-						diffs.size.toString()
-					).text()
-				}, {
-					// eslint-disable-next-line mediawiki/msg-doc
-					mw.message(
-						`deputy.session.row.details.${
-							largestDiff.diffsize < 0 ? 'negative' : 'positive'
-						}Diff`,
-						largestDiff.diffsize.toString()
-					).text()
-				})</span>
+				<div>
+					{ unwrapWidget( statusDropdown ) }
+					<a
+						class="dp-cs-row-title"
+						target="_blank"
+						href={ '/wiki/' + this.row.title.getPrefixedDb() }
+					>
+						{ this.row.title.getPrefixedText() }
+					</a>
+					<span class="dp-cs-row-details">(test, {
+						mw.message(
+							'deputy.session.row.details.edits',
+							diffs.size.toString()
+						).text()
+					}, {
+						// eslint-disable-next-line mediawiki/msg-doc
+						mw.message(
+							`deputy.${
+								largestDiff.diffsize < 0 ? 'negative' : 'positive'
+							}Diff`,
+							largestDiff.diffsize.toString()
+						).text()
+					})</span>
+					{ unwrapWidget( revisionListToggle ) }
+				</div>
+				<div>
+					{ this.revisionList }
+				</div>
 			</div> as HTMLElement
 		);
 	}
