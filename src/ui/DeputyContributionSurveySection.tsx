@@ -4,6 +4,7 @@ import { DeputyUIElement } from './DeputyUIElement';
 import unwrapWidget from '../util/unwrapWidget';
 import DeputyContributionSurveyRow from './DeputyContributionSurveyRow';
 import ContributionSurveyRow from '../models/ContributionSurveyRow';
+import normalizeTitle from '../util/normalizeTitle';
 
 /**
  * The contribution survey section UI element. This includes a list of revisions
@@ -24,21 +25,47 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	closingCheckbox: any;
 	closingComments: any;
 	cancelButton: any;
+	reviewButton: any;
 	saveButton: any;
 
+	/**
+	 * A collection of strings or DeputyContributionSurveyRows. Used to build the
+	 * section wikitext in a manner that preserves all non-CSR lines.
+	 */
 	wikitextLines: ( DeputyContributionSurveyRow | string )[];
+
+	/**
+	 * @return `true` if this section is (or will be) closed
+	 */
+	get closed(): boolean {
+		return this.closingCheckbox?.isSelected() ?? false;
+	}
+
+	/**
+	 * @return The closing comments for this section
+	 */
+	get comments(): string {
+		return this.closingComments?.getValue() ?? '';
+	}
 
 	/**
 	 * @return The wikitext for this section.
 	 */
 	get wikitext(): string {
 		const final: string[] = [];
+
 		for ( const obj of this.wikitextLines ) {
 			if ( typeof obj === 'string' ) {
 				final.push( obj );
 			} else {
 				final.push( obj.wikitext );
 			}
+		}
+
+		if ( this.closed ) {
+			// TODO: Wiki localization
+			final.splice( 1, 0, `{{collapse top|${( this.comments + ' ~~~~' ).trim()}}}` );
+			final.push( '{{collapse bottom}}' );
 		}
 
 		return final.join( '\n' );
@@ -63,6 +90,17 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		const firstList = this.sectionElements.find( ( el ) => el.tagName === 'UL' );
 		this.originalList = firstList.parentElement.removeChild( firstList ) as HTMLElement;
 
+		const rowElements: Record<string, HTMLLIElement> = {};
+		for ( let i = 0; i < this.originalList.children.length; i++ ) {
+			const li = this.originalList.children.item( i );
+			if ( li.tagName !== 'LI' ) {
+				return;
+			}
+			const anchor: HTMLElement = li.querySelector( 'a:first-of-type' );
+
+			rowElements[ new mw.Title( anchor.innerText ).getPrefixedText() ] = li as HTMLLIElement;
+		}
+
 		const headingName = this.casePage.parsoid ?
 			this.heading.innerText :
 			( this.heading.querySelector( '.mw-headline' ) as HTMLElement ).innerText;
@@ -74,13 +112,19 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		for ( let i = 0; i < wikitextLines.length; i++ ) {
 			const line = wikitextLines[ i ];
 
-			const row = line.startsWith( '*' ) ? new DeputyContributionSurveyRow(
-				new ContributionSurveyRow( line ), this
-			) : line;
-			if ( typeof row !== 'string' ) {
-				this.rows.push( row );
+			let rowElement;
+			if ( line.startsWith( '*' ) ) {
+				const csr = new ContributionSurveyRow( line );
+				rowElement = new DeputyContributionSurveyRow(
+					csr, rowElements[ csr.title.getPrefixedText() ], this
+				);
+			} else {
+				rowElement = line;
 			}
-			this.wikitextLines.push( row );
+			if ( typeof rowElement !== 'string' ) {
+				this.rows.push( rowElement );
+			}
+			this.wikitextLines.push( rowElement );
 		}
 	}
 
@@ -107,6 +151,9 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		this.cancelButton = new OO.ui.ButtonWidget( {
 			label: mw.message( 'deputy.cancel' ).text()
 		} );
+		this.reviewButton = new OO.ui.ButtonWidget( {
+			label: mw.message( 'deputy.review' ).text()
+		} );
 		this.saveButton = new OO.ui.ButtonWidget( {
 			label: mw.message( 'deputy.save' ).text(),
 			flags: [ 'primary', 'progressive' ]
@@ -129,6 +176,8 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			this.toggleClosingComments( v );
 		} );
 
+		( window as any ).test = this;
+
 		return this.container = <div class="deputy dp-cs-section">
 			<div>
 				{ this.rows.map( ( row ) => row.render() ) }
@@ -148,6 +197,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 				</div>
 				<div style={{ display: 'flex', alignItems: 'end' }}>
 					{ unwrapWidget( this.cancelButton ) }
+					{ unwrapWidget( this.reviewButton ) }
 					{ unwrapWidget( this.saveButton ) }
 				</div>
 			</div>

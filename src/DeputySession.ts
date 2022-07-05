@@ -26,6 +26,12 @@ interface SessionInformation {
 export default class DeputySession {
 
 	/**
+	 * A DiscussionTools Parser. Used for parsing comments in a streamlined way (using
+	 * DiscussionTools) as compared to relying on an in-house parser.
+	 */
+	parser: any;
+
+	/**
 	 * Initialize session-related information. If an active session was detected,
 	 * restart it.
 	 */
@@ -48,8 +54,8 @@ export default class DeputySession {
 	}
 
 	/**
-	 * Initialize interface components for an active session. This should always run on CCI
-	 * case pages.
+	 * Initialize interface components for an active session. This will always run in the
+	 * context of a CCI case page.
 	 *
 	 * @param session
 	 * @param casePage
@@ -75,8 +81,13 @@ export default class DeputySession {
 				'oojs-ui.styles.icons-editing-core',
 				'oojs-ui.styles.icons-interactions',
 				'oojs-ui.styles.icons-media',
-				'oojs-ui.styles.icons-movement'
-			], async () => {
+				'oojs-ui.styles.icons-movement',
+				'ext.discussionTools.init'
+			], async ( require ) => {
+				// Instantiate the parser
+				const dt = require( 'ext.discussionTools.init' );
+				this.parser = new dt.Parser( dt.parserData );
+
 				// TODO: Do interface functions
 				for ( const section of session.caseSections ) {
 					const heading = casePage.findContributionSurveyHeading( section );

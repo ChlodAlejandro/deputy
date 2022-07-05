@@ -2,6 +2,7 @@
     "deputy.name": "Deputy",
 
     "deputy.cancel": "Cancel",
+    "deputy.review": "Review",
     "deputy.save": "Save",
     "deputy.positiveDiff": "+{{FORMATNUM:$1}}",
     "deputy.negativeDiff": "-{{FORMATNUM:$1}}",
@@ -28,6 +29,13 @@
     "deputy.session.row.checkAll": "Mark all revisions as finished",
     "deputy.session.row.checkAll.confirm": "Mark all revisions as finished?",
     "deputy.session.row.closeComments": "Closing comments",
+    "deputy.session.row.close.sigFound": "The closing comment had a signature. It will not be automatically removed when saved.",
+    "deputy.session.row.close.sigFound.maybe": "The closing comment might have had a signature. It will not be automatically removed when saved.",
+
+    "deputy.session.row.checked": "Checked by $1",
+    "deputy.session.row.checkedComplete": "Checked by $1 on $2 ($3 ago)",
+    "deputy.session.row.checked.talk": "talk",
+    "deputy.session.row.checked.contribs": "contribs",
 
     "deputy.session.revision.assessed": "Assessed",
     "deputy.session.revision.cur": "cur",

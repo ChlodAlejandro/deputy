@@ -9,7 +9,8 @@ import unwrapWidget from '../util/unwrapWidget';
 import DeputyLoadingDots from './DeputyLoadingDots';
 import { DeputyContributionSurveyRevision } from './DeputyContributionSurveyRevision';
 import { ContributionSurveyRevision } from '../models/ContributionSurveyRevision';
-import DeputyUnfinishedContributionSurveyRow from './row/DeputyUnfinishedContributionSurveyRow';
+import DeputyFinishedContributionSurveyRow from './row/DeputyUnfinishedContributionSurveyRow';
+import classMix from '../util/classMix';
 
 /**
  * A UI element used for denoting the following aspects of a page in the contribution
@@ -37,6 +38,10 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 */
 	section: DeputyContributionSurveySection;
 	/**
+	 * The "LI" element that this row was rendered into by MediaWiki.
+	 */
+	originalElement?: HTMLLIElement;
+	/**
 	 * The contribution survey row data
 	 */
 	row: ContributionSurveyRow;
@@ -58,9 +63,18 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 */
 	commentsTextInput: any;
 	/**
+	 * FieldLayout for `commentsTextInput`. If not set, this field is not rendered.
+	 */
+	commentsField: any;
+	/**
 	 * The revisions associated with this element. Only populated by `renderUnfinished`.
 	 */
 	revisions: DeputyContributionSurveyRevision[];
+	/**
+	 * DeputyUnfinishedContributionSurveyRow, if rendered. Only rendered if this row was already
+	 * finished.
+	 */
+	finishedRow: DeputyFinishedContributionSurveyRow;
 
 	/**
 	 * OOUI DropdownWidget for the current row status
@@ -70,6 +84,18 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 * Options for the status dropdown. Rendered by `renderHead`.
 	 */
 	statusDropdownOptions: Map<ContributionSurveyRowStatus, any>;
+
+	/**
+	 * @return `true` if:
+	 *  (a) this row was initially finished (`this.finished`) AND
+	 *  (b.1) this row's status changed OR
+	 *  (b.2) this row's comment changed
+	 */
+	get modified(): boolean {
+		return this.finished &&
+			( this.status !== this.row.originalStatus ||
+			this.comments !== this.row.getActualComment() );
+	}
 
 	/**
 	 * @return The current status of this row.
@@ -137,10 +163,10 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 				})]]`;
 			} ).join( '' );
 		} else {
-			if ( finished ) {
-				// Originally finished. Just append comments.
-				result += this.row.comment;
-			} else {
+			/**
+			 * Function will apply the current user values to the row.
+			 */
+			const useUserData = () => {
 				let addComments = false;
 				switch ( this.status ) {
 					case ContributionSurveyRowStatus.Unfinished:
@@ -149,7 +175,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 					case ContributionSurveyRowStatus.Unknown:
 						// This state should not exist. Try to append comments (because if this
 						// branch is running, the comment must have not been added by the positive
-						// branch of this if statement).
+						// branch of this if statement). Don't append user-provided comments.
 						result += this.row.comment;
 						break;
 					case ContributionSurveyRowStatus.WithViolations:
@@ -175,6 +201,18 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 
 				// Sign.
 				result += ' ~~~~';
+			};
+
+			if ( finished ) {
+				if ( this.modified ) {
+					// Modified. Use user data.
+					useUserData();
+				} else {
+					// No changes. Just append original closure comments.
+					result += this.row.comment;
+				}
+			} else {
+				useUserData();
 			}
 		}
 
@@ -185,10 +223,16 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 * Creates a new DeputyContributionSurveyRow object.
 	 *
 	 * @param row The contribution survey row data
+	 * @param originalElement
 	 * @param section The section that this row belongs to
 	 */
-	constructor( row: ContributionSurveyRow, section: DeputyContributionSurveySection ) {
+	constructor(
+		row: ContributionSurveyRow,
+		originalElement: HTMLLIElement,
+		section: DeputyContributionSurveySection
+	) {
 		this.row = row;
+		this.originalElement = originalElement;
 		this.section = section;
 	}
 
@@ -207,30 +251,39 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	}
 
 	/**
-	 *
+	 * Perform UI updates and recheck possible values.
 	 */
 	recheckOptions(): void {
-		if ( !this.statusDropdownOptions ) {
-			// Silent failure
-			return;
+		if ( this.revisions && this.statusDropdownOptions ) {
+			const uncheckedDiffs = this.revisions
+				.map( ( v ) => v.done )
+				.filter( ( v ) => !v )
+				.length;
+
+			if ( uncheckedDiffs === 0 ) {
+				this.statusDropdownOptions.get( ContributionSurveyRowStatus.Unfinished )
+					.setDisabled( true );
+				if ( this.status === ContributionSurveyRowStatus.Unfinished ) {
+					this.statusDropdown.getMenu()
+						.selectItemByData( ContributionSurveyRowStatus.WithoutViolations );
+				}
+				this.refreshStatusDropdown();
+			} else {
+				this.statusDropdownOptions.get( ContributionSurveyRowStatus.Unfinished )
+					.setDisabled( false );
+			}
 		}
 
-		const uncheckedDiffs = this.revisions
-			.map( ( v ) => v.done )
-			.filter( ( v ) => !v )
-			.length;
-
-		if ( uncheckedDiffs === 0 ) {
-			this.statusDropdownOptions.get( ContributionSurveyRowStatus.Unfinished )
-				.setDisabled( true );
-			if ( this.status === ContributionSurveyRowStatus.Unfinished ) {
-				this.statusDropdown.getMenu()
-					.selectItemByData( ContributionSurveyRowStatus.WithoutViolations );
-			}
-			this.refreshStatusDropdown();
-		} else {
-			this.statusDropdownOptions.get( ContributionSurveyRowStatus.Unfinished )
-				.setDisabled( false );
+		if ( this.modified && this.commentsField && this.finishedRow ) {
+			this.commentsField.setNotices(
+				{
+					true: [ mw.message( 'deputy.session.row.close.sigFound' ).text() ],
+					maybe: [ mw.message( 'deputy.session.row.close.sigFound.maybe' ).text() ],
+					false: []
+				}[ `${this.finishedRow.hasSignature()}` ]
+			);
+		} else if ( this.commentsField ) {
+			this.commentsField.setNotices( [] );
 		}
 
 	}
@@ -241,8 +294,32 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 *
 	 * @return HTML element
 	 */
-	renderFinished(): JSX.Element {
-		return <DeputyUnfinishedContributionSurveyRow row={this.row} /> as HTMLElement;
+	renderFinished(): ComponentChild {
+		this.finishedRow = new DeputyFinishedContributionSurveyRow( {
+			originalElement: this.originalElement,
+			row: this.row
+		} );
+
+		this.commentsTextInput = new OO.ui.TextInputWidget( {
+			classes: [ 'dp-cs-row-closeComments' ],
+			placeholder: mw.message( 'deputy.session.row.closeComments' ).text(),
+			value: this.row.getActualComment()
+		} );
+
+		this.commentsTextInput.on( 'change', () => {
+			// TODO: debug
+			console.log( this.wikitext );
+			this.recheckOptions();
+		} );
+
+		return <div class="dp-cs-row-finished">
+			{ this.finishedRow.render() }
+			{ unwrapWidget( this.commentsField = new OO.ui.FieldLayout( this.commentsTextInput, {
+				align: 'top',
+				invisibleLabel: true,
+				label: mw.message( 'deputy.session.row.closeComments' ).text()
+			} ) ) }
+		</div>;
 	}
 
 	/**
@@ -266,6 +343,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		// TODO: debug
 		this.commentsTextInput.on( 'change', () => {
 			console.log( this.wikitext );
+			this.recheckOptions();
 		} );
 
 		for ( const revision of diffs.values() ) {
@@ -299,9 +377,9 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			<a
 				class="dp-cs-row-link dp-cs-row-edit"
 				target="_blank"
-				href={ mw.format(
-					mw.config.get( 'wgArticlePath' ),
-					'Special:Edit/' + this.row.title.getPrefixedDb()
+				href={ mw.util.getUrl(
+					this.row.title.getPrefixedDb(),
+					{ action: 'edit' }
 				) }
 			>
 				{ unwrapWidget( new OO.ui.ButtonWidget( {
@@ -315,8 +393,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			<a
 				class="dp-cs-row-link dp-cs-row-talk"
 				target="_blank"
-				href={ mw.format(
-					mw.config.get( 'wgArticlePath' ),
+				href={ mw.util.getUrl(
 					this.row.title.getTalkPage().getPrefixedDb()
 				) }
 			>
@@ -331,9 +408,9 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			<a
 				class="dp-cs-row-link dp-cs-row-history"
 				target="_blank"
-				href={ mw.format(
-					mw.config.get( 'wgArticlePath' ),
-					'Special:PageHistory/' + this.row.title.getPrefixedDb()
+				href={ mw.util.getUrl(
+					this.row.title.getPrefixedDb(),
+					{ action: 'history' }
 				) }
 			>
 				{ unwrapWidget( new OO.ui.ButtonWidget( {
@@ -493,6 +570,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			if ( !visible ) {
 				this.refreshStatusDropdown();
 			}
+			this.recheckOptions();
 		} );
 		// Make the menu larger than the actual dropdown.
 		this.statusDropdown.getMenu().on( 'ready', () => {
@@ -576,8 +654,9 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			</a>
 			{ this.renderDetails( diffs ) }
 			{ this.renderLinks() }
-			{ unwrapWidget( checkAll ) }
-			{ unwrapWidget( contentToggle ) }
+			{ !this.finished && unwrapWidget( checkAll ) }
+			{ !contentContainer.classList.contains( 'dp-cs-row-content-empty' ) &&
+				unwrapWidget( contentToggle ) }
 		</div>;
 	}
 
@@ -586,8 +665,13 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 * @param diffs
 	 * @param content
 	 */
-	renderRow( diffs: Map<number, ContributionSurveyRevision>, content: JSX.Element ): void {
-		const contentContainer = <div class="dp-cs-row-content">{ content }</div>;
+	renderRow( diffs: Map<number, ContributionSurveyRevision>, content: ComponentChild ): void {
+		const contentContainer = <div
+			class={classMix( [
+				'dp-cs-row-content',
+				!content && 'dp-cs-row-content-empty'
+			] )}
+		>{ content }</div>;
 
 		this.element = swapElements(
 			this.element, <div>

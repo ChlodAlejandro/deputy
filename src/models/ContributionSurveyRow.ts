@@ -40,6 +40,7 @@ export default class ContributionSurveyRow {
 		>,
 		RegExp
 	> = {
+			// TODO: Wiki localization
 			[ ContributionSurveyRowStatus.WithViolations ]: /\{\{(aye|y)}}/gi,
 			[ ContributionSurveyRowStatus.WithoutViolations ]: /\{\{n(ay)?}}/gi,
 			[ ContributionSurveyRowStatus.Missing ]: /\{\{\?}}/gi
@@ -92,9 +93,20 @@ export default class ContributionSurveyRow {
 	 */
 	comment?: string;
 	/**
+	 * Determines if the status indicator (as tested by the regular expressions at
+	 * {@link ContributionSurveyRow.commentMatchRegex}) is isolated (at the start
+	 * or end of the comment). This will enable removal of the status indicator
+	 * from the comment in the comment text input box.
+	 */
+	statusIsolated?: false | 'start' | 'end';
+	/**
 	 * The status of this row.
 	 */
 	status: ContributionSurveyRowStatus;
+	/**
+	 * The original status of this row (if it had a prior status).
+	 */
+	readonly originalStatus: ContributionSurveyRowStatus;
 
 	/**
 	 * This variable returns true when
@@ -130,9 +142,27 @@ export default class ContributionSurveyRow {
 		this.title = new mw.Title( rowExec[ 1 ] );
 		this.extras = rowExec[ 2 ];
 		this.comment = rowExec[ 4 ];
-		this.status = rowExec[ 4 ] == null ?
+		this.status = this.originalStatus = rowExec[ 4 ] == null ?
 			ContributionSurveyRowStatus.Unfinished :
 			ContributionSurveyRow.identifyCommentStatus( rowExec[ 4 ] );
+
+		if ( ( ContributionSurveyRow.commentMatchRegex as any )[ this.status ] != null ) {
+			if (
+				cloneRegex( ( ContributionSurveyRow.commentMatchRegex )[
+					this.status as keyof typeof ContributionSurveyRow.commentMatchRegex
+				], { pre: '^' } ).test( this.comment )
+			) {
+				this.statusIsolated = 'start';
+			} else if (
+				cloneRegex( ( ContributionSurveyRow.commentMatchRegex )[
+					this.status as keyof typeof ContributionSurveyRow.commentMatchRegex
+				], { post: '$' } ).test( this.comment )
+			) {
+				this.statusIsolated = 'end';
+			} else {
+				this.statusIsolated = false;
+			}
+		}
 	}
 
 	/**
@@ -207,6 +237,35 @@ export default class ContributionSurveyRow {
 		);
 
 		return this.diffs = revisionData;
+	}
+
+	/**
+	 * Gets the comment with status indicator removed.
+	 *
+	 * @return The comment with the status indicator removed.
+	 */
+	getActualComment() {
+		if ( this.originalStatus === ContributionSurveyRowStatus.Unfinished ) {
+			return '';
+		} else if ( this.statusIsolated === false ||
+			this.originalStatus === ContributionSurveyRowStatus.Unknown
+		) {
+			return this.comment;
+		} else if ( this.statusIsolated === 'start' ) {
+			return this.comment.replace(
+				cloneRegex( ( ContributionSurveyRow.commentMatchRegex )[
+					this.originalStatus as keyof typeof ContributionSurveyRow.commentMatchRegex
+				], { pre: '^' } ),
+				''
+			).trim();
+		} else if ( this.statusIsolated === 'end' ) {
+			return this.comment.replace(
+				cloneRegex( ( ContributionSurveyRow.commentMatchRegex )[
+					this.originalStatus as keyof typeof ContributionSurveyRow.commentMatchRegex
+				], { post: '$' } ),
+				''
+			).trim();
+		}
 	}
 
 }

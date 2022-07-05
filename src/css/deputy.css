@@ -156,8 +156,20 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
     margin: 4px 0;
 }
 
-.dp-cs-row-closeComments {
+.dp-cs-row-content.dp-cs-row-content-empty {
+    display: none !important;
+}
+
+.dp-cs-row-closeComments:not(:last-child) {
     margin-bottom: 8px;
+}
+
+.dp-cs-row-finished .oo-ui-fieldLayout:first-child {
+    margin-top: 0;
+}
+
+.dp-cs-row-finished .oo-ui-fieldLayout {
+    margin-top: 8px;
 }
 
 .dp-cs-row-revisions .mw-tag-markers .mw-tag-marker:not(:first-child),
