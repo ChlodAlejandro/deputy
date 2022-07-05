@@ -25,6 +25,9 @@ declare global {
 	// OOjs/OOUI global.
 	const OO: any & {
 		EventEmitter(): OOEventEmitter;
+		ui: any & {
+			confirm( message: string, options?: any ): JQuery.Promise<boolean>;
+		}
 	};
 
 	interface Window {

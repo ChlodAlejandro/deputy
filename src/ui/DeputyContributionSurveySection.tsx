@@ -16,6 +16,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	casePage: DeputyCasePage;
 	heading: HTMLHeadingElement;
 	sectionElements: HTMLElement[];
+	originalList: HTMLElement;
 
 	// UI elements (no OOUI types, fall back to `any`)
 	container: HTMLElement;
@@ -24,6 +25,24 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	closingComments: any;
 	cancelButton: any;
 	saveButton: any;
+
+	wikitextLines: ( DeputyContributionSurveyRow | string )[];
+
+	/**
+	 * @return The wikitext for this section.
+	 */
+	get wikitext(): string {
+		const final: string[] = [];
+		for ( const obj of this.wikitextLines ) {
+			if ( typeof obj === 'string' ) {
+				final.push( obj );
+			} else {
+				final.push( obj.wikitext );
+			}
+		}
+
+		return final.join( '\n' );
+	}
 
 	/**
 	 * Creates a DeputyContributionSurveySection from a given heading.
@@ -42,17 +61,27 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	 */
 	async prepare(): Promise<void> {
 		const firstList = this.sectionElements.find( ( el ) => el.tagName === 'UL' );
-		firstList.parentElement.removeChild( firstList );
+		this.originalList = firstList.parentElement.removeChild( firstList ) as HTMLElement;
 
 		const headingName = this.casePage.parsoid ?
 			this.heading.innerText :
 			( this.heading.querySelector( '.mw-headline' ) as HTMLElement ).innerText;
 		const sectionWikitext = await this.casePage.wikitext.getSectionWikitext( headingName );
 
-		const wikitextRows = sectionWikitext.split( '\n' ).filter( ( v ) => v.startsWith( '*' ) );
-		this.rows = wikitextRows.map( ( rowText ) => new DeputyContributionSurveyRow(
-			new ContributionSurveyRow( rowText ), this
-		) );
+		const wikitextLines = sectionWikitext.split( '\n' );
+		this.rows = [];
+		this.wikitextLines = [];
+		for ( let i = 0; i < wikitextLines.length; i++ ) {
+			const line = wikitextLines[ i ];
+
+			const row = line.startsWith( '*' ) ? new DeputyContributionSurveyRow(
+				new ContributionSurveyRow( line ), this
+			) : line;
+			if ( typeof row !== 'string' ) {
+				this.rows.push( row );
+			}
+			this.wikitextLines.push( row );
+		}
 	}
 
 	/**

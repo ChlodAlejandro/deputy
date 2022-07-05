@@ -150,10 +150,14 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
     margin-right: 0.2em;
 }
 
-.dp-cs-row .dp-cs-row-revisions {
+.dp-cs-row-content {
     padding: 16px;
     background-color: rgba(0, 0, 0, 4%);
     margin: 4px 0;
+}
+
+.dp-cs-row-closeComments {
+    margin-bottom: 8px;
 }
 
 .dp-cs-row-revisions .mw-tag-markers .mw-tag-marker:not(:first-child),

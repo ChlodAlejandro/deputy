@@ -16,6 +16,14 @@ export class DeputyContributionSurveyRevision extends OO.EventEmitter implements
 		return this.doneCheckbox?.isSelected() ?? false;
 	}
 	/**
+	 * Set the value of the done checkbox.
+	 *
+	 * @param value The new value
+	 */
+	set done( value: boolean ) {
+		this.doneCheckbox?.setSelected( value );
+	}
+	/**
 	 * The revision that this UI element handles.
 	 */
 	revision: ContributionSurveyRevision;
@@ -175,13 +183,23 @@ export class DeputyContributionSurveyRevision extends OO.EventEmitter implements
 						}
 						title="Special:Tags"
 						target="_blank"
-					>{mw.message(
-							'deputy.session.revision.tags',
-							this.revision.tags.length.toString()
-						).text()}</a>{this.revision.tags.map( ( v ) => <span
-						class={ `mw-tag-marker mw-tag-marker-${v}` }
-						dangerouslySetInnerHTML={ mw.message( `tag-${v}` ).parse() }
-					/> )}
+					>
+						{
+							mw.message(
+								'deputy.session.revision.tags',
+								this.revision.tags.length.toString()
+							).text()
+						}
+					</a>{
+						this.revision.tags.map( ( v ) => {
+							// eslint-disable-next-line mediawiki/msg-doc
+							const tagMessage = mw.message( `tag-${v}` ).parse();
+							return tagMessage !== '-' && <span
+								class={ `mw-tag-marker mw-tag-marker-${v}` }
+								dangerouslySetInnerHTML={tagMessage}
+							/>;
+						} )
+					}
 				</span>
 			}
 		</div> as HTMLElement;

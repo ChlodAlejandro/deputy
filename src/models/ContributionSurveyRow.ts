@@ -27,7 +27,7 @@ export default class ContributionSurveyRow {
 	 * page has been cleared and commented on by a user.
 	 */
 	static readonly rowWikitextRegex =
-		/\*?(?:'''.''' )?\[\[:?(.+?)]](?:: ?)?(?:.*?(?:\[\[Special:Diff\/(\d+)\|.+?]])+|(.+$))/gm;
+		/\*?(?:'''.''' )?\[\[:?(.+?)]] ?([^:]*) ?(?:: ?)?(?:(?:\[\[Special:Diff\/(\d+)\|.+?]])+|(.+$))/gm;
 
 	/**
 	 * A set of regular expressions that will match a specific contribution survey row
@@ -40,9 +40,9 @@ export default class ContributionSurveyRow {
 		>,
 		RegExp
 	> = {
-			[ ContributionSurveyRowStatus.WithViolations ]: /\{\{(aye|y)}}/g,
-			[ ContributionSurveyRowStatus.WithoutViolations ]: /\{\{n(ay)?}}/g,
-			[ ContributionSurveyRowStatus.Missing ]: /\{\{\?}}/g
+			[ ContributionSurveyRowStatus.WithViolations ]: /\{\{(aye|y)}}/gi,
+			[ ContributionSurveyRowStatus.WithoutViolations ]: /\{\{n(ay)?}}/gi,
+			[ ContributionSurveyRowStatus.Missing ]: /\{\{\?}}/gi
 		};
 
 	/**
@@ -84,6 +84,10 @@ export default class ContributionSurveyRow {
 	 */
 	title: mw.Title;
 	/**
+	 * Extra page information. e.g. "(1 edit, 1 major, +173)"
+	 */
+	extras: string;
+	/**
 	 * Editor comments for this row (including signature)
 	 */
 	comment?: string;
@@ -124,10 +128,11 @@ export default class ContributionSurveyRow {
 
 		this.wikitext = wikitext;
 		this.title = new mw.Title( rowExec[ 1 ] );
-		this.comment = rowExec[ 3 ];
-		this.status = rowExec[ 3 ] == null ?
+		this.extras = rowExec[ 2 ];
+		this.comment = rowExec[ 4 ];
+		this.status = rowExec[ 4 ] == null ?
 			ContributionSurveyRowStatus.Unfinished :
-			ContributionSurveyRow.identifyCommentStatus( rowExec[ 3 ] );
+			ContributionSurveyRow.identifyCommentStatus( rowExec[ 4 ] );
 	}
 
 	/**
@@ -145,7 +150,7 @@ export default class ContributionSurveyRow {
 		const diffs = [];
 
 		// Load revision information
-		if ( rowExec[ 2 ] !== null && rowExec.length !== 0 ) {
+		if ( rowExec[ 3 ] !== null && rowExec.length !== 0 ) {
 			const diffRegex = cloneRegex( /Special:Diff\/(\d+)/g );
 			let diffMatch = diffRegex.exec( rowExec[ 0 ] );
 			while ( diffMatch != null ) {

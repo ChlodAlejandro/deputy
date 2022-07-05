@@ -42,6 +42,10 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	row: ContributionSurveyRow;
 
 	/**
+	 * Whether this row was originally finished upon loading.
+	 */
+	finished: boolean;
+	/**
 	 * This row's main root element. Does not get swapped.
 	 */
 	rootElement: HTMLElement;
@@ -54,7 +58,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 */
 	commentsTextInput: any;
 	/**
-	 * The revisions associated with this element.
+	 * The revisions associated with this element. Only populated by `renderUnfinished`.
 	 */
 	revisions: DeputyContributionSurveyRevision[];
 
@@ -66,6 +70,116 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 * Options for the status dropdown. Rendered by `renderHead`.
 	 */
 	statusDropdownOptions: Map<ContributionSurveyRowStatus, any>;
+
+	/**
+	 * @return The current status of this row.
+	 */
+	get status(): ContributionSurveyRowStatus {
+		return this.row.status;
+	}
+	/**
+	 * Set the current status of this row.
+	 *
+	 * @param status The new status to apply
+	 */
+	set status( status: ContributionSurveyRowStatus ) {
+		this.row.status = status;
+	}
+
+	/**
+	 * @return The comments for this row (as added by a user)
+	 */
+	get comments(): string {
+		return this.commentsTextInput?.getValue();
+	}
+
+	/**
+	 * Generates a wikitext string representation of this row, preserving existing wikitext
+	 * whenever possible.
+	 *
+	 * @return Wikitext
+	 */
+	get wikitext(): string {
+		if ( this.finished == null ) {
+			console.warn(
+				'Could not determine if this is an originally-finished or ' +
+				'originally-unfinished row. Assuming unfinished and moving on...'
+			);
+		}
+		const finished = this.finished ?? false;
+
+		const wikitext = this.row.wikitext;
+		// "* "
+		let result = /\*\s*/g.exec( wikitext )[ 0 ];
+
+		if ( /'''N'''/.test( wikitext ) ) {
+			// '''N'''
+			result += "'''N''' ";
+		}
+
+		// [[:Example]]
+		result += `[[:${this.row.title.getPrefixedText()}]]`;
+
+		if ( this.row.extras ) {
+			result += ` ${this.row.extras}`;
+		}
+
+		result += ': ';
+
+		const unfinishedDiffs = this.revisions?.filter(
+			( v ) => !v.done
+		) ?? [];
+
+		if ( unfinishedDiffs.length > 0 ) {
+			result += unfinishedDiffs.map( ( v ) => {
+				return `[[Special:Diff/${v.revision.revid}|(${
+					v.revision.diffsize > 0 ? '+' + v.revision.diffsize : v.revision.diffsize
+				})]]`;
+			} ).join( '' );
+		} else {
+			if ( finished ) {
+				// Originally finished. Just append comments.
+				result += this.row.comment;
+			} else {
+				let addComments = false;
+				switch ( this.status ) {
+					case ContributionSurveyRowStatus.Unfinished:
+						// This state should not exist. Just add signature (done outside of switch).
+						break;
+					case ContributionSurveyRowStatus.Unknown:
+						// This state should not exist. Try to append comments (because if this
+						// branch is running, the comment must have not been added by the positive
+						// branch of this if statement).
+						result += this.row.comment;
+						break;
+					case ContributionSurveyRowStatus.WithViolations:
+						result += '{{y}}';
+						addComments = true;
+						break;
+					case ContributionSurveyRowStatus.WithoutViolations:
+						result += '{{n}}';
+						addComments = true;
+						break;
+					case ContributionSurveyRowStatus.Missing:
+						result += '{{?}}';
+						addComments = true;
+						break;
+				}
+
+				const userComments = this.comments
+					.replace( /~~~~\s*$/g, '' )
+					.trim();
+				if ( addComments && userComments.length > 0 ) {
+					result += ' ' + userComments;
+				}
+
+				// Sign.
+				result += ' ~~~~';
+			}
+		}
+
+		return result;
+	}
 
 	/**
 	 * Creates a new DeputyContributionSurveyRow object.
@@ -83,19 +197,13 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 */
 	async loadData() {
 		const diffs = await this.row.getDiffs();
+		this.finished = this.row.completed;
 
 		if ( this.row.completed ) {
 			this.renderRow( diffs, this.renderFinished() );
 		} else {
 			this.renderRow( diffs, this.renderUnfinished( diffs ) );
 		}
-	}
-
-	/**
-	 *
-	 */
-	generateWikitext() {
-
 	}
 
 	/**
@@ -115,8 +223,10 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		if ( uncheckedDiffs === 0 ) {
 			this.statusDropdownOptions.get( ContributionSurveyRowStatus.Unfinished )
 				.setDisabled( true );
-			this.statusDropdown.getMenu()
-				.selectItemByData( ContributionSurveyRowStatus.WithoutViolations );
+			if ( this.status === ContributionSurveyRowStatus.Unfinished ) {
+				this.statusDropdown.getMenu()
+					.selectItemByData( ContributionSurveyRowStatus.WithoutViolations );
+			}
 			this.refreshStatusDropdown();
 		} else {
 			this.statusDropdownOptions.get( ContributionSurveyRowStatus.Unfinished )
@@ -147,6 +257,17 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		const revisionList = document.createElement( 'div' );
 		revisionList.classList.add( 'dp-cs-row-revisions' );
 
+		this.commentsTextInput = new OO.ui.TextInputWidget( {
+			classes: [ 'dp-cs-row-closeComments' ],
+			placeholder: mw.message( 'deputy.session.row.closeComments' ).text()
+		} );
+		revisionList.appendChild( unwrapWidget( this.commentsTextInput ) );
+
+		// TODO: debug
+		this.commentsTextInput.on( 'change', () => {
+			console.log( this.wikitext );
+		} );
+
 		for ( const revision of diffs.values() ) {
 			const revisionUIEl = new DeputyContributionSurveyRevision( revision );
 
@@ -155,7 +276,9 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 				'update',
 				( done: boolean, data: ContributionSurveyRevision ) => {
 					console.log( done, data );
+					// Recheck options first to avoid "Unfinished" being selected when done.
 					this.recheckOptions();
+					console.log( this.wikitext );
 				}
 			);
 
@@ -164,6 +287,64 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		}
 
 		return revisionList;
+	}
+
+	/**
+	 * Renders action button links.
+	 *
+	 * @return An HTML element
+	 */
+	renderLinks(): JSX.Element {
+		return <span class="dp-cs-row-links">
+			<a
+				class="dp-cs-row-link dp-cs-row-edit"
+				target="_blank"
+				href={ mw.format(
+					mw.config.get( 'wgArticlePath' ),
+					'Special:Edit/' + this.row.title.getPrefixedDb()
+				) }
+			>
+				{ unwrapWidget( new OO.ui.ButtonWidget( {
+					invisibleLabel: true,
+					label: mw.message( 'deputy.session.row.edit' ).text(),
+					title: mw.message( 'deputy.session.row.edit' ).text(),
+					icon: 'edit',
+					framed: false
+				} ) ) }
+			</a>
+			<a
+				class="dp-cs-row-link dp-cs-row-talk"
+				target="_blank"
+				href={ mw.format(
+					mw.config.get( 'wgArticlePath' ),
+					this.row.title.getTalkPage().getPrefixedDb()
+				) }
+			>
+				{ unwrapWidget( new OO.ui.ButtonWidget( {
+					invisibleLabel: true,
+					label: mw.message( 'deputy.session.row.talk' ).text(),
+					title: mw.message( 'deputy.session.row.talk' ).text(),
+					icon: 'speechBubbles',
+					framed: false
+				} ) ) }
+			</a>
+			<a
+				class="dp-cs-row-link dp-cs-row-history"
+				target="_blank"
+				href={ mw.format(
+					mw.config.get( 'wgArticlePath' ),
+					'Special:PageHistory/' + this.row.title.getPrefixedDb()
+				) }
+			>
+				{ unwrapWidget( new OO.ui.ButtonWidget( {
+					invisibleLabel: true,
+					label: mw.message( 'deputy.session.row.history' ).text(),
+					title: mw.message( 'deputy.session.row.history' ).text(),
+					icon: 'history',
+					framed: false
+				} ) ) }
+			</a>
+		</span>;
 	}
 
 	/**
@@ -239,10 +420,9 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			return;
 		}
 		// Dropdown has closed, option must have been selected.
-		const value: ContributionSurveyRowStatus =
-			this.statusDropdown.getMenu().findSelectedItem().getData();
-		console.log( 'dropdown change', value );
-		const icon = DeputyContributionSurveyRow.menuOptionIcon[ value ];
+		this.status = this.statusDropdown.getMenu().findSelectedItem().getData();
+		console.log( 'dropdown change', this.status );
+		const icon = DeputyContributionSurveyRow.menuOptionIcon[ this.status ];
 		this.statusDropdown.setIcon( icon === false ? null : icon );
 	}
 
@@ -320,6 +500,29 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			unwrapWidget( this.statusDropdown.getMenu() ).style.width = '20em';
 		} );
 
+		// Build mass checker
+		const checkAll = new OO.ui.ButtonWidget( {
+			icon: 'checkAll',
+			label: mw.message( 'deputy.session.row.checkAll' ).text(),
+			title: mw.message( 'deputy.session.row.checkAll' ).text(),
+			invisibleLabel: true,
+			framed: false
+		} );
+		checkAll.on( 'click', () => {
+			OO.ui.confirm(
+				mw.message( 'deputy.session.row.checkAll.confirm' ).text()
+			).done(
+				( confirmed: boolean ) => {
+					if ( confirmed ) {
+						this.revisions.forEach( ( revision ) => {
+							revision.done = true;
+						} );
+						this.recheckOptions();
+					}
+				}
+			);
+		} );
+
 		// Build revision list toggler
 		const contentToggle = new OO.ui.ButtonWidget( {
 			classes: [ 'dp-cs-row-toggle' ],
@@ -338,9 +541,18 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		const toggleContent = ( show = !contentToggled ) => {
 			contentToggle.setIcon( show ? 'collapse' : 'expand' );
 			contentToggle.setLabel(
-				show ?
-					'deputy.session.row.content.close' :
-					'deputy.session.row.content.open'
+				mw.message(
+					show ?
+						'deputy.session.row.content.close' :
+						'deputy.session.row.content.open'
+				).text()
+			);
+			contentToggle.setTitle(
+				mw.message(
+					show ?
+						'deputy.session.row.content.close' :
+						'deputy.session.row.content.open'
+				).text()
 			);
 			contentContainer.style.display = show ? 'block' : 'none';
 			contentToggled = !contentToggled;
@@ -348,28 +560,6 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		toggleContent( contentToggled );
 		contentToggle.on( 'click', () => {
 			toggleContent();
-		} );
-
-		// Build edit button
-		const editButton = new OO.ui.ButtonWidget( {
-			invisibleLabel: true,
-			label: mw.message( 'deputy.session.row.history' ).text(),
-			icon: 'edit',
-			framed: false
-		} );
-		// Build talk button
-		const talkButton = new OO.ui.ButtonWidget( {
-			invisibleLabel: true,
-			label: mw.message( 'deputy.session.row.history' ).text(),
-			icon: 'speechBubbles',
-			framed: false
-		} );
-		// Build history button
-		const historyButton = new OO.ui.ButtonWidget( {
-			invisibleLabel: true,
-			label: mw.message( 'deputy.session.row.history' ).text(),
-			icon: 'history',
-			framed: false
 		} );
 
 		return <div class="dp-cs-row-head">
@@ -385,38 +575,8 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 				{ this.row.title.getPrefixedText() }
 			</a>
 			{ this.renderDetails( diffs ) }
-			<span class="dp-cs-row-links">
-				<a
-					class="dp-cs-row-link dp-cs-row-edit"
-					target="_blank"
-					href={ mw.format(
-						mw.config.get( 'wgArticlePath' ),
-						'Special:Edit/' + this.row.title.getPrefixedDb()
-					) }
-				>
-					{ unwrapWidget( editButton ) }
-				</a>
-				<a
-					class="dp-cs-row-link dp-cs-row-talk"
-					target="_blank"
-					href={ mw.format(
-						mw.config.get( 'wgArticlePath' ),
-						this.row.title.getTalkPage().getPrefixedDb()
-					) }
-				>
-					{ unwrapWidget( talkButton ) }
-				</a>
-				<a
-					class="dp-cs-row-link dp-cs-row-history"
-					target="_blank"
-					href={ mw.format(
-						mw.config.get( 'wgArticlePath' ),
-						'Special:PageHistory/' + this.row.title.getPrefixedDb()
-					) }
-				>
-					{ unwrapWidget( historyButton ) }
-				</a>
-			</span>
+			{ this.renderLinks() }
+			{ unwrapWidget( checkAll ) }
 			{ unwrapWidget( contentToggle ) }
 		</div>;
 	}
@@ -427,7 +587,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 * @param content
 	 */
 	renderRow( diffs: Map<number, ContributionSurveyRevision>, content: JSX.Element ): void {
-		const contentContainer = <div>{ content }</div>;
+		const contentContainer = <div class="dp-cs-row-content">{ content }</div>;
 
 		this.element = swapElements(
 			this.element, <div>

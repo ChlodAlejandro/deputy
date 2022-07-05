@@ -27,6 +27,9 @@ describe( 'ContributionSurveyRow static unit tests', () => {
 			'* [[:Example]]: (1 edit, 1 major, +173) [[Special:Diff/123456|(+173)]]',
 			'* [[:Example]]: {{?}} Deleted',
 
+			// Created page
+			'* \'\'\'N\'\'\' [[:Example]]: (1 edit) [[Special:Diff/123456|(+173)]]',
+
 			// With comment
 			'* [[:Example]]: {{y}} <span style="background:#ffff55">\'\'\'\'\'[[User:Chlod|Chlod' +
 			']]\'\'\'\'\'</span>&nbsp;<small style="font-size:calc(1em - 2pt)">([[#top|top]]&nbs' +
@@ -82,6 +85,13 @@ describe( 'ContributionSurveyRow static unit tests', () => {
 			expect(
 				page.evaluate( () => {
 					return window.deputy.models.ContributionSurveyRow.identifyCommentStatus(
+						'{{Y}}'
+					);
+				} )
+			).resolves.toBe( ContributionSurveyRowStatus.WithViolations ),
+			expect(
+				page.evaluate( () => {
+					return window.deputy.models.ContributionSurveyRow.identifyCommentStatus(
 						'{{y}} cleaned'
 					);
 				} )
@@ -90,6 +100,13 @@ describe( 'ContributionSurveyRow static unit tests', () => {
 				page.evaluate( () => {
 					return window.deputy.models.ContributionSurveyRow.identifyCommentStatus(
 						'{{n}}'
+					);
+				} )
+			).resolves.toBe( ContributionSurveyRowStatus.WithoutViolations ),
+			expect(
+				page.evaluate( () => {
+					return window.deputy.models.ContributionSurveyRow.identifyCommentStatus(
+						'{{N}}'
 					);
 				} )
 			).resolves.toBe( ContributionSurveyRowStatus.WithoutViolations ),
