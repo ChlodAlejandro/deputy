@@ -4,7 +4,7 @@ import { DeputyUIElement } from './DeputyUIElement';
 import unwrapWidget from '../util/unwrapWidget';
 import DeputyContributionSurveyRow from './DeputyContributionSurveyRow';
 import ContributionSurveyRow from '../models/ContributionSurveyRow';
-import normalizeTitle from '../util/normalizeTitle';
+import ContributionSurveySection from '../models/ContributionSurveySection';
 
 /**
  * The contribution survey section UI element. This includes a list of revisions
@@ -15,6 +15,7 @@ import normalizeTitle from '../util/normalizeTitle';
 export default class DeputyContributionSurveySection implements DeputyUIElement {
 
 	casePage: DeputyCasePage;
+	section: ContributionSurveySection;
 	heading: HTMLHeadingElement;
 	sectionElements: HTMLElement[];
 	originalList: HTMLElement;
@@ -38,14 +39,26 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	 * @return `true` if this section is (or will be) closed
 	 */
 	get closed(): boolean {
-		return this.closingCheckbox?.isSelected() ?? false;
+		return this.section.closed;
+	}
+	/**
+	 * Sets the close state of this section
+	 */
+	set closed( value: boolean ) {
+		this.section.closed = value;
 	}
 
 	/**
 	 * @return The closing comments for this section
 	 */
 	get comments(): string {
-		return this.closingComments?.getValue() ?? '';
+		return this.section.closingComments;
+	}
+	/**
+	 * Sets the comments of a section.
+	 */
+	set comments( value: string ) {
+		this.section.closingComments = value;
 	}
 
 	/**
@@ -81,6 +94,19 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		this.casePage = casePage;
 		this.heading = heading;
 		this.sectionElements = casePage.getContributionSurveySection( heading );
+
+		const collapsible = this.sectionElements.find(
+			( v: HTMLElement ) => v.querySelector( '.mw-collapsible' )
+		)?.querySelector( '.mw-collapsible' ) ?? null;
+
+		this.section = new ContributionSurveySection(
+			casePage,
+			casePage.parsoid ?
+				heading.innerText :
+				heading.querySelector<HTMLElement>( '.mw-headline' ).innerText,
+			collapsible != null,
+			collapsible?.querySelector<HTMLElement>( '.mw-collapsible-toggle + div' ).innerText
+		);
 	}
 
 	/**
@@ -169,9 +195,13 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		} );
 		// Hide by default.
 		closingCommentsField.toggle( false );
+		closingCommentsField.on( 'change', ( v: string ) => {
+			this.comments = v;
+		} );
 
 		this.toggleClosingComments( false );
 		this.closingCheckbox.on( 'change', ( v: boolean ) => {
+			this.closed = v;
 			closingCommentsField.toggle( v );
 			this.toggleClosingComments( v );
 		} );

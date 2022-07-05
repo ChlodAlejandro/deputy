@@ -7,7 +7,7 @@ import unwrapWidget from '../util/unwrapWidget';
 /**
  * A specific revision for a section row.
  */
-export class DeputyContributionSurveyRevision extends OO.EventEmitter implements DeputyUIElement {
+export default class DeputyContributionSurveyRevision extends OO.EventEmitter implements DeputyUIElement {
 
 	/**
 	 * @return `true` the current revision has been checked by the user or `false` if not.

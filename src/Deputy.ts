@@ -66,6 +66,11 @@ class Deputy {
 	session: DeputySession;
 
 	/**
+	 * OOUI WindowManager. Instantiated only when needed.
+	 */
+	windowManager: any;
+
+	/**
 	 * Private constructor. To access Deputy, use `window.deputy` or Deputy.instance.
 	 */
 	private constructor() {

@@ -48,6 +48,10 @@ export default class DeputyCasePage {
 	 */
 	pageId: number;
 	/**
+	 * Title of this page.
+	 */
+	title: mw.Title;
+	/**
 	 * The document to use as a reference.
 	 */
 	document: Document;
@@ -62,11 +66,13 @@ export default class DeputyCasePage {
 
 	/**
 	 * @param pageId The page ID of the case page.
+	 * @param title The title of the page being accessed
 	 * @param document The document to be used as a reference.
 	 * @param parsoid Whether this is a Parsoid document or not.
 	 */
-	constructor( pageId?: number, document?: Document, parsoid?: boolean ) {
+	constructor( pageId?: number, title?: mw.Title, document?: Document, parsoid?: boolean ) {
 		this.pageId = pageId ?? window.deputy.currentPageId;
+		this.title = title ?? window.deputy.currentPage;
 		this.document = document ?? window.document;
 		this.parsoid = parsoid ?? /mw: http:\/\/mediawiki.org\/rdf\//.test(
 			this.document.documentElement.getAttribute( 'prefix' )

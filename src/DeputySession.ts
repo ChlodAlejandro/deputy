@@ -88,6 +88,10 @@ export default class DeputySession {
 				const dt = require( 'ext.discussionTools.init' );
 				this.parser = new dt.Parser( dt.parserData );
 
+				window.deputy.windowManager = new OO.ui.WindowManager();
+				document.getElementsByTagName( 'body' )[ 0 ]
+					.appendChild( window.deputy.windowManager.$element[ 0 ] );
+
 				// TODO: Do interface functions
 				for ( const section of session.caseSections ) {
 					const heading = casePage.findContributionSurveyHeading( section );

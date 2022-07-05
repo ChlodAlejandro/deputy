@@ -7,7 +7,7 @@ import ContributionSurveyRow, {
 import swapElements from '../util/swapElements';
 import unwrapWidget from '../util/unwrapWidget';
 import DeputyLoadingDots from './DeputyLoadingDots';
-import { DeputyContributionSurveyRevision } from './DeputyContributionSurveyRevision';
+import DeputyContributionSurveyRevision from './DeputyContributionSurveyRevision';
 import { ContributionSurveyRevision } from '../models/ContributionSurveyRevision';
 import DeputyFinishedContributionSurveyRow from './row/DeputyUnfinishedContributionSurveyRow';
 import classMix from '../util/classMix';
