@@ -48,7 +48,8 @@ export default class DeputySession {
 	}
 
 	/**
-	 * Initialize interface components for an active session.
+	 * Initialize interface components for an active session. This should always run on CCI
+	 * case pages.
 	 *
 	 * @param session
 	 * @param casePage
@@ -62,21 +63,38 @@ export default class DeputySession {
 			return;
 		}
 
-		// TODO: Do interface functions
-		for ( const section of session.caseSections ) {
-			const heading = casePage.findContributionSurveyHeading( section );
+		await new Promise<void>( ( res ) => {
+			mw.loader.using( [
+				'mediawiki.special.changeslist',
+				'mediawiki.interface.helpers.styles',
+				'mediawiki.pager.styles',
+				'oojs-ui-core',
+				'oojs-ui-windows',
+				'oojs-ui.styles.icons-alerts',
+				'oojs-ui.styles.icons-content',
+				'oojs-ui.styles.icons-editing-core',
+				'oojs-ui.styles.icons-interactions',
+				'oojs-ui.styles.icons-media',
+				'oojs-ui.styles.icons-movement'
+			], async () => {
+				// TODO: Do interface functions
+				for ( const section of session.caseSections ) {
+					const heading = casePage.findContributionSurveyHeading( section );
 
-			if ( !heading ) {
-				// The section is assumed missing.
-				const sessionIndex = session.caseSections.indexOf( section );
-				session.caseSections.splice( sessionIndex, 1 );
-				continue;
-			}
+					if ( !heading ) {
+						// The section is assumed missing.
+						const sessionIndex = session.caseSections.indexOf( section );
+						session.caseSections.splice( sessionIndex, 1 );
+						continue;
+					}
 
-			const el = new DeputyContributionSurveySection( casePage, heading );
-			await el.prepare();
-			heading.insertAdjacentElement( 'afterend', el.render() );
-		}
+					const el = new DeputyContributionSurveySection( casePage, heading );
+					await el.prepare();
+					heading.insertAdjacentElement( 'afterend', el.render() );
+				}
+				res();
+			} );
+		} );
 	}
 
 	/**

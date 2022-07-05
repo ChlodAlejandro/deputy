@@ -14,6 +14,18 @@ export default function ( props: { row: ContributionSurveyRow } ): JSX.Element {
 	const user = guessAuthor( props.row.comment );
 
 	return <div>
-		{ user && <span>Checked by {user} ( talk | contirbs )</span> }
+		{ user && <span>Checked by {user} <span class="mw-usertoollinks mw-changeslist-links">
+			<span><a
+				class="mw-usertoollinks-talk"
+				target="_blank"
+				href="/wiki/User_talk:Chlod"
+				title="User talk:Chlod"
+			>talk</a></span>
+			<span><a
+				class="mw-usertoollinks-contribs"
+				target="_blank"
+				href="/wiki/Special:Contributions/Chlod"
+				title="Special:Contributions/Chlod">contribs</a></span>
+		</span></span> }
 	</div>;
 }

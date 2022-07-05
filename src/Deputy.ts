@@ -146,17 +146,7 @@ class Deputy {
 
 mw.loader.using( [
 	'mediawiki.api',
-	'mediawiki.special.changeslist',
-	'mediawiki.interface.helpers.styles',
-	'mediawiki.pager.styles',
-	'mediawiki.Title',
-	'oojs-ui-core',
-	'oojs-ui.styles.icons-alerts',
-	'oojs-ui.styles.icons-content',
-	'oojs-ui.styles.icons-editing-core',
-	'oojs-ui.styles.icons-interactions',
-	'oojs-ui.styles.icons-media',
-	'oojs-ui.styles.icons-movement'
+	'mediawiki.Title'
 ], function () {
 	performHacks();
 	window.deputy = Deputy.instance;
