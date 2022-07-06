@@ -146,9 +146,9 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 				'testHeading4', 'testHeading5', 'testHeading6',
 				'testHeading7', 'testHeading8', 'testHeading9'
 			].map( ( _id ) => expect(
-				page.evaluate( ( id ) => {
+				page.evaluate( async ( id ) => {
 					console.log( id, document.getElementById( id ) );
-					const currentPage = new window.deputy.DeputyCasePage();
+					const currentPage = await window.deputy.DeputyCasePage.build();
 					return currentPage.isContributionSurveyHeading(
 						document.getElementById( id ).nextElementSibling as HTMLElement
 					);
@@ -160,8 +160,8 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 				'testHeading4', 'testHeading5', 'testHeading6',
 				'testHeading7', 'testHeading8', 'testHeading9'
 			].map( ( _id ) => expect(
-				page.evaluate( ( id ) => {
-					const currentPage = new window.deputy.DeputyCasePage();
+				page.evaluate( async ( id ) => {
+					const currentPage = await window.deputy.DeputyCasePage.build();
 					return currentPage.isContributionSurveyHeading(
 						( document.getElementById( id ).nextElementSibling as HTMLElement )
 							.querySelector( '.mw-headline' ) as HTMLElement
@@ -172,8 +172,8 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 			...( [
 				'testHeadingFake1'
 			].map( ( _id ) => expect(
-				page.evaluate( ( id ) => {
-					const currentPage = new window.deputy.DeputyCasePage();
+				page.evaluate( async ( id ) => {
+					const currentPage = await window.deputy.DeputyCasePage.build();
 					return currentPage.isContributionSurveyHeading(
 						document.getElementById( id ).nextElementSibling as HTMLElement
 					);
@@ -185,8 +185,8 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 				'testHeading4', 'testHeading5', 'testHeading6',
 				'testHeading7', 'testHeading8', 'testHeading9'
 			].map( ( _id ) => expect(
-				page.evaluate( ( id ) => {
-					const currentPage = new window.deputy.DeputyCasePage();
+				page.evaluate( async ( id ) => {
+					const currentPage = await window.deputy.DeputyCasePage.build();
 					return currentPage.isContributionSurveyHeading(
 						document.getElementById( id )
 					);
@@ -208,7 +208,7 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 
 		await expect(
 			page.evaluate(
-				() => ( new window.deputy.DeputyCasePage() )
+				async () => ( await window.deputy.DeputyCasePage.build() )
 					.findFirstContributionSurveyHeading()
 					.getAttribute( 'data-deputy-test' )
 			)
@@ -218,7 +218,7 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 	test( 'findContributionSurveyHeadings', async () => {
 		await expect(
 			page.evaluate(
-				() => ( new window.deputy.DeputyCasePage() )
+				async () => ( await window.deputy.DeputyCasePage.build() )
 					.findContributionSurveyHeadings()
 					.length
 			)
@@ -231,8 +231,8 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 			'testHeading4', 'testHeading5', 'testHeading6',
 			'testHeading7', 'testHeading8', 'testHeading9'
 		].map( ( _id ) => expect(
-			page.evaluate( ( id ) => {
-				const currentPage = new window.deputy.DeputyCasePage();
+			page.evaluate( async ( id ) => {
+				const currentPage = await window.deputy.DeputyCasePage.build();
 				return currentPage.getContributionSurveySection(
 					document.getElementById( id ).nextElementSibling as HTMLElement
 				).filter( ( v ) => v.tagName === 'UL' ).length;
@@ -244,8 +244,8 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 
 		test( 'getWikitext', async () => {
 			await expect(
-				page.evaluate( () => {
-					const currentPage = new window.deputy.DeputyCasePage();
+				page.evaluate( async () => {
+					const currentPage = await window.deputy.DeputyCasePage.build();
 					return currentPage.wikitext.getWikitext();
 				} )
 			).resolves.toBeTruthy();
@@ -254,14 +254,14 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 		test( 'getSectionWikitext (number)', async () => {
 			await Promise.all( [
 				expect(
-					page.evaluate( () => {
-						const currentPage = new window.deputy.DeputyCasePage();
+					page.evaluate( async () => {
+						const currentPage = await window.deputy.DeputyCasePage.build();
 						return currentPage.wikitext.getSectionWikitext( 0 );
 					} )
 				).resolves.toContain( '{{anchor|top}}' ),
 				expect(
-					page.evaluate( () => {
-						const currentPage = new window.deputy.DeputyCasePage();
+					page.evaluate( async () => {
+						const currentPage = await window.deputy.DeputyCasePage.build();
 						return currentPage.wikitext.getSectionWikitext( 2 );
 					} )
 				).resolves.toContain( 'Examine the article or the diffs linked below' )
@@ -271,14 +271,14 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 		test( 'getSectionWikitext (string)', async () => {
 			await Promise.all( [
 				expect(
-					page.evaluate( () => {
-						const currentPage = new window.deputy.DeputyCasePage();
+					page.evaluate( async () => {
+						const currentPage = await window.deputy.DeputyCasePage.build();
 						return currentPage.wikitext.getSectionWikitext( 'Text' );
 					} )
 				).resolves.toContain( 'Examine the article or the diffs linked below' ),
 				expect(
-					page.evaluate( () => {
-						const currentPage = new window.deputy.DeputyCasePage();
+					page.evaluate( async () => {
+						const currentPage = await window.deputy.DeputyCasePage.build();
 						return currentPage.wikitext.getSectionWikitext( 'Pages 1 to 20' );
 					} )
 				).resolves.toContain( 'Special:Diff' )
