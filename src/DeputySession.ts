@@ -302,6 +302,10 @@ export default class DeputySession {
 				await section.close();
 			}
 		}
+
+		casePage.document.querySelectorAll( '.dp-cs-section-add' )
+			.forEach( ( el: HTMLElement ) => removeElement( el ) );
+
 		await casePage.saveToCache();
 		await this.setSession( null );
 	}
