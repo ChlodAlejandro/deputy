@@ -49,7 +49,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	/**
 	 * Whether this row was originally finished upon loading.
 	 */
-	finished: boolean;
+	wasFinished: boolean;
 	/**
 	 * This row's main root element. Does not get swapped.
 	 */
@@ -92,7 +92,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 *  (b.2) this row's comment changed
 	 */
 	get modified(): boolean {
-		return this.finished &&
+		return this.wasFinished &&
 			( this.status !== this.row.originalStatus ||
 			this.comments !== this.row.getActualComment() );
 	}
@@ -126,13 +126,13 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 * @return Wikitext
 	 */
 	get wikitext(): string {
-		if ( this.finished == null ) {
+		if ( this.wasFinished == null ) {
 			console.warn(
 				'Could not determine if this is an originally-finished or ' +
 				'originally-unfinished row. Assuming unfinished and moving on...'
 			);
 		}
-		const finished = this.finished ?? false;
+		const finished = this.wasFinished ?? false;
 
 		const wikitext = this.row.wikitext;
 		// "* "
@@ -241,7 +241,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 */
 	async loadData() {
 		const diffs = await this.row.getDiffs();
-		this.finished = this.row.completed;
+		this.wasFinished = this.row.completed;
 
 		if ( this.row.completed ) {
 			this.renderRow( diffs, this.renderFinished() );
@@ -654,7 +654,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			</a>
 			{ this.renderDetails( diffs ) }
 			{ this.renderLinks() }
-			{ !this.finished && unwrapWidget( checkAll ) }
+			{ !this.wasFinished && unwrapWidget( checkAll ) }
 			{ !contentContainer.classList.contains( 'dp-cs-row-content-empty' ) &&
 				unwrapWidget( contentToggle ) }
 		</div>;
@@ -677,8 +677,8 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			this.element, <div>
 				{ this.renderHead( diffs, contentContainer ) }
 				{ contentContainer }
-			</div> as HTMLElement
-		);
+			</div>
+		) as HTMLElement;
 	}
 
 	/**

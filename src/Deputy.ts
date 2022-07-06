@@ -85,7 +85,13 @@ class Deputy {
 	async init() {
 		mw.hook( 'deputy.preload' ).fire( this );
 
-		this.wiki = new mw.Api();
+		this.wiki = new mw.Api( {
+			parameters: {
+				format: 'json',
+				formatversion: 2,
+				utf8: 1
+			}
+		} );
 
 		// Inject CSS
 		mw.util.addCSS( deputyStyles );
@@ -151,7 +157,8 @@ class Deputy {
 
 mw.loader.using( [
 	'mediawiki.api',
-	'mediawiki.Title'
+	'mediawiki.Title',
+	'oojs'
 ], function () {
 	performHacks();
 	window.deputy = Deputy.instance;

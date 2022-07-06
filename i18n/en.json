@@ -4,14 +4,21 @@
     "deputy.cancel": "Cancel",
     "deputy.review": "Review",
     "deputy.save": "Save",
+    "deputy.close": "Close",
     "deputy.positiveDiff": "+{{FORMATNUM:$1}}",
     "deputy.negativeDiff": "-{{FORMATNUM:$1}}",
+
+    "deputy.diff": "Review your changes",
+    "deputy.diff.load": "Loading changes...",
+    "deputy.diff.no-changes": "No difference",
+    "deputy.diff.error": "An error occurred while trying to get the comparison.",
 
     "deputy.session.start": "start CCI session",
 
     "deputy.session.section.close": "Close section",
     "deputy.session.section.closeComments": "Closing comments",
     "deputy.session.section.closeHelp": "Your signature will automatically be appended to your closing comments.",
+    "deputy.session.section.closeWarn": "You have unsaved changes. Close the section without saving?",
 
     "deputy.session.row.status": "Current page status",
     "deputy.session.row.status.unfinished": "Unfinished",

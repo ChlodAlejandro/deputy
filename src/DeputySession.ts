@@ -30,6 +30,10 @@ export default class DeputySession {
 	 * DiscussionTools) as compared to relying on an in-house parser.
 	 */
 	parser: any;
+	/**
+	 * An array of active section UI elements. Populated in `initSessionInterface`.
+	 */
+	sections: DeputyContributionSurveySection[];
 
 	/**
 	 * Initialize session-related information. If an active session was detected,
@@ -40,7 +44,8 @@ export default class DeputySession {
 		const session = await this.getSession();
 		if ( session ) {
 			if ( session.casePageId === window.deputy.currentPageId ) {
-				await this.initSessionInterface( session );
+				const casePage = await DeputyCasePage.build();
+				await this.initSessionInterface( session, casePage );
 			} else {
 				// TODO: Show "start work" with session replacement warning
 			}
@@ -48,7 +53,7 @@ export default class DeputySession {
 			// No active session
 			if ( DeputyCasePage.isCasePage() ) {
 				// Show session start buttons
-				this.initEntryInterface();
+				await this.initEntryInterface();
 			}
 		}
 	}
@@ -62,7 +67,7 @@ export default class DeputySession {
 	 */
 	async initSessionInterface(
 		session: SessionInformation,
-		casePage = new DeputyCasePage()
+		casePage: DeputyCasePage
 	): Promise<void> {
 		if ( window.location.search.indexOf( 'action=edit' ) !== -1 ) {
 			// User is editing, don't load interface.
@@ -93,20 +98,21 @@ export default class DeputySession {
 					.appendChild( window.deputy.windowManager.$element[ 0 ] );
 
 				// TODO: Do interface functions
-				for ( const section of session.caseSections ) {
-					const heading = casePage.findContributionSurveyHeading( section );
+				this.sections = [];
+				await Promise.all(
+					session.caseSections.map( ( section ) => {
+						const heading = casePage.findContributionSurveyHeading( section );
 
-					if ( !heading ) {
-						// The section is assumed missing.
-						const sessionIndex = session.caseSections.indexOf( section );
-						session.caseSections.splice( sessionIndex, 1 );
-						continue;
-					}
+						if ( !heading ) {
+							// The section is assumed missing.
+							const sessionIndex = session.caseSections.indexOf( section );
+							session.caseSections.splice( sessionIndex, 1 );
+							return Promise.resolve( null );
+						}
 
-					const el = new DeputyContributionSurveySection( casePage, heading );
-					await el.prepare();
-					heading.insertAdjacentElement( 'afterend', el.render() );
-				}
+						return this.activateSection( session, casePage, heading );
+					} )
+				);
 				res();
 			} );
 		} );
@@ -116,10 +122,10 @@ export default class DeputySession {
 	 * Initialize interface components for *starting* a session. This includes
 	 * the `[start CCI session]` notice at the top of each CCI page section heading.
 	 */
-	initEntryInterface(): void {
-		const casePage = new DeputyCasePage();
+	async initEntryInterface(): Promise<void> {
+		const casePage = await DeputyCasePage.build();
 		casePage.findContributionSurveyHeadings()
-			.forEach( ( heading ) => {
+			.forEach( ( heading: ContributionSurveyHeading ) => {
 				heading.appendChild(
 					DeputyCCISessionStartLink( heading, this )
 				);
@@ -152,24 +158,64 @@ export default class DeputySession {
 	 *
 	 * @param section
 	 */
-	startSession( section: ContributionSurveyHeading ): void {
+	async startSession( section: ContributionSurveyHeading ): Promise<void> {
 		const pageID = window.deputy.currentPageId;
 		const sectionName = sectionHeadingName( section );
 
 		// Save session to storage
-		window.deputy.storage.db.put( 'casePageCache', {
-			pageID: pageID,
-			lastActive: Date.now(),
-			lastActiveSections: [ sectionName ]
-		} );
+		const casePage = await DeputyCasePage.build();
 		const session = {
 			casePageId: pageID,
 			caseSections: [ sectionName ]
 		};
-		this.setSession( session );
+		await this.setSession( session );
+		await this.initSessionInterface( session, casePage );
+	}
 
-		// TODO: Make DeputyCasePage instantiated based on current page and use that here.
-		this.initSessionInterface( session );
+	/**
+	 * Closes the current session.
+	 *
+	 * @param casePage
+	 */
+	async closeSession( casePage: DeputyCasePage ): Promise<void> {
+		if ( this.sections ) {
+			for ( const section of this.sections ) {
+				section.close();
+			}
+		}
+		await casePage.saveToCache();
+		await this.setSession( null );
+	}
+
+	/**
+	 * Activates a section. This appends the section UI, adds the section to the
+	 * cache (if not already added), and internally stores the section for a
+	 * graceful exit.
+	 *
+	 * @param session
+	 * @param casePage
+	 * @param heading
+	 */
+	async activateSection(
+		session: SessionInformation,
+		casePage: DeputyCasePage,
+		heading: ContributionSurveyHeading
+	): Promise<void> {
+		const el = new DeputyContributionSurveySection( casePage, heading );
+		await el.prepare();
+
+		const sectionName = casePage.parsoid ?
+			heading.innerText :
+			heading.querySelector<HTMLElement>( '.mw-headline' ).innerText;
+		this.sections.push( el );
+		const lastActiveSession = session.caseSections.indexOf( sectionName );
+		if ( lastActiveSession == null ) {
+			session.caseSections.push( sectionName );
+			await this.setSession( session );
+		}
+		await casePage.addActiveSection( sectionName );
+
+		heading.insertAdjacentElement( 'afterend', el.render() );
 	}
 
 }

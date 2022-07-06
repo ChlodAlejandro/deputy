@@ -30,6 +30,9 @@ function blockCommentIfy( text ) {
 	return final;
 }
 
+/**
+ * @type {import('rollup').RollupOptions}
+ */
 export default {
 	input: 'src/Deputy.ts',
 	output: {

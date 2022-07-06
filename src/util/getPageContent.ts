@@ -15,15 +15,12 @@ export default function (
 ): PromiseLike<string & { contentFormat: string }> {
 	return api.get( {
 		action: 'query',
-		format: 'json',
 		prop: 'revisions',
 		...( typeof page === 'number' ? {
 			pageids: page
 		} : {
 			titles: normalizeTitle( page ).getPrefixedText()
 		} ),
-		utf8: 1,
-		formatversion: '2',
 		rvprop: 'content',
 		rvslots: 'main',
 		rvlimit: '1',

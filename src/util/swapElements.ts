@@ -6,7 +6,7 @@
  * @param element2 The element to insert
  * @return `element2`, for chaining
  */
-export default function ( element1: HTMLElement, element2: HTMLElement ): HTMLElement {
+export default function <T extends Element> ( element1: T, element2: T ): T {
 	element1.insertAdjacentElement( 'afterend', element2 );
 	element1.parentElement.removeChild( element1 );
 	return element2;

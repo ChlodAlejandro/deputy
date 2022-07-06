@@ -5,6 +5,8 @@ import unwrapWidget from '../util/unwrapWidget';
 import DeputyContributionSurveyRow from './DeputyContributionSurveyRow';
 import ContributionSurveyRow from '../models/ContributionSurveyRow';
 import ContributionSurveySection from '../models/ContributionSurveySection';
+import DeputyReviewDialog from './DeputyReviewDialog';
+import swapElements from '../util/swapElements';
 
 /**
  * The contribution survey section UI element. This includes a list of revisions
@@ -15,7 +17,7 @@ import ContributionSurveySection from '../models/ContributionSurveySection';
 export default class DeputyContributionSurveySection implements DeputyUIElement {
 
 	casePage: DeputyCasePage;
-	section: ContributionSurveySection;
+	private _section: ContributionSurveySection;
 	heading: HTMLHeadingElement;
 	sectionElements: HTMLElement[];
 	originalList: HTMLElement;
@@ -36,29 +38,45 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	wikitextLines: ( DeputyContributionSurveyRow | string )[];
 
 	/**
+	 * @return `true` if this section has been modified
+	 */
+	get modified(): boolean {
+		return this.rows && this.rows.length > 0 &&
+			this.rows.some( ( row ) => row.modified ) || (
+			this._section && this._section.originallyClosed !== this.closed
+		);
+	}
+
+	/**
 	 * @return `true` if this section is (or will be) closed
 	 */
 	get closed(): boolean {
-		return this.section.closed;
+		return this._section?.closed;
 	}
 	/**
 	 * Sets the close state of this section
 	 */
 	set closed( value: boolean ) {
-		this.section.closed = value;
+		if ( this._section?.closed == null ) {
+			throw new Error( 'Section has not been loaded yet.' );
+		}
+		this._section.closed = value;
 	}
 
 	/**
 	 * @return The closing comments for this section
 	 */
 	get comments(): string {
-		return this.section.closingComments;
+		return this._section?.closingComments;
 	}
 	/**
 	 * Sets the comments of a section.
 	 */
 	set comments( value: string ) {
-		this.section.closingComments = value;
+		if ( this._section?.closingComments == null ) {
+			throw new Error( 'Section has not been loaded yet.' );
+		}
+		this._section.closingComments = value;
 	}
 
 	/**
@@ -77,11 +95,59 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 
 		if ( this.closed ) {
 			// TODO: Wiki localization
-			final.splice( 1, 0, `{{collapse top|${( this.comments + ' ~~~~' ).trim()}}}` );
+			final.splice( 1, 0, `{{collapse top|${
+				( ( this.comments ?? '' ) + ' ~~~~' ).trim()
+			}}}` );
+
+			if ( final[ final.length - 1 ].trim().length === 0 ) {
+				final.pop();
+			}
 			final.push( '{{collapse bottom}}' );
 		}
 
 		return final.join( '\n' );
+	}
+
+	/**
+	 * @return The edit summary for this section's changes.
+	 */
+	get editComment(): string {
+		// TODO: Wiki localization
+		// Not i18n, since this is dependent on the wiki content language.
+		if ( this.modified ) {
+			const modified = this.rows.filter( ( row ) => row.modified );
+			let worked = 0;
+			let assessed = 0;
+			let finished = 0;
+			let reworked = 0;
+
+			for ( const row of modified ) {
+				if ( !row.wasFinished ) {
+					worked++;
+					assessed += row.revisions.find( ( rev ) => rev.done ).length;
+					if ( row.row.completed ) {
+						finished++;
+					}
+				} else {
+					reworked++;
+				}
+			}
+
+			const message: string[] = [];
+			if ( assessed > 0 ) {
+				message.push( `${assessed} revisions assessed across ${worked} pages` );
+			}
+			if ( finished > 0 ) {
+				message.push( `${finished} pages finished` );
+			}
+			if ( reworked > 0 ) {
+				message.push( `${reworked} pages reworked` );
+			}
+
+			return 'Assessed ' + message.join( '; ' );
+		} else {
+			return 'Reformatting section';
+		}
 	}
 
 	/**
@@ -94,18 +160,31 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		this.casePage = casePage;
 		this.heading = heading;
 		this.sectionElements = casePage.getContributionSurveySection( heading );
+	}
 
+	/**
+	 * Get the ContributionSurveySection for this section
+	 */
+	async getSection(): Promise<ContributionSurveySection> {
 		const collapsible = this.sectionElements.find(
 			( v: HTMLElement ) => v.querySelector( '.mw-collapsible' )
 		)?.querySelector( '.mw-collapsible' ) ?? null;
 
-		this.section = new ContributionSurveySection(
-			casePage,
-			casePage.parsoid ?
-				heading.innerText :
-				heading.querySelector<HTMLElement>( '.mw-headline' ).innerText,
-			collapsible != null,
-			collapsible?.querySelector<HTMLElement>( '.mw-collapsible-toggle + div' ).innerText
+		const headingName = this.casePage.parsoid ?
+			this.heading.innerText :
+			( this.heading.querySelector( '.mw-headline' ) as HTMLElement ).innerText;
+		const sectionWikitext = await this.casePage.wikitext.getSectionWikitext( headingName );
+
+		return this._section ?? (
+			this._section = new ContributionSurveySection(
+				this.casePage,
+				this.casePage.parsoid ?
+					this.heading.innerText :
+					this.heading.querySelector<HTMLElement>( '.mw-headline' ).innerText,
+				collapsible != null,
+				collapsible?.querySelector<HTMLElement>( '.mw-collapsible-toggle + div' ).innerText,
+				sectionWikitext
+			)
 		);
 	}
 
@@ -127,10 +206,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			rowElements[ new mw.Title( anchor.innerText ).getPrefixedText() ] = li as HTMLLIElement;
 		}
 
-		const headingName = this.casePage.parsoid ?
-			this.heading.innerText :
-			( this.heading.querySelector( '.mw-headline' ) as HTMLElement ).innerText;
-		const sectionWikitext = await this.casePage.wikitext.getSectionWikitext( headingName );
+		const sectionWikitext = ( await this.getSection() ).originalWikitext;
 
 		const wikitextLines = sectionWikitext.split( '\n' );
 		this.rows = [];
@@ -152,6 +228,14 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			}
 			this.wikitextLines.push( rowElement );
 		}
+	}
+
+	/**
+	 * Destroys the element from the DOM and re-inserts in its place the original list.
+	 * This *should* return the page back to its original look.
+	 */
+	close(): void {
+		swapElements( this.container, this.originalList );
 	}
 
 	/**
@@ -183,6 +267,32 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		this.saveButton = new OO.ui.ButtonWidget( {
 			label: mw.message( 'deputy.save' ).text(),
 			flags: [ 'primary', 'progressive' ]
+		} );
+
+		this.cancelButton.on( 'click', async () => {
+			if ( this.wikitext !== ( await this.getSection() ).originalWikitext ) {
+				OO.ui.confirm(
+					mw.message( 'deputy.session.section.closeWarn' ).text()
+				).done( ( confirmed: boolean ) => {
+					if ( confirmed ) {
+						this.close();
+					}
+				} );
+			} else {
+				this.close();
+			}
+		} );
+
+		this.reviewButton.on( 'click', async () => {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			const reviewDialog = DeputyReviewDialog( {
+				from: ( await this.getSection() ).originalWikitext,
+				to: this.wikitext,
+				title: this.casePage.title
+			} );
+			window.deputy.windowManager.addWindows( [ reviewDialog ] );
+			window.deputy.windowManager.openWindow( reviewDialog );
 		} );
 
 		const closingCommentsField = new OO.ui.FieldLayout( this.closingComments, {

@@ -48,6 +48,14 @@ export default class DeputyCasePage {
 	 */
 	pageId: number;
 	/**
+	 * A timestamp of when this case page was last worked on.
+	 */
+	lastActive: number = Date.now();
+	/**
+	 * The sections last worked on for this case page.
+	 */
+	lastActiveSections: string[] = [];
+	/**
 	 * Title of this page.
 	 */
 	title: mw.Title;
@@ -70,7 +78,46 @@ export default class DeputyCasePage {
 	 * @param document The document to be used as a reference.
 	 * @param parsoid Whether this is a Parsoid document or not.
 	 */
-	constructor( pageId?: number, title?: mw.Title, document?: Document, parsoid?: boolean ) {
+	static async build(
+		pageId?: number,
+		title?: mw.Title,
+		document?: Document,
+		parsoid?: boolean
+	): Promise<DeputyCasePage> {
+		const cachedInfo = await window.deputy.storage.db.get(
+			'casePageCache',
+			pageId ?? window.deputy.currentPageId
+		);
+		if ( cachedInfo !== null ) {
+			return new DeputyCasePage(
+				pageId,
+				title,
+				document,
+				parsoid,
+				cachedInfo.lastActive,
+				cachedInfo.lastActiveSections
+			);
+		} else {
+			return new DeputyCasePage( pageId, title, document, parsoid );
+		}
+	}
+
+	/**
+	 * @param pageId The page ID of the case page.
+	 * @param title The title of the page being accessed
+	 * @param document The document to be used as a reference.
+	 * @param parsoid Whether this is a Parsoid document or not.
+	 * @param lastActive
+	 * @param lastActiveSessions
+	 */
+	private constructor(
+		pageId?: number,
+		title?: mw.Title,
+		document?: Document,
+		parsoid?: boolean,
+		lastActive?: number,
+		lastActiveSessions?: string[]
+	) {
 		this.pageId = pageId ?? window.deputy.currentPageId;
 		this.title = title ?? window.deputy.currentPage;
 		this.document = document ?? window.document;
@@ -78,6 +125,9 @@ export default class DeputyCasePage {
 			this.document.documentElement.getAttribute( 'prefix' )
 		);
 		this.wikitext = new DeputyCasePageWikitext( this );
+
+		this.lastActive = lastActive ?? Date.now();
+		this.lastActiveSections = lastActiveSessions ?? [];
 	}
 
 	/**
@@ -175,6 +225,61 @@ export default class DeputyCasePage {
 		}
 
 		return sectionMembers;
+	}
+
+	/**
+	 * Saves the current page to the IDB page cache.
+	 */
+	async saveToCache(): Promise<void> {
+		await window.deputy.storage.db.put( 'casePageCache', {
+			pageID: this.pageId,
+			lastActive: this.lastActive,
+			lastActiveSections: this.lastActiveSections
+		} );
+	}
+
+	/**
+	 * Deletes the current page from the cache. This is generally not advised, unless the
+	 * user wishes to forget the case page entirely.
+	 */
+	async deleteFromCache(): Promise<void> {
+		await window.deputy.storage.db.delete( 'casePageCache', this.pageId );
+	}
+
+	/**
+	 * Bumps this page's last active timestamp.
+	 */
+	async bumpActive(): Promise<void> {
+		this.lastActive = Date.now();
+		await this.saveToCache();
+	}
+
+	/**
+	 * Add a section to the list of active sessions. This is used for automatic starting
+	 * and for one-click continuation of past active sessions.
+	 *
+	 * @param section
+	 */
+	async addActiveSection( section: string ): Promise<void> {
+		const lastActiveSection = this.lastActiveSections.indexOf( section );
+		if ( lastActiveSection == null ) {
+			this.lastActiveSections.push( section );
+			await this.saveToCache();
+		}
+	}
+
+	/**
+	 * Remove a section from the list of active sections. This will disable autostart
+	 * for this section.
+	 *
+	 * @param section
+	 */
+	async removeActiveSection( section: string ): Promise<void> {
+		const lastActiveSection = this.lastActiveSections.indexOf( section );
+		if ( lastActiveSection == null ) {
+			this.lastActiveSections.splice( lastActiveSection, 1 );
+			await this.saveToCache();
+		}
 	}
 
 }

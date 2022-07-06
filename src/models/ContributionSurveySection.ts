@@ -24,21 +24,35 @@ export default class ContributionSurveySection {
 	closingComments: string;
 
 	/**
+	 * Whether the section was already closed
+	 */
+	readonly originallyClosed: boolean;
+	/**
+	 * The original wikitext of this section
+	 */
+	readonly originalWikitext: string;
+
+	/**
 	 * @param casePage The case page of this section
 	 * @param name The name of this section (based on the heading)
 	 * @param closed Whether this section has been closed (wrapped in collapse templates)
 	 * @param closingComments Closing comments for this section
+	 * @param wikitext The original wikitext of this section
 	 */
 	constructor(
 		casePage: DeputyCasePage,
 		name: string,
 		closed: boolean,
-		closingComments: string
+		closingComments: string,
+		wikitext: string
 	) {
 		this.casePage = casePage;
 		this.name = name;
 		this.closed = closed;
 		this.closingComments = closingComments;
+
+		this.originalWikitext = wikitext;
+		this.originallyClosed = closed;
 	}
 
 }

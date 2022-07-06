@@ -3,9 +3,9 @@
         "incremental": true,
         "target": "es6",
         "lib": [
-          "dom",
-          "es2015.promise",
-          "es2015.collection"
+            "DOM",
+            "ES2015.Promise",
+            "ES2015.Collection"
         ],
         "outDir": "./build",
 
