@@ -7,7 +7,8 @@ import unwrapWidget from '../util/unwrapWidget';
 /**
  * A specific revision for a section row.
  */
-export default class DeputyContributionSurveyRevision extends OO.EventEmitter implements DeputyUIElement {
+export default class DeputyContributionSurveyRevision
+	extends OO.EventEmitter implements DeputyUIElement {
 
 	/**
 	 * @return `true` the current revision has been checked by the user or `false` if not.
@@ -100,12 +101,12 @@ export default class DeputyContributionSurveyRevision extends OO.EventEmitter im
 		>
 			{ unwrapWidget( this.doneCheckbox ) }
 			<span class="mw-changeslist-links">
-				<span><a href={
+				<span><a rel="noopener" href={
 					getRevisionDiffURL( this.revision.revid, 0 )
 				} title="Difference with latest revision" target="_blank">
 					{ mw.message( 'deputy.session.revision.cur' ).text() }
 				</a></span>
-				<span><a href={
+				<span><a rel="noopener" href={
 					!this.revision.parentid ?
 						null :
 						getRevisionDiffURL( this.revision.parentid, this.revision.revid )
@@ -118,7 +119,7 @@ export default class DeputyContributionSurveyRevision extends OO.EventEmitter im
 				comma
 			}{ formattedDate }</span>
 			<span class="history-user">
-				<a class="mw-userlink" target="_blank" href={
+				<a class="mw-userlink" target="_blank" rel="noopener" href={
 					mw.format(
 						mw.config.get( 'wgArticlePath' ),
 						userPage.getPrefixedDb()
@@ -127,7 +128,7 @@ export default class DeputyContributionSurveyRevision extends OO.EventEmitter im
 					class="mw-usertoollinks mw-changeslist-links"
 				>
 					<span>
-						<a class="mw-usertoollinks-talk" target="_blank" href={
+						<a class="mw-usertoollinks-talk" target="_blank" rel="noopener" href={
 							mw.format(
 								mw.config.get( 'wgArticlePath' ),
 								userTalkPage.getPrefixedDb()
@@ -137,7 +138,7 @@ export default class DeputyContributionSurveyRevision extends OO.EventEmitter im
 						</a>
 					</span>
 					<span>
-						<a class="mw-usertoollinks-contribs" target="_blank" href={
+						<a class="mw-usertoollinks-contribs" target="_blank" rel="noopener" href={
 							mw.format(
 								mw.config.get( 'wgArticlePath' ),
 								userContribsPage.getPrefixedDb()
@@ -175,7 +176,7 @@ export default class DeputyContributionSurveyRevision extends OO.EventEmitter im
 			</DiffTag> <span class="mw-changeslist-separator"></span> { commentElement } {
 				( this.revision.tags?.length ?? -1 ) > 0 && <span class="mw-tag-markers">
 					<a
-						href={
+						rel="noopener" href={
 							mw.format(
 								mw.config.get( 'wgArticlePath' ),
 								'Special:Tags'

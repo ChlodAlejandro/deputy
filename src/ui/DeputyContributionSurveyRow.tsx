@@ -405,7 +405,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			<a
 				class="dp-cs-row-link dp-cs-row-edit"
 				target="_blank"
-				href={ mw.util.getUrl(
+				rel="noopener" href={ mw.util.getUrl(
 					this.row.title.getPrefixedDb(),
 					{ action: 'edit' }
 				) }
@@ -421,7 +421,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			<a
 				class="dp-cs-row-link dp-cs-row-talk"
 				target="_blank"
-				href={ mw.util.getUrl(
+				rel="noopener" href={ mw.util.getUrl(
 					this.row.title.getTalkPage().getPrefixedDb()
 				) }
 			>
@@ -436,7 +436,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			<a
 				class="dp-cs-row-link dp-cs-row-history"
 				target="_blank"
-				href={ mw.util.getUrl(
+				rel="noopener" href={ mw.util.getUrl(
 					this.row.title.getPrefixedDb(),
 					{ action: 'history' }
 				) }
@@ -673,7 +673,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			<a
 				class="dp-cs-row-title"
 				target="_blank"
-				href={ mw.format(
+				rel="noopener" href={ mw.format(
 					mw.config.get( 'wgArticlePath' ),
 					this.row.title.getPrefixedDb()
 				) }

@@ -72,19 +72,19 @@ export default class DeputyUnfinishedContributionSurveyRow {
 				( <span>
 					<a
 						target="_blank"
-						href={ mw.util.getUrl( userPage.getPrefixedDb() ) }
+						rel="noopener" href={ mw.util.getUrl( userPage.getPrefixedDb() ) }
 						title={ userPage.getPrefixedText() }
 					>{ this.author }</a> <span class="mw-usertoollinks mw-changeslist-links">
 						<span><a
 							class="mw-usertoollinks-talk"
 							target="_blank"
-							href={ mw.util.getUrl( talkPage.getPrefixedDb() ) }
+							rel="noopener" href={ mw.util.getUrl( talkPage.getPrefixedDb() ) }
 							title={ talkPage.getPrefixedText() }
 						>talk</a></span>
 						<span><a
 							class="mw-usertoollinks-contribs"
 							target="_blank"
-							href={ mw.util.getUrl( contribsPage.getPrefixedDb() ) }
+							rel="noopener" href={ mw.util.getUrl( contribsPage.getPrefixedDb() ) }
 							title={ contribsPage.getPrefixedText() }
 						>contribs</a></span>
 					</span>
