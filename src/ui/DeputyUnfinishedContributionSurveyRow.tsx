@@ -1,6 +1,6 @@
 import { h } from 'tsx-dom';
-import ContributionSurveyRow from '../../models/ContributionSurveyRow';
-import guessAuthor from '../../util/guessAuthor';
+import ContributionSurveyRow from '../models/ContributionSurveyRow';
+import guessAuthor from '../util/guessAuthor';
 
 /**
  * Displayed when a ContributionSurveyRow has no remaining diffs. Deputy is not able

@@ -60,6 +60,7 @@ interface DeputyDatabase extends DBSchema {
 export default class DeputyStorage {
 
 	db: IDBPDatabase<DeputyDatabase>;
+	tagCache: Record<string, string>;
 
 	/**
 	 * Initialize the Deputy IndexedDB database.
@@ -99,6 +100,11 @@ export default class DeputyStorage {
 				}
 			}
 		);
+
+		// 7 days
+		if ( Date.now() - ( await this.getKV( 'tagCacheAge' ) ?? 0 ) > 6048e5 ) {
+			await this.getTags();
+		}
 	}
 
 	/**
@@ -125,6 +131,33 @@ export default class DeputyStorage {
 			key: key,
 			value: value
 		} ).then( () => true );
+	}
+
+	/**
+	 * Get all MediaWiki tags and store them in the `tagCache` store.
+	 */
+	async getTags(): Promise<void> {
+		const tagCache = await window.deputy.storage.db.getAll( 'tagCache' );
+
+		if ( tagCache.length === 0 ) {
+			await window.deputy.wiki.getMessages( [ '*' ], {
+				amenableparser: true,
+				amincludelocal: true,
+				amprefix: 'tag-'
+			} ).then( ( messages: Record<string, string> ) => {
+				for ( const key in messages ) {
+					this.tagCache[ key ] = messages[ key ];
+					mw.messages.set( key, messages[ key ] );
+					this.db.put( 'tagCache', { key, value: messages[ key ] } );
+				}
+				this.setKV( 'tagCacheAge', Date.now() );
+			} );
+		} else {
+			for ( const { key, value } of tagCache ) {
+				this.tagCache[ key ] = value;
+				mw.messages.set( key, value );
+			}
+		}
 	}
 
 }

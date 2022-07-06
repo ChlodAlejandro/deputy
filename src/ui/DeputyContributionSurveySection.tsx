@@ -7,6 +7,7 @@ import ContributionSurveyRow from '../models/ContributionSurveyRow';
 import ContributionSurveySection from '../models/ContributionSurveySection';
 import DeputyReviewDialog from './DeputyReviewDialog';
 import swapElements from '../util/swapElements';
+import sectionHeadingName from '../util/sectionHeadingName';
 
 /**
  * The contribution survey section UI element. This includes a list of revisions
@@ -27,7 +28,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	rows: DeputyContributionSurveyRow[];
 	closingCheckbox: any;
 	closingComments: any;
-	cancelButton: any;
+	closeButton: any;
 	reviewButton: any;
 	saveButton: any;
 
@@ -170,17 +171,13 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			( v: HTMLElement ) => v.querySelector( '.mw-collapsible' )
 		)?.querySelector( '.mw-collapsible' ) ?? null;
 
-		const headingName = this.casePage.parsoid ?
-			this.heading.innerText :
-			( this.heading.querySelector( '.mw-headline' ) as HTMLElement ).innerText;
+		const headingName = sectionHeadingName( this.heading );
 		const sectionWikitext = await this.casePage.wikitext.getSectionWikitext( headingName );
 
 		return this._section ?? (
 			this._section = new ContributionSurveySection(
 				this.casePage,
-				this.casePage.parsoid ?
-					this.heading.innerText :
-					this.heading.querySelector<HTMLElement>( '.mw-headline' ).innerText,
+				sectionHeadingName( this.heading ),
 				collapsible != null,
 				collapsible?.querySelector<HTMLElement>( '.mw-collapsible-toggle + div' ).innerText,
 				sectionWikitext
@@ -218,7 +215,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			if ( line.startsWith( '*' ) ) {
 				const csr = new ContributionSurveyRow( line );
 				rowElement = new DeputyContributionSurveyRow(
-					csr, rowElements[ csr.title.getPrefixedText() ], this
+					csr, rowElements[ csr.title.getPrefixedText() ], line, this
 				);
 			} else {
 				rowElement = line;
@@ -232,9 +229,11 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 
 	/**
 	 * Destroys the element from the DOM and re-inserts in its place the original list.
-	 * This *should* return the page back to its original look.
+	 * This *should* return the section back to its original look. This does *NOT*
+	 * remove the section from the session or cache. Use `DeputySession.closeSection`
+	 * instead.
 	 */
-	close(): void {
+	async close(): Promise<void> {
 		swapElements( this.container, this.originalList );
 	}
 
@@ -258,8 +257,8 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			placeholder: mw.message( 'deputy.session.section.closeComments' ).text(),
 			disabled: true
 		} );
-		this.cancelButton = new OO.ui.ButtonWidget( {
-			label: mw.message( 'deputy.cancel' ).text()
+		this.closeButton = new OO.ui.ButtonWidget( {
+			label: mw.message( 'deputy.close' ).text()
 		} );
 		this.reviewButton = new OO.ui.ButtonWidget( {
 			label: mw.message( 'deputy.review' ).text()
@@ -269,17 +268,20 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			flags: [ 'primary', 'progressive' ]
 		} );
 
-		this.cancelButton.on( 'click', async () => {
+		this.closeButton.on( 'click', async () => {
 			if ( this.wikitext !== ( await this.getSection() ).originalWikitext ) {
 				OO.ui.confirm(
 					mw.message( 'deputy.session.section.closeWarn' ).text()
 				).done( ( confirmed: boolean ) => {
 					if ( confirmed ) {
-						this.close();
+						this.close().then( () => {
+							window.deputy.session.closeSection( this );
+						} );
 					}
 				} );
 			} else {
-				this.close();
+				await this.close();
+				await window.deputy.session.closeSection( this );
 			}
 		} );
 
@@ -336,7 +338,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 					{ unwrapWidget( closingCommentsField ) }
 				</div>
 				<div style={{ display: 'flex', alignItems: 'end' }}>
-					{ unwrapWidget( this.cancelButton ) }
+					{ unwrapWidget( this.closeButton ) }
 					{ unwrapWidget( this.reviewButton ) }
 					{ unwrapWidget( this.saveButton ) }
 				</div>

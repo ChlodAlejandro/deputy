@@ -14,7 +14,7 @@ export default class DeputyAPI {
 	/**
 	 * Creates a Deputy API instance.
 	 */
-	constructor() {}
+	constructor() { /* ignored for now */ }
 
 	/**
 	 * Logs the user out of the API.
@@ -58,6 +58,13 @@ export default class DeputyAPI {
 			}
 		)
 			.then( ( r ) => r.json() )
+			.then( ( j ) => {
+				if ( j.error ) {
+					throw new Error( j.error.info );
+				}
+
+				return j;
+			} )
 			.then( ( j ) => j.revisions );
 	}
 

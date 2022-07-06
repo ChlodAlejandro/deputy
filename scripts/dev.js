@@ -12,14 +12,22 @@ const buildDirectory = path.resolve( rootDirectory, 'build' );
 const sourceDirectory = path.resolve( rootDirectory, 'src' );
 
 /**
+ * @type {childProcess.ChildProcess}
+ */
+let buildProcess;
+/**
  * Rebuild everything with Babel.
  */
 async function rebuild() {
+	if ( buildProcess && buildProcess.exitCode == null ) {
+		buildProcess.kill( 'SIGKILL' );
+	}
+
 	if ( fs.existsSync( buildDirectory ) ) {
 		fs.rmSync( buildDirectory, { recursive: true } );
 	}
 
-	const child = childProcess.spawn(
+	buildProcess = childProcess.spawn(
 		which.sync( 'npm' ),
 		[
 			'run', 'build'
@@ -31,7 +39,7 @@ async function rebuild() {
 
 	let sinceDone = null;
 
-	child.stdout.on( 'data', ( d ) => {
+	buildProcess.stdout.on( 'data', ( d ) => {
 		d.toString().trim().split( '\n' ).forEach( ( line ) => {
 			if ( /^created .+? \d+?\.\ds/.test( line ) ) {
 				sinceDone = Date.now();
@@ -40,19 +48,19 @@ async function rebuild() {
 		} );
 	} );
 
-	child.stderr.on( 'data', ( d ) => {
+	buildProcess.stderr.on( 'data', ( d ) => {
 		d.toString().trim().split( '\n' ).forEach( ( line ) => {
 			console.error( chalk.yellow( '[build] ' ) + line );
 		} );
 	} );
 
-	child.on( 'error', ( err ) => {
+	buildProcess.on( 'error', ( err ) => {
 		console.log( chalk.yellow( '[babel] ' ) + chalk.red( err.toString() ) );
 	} );
 
 	let interval;
 	await new Promise( ( res ) => {
-		child.on( 'exit', ( code ) => {
+		buildProcess.on( 'exit', ( code ) => {
 			if ( code !== 0 ) {
 				console.log( chalk.red( `Build script exited with code ${code}` ) );
 			}
@@ -61,7 +69,7 @@ async function rebuild() {
 
 		interval = setInterval( () => {
 			if ( sinceDone != null && Date.now() - sinceDone > 2000 ) {
-				child.kill( 'SIGKILL' );
+				buildProcess.kill( 'SIGKILL' );
 				res();
 			}
 		}, 10 );

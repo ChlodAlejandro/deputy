@@ -9,7 +9,7 @@ import unwrapWidget from '../util/unwrapWidget';
 import DeputyLoadingDots from './DeputyLoadingDots';
 import DeputyContributionSurveyRevision from './DeputyContributionSurveyRevision';
 import { ContributionSurveyRevision } from '../models/ContributionSurveyRevision';
-import DeputyFinishedContributionSurveyRow from './row/DeputyUnfinishedContributionSurveyRow';
+import DeputyFinishedContributionSurveyRow from './DeputyUnfinishedContributionSurveyRow';
 import classMix from '../util/classMix';
 
 /**
@@ -41,6 +41,10 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 * The "LI" element that this row was rendered into by MediaWiki.
 	 */
 	originalElement?: HTMLLIElement;
+	/**
+	 * Original wikitext of this element.
+	 */
+	originalWikitext: string;
 	/**
 	 * The contribution survey row data
 	 */
@@ -86,6 +90,14 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	statusDropdownOptions: Map<ContributionSurveyRowStatus, any>;
 
 	/**
+	 * Special boolean that gets set to true if the supposed data from `this.wikitext`
+	 * should  not be trusted. This is usually due to UI element failures or network
+	 * issues that cause the revision list to be loaded improperly (or to be not
+	 * loaded at all). `this.wikitext` will return the original wikitext, if capable.
+	 */
+	broken: boolean;
+
+	/**
 	 * @return `true` if:
 	 *  (a) this row was initially finished (`this.finished`) AND
 	 *  (b.1) this row's status changed OR
@@ -126,6 +138,10 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 * @return Wikitext
 	 */
 	get wikitext(): string {
+		if ( this.broken ) {
+			return this.originalWikitext;
+		}
+
 		if ( this.wasFinished == null ) {
 			console.warn(
 				'Could not determine if this is an originally-finished or ' +
@@ -224,15 +240,18 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 *
 	 * @param row The contribution survey row data
 	 * @param originalElement
+	 * @param originalWikitext
 	 * @param section The section that this row belongs to
 	 */
 	constructor(
 		row: ContributionSurveyRow,
 		originalElement: HTMLLIElement,
+		originalWikitext: string,
 		section: DeputyContributionSurveySection
 	) {
 		this.row = row;
 		this.originalElement = originalElement;
+		this.originalWikitext = originalWikitext;
 		this.section = section;
 	}
 
@@ -240,13 +259,22 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 * Load the revision data in and change the UI element respectively.
 	 */
 	async loadData() {
-		const diffs = await this.row.getDiffs();
-		this.wasFinished = this.row.completed;
+		try {
+			const diffs = await this.row.getDiffs();
 
-		if ( this.row.completed ) {
-			this.renderRow( diffs, this.renderFinished() );
-		} else {
-			this.renderRow( diffs, this.renderUnfinished( diffs ) );
+			this.wasFinished = this.row.completed;
+
+			if ( this.row.completed ) {
+				this.renderRow( diffs, this.renderFinished() );
+			} else {
+				this.renderRow( diffs, this.renderUnfinished( diffs ) );
+			}
+		} catch ( e ) {
+			this.broken = true;
+			this.renderRow( null, new OO.ui.MessageBox( {
+				type: 'error',
+				label: mw.message( 'deputy.session.row.error', e.message ).text()
+			} ) );
 		}
 	}
 
@@ -511,7 +539,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 * @return The head of the row as an element
 	 */
 	renderHead(
-		diffs: Map<number, ContributionSurveyRevision>,
+		diffs: Map<number, ContributionSurveyRevision> | null,
 		contentContainer: JSX.Element
 	): JSX.Element {
 		const possibleStatus = this.row.status;
@@ -550,7 +578,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 					],
 					selected: possibleStatus === +status,
 					disabled: +status === ContributionSurveyRowStatus.Unfinished &&
-						diffs.size === 0
+						diffs && diffs.size === 0
 				} );
 				this.statusDropdownOptions.set( +status, option );
 			}
@@ -652,9 +680,9 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			>
 				{ this.row.title.getPrefixedText() }
 			</a>
-			{ this.renderDetails( diffs ) }
+			{ diffs && this.renderDetails( diffs ) }
 			{ this.renderLinks() }
-			{ !this.wasFinished && unwrapWidget( checkAll ) }
+			{ !this.wasFinished && diffs && diffs.size > 0 && unwrapWidget( checkAll ) }
 			{ !contentContainer.classList.contains( 'dp-cs-row-content-empty' ) &&
 				unwrapWidget( contentToggle ) }
 		</div>;
@@ -665,7 +693,10 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 * @param diffs
 	 * @param content
 	 */
-	renderRow( diffs: Map<number, ContributionSurveyRevision>, content: ComponentChild ): void {
+	renderRow(
+		diffs: Map<number, ContributionSurveyRevision>,
+		content: ComponentChild
+	): void {
 		const contentContainer = <div
 			class={classMix( [
 				'dp-cs-row-content',

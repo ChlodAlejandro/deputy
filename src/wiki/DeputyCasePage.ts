@@ -1,5 +1,6 @@
 import normalizeTitle from '../util/normalizeTitle';
 import DeputyCasePageWikitext from './DeputyCasePageWikitext';
+import sectionHeadingName from '../util/sectionHeadingName';
 
 export type ContributionSurveyHeading = HTMLHeadingElement;
 
@@ -88,7 +89,7 @@ export default class DeputyCasePage {
 			'casePageCache',
 			pageId ?? window.deputy.currentPageId
 		);
-		if ( cachedInfo !== null ) {
+		if ( cachedInfo != null ) {
 			return new DeputyCasePage(
 				pageId,
 				title,
@@ -165,9 +166,7 @@ export default class DeputyCasePage {
 		// done by `findContributionSurveyHeadings`
 		return this.findContributionSurveyHeadings()
 			.find(
-				( v ) => (
-					this.parsoid ? v : v.querySelector<HTMLElement>( '.mw-headline' )
-				).innerText === sectionName
+				( v ) => sectionHeadingName( v ) === sectionName
 			);
 	}
 
@@ -228,6 +227,13 @@ export default class DeputyCasePage {
 	}
 
 	/**
+	 * Check if this page is cached.
+	 */
+	async isCached(): Promise<boolean> {
+		return await window.deputy.storage.db.get( 'casePageCache', this.pageId ) != null;
+	}
+
+	/**
 	 * Saves the current page to the IDB page cache.
 	 */
 	async saveToCache(): Promise<void> {
@@ -262,7 +268,7 @@ export default class DeputyCasePage {
 	 */
 	async addActiveSection( section: string ): Promise<void> {
 		const lastActiveSection = this.lastActiveSections.indexOf( section );
-		if ( lastActiveSection == null ) {
+		if ( lastActiveSection === -1 ) {
 			this.lastActiveSections.push( section );
 			await this.saveToCache();
 		}
@@ -276,7 +282,7 @@ export default class DeputyCasePage {
 	 */
 	async removeActiveSection( section: string ): Promise<void> {
 		const lastActiveSection = this.lastActiveSections.indexOf( section );
-		if ( lastActiveSection == null ) {
+		if ( lastActiveSection !== -1 ) {
 			this.lastActiveSections.splice( lastActiveSection, 1 );
 			await this.saveToCache();
 		}

@@ -57,7 +57,7 @@
 /*
 ===============================================================================
 
-     DEPUTY SESSION START LINK (DeputyCCISessionStartLink)
+     DEPUTY ENTRY POINTS (DeputyCCISessionStartLink, etc.)
 
 ===============================================================================
 */
@@ -68,7 +68,6 @@
     vertical-align: baseline;
     line-height: 1em;
 }
-
 
 .deputy.dp-sessionStarter::before {
     content: '\200B';
@@ -84,6 +83,34 @@
 .client-js .deputy.dp-sessionStarter .dp-sessionStarter-bracket:not(:first-of-type) {
     margin-left: 0.25em;
     color:#54595d
+}
+
+.dp-cs-session-continue {
+    margin-top: 8px;
+}
+
+.dp-cs-section-add {
+    position: absolute;
+    top: 0;
+    /* -1.6em derived from MediaWiki list margins. */
+    left: -1.6em;
+    width: calc(100% + 1.6em);
+    height: 100%;
+
+    background-color: rgba(255, 255, 255, 75%);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dp-cs-section-add .dp-cs-section-addButton {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.dp-cs-section-add:hover .dp-cs-section-addButton {
+    opacity: 1;
 }
 
 /*
