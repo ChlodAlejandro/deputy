@@ -5,7 +5,7 @@
  */
 export default function ( from: number, to?: number ): string {
 	const url = new URL( window.location.href );
-	url.pathname = mw.config.get( 'wgScript' );
+	url.pathname = mw.util.wikiScript( 'index' );
 	const searchParams = url.searchParams;
 	for ( const key of Array.from( searchParams.keys() ) ) {
 		searchParams.delete( key );

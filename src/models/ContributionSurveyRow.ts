@@ -1,5 +1,6 @@
 import cloneRegex from '../util/cloneRegex';
 import { ContributionSurveyRevision } from './ContributionSurveyRevision';
+import DeputyCasePage from '../wiki/DeputyCasePage';
 
 export enum ContributionSurveyRowStatus {
 	// The row has not been processed yet.
@@ -77,6 +78,10 @@ export default class ContributionSurveyRow {
 	}
 
 	/**
+	 * The case page of this row.
+	 */
+	casePage: DeputyCasePage;
+	/**
 	 * The original wikitext of the row.
 	 */
 	wikitext: string;
@@ -133,11 +138,13 @@ export default class ContributionSurveyRow {
 	/**
 	 * Creates a new contribution survey row from MediaWiki parser output.
 	 *
+	 * @param casePage The case page of this row
 	 * @param wikitext The wikitext of the row
 	 */
-	constructor( wikitext: string ) {
+	constructor( casePage: DeputyCasePage, wikitext: string ) {
 		const rowExec = cloneRegex( ContributionSurveyRow.rowWikitextRegex ).exec( wikitext );
 
+		this.casePage = casePage;
 		this.wikitext = wikitext;
 		this.title = new mw.Title( rowExec[ 1 ] );
 		this.extras = rowExec[ 2 ];
@@ -229,7 +236,7 @@ export default class ContributionSurveyRow {
 				}
 			}
 			return acc;
-		}, [ 'tag-list-wrapper' ] );
+		}, [ 'list-wrapper' ] );
 		await window.deputy.wiki.loadMessagesIfMissing(
 			tags.map( ( v ) => 'tag-' + v ), {
 				amenableparser: true

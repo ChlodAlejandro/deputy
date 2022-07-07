@@ -35,6 +35,7 @@
     "deputy.session.row.details.edits": "{{PLURAL:$1|$1 edit|{{FORMATNUM:$1}} edits}}",
     "deputy.session.row.content.open": "Expand additional details",
     "deputy.session.row.content.close": "Collapse additional details",
+    "deputy.session.row.unfinishedWarning": "A assessment was given but not all revisions of the page have been assessed. The assessment will not be saved on the case page until all revisions are marked as assessed, but will be saved locally (on your browser) for later.",
     "deputy.session.row.talk": "Open the talk page",
     "deputy.session.row.edit": "Edit this page",
     "deputy.session.row.history": "Open page history",

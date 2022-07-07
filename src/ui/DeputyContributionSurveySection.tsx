@@ -213,7 +213,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 
 			let rowElement;
 			if ( line.startsWith( '*' ) ) {
-				const csr = new ContributionSurveyRow( line );
+				const csr = new ContributionSurveyRow( this.casePage, line );
 				rowElement = new DeputyContributionSurveyRow(
 					csr, rowElements[ csr.title.getPrefixedText() ], line, this
 				);

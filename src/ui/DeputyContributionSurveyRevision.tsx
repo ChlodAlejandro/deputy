@@ -106,13 +106,17 @@ export default class DeputyContributionSurveyRevision
 				} title="Difference with latest revision" target="_blank">
 					{ mw.message( 'deputy.session.revision.cur' ).text() }
 				</a></span>
-				<span><a rel="noopener" href={
+				<span>{
 					!this.revision.parentid ?
-						null :
-						getRevisionDiffURL( this.revision.parentid, this.revision.revid )
-				} title="Difference with preceding revision" target="_blank">
-					{ mw.message( 'deputy.session.revision.prev' ).text() }
-				</a></span>
+						mw.message( 'deputy.session.revision.prev' ).text() :
+						<a rel="noopener" href={
+							!this.revision.parentid ?
+								null :
+								getRevisionDiffURL( this.revision.parentid, this.revision.revid )
+						} title="Difference with preceding revision" target="_blank">
+							{ mw.message( 'deputy.session.revision.prev' ).text() }
+						</a>
+				}</span>
 			</span>
 			<span class="mw-changeslist-time">{ formattedTime }</span>
 			<span class="mw-changeslist-date">{ formattedTime }{

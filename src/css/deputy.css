@@ -200,6 +200,10 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
     display: none !important;
 }
 
+.dp-cs-row-unfinishedWarning {
+    margin-bottom: 8px;
+}
+
 .dp-cs-row-closeComments:not(:last-child) {
     margin-bottom: 8px;
 }

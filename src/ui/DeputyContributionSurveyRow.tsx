@@ -11,6 +11,7 @@ import DeputyContributionSurveyRevision from './DeputyContributionSurveyRevision
 import { ContributionSurveyRevision } from '../models/ContributionSurveyRevision';
 import DeputyFinishedContributionSurveyRow from './DeputyUnfinishedContributionSurveyRow';
 import classMix from '../util/classMix';
+import { DeputyDiffStatus } from '../DeputyStorage';
 
 /**
  * A UI element used for denoting the following aspects of a page in the contribution
@@ -63,13 +64,17 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 */
 	element: HTMLElement;
 	/**
-	 * TextInputWidget for closing comments.
+	 * TextInputWidget for closing comments. Used by both `renderFinished` and `renderUnfinished`.
 	 */
 	commentsTextInput: any;
 	/**
 	 * FieldLayout for `commentsTextInput`. If not set, this field is not rendered.
 	 */
 	commentsField: any;
+	/**
+	 * Message box displayed when a user has set a status but not yet cleared all diffs.
+	 */
+	unfinishedMessageBox: any;
 	/**
 	 * The revisions associated with this element. Only populated by `renderUnfinished`.
 	 */
@@ -98,15 +103,33 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	broken: boolean;
 
 	/**
+	 * A function (throttled with `mw.util.throttle`) that saves the current row's status
+	 * and comments to DeputyStorage to recover unsaved data or data that could not be saved
+	 * (e.g. status when some revisions remain unassessed).
+	 */
+	statusAutosaveFunction: () => void;
+
+	/**
 	 * @return `true` if:
-	 *  (a) this row was initially finished (`this.finished`) AND
-	 *  (b.1) this row's status changed OR
-	 *  (b.2) this row's comment changed
+	 *  (a) this row's status changed OR
+	 *  (b) this row's comment changed
+	 *
+	 *  This does not check if the revisions themselves were modified.
+	 */
+	get statusModified(): boolean {
+		return ( this.status !== this.row.originalStatus ||
+				this.comments !== this.row.getActualComment() );
+	}
+
+	/**
+	 * @return `true` if:
+	 *  (a) `statusModified` is true OR
+	 *  (b) diffs were marked as completed
+	 *
+	 *  This does not check if the revisions themselves were modified.
 	 */
 	get modified(): boolean {
-		return this.wasFinished &&
-			( this.status !== this.row.originalStatus ||
-			this.comments !== this.row.getActualComment() );
+		return this.statusModified || this.revisions.some( ( v ) => v.done );
 	}
 
 	/**
@@ -220,7 +243,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			};
 
 			if ( finished ) {
-				if ( this.modified ) {
+				if ( this.statusModified ) {
 					// Modified. Use user data.
 					useUserData();
 				} else {
@@ -268,10 +291,19 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 				this.renderRow( diffs, this.renderFinished() );
 			} else {
 				this.renderRow( diffs, this.renderUnfinished( diffs ) );
+
+				const savedStatus = await this.getSavedStatus();
+				if ( !this.wasFinished && savedStatus ) {
+					// An autosaved status exists. Let's use that.
+					this.commentsTextInput.setValue( savedStatus.comments );
+					this.statusDropdown.getMenu()
+						.selectItemByData( savedStatus.status );
+					this.refreshStatusDropdown();
+				}
 			}
 		} catch ( e ) {
 			this.broken = true;
-			this.renderRow( null, new OO.ui.MessageBox( {
+			this.renderRow( null, new OO.ui.MessageWidget( {
 				type: 'error',
 				label: mw.message( 'deputy.session.row.error', e.message ).text()
 			} ) );
@@ -279,9 +311,26 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	}
 
 	/**
+	 * @return The hash used for autosave keys
+	 */
+	get autosaveHash(): string {
+		return `CASE--${
+			this.row.casePage.title.getPrefixedDb()
+		}+PAGE--${
+			this.row.title.getPrefixedDb()
+		}`;
+	}
+
+	/**
 	 * Perform UI updates and recheck possible values.
 	 */
-	recheckOptions(): void {
+	onUpdate(): void {
+		if ( this.statusAutosaveFunction == null ) {
+			this.statusAutosaveFunction = ( mw.util as any ).throttle( async () => {
+				await this.saveStatus();
+			}, 500 );
+		}
+
 		if ( this.revisions && this.statusDropdownOptions ) {
 			const uncheckedDiffs = this.revisions
 				.map( ( v ) => v.done )
@@ -300,9 +349,17 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 				this.statusDropdownOptions.get( ContributionSurveyRowStatus.Unfinished )
 					.setDisabled( false );
 			}
+
+			const unfinishedWithStatus = this.statusModified && uncheckedDiffs > 0;
+			if ( this.unfinishedMessageBox ) {
+				this.unfinishedMessageBox.toggle( unfinishedWithStatus );
+			}
+			if ( unfinishedWithStatus ) {
+				this.statusAutosaveFunction();
+			}
 		}
 
-		if ( this.modified && this.commentsField && this.finishedRow ) {
+		if ( this.wasFinished && this.statusModified && this.commentsField && this.finishedRow ) {
 			this.commentsField.setNotices(
 				{
 					true: [ mw.message( 'deputy.session.row.close.sigFound' ).text() ],
@@ -314,6 +371,29 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			this.commentsField.setNotices( [] );
 		}
 
+	}
+
+	/**
+	 * Gets the database-saved status. Used for getting the autosaved values of the status and
+	 * closing comments.
+	 */
+	async getSavedStatus(): Promise<DeputyDiffStatus> {
+		return await window.deputy.storage.db.get( 'diffStatus', this.autosaveHash );
+	}
+
+	/**
+	 * Save the status and comment for this row to DeputyStorage.
+	 */
+	async saveStatus(): Promise<void> {
+		if ( this.statusModified ) {
+			await window.deputy.storage.db.put( 'diffStatus', {
+				hash: this.autosaveHash,
+				casePageID: this.row.casePage.pageId,
+				page: this.row.title.getPrefixedText(),
+				status: this.status,
+				comments: this.comments
+			} );
+		}
 	}
 
 	/**
@@ -335,9 +415,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		} );
 
 		this.commentsTextInput.on( 'change', () => {
-			// TODO: debug
-			console.log( this.wikitext );
-			this.recheckOptions();
+			this.onUpdate();
 		} );
 
 		return <div class="dp-cs-row-finished">
@@ -362,16 +440,22 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		const revisionList = document.createElement( 'div' );
 		revisionList.classList.add( 'dp-cs-row-revisions' );
 
+		this.unfinishedMessageBox = new OO.ui.MessageWidget( {
+			classes: [ 'dp-cs-row-unfinishedWarning' ],
+			type: 'warn',
+			label: mw.message( 'deputy.session.row.unfinishedWarning' ).text()
+		} );
+		this.unfinishedMessageBox.toggle( false );
+		revisionList.appendChild( unwrapWidget( this.unfinishedMessageBox ) );
+
 		this.commentsTextInput = new OO.ui.TextInputWidget( {
 			classes: [ 'dp-cs-row-closeComments' ],
 			placeholder: mw.message( 'deputy.session.row.closeComments' ).text()
 		} );
 		revisionList.appendChild( unwrapWidget( this.commentsTextInput ) );
 
-		// TODO: debug
 		this.commentsTextInput.on( 'change', () => {
-			console.log( this.wikitext );
-			this.recheckOptions();
+			this.onUpdate();
 		} );
 
 		for ( const revision of diffs.values() ) {
@@ -383,7 +467,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 				( done: boolean, data: ContributionSurveyRevision ) => {
 					console.log( done, data );
 					// Recheck options first to avoid "Unfinished" being selected when done.
-					this.recheckOptions();
+					this.onUpdate();
 					console.log( this.wikitext );
 				}
 			);
@@ -524,9 +608,9 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			// Silent failure
 			return;
 		}
+
 		// Dropdown has closed, option must have been selected.
 		this.status = this.statusDropdown.getMenu().findSelectedItem().getData();
-		console.log( 'dropdown change', this.status );
 		const icon = DeputyContributionSurveyRow.menuOptionIcon[ this.status ];
 		this.statusDropdown.setIcon( icon === false ? null : icon );
 	}
@@ -598,7 +682,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			if ( !visible ) {
 				this.refreshStatusDropdown();
 			}
-			this.recheckOptions();
+			this.onUpdate();
 		} );
 		// Make the menu larger than the actual dropdown.
 		this.statusDropdown.getMenu().on( 'ready', () => {
@@ -623,7 +707,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 						this.revisions.forEach( ( revision ) => {
 							revision.done = true;
 						} );
-						this.recheckOptions();
+						this.onUpdate();
 					}
 				}
 			);

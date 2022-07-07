@@ -1,5 +1,6 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
 import { ExpandedRevisionData } from './api/ExpandedRevisionData';
+import { ContributionSurveyRowStatus } from './models/ContributionSurveyRow';
 
 /**
  * General key-value store. Used for storing single-variable data
@@ -38,6 +39,20 @@ interface DeputyDiffCacheStore {
 	value: ExpandedRevisionData;
 }
 
+export interface DeputyDiffStatus {
+	hash: string,
+	casePageID: number,
+	page: string,
+	status: ContributionSurveyRowStatus,
+	comments: string
+}
+
+interface DeputyDiffStatusStore {
+	/* `hash` */
+	key: string;
+	value: DeputyDiffStatus;
+}
+
 interface DeputyTagCacheStore {
 	/* `key` */
 	key: string;
@@ -51,6 +66,7 @@ interface DeputyDatabase extends DBSchema {
 	keyval: DeputyKeyvalStore;
 	casePageCache: DeputyCasePageCacheStore;
 	diffCache: DeputyDiffCacheStore;
+	diffStatus: DeputyDiffStatusStore;
 	tagCache: DeputyTagCacheStore;
 }
 
@@ -83,6 +99,9 @@ export default class DeputyStorage {
 							db.createObjectStore( 'diffCache', {
 								keyPath: 'revid'
 							} );
+							db.createObjectStore( 'diffStatus', {
+								keyPath: 'hash'
+							} );
 							db.createObjectStore( 'tagCache', {
 								keyPath: 'key'
 							} );
@@ -101,10 +120,7 @@ export default class DeputyStorage {
 			}
 		);
 
-		// 7 days
-		if ( Date.now() - ( await this.getKV( 'tagCacheAge' ) ?? 0 ) > 6048e5 ) {
-			await this.getTags();
-		}
+		await this.getTags();
 	}
 
 	/**
@@ -137,9 +153,14 @@ export default class DeputyStorage {
 	 * Get all MediaWiki tags and store them in the `tagCache` store.
 	 */
 	async getTags(): Promise<void> {
+		this.tagCache = {};
 		const tagCache = await window.deputy.storage.db.getAll( 'tagCache' );
 
-		if ( tagCache.length === 0 ) {
+		if (
+			tagCache.length === 0 ||
+			// 7 days
+			Date.now() - ( await this.getKV( 'tagCacheAge' ) ?? 0 ) > 6048e5
+		) {
 			await window.deputy.wiki.getMessages( [ '*' ], {
 				amenableparser: true,
 				amincludelocal: true,
