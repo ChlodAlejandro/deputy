@@ -21,7 +21,7 @@ export default async function ( page: mw.Title | string, sectionName: string ) {
 		.find( ( section ) => section.line === sectionName );
 
 	if ( indexSection ) {
-		return +indexSection.index;
+		return isNaN( +indexSection.index ) ? null : +indexSection.index;
 	} else {
 		return null;
 	}

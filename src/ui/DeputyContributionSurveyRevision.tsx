@@ -10,31 +10,33 @@ import unwrapWidget from '../util/unwrapWidget';
 export default class DeputyContributionSurveyRevision
 	extends OO.EventEmitter implements DeputyUIElement {
 
-	/**
-	 * @return `true` the current revision has been checked by the user or `false` if not.
-	 */
-	get done(): boolean {
-		return this.doneCheckbox?.isSelected() ?? false;
-	}
-	/**
-	 * Set the value of the done checkbox.
-	 *
-	 * @param value The new value
-	 */
-	set done( value: boolean ) {
-		this.doneCheckbox?.setSelected( value );
-	}
+	disabled: boolean;
 	/**
 	 * The revision that this UI element handles.
 	 */
 	revision: ContributionSurveyRevision;
 
 	/**
+	 * @return `true` the current revision has been checked by the user or `false` if not.
+	 */
+	get completed(): boolean {
+		return this.completedCheckbox?.isSelected() ?? false;
+	}
+	/**
+	 * Set the value of the completed checkbox.
+	 *
+	 * @param value The new value
+	 */
+	set completed( value: boolean ) {
+		this.completedCheckbox?.setSelected( value );
+	}
+
+	/**
 	 * The checkbox to indicate that a diff has been checked by the user.
 	 *
 	 * @private
 	 */
-	private doneCheckbox: any;
+	private completedCheckbox: any;
 
 	/**
 	 * @param revision
@@ -86,11 +88,11 @@ export default class DeputyContributionSurveyRevision
 			dangerouslySetInnerHTML={this.revision.parsedcomment}
 		/>;
 
-		this.doneCheckbox = new OO.ui.CheckboxInputWidget( {
+		this.completedCheckbox = new OO.ui.CheckboxInputWidget( {
 			label: mw.message( 'deputy.session.revision.assessed' ).text()
 		} );
 
-		this.doneCheckbox.on( 'change', ( checked: boolean ) => {
+		this.completedCheckbox.on( 'change', ( checked: boolean ) => {
 			this.emit( 'update', checked, this.revision );
 		} );
 
@@ -99,7 +101,7 @@ export default class DeputyContributionSurveyRevision
 		return <div
 			class={ ( this.revision.tags ?? [] ).map( ( v ) => 'mw-tag-' + v ).join( ' ' ) }
 		>
-			{ unwrapWidget( this.doneCheckbox ) }
+			{ unwrapWidget( this.completedCheckbox ) }
 			<span class="mw-changeslist-links">
 				<span><a rel="noopener" href={
 					getRevisionDiffURL( this.revision.revid, 0 )
@@ -208,6 +210,17 @@ export default class DeputyContributionSurveyRevision
 				</span>
 			}
 		</div> as HTMLElement;
+	}
+
+	/**
+	 * Sets the disabled state of this section.
+	 *
+	 * @param disabled
+	 */
+	setDisabled( disabled: boolean ) {
+		this.completedCheckbox?.setDisabled( disabled );
+
+		this.disabled = disabled;
 	}
 
 }

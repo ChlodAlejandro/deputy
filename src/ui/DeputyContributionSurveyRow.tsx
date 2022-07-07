@@ -34,6 +34,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		[ ContributionSurveyRowStatus.Missing ]: 'help'
 	};
 
+	disabled: boolean;
 	/**
 	 * The section that this row belongs to
 	 */
@@ -71,6 +72,10 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 * FieldLayout for `commentsTextInput`. If not set, this field is not rendered.
 	 */
 	commentsField: any;
+	/**
+	 * Button that checks all revisions of this row
+	 */
+	checkAllButton: any;
 	/**
 	 * Message box displayed when a user has set a status but not yet cleared all diffs.
 	 */
@@ -129,7 +134,12 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 *  This does not check if the revisions themselves were modified.
 	 */
 	get modified(): boolean {
-		return this.statusModified || this.revisions.some( ( v ) => v.done );
+		return this.statusModified ||
+			// This is assumed as a modification, since all diffs are automatically removed
+			// from the page whenever marked as complete. Therefore, there can never be a
+			// situation where a row's revisions have been modified but there are no completed
+			// revisions.
+			this.revisions?.some( ( v ) => v.completed );
 	}
 
 	/**
@@ -145,6 +155,18 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 */
 	set status( status: ContributionSurveyRowStatus ) {
 		this.row.status = status;
+	}
+
+	/**
+	 * @return `true` if this row has all diffs marked as completed.
+	 */
+	get completed(): boolean {
+		if ( this.revisions == null ) {
+			return true;
+		}
+
+		return this.revisions
+			.every( ( v ) => v.completed );
 	}
 
 	/**
@@ -192,7 +214,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		result += ': ';
 
 		const unfinishedDiffs = this.revisions?.filter(
-			( v ) => !v.done
+			( v ) => !v.completed
 		) ?? [];
 
 		if ( unfinishedDiffs.length > 0 ) {
@@ -299,6 +321,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 					this.statusDropdown.getMenu()
 						.selectItemByData( savedStatus.status );
 					this.refreshStatusDropdown();
+					this.onUpdate();
 				}
 			}
 		} catch ( e ) {
@@ -332,12 +355,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		}
 
 		if ( this.revisions && this.statusDropdownOptions ) {
-			const uncheckedDiffs = this.revisions
-				.map( ( v ) => v.done )
-				.filter( ( v ) => !v )
-				.length;
-
-			if ( uncheckedDiffs === 0 ) {
+			if ( this.completed ) {
 				this.statusDropdownOptions.get( ContributionSurveyRowStatus.Unfinished )
 					.setDisabled( true );
 				if ( this.status === ContributionSurveyRowStatus.Unfinished ) {
@@ -350,13 +368,11 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 					.setDisabled( false );
 			}
 
-			const unfinishedWithStatus = this.statusModified && uncheckedDiffs > 0;
+			const unfinishedWithStatus = this.statusModified && !this.completed;
 			if ( this.unfinishedMessageBox ) {
 				this.unfinishedMessageBox.toggle( unfinishedWithStatus );
 			}
-			if ( unfinishedWithStatus ) {
-				this.statusAutosaveFunction();
-			}
+			this.statusAutosaveFunction();
 		}
 
 		if ( this.wasFinished && this.statusModified && this.commentsField && this.finishedRow ) {
@@ -609,7 +625,6 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			return;
 		}
 
-		// Dropdown has closed, option must have been selected.
 		this.status = this.statusDropdown.getMenu().findSelectedItem().getData();
 		const icon = DeputyContributionSurveyRow.menuOptionIcon[ this.status ];
 		this.statusDropdown.setIcon( icon === false ? null : icon );
@@ -691,21 +706,21 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		} );
 
 		// Build mass checker
-		const checkAll = new OO.ui.ButtonWidget( {
+		this.checkAllButton = new OO.ui.ButtonWidget( {
 			icon: 'checkAll',
 			label: mw.message( 'deputy.session.row.checkAll' ).text(),
 			title: mw.message( 'deputy.session.row.checkAll' ).text(),
 			invisibleLabel: true,
 			framed: false
 		} );
-		checkAll.on( 'click', () => {
+		this.checkAllButton.on( 'click', () => {
 			OO.ui.confirm(
 				mw.message( 'deputy.session.row.checkAll.confirm' ).text()
 			).done(
 				( confirmed: boolean ) => {
 					if ( confirmed ) {
 						this.revisions.forEach( ( revision ) => {
-							revision.done = true;
+							revision.completed = true;
 						} );
 						this.onUpdate();
 					}
@@ -766,7 +781,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			</a>
 			{ diffs && this.renderDetails( diffs ) }
 			{ this.renderLinks() }
-			{ !this.wasFinished && diffs && diffs.size > 0 && unwrapWidget( checkAll ) }
+			{ !this.wasFinished && diffs && diffs.size > 0 && unwrapWidget( this.checkAllButton ) }
 			{ !contentContainer.classList.contains( 'dp-cs-row-content-empty' ) &&
 				unwrapWidget( contentToggle ) }
 		</div>;
@@ -808,6 +823,20 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		this.loadData();
 
 		return this.rootElement;
+	}
+
+	/**
+	 * Sets the disabled state of this section.
+	 *
+	 * @param disabled
+	 */
+	setDisabled( disabled: boolean ): void {
+		this.statusDropdown?.setDisabled( disabled );
+		this.commentsTextInput?.setDisabled( disabled );
+		this.checkAllButton?.setDisabled( disabled );
+		this.revisions?.forEach( ( revision ) => revision.setDisabled( disabled ) );
+
+		this.disabled = disabled;
 	}
 
 }

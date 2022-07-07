@@ -1,6 +1,7 @@
 import normalizeTitle from '../util/normalizeTitle';
 import DeputyCasePageWikitext from './DeputyCasePageWikitext';
 import sectionHeadingName from '../util/sectionHeadingName';
+import getPageTitle from '../util/getPageTitle';
 
 export type ContributionSurveyHeading = HTMLHeadingElement;
 
@@ -89,7 +90,13 @@ export default class DeputyCasePage {
 			'casePageCache',
 			pageId ?? window.deputy.currentPageId
 		);
+
 		if ( cachedInfo != null ) {
+			if ( pageId != null ) {
+				// Title might be out of date. Recheck for safety.
+				title = await getPageTitle( pageId );
+			}
+
 			return new DeputyCasePage(
 				pageId,
 				title,

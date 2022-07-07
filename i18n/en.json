@@ -25,6 +25,9 @@
     "deputy.session.section.closeHelp": "Your signature will automatically be appended to your closing comments.",
     "deputy.session.section.closeWarn": "You have unsaved changes. Close the section without saving?",
 
+    "deputy.session.section.failed": "Failed to save section",
+    "deputy.session.section.missingSection": "The target section is missing from the case page.",
+
     "deputy.session.row.status": "Current page status",
     "deputy.session.row.status.unfinished": "Unfinished",
     "deputy.session.row.status.unknown": "Unknown",

@@ -120,6 +120,30 @@
 
 ===============================================================================
 */
+.dp-cs-section-footer {
+    position: relative;
+    padding: 8px;
+}
+
+.dp-cs-section-progress {
+    margin-top: 8px;
+    max-height: 0;
+    transition: max-height 0.2s ease-in-out;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.dp-cs-section-progress.active {
+    max-height: 50px;
+}
+
+.dp-cs-section-progress .oo-ui-progressBarWidget {
+    flex: 1
+}
+
 .dp-cs-section-closingCommentsField {
     margin-top: 8px;
 }

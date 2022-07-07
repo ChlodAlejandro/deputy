@@ -3,17 +3,15 @@ import normalizeTitle from './normalizeTitle';
 /**
  * Get the content of a page on-wiki.
  *
- * @param api
  * @param page
  * @param extraOptions
  * @return A promise resolving to the page content
  */
 export default function (
-	api: mw.Api,
 	page: mw.Title|string|number,
 	extraOptions: Record<string, any> = {}
 ): PromiseLike<string & { contentFormat: string }> {
-	return api.get( {
+	return window.deputy.wiki.get( {
 		action: 'query',
 		prop: 'revisions',
 		...( typeof page === 'number' ? {

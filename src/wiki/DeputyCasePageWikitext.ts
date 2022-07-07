@@ -30,7 +30,7 @@ export default class DeputyCasePageWikitext {
 	 */
 	async getWikitext(): Promise<DeputyCasePageWikitext['content']> {
 		return this.content ??
-			( this.content = await getPageContent( window.deputy.wiki, this.casePage.pageId ) );
+			( this.content = await getPageContent( this.casePage.pageId ) );
 	}
 
 	/**
@@ -43,7 +43,6 @@ export default class DeputyCasePageWikitext {
 	async getSectionWikitext( section: string | number ): Promise<string> {
 		if ( typeof section === 'number' ) {
 			return getPageContent(
-				window.deputy.wiki,
 				this.casePage.pageId,
 				{ rvsection: section }
 			).then( ( v ) => v.toString() );

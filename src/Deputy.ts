@@ -89,7 +89,10 @@ class Deputy {
 			parameters: {
 				format: 'json',
 				formatversion: 2,
-				utf8: 1
+				utf8: 1,
+				errorformat: 'html',
+				errorlang: mw.config.get( 'wgUserLanguage' ),
+				errorsuselocal: true
 			}
 		} );
 
@@ -105,7 +108,7 @@ class Deputy {
 				}
 				stringsLoaded = true;
 			} else {
-				const langFile = await getPageContent( this.wiki, window.deputyLang );
+				const langFile = await getPageContent( window.deputyLang );
 				try {
 					if ( langFile.contentFormat !== 'application/json' ) {
 						// Anti-pattern, but JSON.parse throws so this catches both of those.

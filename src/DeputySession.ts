@@ -215,7 +215,8 @@ export default class DeputySession {
 	}
 
 	/**
-	 * Adds the "start working on this section" overlay and button to a given section.
+	 * Adds the "start working on this section" or "reload page" overlay and button
+	 * to a given section.
 	 *
 	 * @param casePage
 	 * @param heading
@@ -299,7 +300,7 @@ export default class DeputySession {
 	async closeSession( casePage: DeputyCasePage ): Promise<void> {
 		if ( this.sections ) {
 			for ( const section of this.sections ) {
-				await section.close();
+				section.close();
 			}
 		}
 
