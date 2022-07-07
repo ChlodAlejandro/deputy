@@ -52,7 +52,10 @@ export default class DeputySession {
 		// Check if there is an active session.
 		this.session = await this.getSession();
 		if ( this.session ) {
-			if ( this.session.casePageId === window.deputy.currentPageId ) {
+			if ( this.session.caseSections.length === 0 ) {
+				await this.setSession( null );
+				await this.init();
+			} else if ( this.session.casePageId === window.deputy.currentPageId ) {
 				const casePage = await DeputyCasePage.build();
 				await this.initSessionInterface( casePage );
 			} else {

@@ -11,6 +11,7 @@ import sectionHeadingName from '../util/sectionHeadingName';
 import getSectionId from '../util/getSectionId';
 import getSectionHTML from '../util/getSectionHTML';
 import removeElement from '../util/removeElement';
+import decorateEditSummary from '../util/decorateEditSummary';
 
 /**
  * The contribution survey section UI element. This includes a list of revisions
@@ -131,7 +132,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			for ( const row of modified ) {
 				if ( !row.wasFinished ) {
 					worked++;
-					assessed += row.revisions.find( ( rev ) => rev.completed ).length;
+					assessed += row.revisions?.find( ( rev ) => rev.completed ).length;
 					if ( row.completed ) {
 						finished++;
 					}
@@ -185,7 +186,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 				this.casePage,
 				this.headingName,
 				collapsible != null,
-				collapsible?.querySelector<HTMLElement>( '.mw-collapsible-toggle + div' ).innerText,
+				collapsible?.querySelector<HTMLElement>( 'th > div' ).innerText,
 				wikitext ?? await this.casePage.wikitext.getSectionWikitext( this.headingName )
 			)
 		);
@@ -294,7 +295,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			pageid: this.casePage.pageId,
 			section: sectionId,
 			text: this.wikitext,
-			summary: this.editComment
+			summary: decorateEditSummary( this.editComment )
 		} ).then( function ( data ) {
 			return data;
 		}, function ( code, data ) {
