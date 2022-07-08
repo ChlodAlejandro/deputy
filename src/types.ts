@@ -64,6 +64,7 @@ declare global {
 		EventEmitter(): OOEventEmitter;
 		ui: any & {
 			confirm( message: string, options?: any ): JQuery.Promise<boolean>;
+			alert( message: string, options?: any ): JQuery.Promise<boolean>;
 			Process: Process;
 		}
 	};

@@ -18,6 +18,8 @@
     "deputy.session.continue.button": "Continue session",
     "deputy.session.continue.head": "You last worked on this page on $1.",
     "deputy.session.continue.help": "Continue working on \"$1\" and pick up where you left off.",
+    "deputy.session.tabActive.head": "You are working on this case page from another tab.",
+    "deputy.session.tabActive.help": "Deputy can only run on one case page and tab at a time. Navigate to the other tab to continue working.",
     "deputy.session.add": "Start working on this section",
 
     "deputy.session.section.close": "Close section",
@@ -25,6 +27,7 @@
     "deputy.session.section.closeHelp": "Your signature will automatically be appended to your closing comments.",
     "deputy.session.section.closeWarn": "You have unsaved changes. Close the section without saving?",
 
+    "deputy.session.section.saved": "Section saved",
     "deputy.session.section.failed": "Failed to save section",
     "deputy.session.section.missingSection": "The target section is missing from the case page.",
 

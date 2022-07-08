@@ -243,7 +243,10 @@ export default class ContributionSurveyRow {
 			}
 		);
 
-		return this.diffs = revisionData;
+		// Sort from most bytes to least.
+		return this.diffs = new Map( [ ...revisionData.entries() ].sort(
+			( a, b ) => b[ 1 ].diffsize - a[ 1 ].diffsize
+		) );
 	}
 
 	/**

@@ -132,7 +132,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			for ( const row of modified ) {
 				if ( !row.wasFinished ) {
 					worked++;
-					assessed += row.revisions?.find( ( rev ) => rev.completed ).length;
+					assessed += row.revisions?.filter( ( rev ) => rev.completed ).length;
 					if ( row.completed ) {
 						finished++;
 					}
@@ -377,6 +377,10 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			const sectionId = await getSectionId( this.casePage.title, this.headingName );
 			await this.save( sectionId ).then( async ( result ) => {
 				if ( result ) {
+					mw.notify(
+						mw.message( 'deputy.session.section.saved' ).text()
+					);
+
 					// Rebuild the entire section to HTML, and then reopen.
 					const {
 						element, wikitext
@@ -406,6 +410,10 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 					oldHeading.insertAdjacentElement( 'afterend', this.render() );
 					removeElement( oldHeading );
 				}
+			}, ( error ) => {
+				console.error( error );
+				saveContainer.classList.remove( 'active' );
+				this.setDisabled( false );
 			} );
 
 			saveContainer.classList.remove( 'active' );
