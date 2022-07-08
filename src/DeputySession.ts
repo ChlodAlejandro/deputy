@@ -9,8 +9,8 @@ import removeElement from './util/removeElement';
 import DeputyCCISessionAddSection from './ui/DeputyCCISessionAddSection';
 import DeputyCCISessionTabActiveMessage from './ui/DeputyCCISessionTabActiveMessage';
 import {
-	DeputySessionRequestMessage,
-	LowLevelDeputyMessage
+	DeputyMessageEvent,
+	DeputySessionRequestMessage
 } from './DeputyCommunications';
 
 interface SessionInformation {
@@ -52,7 +52,7 @@ export default class DeputySession {
 	/**
 	 * Responder for session requests.
 	 */
-	readonly sessionRequestResponder = this.sendSessionRequest.bind( this );
+	readonly sessionRequestResponder = this.sendSessionResponse.bind( this );
 
 	/**
 	 * Initialize session-related information. If an active session was detected,
@@ -335,8 +335,8 @@ export default class DeputySession {
 	 *
 	 * @param event
 	 */
-	sendSessionRequest(
-		event: Event & { data: LowLevelDeputyMessage & DeputySessionRequestMessage }
+	sendSessionResponse(
+		event: DeputyMessageEvent<DeputySessionRequestMessage>
 	): void {
 		window.deputy.comms.reply(
 			event.data, {

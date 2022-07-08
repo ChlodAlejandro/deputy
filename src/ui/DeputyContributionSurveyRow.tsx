@@ -12,6 +12,9 @@ import { ContributionSurveyRevision } from '../models/ContributionSurveyRevision
 import DeputyFinishedContributionSurveyRow from './DeputyUnfinishedContributionSurveyRow';
 import classMix from '../util/classMix';
 import { DeputyDiffStatus } from '../DeputyStorage';
+import {
+	DeputyMessageEvent, DeputyPageStatusRequestMessage
+} from '../DeputyCommunications';
 
 /**
  * A UI element used for denoting the following aspects of a page in the contribution
@@ -106,6 +109,11 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 * loaded at all). `this.wikitext` will return the original wikitext, if capable.
 	 */
 	broken: boolean;
+
+	/**
+	 * Responder for session requests.
+	 */
+	readonly statusRequestResponder = this.sendStatusResponse.bind( this );
 
 	/**
 	 * A function (throttled with `mw.util.throttle`) that saves the current row's status
@@ -324,6 +332,10 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 					this.onUpdate();
 				}
 			}
+			window.deputy.comms.addEventListener(
+				'pageStatusRequest',
+				this.statusRequestResponder
+			);
 		} catch ( e ) {
 			this.broken = true;
 			this.renderRow( null, new OO.ui.MessageWidget( {
@@ -837,6 +849,30 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		this.revisions?.forEach( ( revision ) => revision.setDisabled( disabled ) );
 
 		this.disabled = disabled;
+	}
+
+	/**
+	 * Responds to a status request.
+	 *
+	 * @param event
+	 */
+	sendStatusResponse(
+		event: DeputyMessageEvent<DeputyPageStatusRequestMessage>
+	): void {
+		if (
+			event.data.caseId === this.section.casePage.pageId &&
+			event.data.page === this.row.title.getPrefixedText()
+		) {
+			window.deputy.comms.reply(
+				event.data, {
+					type: 'pageStatusResponse',
+					status: this.status,
+					revisionStatus: event.data.revision ? this.revisions.find(
+						( r ) => r.revision.revid === event.data.revision
+					)?.completed : undefined
+				}
+			);
+		}
 	}
 
 }

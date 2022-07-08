@@ -1,4 +1,5 @@
 import 'broadcastchannel-polyfill';
+import { ContributionSurveyRowStatus } from './models/ContributionSurveyRow';
 
 export interface DeputySessionRequestMessage {
 	type: 'sessionRequest';
@@ -20,13 +21,29 @@ export interface DeputySessionStartedMessage {
 	caseId: number;
 }
 
+export interface DeputyPageStatusRequestMessage {
+	type: 'pageStatusRequest',
+	caseId: number;
+	page: string;
+	revision?: number;
+}
+
+export interface DeputyPageStatusResponseMessage {
+	type: 'pageStatusResponse',
+	status: ContributionSurveyRowStatus
+	// Defined if a revision was given in the request.
+	revisionStatus?: boolean;
+}
+
 /**
  * A constant map of specific one-way Deputy message types and their respective
  * response messages.
  */
 const OneWayDeputyMessageMap = <const>{
 	sessionRequest: 'sessionResponse',
-	sessionResponse: 'sessionRequest'
+	sessionResponse: 'sessionRequest',
+	pageStatusRequest: 'pageStatusResponse',
+	pageStatusResponse: 'pageStatusRequest'
 };
 
 export type DeputyRequestMessage = DeputySessionRequestMessage;
@@ -35,7 +52,9 @@ export type DeputyMessage =
 	| DeputyRequestMessage
 	| DeputyResponseMessage
 	| DeputySessionClosedMessage
-	| DeputySessionStartedMessage;
+	| DeputySessionStartedMessage
+	| DeputyPageStatusRequestMessage
+	| DeputyPageStatusResponseMessage;
 export type LowLevelDeputyMessage = DeputyMessage & {
 	_deputy: true;
 	_deputyMessageId: string;
@@ -57,6 +76,10 @@ export type LowLevelResponseMessage<T extends OneWayDeputyMessage> = InboundDepu
 }
 export type ResponseMessage<T extends OneWayDeputyMessage> = DeputyMessage & {
 	type: typeof OneWayDeputyMessageMap[ T[ 'type' ] ];
+};
+
+export type DeputyMessageEvent<T extends DeputyMessage> = Event & {
+	data: LowLevelDeputyMessage & T
 };
 
 // TODO: debug

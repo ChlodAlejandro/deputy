@@ -242,6 +242,14 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	 */
 	close(): void {
 		swapElements( this.container, this.originalList );
+
+		// Detach listener to stop listening to events.
+		this.rows.forEach( ( row ) => {
+			window.deputy.comms.removeEventListener(
+				'pageStatusRequest',
+				row.statusRequestResponder
+			);
+		} );
 	}
 
 	/**
