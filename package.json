@@ -53,6 +53,7 @@
         "serve-handler": "^6.1.3",
         "shx": "^0.3.4",
         "ts-jest": "^28.0.5",
+        "tslib": "^2.4.0",
         "types-mediawiki": "github:wikimedia-gadgets/types-mediawiki",
         "typescript": "^4.7.4",
         "which": "^2.0.2"
