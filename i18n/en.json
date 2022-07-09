@@ -24,7 +24,7 @@
 
     "deputy.session.section.close": "Close section",
     "deputy.session.section.closeComments": "Closing comments",
-    "deputy.session.section.closeHelp": "Your signature will automatically be appended to your closing comments.",
+    "deputy.session.section.closeHelp": "Your signature will automatically be included.",
     "deputy.session.section.closeWarn": "You have unsaved changes. Close the section without saving?",
 
     "deputy.session.section.saved": "Section saved",

@@ -1,23 +1,27 @@
 import './types';
 import DeputyStorage from './DeputyStorage';
 import DeputyCommunications from './DeputyCommunications';
-import DeputySession from './DeputySession';
+import DeputySession from './session/DeputySession';
 import DeputyCasePage from './wiki/DeputyCasePage';
 import normalizeTitle from './util/normalizeTitle';
 import deputyEnglish from '../i18n/en.json';
 import DeputyAPI from './api/DeputyAPI';
 import sectionHeadingName from './util/sectionHeadingName';
 import ContributionSurveyRow from './models/ContributionSurveyRow';
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import deputyStyles from './css/deputy.css';
 import getPageContent from './util/getPageContent';
 import cloneRegex from './util/cloneRegex';
 import { DeputyPreferences } from './DeputyPreferences';
 import performHacks from './util/performHacks';
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import deputyStyles from './css/deputy.css';
+
 /**
  * The main class for Deputy. Entry point for execution.
+ *
+ * This class is not exported to avoid circular references and extraneous
+ * export code in the Rollup bundle (unnecessary for a userscript).
  */
 class Deputy {
 

@@ -1,8 +1,8 @@
-import { DeputyUIElement } from './DeputyUIElement';
-import { ContributionSurveyRevision } from '../models/ContributionSurveyRevision';
+import { DeputyUIElement } from '../DeputyUIElement';
+import { ContributionSurveyRevision } from '../../models/ContributionSurveyRevision';
 import { h } from 'tsx-dom';
-import getRevisionDiffURL from '../util/getRevisionDiffURL';
-import unwrapWidget from '../util/unwrapWidget';
+import getRevisionDiffURL from '../../util/getRevisionDiffURL';
+import unwrapWidget from '../../util/unwrapWidget';
 
 /**
  * A specific revision for a section row.

@@ -1,17 +1,17 @@
 import { h } from 'tsx-dom';
-import DeputyCasePage, { ContributionSurveyHeading } from '../wiki/DeputyCasePage';
-import { DeputyUIElement } from './DeputyUIElement';
-import unwrapWidget from '../util/unwrapWidget';
+import DeputyCasePage, { ContributionSurveyHeading } from '../../wiki/DeputyCasePage';
+import { DeputyUIElement } from '../DeputyUIElement';
+import unwrapWidget from '../../util/unwrapWidget';
 import DeputyContributionSurveyRow from './DeputyContributionSurveyRow';
-import ContributionSurveyRow from '../models/ContributionSurveyRow';
-import ContributionSurveySection from '../models/ContributionSurveySection';
+import ContributionSurveyRow from '../../models/ContributionSurveyRow';
+import ContributionSurveySection from '../../models/ContributionSurveySection';
 import DeputyReviewDialog from './DeputyReviewDialog';
-import swapElements from '../util/swapElements';
-import sectionHeadingName from '../util/sectionHeadingName';
-import getSectionId from '../util/getSectionId';
-import getSectionHTML from '../util/getSectionHTML';
-import removeElement from '../util/removeElement';
-import decorateEditSummary from '../util/decorateEditSummary';
+import swapElements from '../../util/swapElements';
+import sectionHeadingName from '../../util/sectionHeadingName';
+import getSectionId from '../../util/getSectionId';
+import getSectionHTML from '../../util/getSectionHTML';
+import removeElement from '../../util/removeElement';
+import decorateEditSummary from '../../util/decorateEditSummary';
 
 /**
  * The contribution survey section UI element. This includes a list of revisions
@@ -243,7 +243,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	close(): void {
 		swapElements( this.container, this.originalList );
 
-		// Detach listener to stop listening to events.
+		// Detach listeners to stop listening to events.
 		this.rows.forEach( ( row ) => {
 			window.deputy.comms.removeEventListener(
 				'pageStatusRequest',
@@ -356,12 +356,12 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 				).done( ( confirmed: boolean ) => {
 					if ( confirmed ) {
 						this.close();
-						window.deputy.session.closeSection( this );
+						window.deputy.session.rootSession.closeSection( this );
 					}
 				} );
 			} else {
 				this.close();
-				await window.deputy.session.closeSection( this );
+				await window.deputy.session.rootSession.closeSection( this );
 			}
 		} );
 

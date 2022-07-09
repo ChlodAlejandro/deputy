@@ -1,44 +1,31 @@
-import DeputyCasePage, { ContributionSurveyHeading } from './wiki/DeputyCasePage';
-import sectionHeadingName from './util/sectionHeadingName';
-import DeputyContributionSurveySection from './ui/DeputyContributionSurveySection';
-import DeputyCCISessionStartLink from './ui/DeputyCCISessionStartLink';
-import unwrapWidget from './util/unwrapWidget';
-import DeputyCCISessionContinueMessage from './ui/DeputyCCISessionContinueMessage';
-import swapElements from './util/swapElements';
-import removeElement from './util/removeElement';
-import DeputyCCISessionAddSection from './ui/DeputyCCISessionAddSection';
-import DeputyCCISessionTabActiveMessage from './ui/DeputyCCISessionTabActiveMessage';
-import {
-	DeputyMessageEvent,
-	DeputySessionRequestMessage
-} from './DeputyCommunications';
-
-interface SessionInformation {
-	/**
-	 * A specific case page, refers to a case in the {@link DeputyCasePageCacheStore}.
-	 */
-	casePageId: number;
-	/**
-	 * The sections which were last left open.
-	 */
-	caseSections: string[];
-}
+import DeputyCasePage, { ContributionSurveyHeading } from '../wiki/DeputyCasePage';
+import DeputyCCISessionStartLink from '../ui/root/DeputyCCISessionStartLink';
+import DeputyCCISessionContinueMessage from '../ui/root/DeputyCCISessionContinueMessage';
+import removeElement from '../util/removeElement';
+import unwrapWidget from '../util/unwrapWidget';
+import swapElements from '../util/swapElements';
+import DeputyCCISessionTabActiveMessage from '../ui/root/DeputyCCISessionTabActiveMessage';
+import sectionHeadingName from '../util/sectionHeadingName';
+import { DeputyMessageEvent, DeputySessionRequestMessage } from '../DeputyCommunications';
+import DeputyCCISessionAddSection from '../ui/root/DeputyCCISessionAddSection';
+import DeputyContributionSurveySection from '../ui/root/DeputyContributionSurveySection';
+import { SessionInformation } from './DeputySession';
 
 /**
- * Handles the active Deputy session and sets up inter-tab communication.
- *
- * A "Session" is a period wherein Deputy exercises a majority of its features,
- * namely the use of inter-tab communication and database transactions for
- * page and revision caching. Other tabs that load Deputy will recognize the
- * started session and begin communicating with the root tab (the tab with the
- * CCI page, and therefore the main Deputy session handler, open).
+ * The DeputyRootSession. Instantiated only when:
+ *  (a) the page is a CCI case page, and
+ *  (b) a session is currently active
  */
-export default class DeputySession {
+export default class DeputyRootSession {
 
 	/**
 	 * The current active session, if one exists.
 	 */
 	session: SessionInformation;
+	/**
+	 * The case page that this root session is handling.
+	 */
+	casePage: DeputyCasePage;
 	/**
 	 * A DiscussionTools Parser. Used for parsing comments in a streamlined way (using
 	 * DiscussionTools) as compared to relying on an in-house parser.
@@ -54,83 +41,26 @@ export default class DeputySession {
 	 */
 	readonly sessionRequestResponder = this.sendSessionResponse.bind( this );
 
-	/**
-	 * Initialize session-related information. If an active session was detected,
-	 * restart it.
+	/*
+	 * =========================================================================
+	 * STATIC AND SESSION-LESS FUNCTIONS
+	 * =========================================================================
 	 */
-	async init() {
-		// Check if there is an active session.
-		this.session = await this.getSession();
-
-		if ( this.session ) {
-			if ( this.session.caseSections.length === 0 ) {
-				// No more sections. Discard session.
-				await this.setSession( null );
-				await this.init();
-			} else if ( this.session.casePageId === window.deputy.currentPageId ) {
-				// Definitely a case page, no need to question.
-				const casePage = await DeputyCasePage.build();
-
-				if ( mw.config.get( 'wgAction' ) !== 'view' ) {
-					// This page's main content is not being viewed. Do nothing.
-				} else if (
-					mw.config.get( 'wgRevisionId' ) !==
-					mw.config.get( 'wgCurRevisionId' )
-				) {
-					// This is not the latest version of the page. Do nothing.
-				} else if ( await this.checkForActiveSessionTabs() ) {
-					// Session is active in another tab. Defer to other tab.
-					await this.initTabActiveInterface( casePage );
-				} else {
-					// Page reloaded or exited without proper session close.
-					// Continue where we left off.
-					await this.initSessionInterface( casePage );
-					await casePage.bumpActive();
-				}
-			} else if ( DeputyCasePage.isCasePage() ) {
-				// TODO: Show "start work" with session replacement warning
-			}
-		} else {
-			// No active session
-			if ( DeputyCasePage.isCasePage() ) {
-				const casePage = await DeputyCasePage.build();
-
-				if ( await casePage.isCached() ) {
-					await this.initContinueInterface( casePage );
-				} else {
-					// Show session start buttons
-					await this.initEntryInterface();
-				}
-			}
-		}
-	}
-
-	/**
-	 * Broadcasts a `sessionRequest` message to the Deputy communicator to find other
-	 * tabs with open sessions. This prevents two tabs from opening the same session
-	 * at the same time.
-	 */
-	async checkForActiveSessionTabs(): Promise<boolean> {
-		return await window.deputy.comms.sendAndWait( { type: 'sessionRequest' } )
-			.then( ( res ) => {
-				return res != null;
-			} );
-	}
 
 	/**
 	 * Initialize interface components for *starting* a session. This includes
 	 * the `[start CCI session]` notice at the top of each CCI page section heading.
 	 *
-	 * @param _casePage
+	 * @param _casePage The current case page
 	 */
-	async initEntryInterface( _casePage?: DeputyCasePage ): Promise<void> {
+	static async initEntryInterface( _casePage?: DeputyCasePage ): Promise<void> {
 		const continuing = _casePage != null;
 		const casePage = continuing ? _casePage : await DeputyCasePage.build();
 
 		casePage.findContributionSurveyHeadings()
 			.forEach( ( heading: ContributionSurveyHeading ) => {
 				heading.appendChild(
-					DeputyCCISessionStartLink( heading, this, casePage )
+					DeputyCCISessionStartLink( heading, casePage )
 				);
 			} );
 	}
@@ -141,13 +71,11 @@ export default class DeputySession {
 	 * and a single message box showing when the page was last worked on on top of the
 	 * first CCI heading found.
 	 *
-	 * @param casePage
+	 * @param casePage The case page to continue with
 	 */
-	async initContinueInterface(
-		casePage: DeputyCasePage
-	): Promise<void> {
+	static async initContinueInterface( casePage: DeputyCasePage ): Promise<void> {
 		await Promise.all( [
-			this.initEntryInterface( casePage ),
+			DeputyRootSession.initEntryInterface(),
 			mw.loader.using(
 				[ 'oojs-ui-core', 'oojs-ui.styles.icons-content' ],
 				() => {
@@ -162,7 +90,9 @@ export default class DeputySession {
 							type: 'notice',
 							icon: 'history',
 							label: new OO.ui.HtmlSnippet(
-								DeputyCCISessionContinueMessage( { casePage } ).innerHTML
+								DeputyCCISessionContinueMessage( {
+									casePage: casePage
+								} ).innerHTML
 							)
 						} );
 
@@ -173,10 +103,10 @@ export default class DeputySession {
 						} );
 						const sessionStartListener = async () => {
 							removeElement( unwrapWidget( messageBox ) );
-							await this.initTabActiveInterface( casePage );
+							await this.initTabActiveInterface();
 						};
 						continueButton.on( 'click', () => {
-							window.deputy.session.continueSession( casePage );
+							DeputyRootSession.continueSession( casePage );
 							window.deputy.comms.removeEventListener(
 								'sessionStarted',
 								sessionStartListener
@@ -205,15 +135,71 @@ export default class DeputySession {
 	}
 
 	/**
+	 * Starts a Deputy session.
+	 *
+	 * @param section
+	 * @param _casePage
+	 */
+	static async startSession(
+		section: ContributionSurveyHeading,
+		_casePage?: DeputyCasePage
+	): Promise<void> {
+		const sectionName = sectionHeadingName( section );
+
+		// Save session to storage
+		const casePage = _casePage ?? await DeputyCasePage.build();
+		const session = await this.setSession( {
+			casePageId: casePage.pageId,
+			caseSections: [ sectionName ]
+		} );
+
+		const rootSession =
+			window.deputy.session.rootSession =
+				new DeputyRootSession( session, casePage );
+		await casePage.bumpActive();
+		await rootSession.initSessionInterface();
+	}
+
+	/**
+	 * Continue a session from a DeputyCasePage.
+	 *
+	 * @param casePage The case page to continue with
+	 */
+	static async continueSession( casePage: DeputyCasePage ): Promise<void> {
+		// Save session to storage
+		const session = await this.setSession( {
+			casePageId: casePage.pageId,
+			// Shallow array copy
+			caseSections: [ ...casePage.lastActiveSections ]
+		} );
+
+		const rootSession =
+			window.deputy.session.rootSession =
+				new DeputyRootSession( session, casePage );
+		await casePage.bumpActive();
+		await rootSession.initSessionInterface();
+	}
+
+	/**
+	 * Sets the current active session information.
+	 *
+	 * @param session The session to save.
+	 * @return SessionInformation object if successful, `null` if not.
+	 */
+	static async setSession( session: SessionInformation ): Promise<SessionInformation> {
+		return ( await window.deputy.storage.setKV( 'session', session ) ) ? session : null;
+	}
+
+	/**
 	 * Shows the interface for an attempted Deputy execution on a different tab than
 	 * expected. This prevents Deputy from running entirely to avoid loss of progress
 	 * and desynchronization.
 	 *
-	 * @param casePage The CURRENT case page.
+	 * @param _casePage The current case page (not the active one)
 	 */
-	async initTabActiveInterface(
-		casePage: DeputyCasePage
-	): Promise<void> {
+	static async initTabActiveInterface( _casePage?: DeputyCasePage ): Promise<void> {
+		const casePage = _casePage ?? await DeputyCasePage.build();
+
 		return mw.loader.using(
 			[ 'oojs-ui-core', 'oojs-ui.styles.icons-content' ],
 			() => {
@@ -237,7 +223,7 @@ export default class DeputySession {
 						'sessionClosed',
 						async () => {
 							removeElement( unwrapWidget( messageBox ) );
-							await this.init();
+							await window.deputy.session.init();
 						},
 						{ once: true }
 					);
@@ -246,20 +232,31 @@ export default class DeputySession {
 		);
 	}
 
+	/*
+	 * =========================================================================
+	 *  INSTANCE AND ACTIVE SESSION FUNCTIONS
+	 * =========================================================================
+	 */
+
+	/**
+	 * @param session
+	 * @param casePage
+	 */
+	constructor( session: SessionInformation, casePage: DeputyCasePage ) {
+		this.session = session;
+		this.casePage = casePage;
+	}
+
 	/**
 	 * Initialize interface components for an active session. This will always run in the
 	 * context of a CCI case page.
-	 *
-	 * @param casePage
 	 */
-	async initSessionInterface(
-		casePage: DeputyCasePage
-	): Promise<void> {
+	async initSessionInterface(): Promise<void> {
 		if ( window.location.search.indexOf( 'action=edit' ) !== -1 ) {
 			// User is editing, don't load interface.
 			return;
 		}
-		if ( await this.checkForActiveSessionTabs() ) {
+		if ( await window.deputy.session.checkForActiveSessionTabs() ) {
 			// User is on another tab, don't load interface.
 			mw.loader.using( [ 'oojs-ui-core', 'oojs-ui-windows' ], () => {
 				OO.ui.alert(
@@ -270,8 +267,8 @@ export default class DeputySession {
 			return;
 		}
 
-		removeElement( casePage.document.querySelector( '.dp-cs-session-lastActive' ) );
-		casePage.document.querySelectorAll( '.dp-sessionStarter' )
+		removeElement( this.casePage.document.querySelector( '.dp-cs-session-lastActive' ) );
+		this.casePage.document.querySelectorAll( '.dp-sessionStarter' )
 			.forEach( ( el: HTMLElement ) => {
 				removeElement( el );
 			} );
@@ -306,23 +303,23 @@ export default class DeputySession {
 				this.sections = [];
 
 				const foundSections: string[] = [];
-				for ( const heading of casePage.findContributionSurveyHeadings() ) {
+				for ( const heading of this.casePage.findContributionSurveyHeadings() ) {
 					const headingName = sectionHeadingName( heading );
 
 					if ( this.session.caseSections.indexOf( headingName ) !== -1 ) {
 						foundSections.push( headingName );
 						( () => {
 							// Placed in self-executing function for asynchronicity.
-							this.activateSection( casePage, heading );
+							this.activateSection( this.casePage, heading );
 						} )();
 					} else {
-						this.addSectionOverlay( casePage, heading );
+						this.addSectionOverlay( this.casePage, heading );
 					}
 				}
 
 				// Strip missing sections from caseSections.
 				this.session.caseSections = foundSections;
-				await this.setSession( this.session );
+				await DeputyRootSession.setSession( this.session );
 
 				res();
 			} );
@@ -367,67 +364,6 @@ export default class DeputySession {
 	}
 
 	/**
-	 * Gets the current active session information.
-	 *
-	 * @return {Promise<SessionInformation|undefined>}
-	 *     A promise that resolves with the session information or `undefined` if session
-	 *     information is not available.
-	 */
-	async getSession(): Promise<SessionInformation | undefined> {
-		return ( await window.deputy.storage.getKV( 'session' ) ) as SessionInformation | undefined;
-	}
-
-	/**
-	 * Sets the current active session information.
-	 *
-	 * @param session The session to save.
-	 * @return boolean `true` if successful.
-	 */
-	setSession( session: SessionInformation ): Promise<boolean> {
-		this.session = session;
-		return window.deputy.storage.setKV( 'session', session );
-	}
-
-	/**
-	 * Starts a Deputy session.
-	 *
-	 * @param section
-	 */
-	async startSession( section: ContributionSurveyHeading ): Promise<void> {
-		const pageID = window.deputy.currentPageId;
-		const sectionName = sectionHeadingName( section );
-
-		// Save session to storage
-		const casePage = await DeputyCasePage.build();
-		await this.setSession( {
-			casePageId: pageID,
-			caseSections: [ sectionName ]
-		} );
-
-		await this.initSessionInterface( casePage );
-		await casePage.bumpActive();
-	}
-
-	/**
-	 * Continue a session from a DeputyCasePage.
-	 *
-	 * @param casePage
-	 */
-	async continueSession( casePage: DeputyCasePage ): Promise<void> {
-		const pageID = window.deputy.currentPageId;
-
-		// Save session to storage
-		await this.setSession( {
-			casePageId: pageID,
-			// Shallow array copy
-			caseSections: [ ...casePage.lastActiveSections ]
-		} );
-
-		await this.initSessionInterface( casePage );
-		await casePage.bumpActive();
-	}
-
-	/**
 	 * Closes the current session.
 	 *
 	 * @param casePage
@@ -447,7 +383,7 @@ export default class DeputySession {
 		window.deputy.comms.removeEventListener(
 			'sessionRequest', this.sessionRequestResponder
 		);
-		await this.setSession( null );
+		await window.deputy.session.clearSession();
 		window.deputy.comms.send( { type: 'sessionClosed', caseId: oldSession.casePageId } );
 	}
 
@@ -471,7 +407,7 @@ export default class DeputySession {
 		const lastActiveSession = this.session.caseSections.indexOf( sectionName );
 		if ( lastActiveSession === -1 ) {
 			this.session.caseSections.push( sectionName );
-			await this.setSession( this.session );
+			await DeputyRootSession.setSession( this.session );
 		}
 		await casePage.addActiveSection( sectionName );
 
@@ -521,7 +457,7 @@ export default class DeputySession {
 				// Don't remove from casePage if there are no sections left, or
 				// else "continue where you left off" won't work.
 			} else {
-				await this.setSession( this.session );
+				await DeputyRootSession.setSession( this.session );
 				await casePage.removeActiveSection( sectionName );
 				this.addSectionOverlay( casePage, heading );
 			}
@@ -531,7 +467,7 @@ export default class DeputySession {
 			// Re-append Deputy session entry interface elements.
 			// Put in a self-executing function to run asynchronously from closeSection.
 			( () => {
-				this.init();
+				window.deputy.session.init();
 			} )();
 		}
 	}

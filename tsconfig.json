@@ -4,8 +4,7 @@
         "target": "es6",
         "lib": [
             "DOM",
-            "ES2015.Promise",
-            "ES2015.Collection"
+            "ES2015"
         ],
         "outDir": "./build",
 

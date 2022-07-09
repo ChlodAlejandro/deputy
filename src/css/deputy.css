@@ -124,6 +124,7 @@
     margin-top: 8px;
     position: sticky;
     top: 8px;
+    z-index: 50;
 }
 
 .skin-vector-2022.vector-sticky-header-visible .dp-cs-session-notice {
@@ -236,6 +237,11 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
 
 .dp-cs-row-unfinishedWarning {
     margin-bottom: 8px;
+}
+
+.dp-cs-row-closeComments {
+    font-family: monospace, monospace;
+    font-size: small;
 }
 
 .dp-cs-row-closeComments:not(:last-child) {

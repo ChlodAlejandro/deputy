@@ -1,8 +1,8 @@
 import { h } from 'tsx-dom';
-import '../types';
-import DeputyCasePage, { ContributionSurveyHeading } from '../wiki/DeputyCasePage';
-import unwrapWidget from '../util/unwrapWidget';
-import removeElement from '../util/removeElement';
+import '../../types';
+import DeputyCasePage, { ContributionSurveyHeading } from '../../wiki/DeputyCasePage';
+import unwrapWidget from '../../util/unwrapWidget';
+import removeElement from '../../util/removeElement';
 
 /**
  * Creates the "Start working on section" overlay over existing contribution survey
@@ -34,7 +34,7 @@ export default function ( props: {
 		// for ContributionSurveySection. This sneakily removes this element before any sort
 		// of activation is performed.
 		removeElement( element );
-		window.deputy.session.activateSection( casePage, heading );
+		window.deputy.session.rootSession.activateSection( casePage, heading );
 	} );
 
 	return element;

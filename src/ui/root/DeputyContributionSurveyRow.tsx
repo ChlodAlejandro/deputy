@@ -1,20 +1,20 @@
 import { ComponentChild, h } from 'tsx-dom';
 import DeputyContributionSurveySection from './DeputyContributionSurveySection';
-import { DeputyUIElement } from './DeputyUIElement';
+import { DeputyUIElement } from '../DeputyUIElement';
 import ContributionSurveyRow, {
 	ContributionSurveyRowStatus
-} from '../models/ContributionSurveyRow';
-import swapElements from '../util/swapElements';
-import unwrapWidget from '../util/unwrapWidget';
+} from '../../models/ContributionSurveyRow';
+import swapElements from '../../util/swapElements';
+import unwrapWidget from '../../util/unwrapWidget';
 import DeputyLoadingDots from './DeputyLoadingDots';
 import DeputyContributionSurveyRevision from './DeputyContributionSurveyRevision';
-import { ContributionSurveyRevision } from '../models/ContributionSurveyRevision';
+import { ContributionSurveyRevision } from '../../models/ContributionSurveyRevision';
 import DeputyFinishedContributionSurveyRow from './DeputyUnfinishedContributionSurveyRow';
-import classMix from '../util/classMix';
-import { DeputyDiffStatus } from '../DeputyStorage';
+import classMix from '../../util/classMix';
+import { DeputyDiffStatus } from '../../DeputyStorage';
 import {
 	DeputyMessageEvent, DeputyPageStatusRequestMessage
-} from '../DeputyCommunications';
+} from '../../DeputyCommunications';
 
 /**
  * A UI element used for denoting the following aspects of a page in the contribution
@@ -425,6 +425,28 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	}
 
 	/**
+	 * Renders the `commentsTextInput` variable (closing comments OOUI TextInputWidget)
+	 *
+	 * @param value
+	 * @return The OOUI TextInputWidget
+	 */
+	renderCommentsTextInput( value?: string ): any {
+		this.commentsTextInput = new OO.ui.MultilineTextInputWidget( {
+			classes: [ 'dp-cs-row-closeComments' ],
+			placeholder: mw.message( 'deputy.session.row.closeComments' ).text(),
+			value: value,
+			autosize: true,
+			rows: 1
+		} );
+
+		this.commentsTextInput.on( 'change', () => {
+			this.onUpdate();
+		} );
+
+		return this.commentsTextInput;
+	}
+
+	/**
 	 * Render the row with the "finished" state (has info
 	 * on closer and closing comments).
 	 *
@@ -436,23 +458,18 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			row: this.row
 		} );
 
-		this.commentsTextInput = new OO.ui.TextInputWidget( {
-			classes: [ 'dp-cs-row-closeComments' ],
-			placeholder: mw.message( 'deputy.session.row.closeComments' ).text(),
-			value: this.row.getActualComment()
-		} );
-
-		this.commentsTextInput.on( 'change', () => {
-			this.onUpdate();
-		} );
-
 		return <div class="dp-cs-row-finished">
 			{ this.finishedRow.render() }
-			{ unwrapWidget( this.commentsField = new OO.ui.FieldLayout( this.commentsTextInput, {
-				align: 'top',
-				invisibleLabel: true,
-				label: mw.message( 'deputy.session.row.closeComments' ).text()
-			} ) ) }
+			{ unwrapWidget(
+				this.commentsField = new OO.ui.FieldLayout(
+					this.renderCommentsTextInput( this.row.getActualComment() ),
+					{
+						align: 'top',
+						invisibleLabel: true,
+						label: mw.message( 'deputy.session.row.closeComments' ).text()
+					}
+				)
+			) }
 		</div>;
 	}
 
@@ -476,15 +493,9 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		this.unfinishedMessageBox.toggle( false );
 		revisionList.appendChild( unwrapWidget( this.unfinishedMessageBox ) );
 
-		this.commentsTextInput = new OO.ui.TextInputWidget( {
-			classes: [ 'dp-cs-row-closeComments' ],
-			placeholder: mw.message( 'deputy.session.row.closeComments' ).text()
-		} );
-		revisionList.appendChild( unwrapWidget( this.commentsTextInput ) );
-
-		this.commentsTextInput.on( 'change', () => {
-			this.onUpdate();
-		} );
+		revisionList.appendChild( unwrapWidget(
+			this.renderCommentsTextInput()
+		) );
 
 		for ( const revision of diffs.values() ) {
 			const revisionUIEl = new DeputyContributionSurveyRevision( revision );

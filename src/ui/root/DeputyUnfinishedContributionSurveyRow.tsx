@@ -1,6 +1,6 @@
 import { h } from 'tsx-dom';
-import ContributionSurveyRow from '../models/ContributionSurveyRow';
-import guessAuthor from '../util/guessAuthor';
+import ContributionSurveyRow from '../../models/ContributionSurveyRow';
+import guessAuthor from '../../util/guessAuthor';
 
 /**
  * Displayed when a ContributionSurveyRow has no remaining diffs. Deputy is not able
@@ -49,7 +49,7 @@ export default class DeputyUnfinishedContributionSurveyRow {
 	render(): JSX.Element {
 		const props = this.props;
 
-		const parser = window.deputy.session.parser;
+		const parser = window.deputy.session.rootSession.parser;
 		// Use DiscussionTools to identify the user and timestamp.
 		const parsedComment = parser.parse( props.originalElement )?.commentItems?.[ 0 ];
 		if ( !parsedComment ) {

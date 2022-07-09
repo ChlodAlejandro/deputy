@@ -1,5 +1,5 @@
 import { h } from 'tsx-dom';
-import DeputyCasePage from '../wiki/DeputyCasePage';
+import DeputyCasePage from '../../wiki/DeputyCasePage';
 
 /**
  * Displayed when a user has previously worked on a case page and is now visiting

@@ -1,6 +1,6 @@
-import '../types';
-import unwrapWidget from '../util/unwrapWidget';
-import swapElements from '../util/swapElements';
+import '../../types';
+import unwrapWidget from '../../util/unwrapWidget';
+import swapElements from '../../util/swapElements';
 import { h } from 'tsx-dom';
 
 // This is one of those "TypeScript, trust me" moments. This is what happens when
