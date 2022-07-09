@@ -56,6 +56,7 @@
         "tslib": "^2.4.0",
         "typedoc": "^0.23.6",
         "typedoc-plugin-missing-exports": "^0.23.0",
+        "typedoc-plugin-rename-defaults": "^0.6.4",
         "types-mediawiki": "github:wikimedia-gadgets/types-mediawiki",
         "typescript": "^4.7.4",
         "which": "^2.0.2"
