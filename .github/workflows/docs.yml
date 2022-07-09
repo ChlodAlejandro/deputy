@@ -37,7 +37,7 @@ jobs:
             npx --yes typedoc \
                 --out ../docs \
                 --cleanOutputDir false \
-                src/index.ts
+                src/Deputy.ts
 
       # Commit
       -   name: Commit new documentation
