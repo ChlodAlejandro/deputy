@@ -36,6 +36,8 @@ jobs:
           run: |
             npx --yes typedoc \
                 --out ../docs \
+                --excludeExternals true \
+                --plugin typedoc-plugin-missing-exports \
                 --cleanOutputDir false \
                 src/Deputy.ts
 
