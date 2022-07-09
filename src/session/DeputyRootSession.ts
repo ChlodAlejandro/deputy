@@ -18,29 +18,6 @@ import { SessionInformation } from './DeputySession';
  */
 export default class DeputyRootSession {
 
-	/**
-	 * The current active session, if one exists.
-	 */
-	session: SessionInformation;
-	/**
-	 * The case page that this root session is handling.
-	 */
-	casePage: DeputyCasePage;
-	/**
-	 * A DiscussionTools Parser. Used for parsing comments in a streamlined way (using
-	 * DiscussionTools) as compared to relying on an in-house parser.
-	 */
-	parser: any;
-	/**
-	 * An array of active section UI elements. Populated in `initSessionInterface`.
-	 */
-	sections: DeputyContributionSurveySection[];
-
-	/**
-	 * Responder for session requests.
-	 */
-	readonly sessionRequestResponder = this.sendSessionResponse.bind( this );
-
 	/*
 	 * =========================================================================
 	 * STATIC AND SESSION-LESS FUNCTIONS
@@ -232,6 +209,29 @@ export default class DeputyRootSession {
 		);
 	}
 
+	/**
+	 * The current active session, if one exists.
+	 */
+	session: SessionInformation;
+	/**
+	 * The case page that this root session is handling.
+	 */
+	casePage: DeputyCasePage;
+	/**
+	 * A DiscussionTools Parser. Used for parsing comments in a streamlined way (using
+	 * DiscussionTools) as compared to relying on an in-house parser.
+	 */
+	parser: any;
+	/**
+	 * An array of active section UI elements. Populated in `initSessionInterface`.
+	 */
+	sections: DeputyContributionSurveySection[];
+
+	/**
+	 * Responder for session requests.
+	 */
+	readonly sessionRequestResponder = this.sendSessionResponse.bind( this );
+
 	/*
 	 * =========================================================================
 	 *  INSTANCE AND ACTIVE SESSION FUNCTIONS
@@ -364,21 +364,27 @@ export default class DeputyRootSession {
 	}
 
 	/**
-	 * Closes the current session.
-	 *
-	 * @param casePage
+	 * Closes all active session-related UI components. Done prior to closing
+	 * a section or reloading the interface.
 	 */
-	async closeSession( casePage: DeputyCasePage ): Promise<void> {
+	closeSessionUI(): void {
 		if ( this.sections ) {
 			for ( const section of this.sections ) {
 				section.close();
 			}
 		}
 
-		casePage.document.querySelectorAll( '.dp-cs-section-add' )
+		this.casePage.document.querySelectorAll( '.dp-cs-section-add' )
 			.forEach( ( el: HTMLElement ) => removeElement( el ) );
+	}
 
-		await casePage.saveToCache();
+	/**
+	 * Closes the current session.
+	 */
+	async closeSession(): Promise<void> {
+		this.closeSessionUI();
+
+		await this.casePage.saveToCache();
 		const oldSession = this.session;
 		window.deputy.comms.removeEventListener(
 			'sessionRequest', this.sessionRequestResponder
@@ -453,7 +459,7 @@ export default class DeputyRootSession {
 
 			// If no sections remain, clear the session.
 			if ( this.session.caseSections.length === 0 ) {
-				await this.closeSession( casePage );
+				await this.closeSession();
 				// Don't remove from casePage if there are no sections left, or
 				// else "continue where you left off" won't work.
 			} else {

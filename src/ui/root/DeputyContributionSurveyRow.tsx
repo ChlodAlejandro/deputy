@@ -16,6 +16,22 @@ import {
 	DeputyMessageEvent, DeputyPageStatusRequestMessage
 } from '../../DeputyCommunications';
 
+export enum DeputyContributionSurveyRowState {
+	/*
+	 * Special boolean that gets set to true if the supposed data from `this.wikitext`
+	 * should not be trusted. This is usually due to UI element failures or network
+	 * issues that cause the revision list to be loaded improperly (or to be not
+	 * loaded at all). `this.wikitext` will return the original wikitext, if capable.
+	 */
+	Broken = -1,
+	// Data not loaded, may be appended.
+	Loading,
+	// Data loaded, ready for use.
+	Ready,
+	// Closed by `close()`.
+	Closed
+}
+
 /**
  * A UI element used for denoting the following aspects of a page in the contribution
  * survey:
@@ -38,6 +54,10 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	};
 
 	disabled: boolean;
+	/**
+	 * The state of this element.
+	 */
+	state: DeputyContributionSurveyRowState = DeputyContributionSurveyRowState.Loading;
 	/**
 	 * The section that this row belongs to
 	 */
@@ -101,14 +121,6 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 * Options for the status dropdown. Rendered by `renderHead`.
 	 */
 	statusDropdownOptions: Map<ContributionSurveyRowStatus, any>;
-
-	/**
-	 * Special boolean that gets set to true if the supposed data from `this.wikitext`
-	 * should  not be trusted. This is usually due to UI element failures or network
-	 * issues that cause the revision list to be loaded improperly (or to be not
-	 * loaded at all). `this.wikitext` will return the original wikitext, if capable.
-	 */
-	broken: boolean;
 
 	/**
 	 * Responder for session requests.
@@ -178,6 +190,13 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	}
 
 	/**
+	 * @return `true` if this element is broken.
+	 */
+	get broken(): boolean {
+		return this.state === DeputyContributionSurveyRowState.Broken;
+	}
+
+	/**
 	 * @return The comments for this row (as added by a user)
 	 */
 	get comments(): string {
@@ -191,7 +210,8 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 * @return Wikitext
 	 */
 	get wikitext(): string {
-		if ( this.broken ) {
+		// Broken, loading, or closed. Just return the original wikitext.
+		if ( this.state !== DeputyContributionSurveyRowState.Ready ) {
 			return this.originalWikitext;
 		}
 
@@ -336,8 +356,9 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 				'pageStatusRequest',
 				this.statusRequestResponder
 			);
+			this.state = DeputyContributionSurveyRowState.Ready;
 		} catch ( e ) {
-			this.broken = true;
+			this.state = DeputyContributionSurveyRowState.Broken;
 			this.renderRow( null, new OO.ui.MessageWidget( {
 				type: 'error',
 				label: mw.message( 'deputy.session.row.error', e.message ).text()
@@ -500,14 +521,11 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		for ( const revision of diffs.values() ) {
 			const revisionUIEl = new DeputyContributionSurveyRevision( revision );
 
-			// TODO: Update state of dropdown (disable "unfinished")
 			revisionUIEl.on(
 				'update',
-				( done: boolean, data: ContributionSurveyRevision ) => {
-					console.log( done, data );
+				() => {
 					// Recheck options first to avoid "Unfinished" being selected when done.
 					this.onUpdate();
-					console.log( this.wikitext );
 				}
 			);
 
@@ -751,7 +769,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			);
 		} );
 
-		// Build revision list toggler
+		// Build content toggler
 		const contentToggle = new OO.ui.ButtonWidget( {
 			classes: [ 'dp-cs-row-toggle' ],
 			// Will be set by toggle function. Blank for now.

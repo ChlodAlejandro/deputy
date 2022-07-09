@@ -24,6 +24,8 @@ export interface SessionInformation {
  */
 export default class DeputySession {
 
+	readonly DeputyRootSession = DeputyRootSession;
+
 	/**
 	 * The DeputyRootSession handles session functions for the root tab. The
 	 * separation between DeputySession and DeputyRootSession is made to confine

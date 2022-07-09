@@ -2,7 +2,9 @@ import { h } from 'tsx-dom';
 import DeputyCasePage, { ContributionSurveyHeading } from '../../wiki/DeputyCasePage';
 import { DeputyUIElement } from '../DeputyUIElement';
 import unwrapWidget from '../../util/unwrapWidget';
-import DeputyContributionSurveyRow from './DeputyContributionSurveyRow';
+import DeputyContributionSurveyRow, {
+	DeputyContributionSurveyRowState
+} from './DeputyContributionSurveyRow';
 import ContributionSurveyRow from '../../models/ContributionSurveyRow';
 import ContributionSurveySection from '../../models/ContributionSurveySection';
 import DeputyReviewDialog from './DeputyReviewDialog';
@@ -219,7 +221,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			const line = wikitextLines[ i ];
 
 			let rowElement;
-			if ( line.startsWith( '*' ) ) {
+			if ( ContributionSurveyRow.isContributionSurveyRowText( line ) ) {
 				const csr = new ContributionSurveyRow( this.casePage, line );
 				rowElement = new DeputyContributionSurveyRow(
 					csr, rowElements[ csr.title.getPrefixedText() ], line, this
@@ -245,6 +247,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 
 		// Detach listeners to stop listening to events.
 		this.rows.forEach( ( row ) => {
+			row.state = DeputyContributionSurveyRowState.Closed;
 			window.deputy.comms.removeEventListener(
 				'pageStatusRequest',
 				row.statusRequestResponder

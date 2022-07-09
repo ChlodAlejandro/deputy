@@ -1,7 +1,6 @@
 import { h } from 'tsx-dom';
 import DeputyCasePage, { ContributionSurveyHeading } from '../../wiki/DeputyCasePage';
 import sectionHeadingName from '../../util/sectionHeadingName';
-import DeputyRootSession from '../../session/DeputyRootSession';
 
 /**
  * The CCI session start link. Starts a CCI session when pressed.
@@ -22,9 +21,9 @@ export default function (
 				if ( casePage.lastActiveSections.indexOf( headingName ) === -1 ) {
 					await casePage.addActiveSection( headingName );
 				}
-				await DeputyRootSession.continueSession( casePage );
+				await window.deputy.session.DeputyRootSession.continueSession( casePage );
 			} else {
-				await DeputyRootSession.startSession( heading );
+				await window.deputy.session.DeputyRootSession.startSession( heading );
 			}
 		} }>{
 				mw.message(
