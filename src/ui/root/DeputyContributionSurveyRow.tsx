@@ -12,9 +12,8 @@ import { ContributionSurveyRevision } from '../../models/ContributionSurveyRevis
 import DeputyFinishedContributionSurveyRow from './DeputyUnfinishedContributionSurveyRow';
 import classMix from '../../util/classMix';
 import { DeputyDiffStatus } from '../../DeputyStorage';
-import {
-	DeputyMessageEvent, DeputyPageStatusRequestMessage
-} from '../../DeputyCommunications';
+import { DeputyMessageEvent, DeputyPageStatusRequestMessage } from '../../DeputyCommunications';
+import DeputyCCIStatusDropdown from '../shared/DeputyCCIStatusDropdown';
 
 export enum DeputyContributionSurveyRowState {
 	/*
@@ -116,11 +115,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	/**
 	 * OOUI DropdownWidget for the current row status
 	 */
-	statusDropdown: any;
-	/**
-	 * Options for the status dropdown. Rendered by `renderHead`.
-	 */
-	statusDropdownOptions: Map<ContributionSurveyRowStatus, any>;
+	statusDropdown: DeputyCCIStatusDropdown;
 
 	/**
 	 * Responder for session requests.
@@ -346,9 +341,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 				if ( !this.wasFinished && savedStatus ) {
 					// An autosaved status exists. Let's use that.
 					this.commentsTextInput.setValue( savedStatus.comments );
-					this.statusDropdown.getMenu()
-						.selectItemByData( savedStatus.status );
-					this.refreshStatusDropdown();
+					this.statusDropdown.status = savedStatus.status;
 					this.onUpdate();
 				}
 			}
@@ -387,19 +380,10 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			}, 500 );
 		}
 
-		if ( this.revisions && this.statusDropdownOptions ) {
-			if ( this.completed ) {
-				this.statusDropdownOptions.get( ContributionSurveyRowStatus.Unfinished )
-					.setDisabled( true );
-				if ( this.status === ContributionSurveyRowStatus.Unfinished ) {
-					this.statusDropdown.getMenu()
-						.selectItemByData( ContributionSurveyRowStatus.WithoutViolations );
-				}
-				this.refreshStatusDropdown();
-			} else {
-				this.statusDropdownOptions.get( ContributionSurveyRowStatus.Unfinished )
-					.setDisabled( false );
-			}
+		if ( this.revisions && this.statusDropdown ) {
+			this.statusDropdown.setOptionDisabled(
+				ContributionSurveyRowStatus.Unfinished, this.completed
+			);
 
 			const unfinishedWithStatus = this.statusModified && !this.completed;
 			if ( this.unfinishedMessageBox ) {
@@ -658,20 +642,6 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	}
 
 	/**
-	 * Refreshes the status dropdown's icon.
-	 */
-	refreshStatusDropdown() {
-		if ( !this.statusDropdown ) {
-			// Silent failure
-			return;
-		}
-
-		this.status = this.statusDropdown.getMenu().findSelectedItem().getData();
-		const icon = DeputyContributionSurveyRow.menuOptionIcon[ this.status ];
-		this.statusDropdown.setIcon( icon === false ? null : icon );
-	}
-
-	/**
 	 * Renders the "head" part of the row. Contains the status, page name, and details.
 	 *
 	 * @param diffs
@@ -683,67 +653,20 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		contentContainer: JSX.Element
 	): JSX.Element {
 		const possibleStatus = this.row.status;
-		this.statusDropdownOptions = new Map();
 
 		// Build status dropdown
-
-		for ( const status in ContributionSurveyRowStatus ) {
-			if ( +status === ContributionSurveyRowStatus.Unknown ) {
-				if ( possibleStatus === ContributionSurveyRowStatus.Unknown ) {
-					this.statusDropdownOptions.set(
-						possibleStatus,
-						new OO.ui.MenuOptionWidget( {
-							data: ContributionSurveyRowStatus.Unknown,
-							label: mw.message( 'deputy.session.row.status.unknown' ).text(),
-							icon: DeputyContributionSurveyRow.menuOptionIcon[
-								+status as ContributionSurveyRowStatus
-							],
-							selected: true,
-							disabled: true
-						} )
-					);
-				}
-			} else if ( !isNaN( +status ) ) {
-				const statusName = ContributionSurveyRowStatus[ status ];
-				const option = new OO.ui.MenuOptionWidget( {
-					data: +status,
-					// eslint-disable-next-line mediawiki/msg-doc
-					label: mw.message(
-						'deputy.session.row.status.' +
-						statusName[ 0 ].toLowerCase() +
-						statusName.slice( 1 )
-					).text(),
-					icon: DeputyContributionSurveyRow.menuOptionIcon[
-						+status as ContributionSurveyRowStatus
-					],
-					selected: possibleStatus === +status,
-					disabled: +status === ContributionSurveyRowStatus.Unfinished &&
-						diffs && diffs.size === 0
-				} );
-				this.statusDropdownOptions.set( +status, option );
-			}
+		this.statusDropdown = new DeputyCCIStatusDropdown( this.row, {
+			status: possibleStatus
+		} );
+		if ( ( diffs && diffs.size === 0 ) || this.wasFinished ) {
+			// If there are no diffs found or `this.wasFinished` is set (both meaning there are
+			// no diffs and this is an already-assessed row), then the "Unfinished" option will
+			// be disabled.
+			this.statusDropdown.setOptionDisabled( ContributionSurveyRowStatus.Unfinished, true );
 		}
-
-		this.statusDropdown = new OO.ui.DropdownWidget( {
-			classes: [ 'dp-cs-row-status' ],
-			label: mw.message( 'deputy.session.row.status' ).text(),
-			menu: {
-				items: Array.from( this.statusDropdownOptions.values() )
-			}
-		} );
-		this.refreshStatusDropdown();
-
-		// Change the icon of the dropdown when the value changes.
-		this.statusDropdown.getMenu().on( 'toggle', ( visible: boolean ) => {
-			if ( !visible ) {
-				this.refreshStatusDropdown();
-			}
+		this.statusDropdown.addEventListener( 'change', ( event ) => {
+			this.status = event.status;
 			this.onUpdate();
-		} );
-		// Make the menu larger than the actual dropdown.
-		this.statusDropdown.getMenu().on( 'ready', () => {
-			this.statusDropdown.getMenu().toggleClipping( false );
-			unwrapWidget( this.statusDropdown.getMenu() ).style.width = '20em';
 		} );
 
 		// Build mass checker
@@ -809,7 +732,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		} );
 
 		return <div class="dp-cs-row-head">
-			{ unwrapWidget( this.statusDropdown ) }
+			{ unwrapWidget( this.statusDropdown.dropdown ) }
 			<a
 				class="dp-cs-row-title"
 				target="_blank"

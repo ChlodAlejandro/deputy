@@ -37,6 +37,7 @@
     "deputy.session.row.status.withViolations": "Violations found",
     "deputy.session.row.status.withoutViolations": "No violations found",
     "deputy.session.row.status.missing": "Missing",
+
     "deputy.session.row.details.new": "created",
     "deputy.session.row.details.edits": "{{PLURAL:$1|$1 edit|{{FORMATNUM:$1}} edits}}",
     "deputy.session.row.content.open": "Expand additional details",

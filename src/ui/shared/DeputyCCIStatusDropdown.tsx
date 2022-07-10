@@ -1,7 +1,5 @@
 import '../../types';
-import ContributionSurveyRow, {
-	ContributionSurveyRowStatus
-} from '../../models/ContributionSurveyRow';
+import { ContributionSurveyRowStatus } from '../../models/ContributionSurveyRow';
 import unwrapWidget from '../../util/unwrapWidget';
 import DeputyCasePage from '../../wiki/DeputyCasePage';
 
@@ -16,6 +14,10 @@ export interface DeputyCCIStatusDropdownProps {
 	 * hidden.
 	 */
 	enabled?: ContributionSurveyRowStatus[];
+	/**
+	 * Extra options for the DropdownWidget.
+	 */
+	widgetOptions?: string[]
 }
 
 /**
@@ -35,17 +37,20 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 	 * The origin row of this dropdown. Contains info on the active case page and the
 	 * title that this dropdown is for.
 	 */
-	row: ContributionSurveyRow;
+	row: {
+		casePage: DeputyCasePage,
+		title: mw.Title
+	};
 	/**
 	 * The OOUI DropdownWidget element. This does <b>not</b> use DropdownInputWidget
 	 * due to its lack of support for icons in dropdown menu options and the ability
 	 * to hide said icons using CSS and other fun trickery.
 	 */
-	statusDropdown: any;
+	dropdown: any;
 	/**
 	 * A set of OOUI MenuOptionWidgets that make up the status dropdown.
 	 */
-	statusDropdownOptions: Map<ContributionSurveyRowStatus, any>;
+	options: Map<ContributionSurveyRowStatus, any>;
 	/**
 	 * A listener that listens to changes in the status dropdown and performs respective
 	 * updates and changes.
@@ -56,7 +61,19 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 	 * @return The currently-selected status of this dropdown.
 	 */
 	get status(): ContributionSurveyRowStatus {
-		return this.statusDropdown.getMenu().findSelectedItem().getData();
+		return this.dropdown.getMenu().findSelectedItem()?.getData() ?? null;
+	}
+	/**
+	 * Sets the currently-selected status of this dropdown.
+	 */
+	set status( status: ContributionSurveyRowStatus ) {
+		this.dropdown.getMenu().selectItemByData( status );
+		this.setOptionDisabled(
+			ContributionSurveyRowStatus.Unknown,
+			status !== ContributionSurveyRowStatus.Unknown,
+			true
+		);
+		this.refresh();
 	}
 
 	/**
@@ -76,7 +93,8 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 		title: mw.Title
 	}, options: DeputyCCIStatusDropdownProps = {} ) {
 		super();
-		this.statusDropdownOptions = new Map();
+		this.row = row;
+		this.options = new Map();
 
 		for ( const status in ContributionSurveyRowStatus ) {
 			if ( isNaN( +status ) ) {
@@ -99,25 +117,31 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 				// Always disable if Unknown, as Unknown is merely a placeholder value.
 				disabled: +status === ContributionSurveyRowStatus.Unknown
 			} );
-			this.statusDropdownOptions.set( +status, option );
+			this.options.set( +status, option );
 		}
 
-		if ( options.status ) {
-			this.setValue( options.status );
+		this.dropdown = new OO.ui.DropdownWidget( Object.assign(
+			{
+				classes: [ 'dp-cs-row-status' ],
+				label: mw.message( 'deputy.session.row.status' ).text()
+			},
+			options.widgetOptions ?? {},
+			{
+				menu: {
+					items: Array.from( this.options.values() )
+				}
+			}
+		) );
+
+		// Place before event listeners to prevent them from firing too early.
+		if ( options.status != null ) {
+			this.status = options.status;
 		}
-		if ( options.enabled ) {
+		if ( options.enabled != null ) {
 			this.setEnabledOptions( options.enabled );
 		}
 
-		this.statusDropdown = new OO.ui.DropdownWidget( {
-			classes: [ 'dp-cs-row-status' ],
-			label: mw.message( 'deputy.session.row.status' ).text(),
-			menu: {
-				items: Array.from( this.statusDropdownOptions.values() )
-			}
-		} );
-
-		this.statusDropdownChangeListener = () => {
+		this.statusDropdownChangeListener = ( () => {
 			this.dispatchEvent( Object.assign( new Event( 'change' ), {
 				status: this.status
 			} ) );
@@ -128,14 +152,14 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 				page: this.row.title.getPrefixedText(),
 				status: this.status
 			} );
-		};
+		} );
 
 		// Change the icon of the dropdown when the value changes.
-		this.statusDropdown.getMenu().on( 'change', this.statusDropdownChangeListener );
+		this.dropdown.getMenu().on( 'select', this.statusDropdownChangeListener );
 		// Make the menu larger than the actual dropdown.
-		this.statusDropdown.getMenu().on( 'ready', () => {
-			this.statusDropdown.getMenu().toggleClipping( false );
-			unwrapWidget( this.statusDropdown.getMenu() ).style.width = '20em';
+		this.dropdown.getMenu().on( 'ready', () => {
+			this.dropdown.getMenu().toggleClipping( false );
+			unwrapWidget( this.dropdown.getMenu() ).style.width = '20em';
 		} );
 	}
 
@@ -153,11 +177,12 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 	}
 
 	/**
-	 * Refreshes the status dropdown for any changes.
+	 * Refreshes the status dropdown for any changes. This function must NOT
+	 * modify `this.status`, or else it will cause a stack overflow.
 	 */
 	refresh(): void {
 		const icon = DeputyCCIStatusDropdown.menuOptionIcons[ this.status ];
-		this.statusDropdown.setIcon( icon === false ? null : icon );
+		this.dropdown.setIcon( icon === false ? null : icon );
 	}
 
 	/**
@@ -167,7 +192,7 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 	 */
 	setEnabledOptions( enabledOptions: ContributionSurveyRowStatus[], broadcast = false ) {
 		for ( const status in ContributionSurveyRowStatus ) {
-			const option = this.statusDropdownOptions.get( +status );
+			const option = this.options.get( +status );
 			const toEnable = enabledOptions.indexOf( +status ) !== -1;
 			const optionDisabled = option.isDisabled();
 
@@ -185,7 +210,7 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 	 * @param disabled
 	 */
 	setDisabled( disabled: boolean ) {
-		this.statusDropdown.setDisabled( disabled );
+		this.dropdown.setDisabled( disabled );
 	}
 
 	/**
@@ -199,12 +224,12 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 	setOptionDisabled( status: ContributionSurveyRowStatus, disabled: boolean, broadcast = false ) {
 		if ( status === ContributionSurveyRowStatus.Unknown ) {
 			// Special treatment. This hides the entire option from display.
-			this.statusDropdownOptions.get( status ).toggle( disabled );
+			this.options.get( status ).toggle( disabled );
 		} else {
 			// Disable the disable flag.
-			this.statusDropdownOptions.get( status ).setDisabled( disabled );
+			this.options.get( status ).setDisabled( disabled );
 		}
-		if ( disabled ) {
+		if ( this.status === status && disabled ) {
 			this.selectNextBestValue( status );
 		}
 		if ( broadcast ) {
@@ -219,18 +244,6 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 	}
 
 	/**
-	 * Sets the value of the dropdown.
-	 *
-	 * @param status
-	 */
-	setValue( status: ContributionSurveyRowStatus ): void {
-		if ( status === ContributionSurveyRowStatus.Unknown ) {
-			this.setOptionDisabled( status, false, true );
-		}
-		this.statusDropdown.getMenu().selectItemByData( status );
-	}
-
-	/**
 	 * When an option is about to be closed and the current status matches that option,
 	 * this function will find the next best option and select it. The next best value
 	 * is as follows:
@@ -242,15 +255,13 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 	 *   - WithoutViolations: _usually not disabled, kept as is_
 	 *   - Missing: _usually not disabled, kept as is_
 	 *
-	 * @param status
+	 * @param status The status that was <b>changed into</b>
 	 */
 	selectNextBestValue( status: ContributionSurveyRowStatus ) {
-		const menu = this.statusDropdown.getMenu();
-
 		if ( status === ContributionSurveyRowStatus.Unfinished ) {
-			menu.selectItemByData( ContributionSurveyRowStatus.WithoutViolations );
+			this.status = ContributionSurveyRowStatus.WithoutViolations;
 		} else if ( status === ContributionSurveyRowStatus.Unknown ) {
-			menu.selectItemByData( ContributionSurveyRowStatus.Unfinished );
+			this.status = ContributionSurveyRowStatus.Unfinished;
 		}
 	}
 
