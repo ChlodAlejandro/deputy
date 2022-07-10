@@ -16,6 +16,7 @@ import performHacks from './util/performHacks';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import deputyStyles from './css/deputy.css';
+import DeputyCase from './wiki/DeputyCase';
 
 /**
  * The main class for Deputy. Entry point for execution.
@@ -36,6 +37,7 @@ class Deputy {
 	readonly DeputySession = DeputySession;
 	readonly DeputyPreferences = DeputyPreferences;
 	readonly DeputyCommunications = DeputyCommunications;
+	readonly DeputyCase = DeputyCase;
 	readonly DeputyCasePage = DeputyCasePage;
 	readonly models = {
 		ContributionSurveyRow: ContributionSurveyRow

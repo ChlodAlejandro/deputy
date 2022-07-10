@@ -260,3 +260,54 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
 .dp-cs-row-detail:not(:first-child) {
     margin-left: 0.2em;
 }
+
+/*
+===============================================================================
+
+     DEPUTY PAGE TOOLBAR
+
+===============================================================================
+*/
+.dp-pageToolbar {
+    position: fixed;
+    bottom: 8px;
+    left: 8px;
+
+    padding: 8px;
+    background-color: #fff;
+    border: 1px solid gray;
+    font-size: 0.9rem;
+
+    display: flex;
+    align-items: end;
+}
+
+.dp-pt-caseInfo {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.dp-pt-caseInfo-label {
+    font-weight: bold;
+    font-size: 0.6rem;
+    color: #4a5054;
+    text-transform: uppercase;
+}
+
+.dp-pt-caseInfo-name {
+    font-weight: bold;
+    font-size: 1.3rem;
+    pointer-events: none;
+}
+
+.dp-pt-completedCheckbox {
+    font-size: 1.2em;
+    align-self: center;
+}
+
+.dp-pt-separator {
+    margin: 0 16px;
+    border-right: 1px solid gray;
+    font-size: 1.5rem;
+    align-self: center;
+}

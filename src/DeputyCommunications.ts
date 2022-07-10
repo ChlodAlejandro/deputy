@@ -2,6 +2,18 @@ import 'broadcastchannel-polyfill';
 import { ContributionSurveyRowStatus } from './models/ContributionSurveyRow';
 
 /**
+ * Generic message used to acknowledge an action. This is usually required by
+ * non-root session pages to ensure that the root session is still active.
+ *
+ * Due to its usage, this message must always have an attached `_deputyRespondsTo`,
+ * provided by `LowLevelOneWayDeputyMessage`. Otherwise, it is useless as it is
+ * not listened for except as a response.
+ */
+export interface DeputyAcknowledgeMessage {
+	type: 'acknowledge';
+}
+
+/**
  * Used to request for session information. Broadcast prior to actual session
  * execution to avoid session conflicts. If no sessions are active, a timeout
  * (default of 500ms) is expected to expire, meaning there are no active sessions.
@@ -49,7 +61,6 @@ export interface DeputySessionStartedMessage {
  */
 export interface DeputyPageStatusRequestMessage {
 	type: 'pageStatusRequest';
-	caseId: number;
 	page: string;
 	revision?: number;
 }
@@ -60,7 +71,9 @@ export interface DeputyPageStatusRequestMessage {
  */
 export interface DeputyPageStatusResponseMessage {
 	type: 'pageStatusResponse';
+	caseId: number;
 	status: ContributionSurveyRowStatus;
+	enabledStatuses: ContributionSurveyRowStatus[];
 	// Defined if a revision was given in the request.
 	revisionStatus?: boolean;
 }
@@ -89,12 +102,14 @@ const OneWayDeputyMessageMap = <const>{
 	sessionRequest: 'sessionResponse',
 	sessionResponse: 'sessionRequest',
 	pageStatusRequest: 'pageStatusResponse',
-	pageStatusResponse: 'pageStatusRequest'
+	pageStatusResponse: 'pageStatusRequest',
+	pageStatusUpdate: 'acknowledge'
 };
 
 export type DeputyRequestMessage = DeputySessionRequestMessage;
 export type DeputyResponseMessage = DeputySessionResponseMessage;
 export type DeputyMessage =
+	| DeputyAcknowledgeMessage
 	| DeputyRequestMessage
 	| DeputyResponseMessage
 	| DeputySessionClosedMessage

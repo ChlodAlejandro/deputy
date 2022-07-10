@@ -2,6 +2,7 @@ import normalizeTitle from '../util/normalizeTitle';
 import DeputyCasePageWikitext from './DeputyCasePageWikitext';
 import sectionHeadingName from '../util/sectionHeadingName';
 import getPageTitle from '../util/getPageTitle';
+import DeputyCase from './DeputyCase';
 
 export type ContributionSurveyHeading = HTMLHeadingElement;
 
@@ -10,40 +11,7 @@ export type ContributionSurveyHeading = HTMLHeadingElement;
  * This class should be able to operate both on the standard MediaWiki
  * parser output and the Parsoid output.
  */
-export default class DeputyCasePage {
-
-	static rootPage = new mw.Title(
-		'Wikipedia:Contributor copyright investigations'
-	);
-
-	/**
-	 * Checks if the current page (or a supplied page) is a case page (subpage of
-	 * the root page).
-	 *
-	 * @param title The title of the page to check.
-	 * @return `true` if the page is a case page.
-	 */
-	static isCasePage( title?: string | mw.Title ): boolean {
-		return normalizeTitle( title ).getPrefixedDb()
-			.startsWith( this.rootPage.getPrefixedDb() + '/' );
-	}
-
-	/**
-	 * Gets the case name by parsing the title.
-	 *
-	 * @param title The title of the case page
-	 * @return The case name, or `null` if the title was not a valid case page
-	 */
-	static getCaseName?( title?: string | mw.Title ): string {
-		title = normalizeTitle( title );
-		if ( !this.isCasePage( title ) ) {
-			return null;
-		} else {
-			return title.getPrefixedText().replace(
-				this.rootPage.getPrefixedText() + '/', ''
-			);
-		}
-	}
+export default class DeputyCasePage extends DeputyCase {
 
 	/**
 	 * The page ID of the case page.
@@ -126,8 +94,10 @@ export default class DeputyCasePage {
 		lastActive?: number,
 		lastActiveSessions?: string[]
 	) {
-		this.pageId = pageId ?? window.deputy.currentPageId;
-		this.title = title ?? window.deputy.currentPage;
+		super(
+			pageId ?? window.deputy.currentPageId,
+			title ?? window.deputy.currentPage
+		);
 		this.document = document ?? window.document;
 		this.parsoid = parsoid ?? /mw: http:\/\/mediawiki.org\/rdf\//.test(
 			this.document.documentElement.getAttribute( 'prefix' )

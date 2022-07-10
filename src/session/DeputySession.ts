@@ -1,5 +1,6 @@
 import DeputyCasePage from '../wiki/DeputyCasePage';
 import DeputyRootSession from './DeputyRootSession';
+import DeputyPageSession from './DeputyPageSession';
 
 export interface SessionInformation {
 	/**
@@ -32,6 +33,12 @@ export default class DeputySession {
 	 * session-mutating functions within the root tab only.
 	 */
 	rootSession: DeputyRootSession;
+	/**
+	 * The DeputyPageSession handles session functions for a page that is the subject
+	 * of a Deputy session. This object handles things such as synchronicity between
+	 * the root tab and the page toolbar, interface handling, etc.
+	 */
+	pageSession: DeputyPageSession;
 
 	/**
 	 * Initialize session-related information. If an active session was detected,
@@ -42,6 +49,14 @@ export default class DeputySession {
 		const session = await this.getSession();
 
 		if ( session ) {
+			const viewingCurrent =
+				// Page is being viewed.
+				mw.config.get( 'wgAction' ) === 'view' &&
+				// Revision is current revision. Also handles wgRevisionId = 0
+				// (which happens when viewing a diff).
+				mw.config.get( 'wgRevisionId' ) ===
+				mw.config.get( 'wgCurRevisionId' );
+
 			if ( session.caseSections.length === 0 ) {
 				// No more sections. Discard session.
 				await this.clearSession();
@@ -51,17 +66,10 @@ export default class DeputySession {
 				const casePage = await DeputyCasePage.build();
 				this.rootSession = new DeputyRootSession( session, casePage );
 
-				if ( mw.config.get( 'wgAction' ) !== 'view' ) {
-					// This page's main content is not being viewed. Do nothing.
-				} else if (
-					mw.config.get( 'wgRevisionId' ) !==
-					mw.config.get( 'wgCurRevisionId' )
-				) {
-					// This is not the latest version of the page. Do nothing.
-				} else if ( await this.checkForActiveSessionTabs() ) {
+				if ( viewingCurrent && await this.checkForActiveSessionTabs() ) {
 					// Session is active in another tab. Defer to other tab.
 					await DeputyRootSession.initTabActiveInterface( casePage );
-				} else {
+				} else if ( viewingCurrent ) {
 					// Page reloaded or exited without proper session close.
 					// Continue where we left off.
 					await this.rootSession.initSessionInterface();
@@ -69,6 +77,18 @@ export default class DeputySession {
 				}
 			} else if ( DeputyCasePage.isCasePage() ) {
 				// TODO: Show "start work" with session replacement warning
+			} else {
+				// Normal page. Determine if this is being worked on, and then
+				// start a new session if it is.
+				const pageSession = await DeputyPageSession.getPageDetails(
+					window.deputy.currentPage,
+					viewingCurrent ? null : mw.config.get( 'wgRevisionId' )
+				);
+
+				if ( pageSession ) {
+					this.pageSession = new DeputyPageSession();
+					this.pageSession.init( pageSession );
+				}
 			}
 		} else {
 			// No active session

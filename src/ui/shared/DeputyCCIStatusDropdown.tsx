@@ -1,13 +1,14 @@
 import '../../types';
 import { ContributionSurveyRowStatus } from '../../models/ContributionSurveyRow';
 import unwrapWidget from '../../util/unwrapWidget';
-import DeputyCasePage from '../../wiki/DeputyCasePage';
+import { DeputyMessageEvent, DeputyPageStatusUpdateMessage } from '../../DeputyCommunications';
+import DeputyCase from '../../wiki/DeputyCase';
 
 export interface DeputyCCIStatusDropdownProps {
 	/**
 	 * The initial status of the page.
 	 */
-	status?: ContributionSurveyRowStatus
+	status?: ContributionSurveyRowStatus;
 	/**
 	 * The list of enabled status options. If not available, the option will
 	 * be dimmed, <b>with the exception of `Unknown`</b>, which will be
@@ -17,7 +18,12 @@ export interface DeputyCCIStatusDropdownProps {
 	/**
 	 * Extra options for the DropdownWidget.
 	 */
-	widgetOptions?: string[]
+	widgetOptions?: string[];
+	/**
+	 * Whether an acknowledgment message is required after broadcasting a change.
+	 * Defaults to `true`. `false` for root sessions.
+	 */
+	requireAcknowledge?: boolean;
 }
 
 /**
@@ -38,7 +44,7 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 	 * title that this dropdown is for.
 	 */
 	row: {
-		casePage: DeputyCasePage,
+		casePage: DeputyCase,
 		title: mw.Title
 	};
 	/**
@@ -55,7 +61,12 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 	 * A listener that listens to changes in the status dropdown and performs respective
 	 * updates and changes.
 	 */
-	statusDropdownChangeListener: ( items: any[] ) => void;
+	dropdownChangeListener: ( items: any[] ) => void;
+	/**
+	 * A listener that listens to external changes to the status dropdown from the
+	 * inter-tab communication channel.
+	 */
+	dropdownUpdateListener: ( message: DeputyMessageEvent<DeputyPageStatusUpdateMessage> ) => void;
 
 	/**
 	 * @return The currently-selected status of this dropdown.
@@ -71,7 +82,7 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 		this.setOptionDisabled(
 			ContributionSurveyRowStatus.Unknown,
 			status !== ContributionSurveyRowStatus.Unknown,
-			true
+			false
 		);
 		this.refresh();
 	}
@@ -84,12 +95,12 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 	 *      DeputyContributionSurveyRow that is handling the row.
 	 *     For dependent sessions, this is a much simpler version which includes
 	 *      only the case page info and the row title.
-	 * @param row.casePage The DeputyCasePage for this dropdown
+	 * @param row.casePage The DeputyCase for this dropdown
 	 * @param row.title The title of the row (page) that this dropdown accesses
 	 * @param options Additional construction options, usually used by the root session.
 	 */
 	constructor( row: {
-		casePage: DeputyCasePage,
+		casePage: DeputyCase,
 		title: mw.Title
 	}, options: DeputyCCIStatusDropdownProps = {} ) {
 		super();
@@ -141,21 +152,75 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 			this.setEnabledOptions( options.enabled );
 		}
 
-		this.statusDropdownChangeListener = ( () => {
+		const requireAcknowledge = options.requireAcknowledge ?? true;
+
+		let pastStatus = this.status;
+		let incommunicable = false;
+		this.dropdownChangeListener = async () => {
+			if ( incommunicable ) {
+				// Reset flag.
+				incommunicable = false;
+				return;
+			}
+
 			this.dispatchEvent( Object.assign( new Event( 'change' ), {
 				status: this.status
 			} ) );
 			this.refresh();
-			window.deputy.comms.send( {
+			const message = await window.deputy.comms[
+				requireAcknowledge ? 'sendAndWait' as const : 'send' as const
+			]( {
 				type: 'pageStatusUpdate',
 				caseId: this.row.casePage.pageId,
 				page: this.row.title.getPrefixedText(),
 				status: this.status
 			} );
-		} );
+
+			if ( requireAcknowledge && message == null ) {
+				// Broadcast failure as an event and restore to the past value.
+				// This will cause an infinite loop, so set `incommunicable` to true to
+				// avoid that.
+				this.dispatchEvent( Object.assign(
+					new Event( 'updateFail' ),
+					{
+						data: {
+							former: pastStatus,
+							target: this.status
+						}
+					}
+				) );
+				incommunicable = true;
+				this.status = pastStatus;
+			} else {
+				// Overwrite the past status.
+				pastStatus = this.status;
+			}
+		};
+		this.dropdownUpdateListener = ( event ) => {
+			const { data: message } = event;
+
+			if (
+				message.caseId === this.row.casePage.pageId &&
+				message.page === this.row.title.getPrefixedText()
+			) {
+				// Update the enabled and disabled options.
+				for ( const enabled of message.enabledOptions ?? [] ) {
+					this.setOptionDisabled( enabled, false, false );
+				}
+				for ( const disabled of message.disabledOptions ?? [] ) {
+					this.setOptionDisabled( disabled, false, false );
+				}
+
+				// Update the status.
+				this.status = message.status;
+
+				window.deputy.comms.reply( message, { type: 'acknowledge' } );
+			}
+		};
+		window.deputy.comms.addEventListener( 'pageStatusUpdate', this.dropdownUpdateListener );
 
 		// Change the icon of the dropdown when the value changes.
-		this.dropdown.getMenu().on( 'select', this.statusDropdownChangeListener );
+		this.dropdown.getMenu().on( 'select', this.dropdownChangeListener );
 		// Make the menu larger than the actual dropdown.
 		this.dropdown.getMenu().on( 'ready', () => {
 			this.dropdown.getMenu().toggleClipping( false );
@@ -170,9 +235,27 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 		type: 'change',
 		callback: (
 			evt: Event & { type: 'change', status: ContributionSurveyRowStatus }
-		) => void | null,
+		) => void | null
+	): void;
+	/**
+	 * @inheritDoc
+	 */
+	addEventListener(
+		type: 'updateFail',
+		callback: (
+			evt: Event & { data: {
+				former: ContributionSurveyRowStatus, target: ContributionSurveyRowStatus
+			} }
+		) => void | null
+	): void;
+	/**
+	 * @inheritDoc
+	 */
+	addEventListener(
+		type: string,
+		callback: ( evt: any ) => void | null,
 		options?: AddEventListenerOptions | boolean
-	) {
+	): void {
 		super.addEventListener( type, callback, options );
 	}
 
@@ -186,6 +269,17 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 	}
 
 	/**
+	 * Gets a list of enabled options.
+	 *
+	 * @return An array of {@link ContributionSurveyRowStatus}es
+	 */
+	getEnabledOptions(): ContributionSurveyRowStatus[] {
+		return Array.from( this.options.keys() ).filter( ( status ) => {
+			return !this.options.get( status ).isDisabled();
+		} );
+	}
+
+	/**
 	 *
 	 * @param enabledOptions
 	 * @param broadcast
@@ -193,6 +287,12 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 	setEnabledOptions( enabledOptions: ContributionSurveyRowStatus[], broadcast = false ) {
 		for ( const status in ContributionSurveyRowStatus ) {
 			const option = this.options.get( +status );
+
+			if ( option == null ) {
+				// Skip if null.
+				continue;
+			}
+
 			const toEnable = enabledOptions.indexOf( +status ) !== -1;
 			const optionDisabled = option.isDisabled();
 

@@ -656,7 +656,8 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 
 		// Build status dropdown
 		this.statusDropdown = new DeputyCCIStatusDropdown( this.row, {
-			status: possibleStatus
+			status: possibleStatus,
+			requireAcknowledge: false
 		} );
 		if ( ( diffs && diffs.size === 0 ) || this.wasFinished ) {
 			// If there are no diffs found or `this.wasFinished` is set (both meaning there are
@@ -811,14 +812,13 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	sendStatusResponse(
 		event: DeputyMessageEvent<DeputyPageStatusRequestMessage>
 	): void {
-		if (
-			event.data.caseId === this.section.casePage.pageId &&
-			event.data.page === this.row.title.getPrefixedText()
-		) {
+		if ( event.data.page === this.row.title.getPrefixedText() ) {
 			window.deputy.comms.reply(
 				event.data, {
 					type: 'pageStatusResponse',
+					caseId: this.row.casePage.pageId,
 					status: this.status,
+					enabledStatuses: this.statusDropdown.getEnabledOptions(),
 					revisionStatus: event.data.revision ? this.revisions.find(
 						( r ) => r.revision.revid === event.data.revision
 					)?.completed : undefined

@@ -65,5 +65,8 @@
     "deputy.session.revision.contribs": "contribs",
     "deputy.session.revision.bytes": "{{FORMATNUM:$1}} bytes",
     "deputy.session.revision.byteChange": "{{FORMATNUM:$1}} bytes after change of this size",
-    "deputy.session.revision.tags": "{{PLURAL:$1|Tag|Tags}}:"
+    "deputy.session.revision.tags": "{{PLURAL:$1|Tag|Tags}}:",
+
+    "deputy.session.page.incommunicable": "Cannot find an active Deputy session. Please ensure that Deputy is running on a contributor investigation case page.",
+    "deputy.session.page.caseInfo.label": "Current case"
 }
