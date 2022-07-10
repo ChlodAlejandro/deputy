@@ -3,6 +3,8 @@ import { ContributionSurveyRevision } from '../../models/ContributionSurveyRevis
 import { h } from 'tsx-dom';
 import getRevisionDiffURL from '../../util/getRevisionDiffURL';
 import unwrapWidget from '../../util/unwrapWidget';
+import { DeputyMessageEvent, DeputyRevisionStatusUpdateMessage } from '../../DeputyCommunications';
+import ContributionSurveyRow from '../../models/ContributionSurveyRow';
 
 /**
  * A specific revision for a section row.
@@ -15,6 +17,10 @@ export default class DeputyContributionSurveyRevision
 	 * The revision that this UI element handles.
 	 */
 	revision: ContributionSurveyRevision;
+	/**
+	 * The row that this revision belongs to.
+	 */
+	row: ContributionSurveyRow;
 
 	/**
 	 * @return `true` the current revision has been checked by the user or `false` if not.
@@ -40,10 +46,45 @@ export default class DeputyContributionSurveyRevision
 
 	/**
 	 * @param revision
+	 * @param row
 	 */
-	constructor( revision: ContributionSurveyRevision ) {
+	constructor( revision: ContributionSurveyRevision, row: ContributionSurveyRow ) {
 		super();
 		this.revision = revision;
+		this.row = row;
+	}
+
+	readonly revisionStatusUpdateListener = this.onRevisionStatusUpdate.bind( this );
+
+	/**
+	 * Listener for revision status updates from the root session.
+	 *
+	 * @param root0
+	 * @param root0.data
+	 */
+	onRevisionStatusUpdate(
+		{ data }: DeputyMessageEvent<DeputyRevisionStatusUpdateMessage>
+	): void {
+		if (
+			this.row.casePage.pageId === data.caseId &&
+			this.row.title.getPrefixedText() === data.page &&
+			this.revision.revid === data.revision
+		) {
+			this.completedCheckbox.setSelected( data.status );
+			window.deputy.comms.reply( data, {
+				type: 'acknowledge'
+			} );
+		}
+	}
+
+	/**
+	 * Performs cleanup before removal.
+	 */
+	close(): void {
+		window.deputy.comms.removeEventListener(
+			'revisionStatusUpdate',
+			this.revisionStatusUpdateListener
+		);
 	}
 
 	/**
@@ -95,6 +136,10 @@ export default class DeputyContributionSurveyRevision
 		this.completedCheckbox.on( 'change', ( checked: boolean ) => {
 			this.emit( 'update', checked, this.revision );
 		} );
+		window.deputy.comms.addEventListener(
+			'revisionStatusUpdate',
+			this.revisionStatusUpdateListener
+		);
 
 		const comma = mw.message( 'comma-separator' ).text();
 

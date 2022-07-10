@@ -81,11 +81,11 @@ export default class DeputySession {
 				// Normal page. Determine if this is being worked on, and then
 				// start a new session if it is.
 				const pageSession = await DeputyPageSession.getPageDetails(
-					window.deputy.currentPage,
-					viewingCurrent ? null : mw.config.get( 'wgRevisionId' )
+					window.deputy.currentPage
 				);
 
 				if ( pageSession ) {
+					// This page is being worked on, create a session.
 					this.pageSession = new DeputyPageSession();
 					this.pageSession.init( pageSession );
 				}

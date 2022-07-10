@@ -155,14 +155,18 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 		const requireAcknowledge = options.requireAcknowledge ?? true;
 
 		let pastStatus = this.status;
+		let processing = false;
 		let incommunicable = false;
 		this.dropdownChangeListener = async () => {
 			if ( incommunicable ) {
 				// Reset flag.
 				incommunicable = false;
 				return;
+			} else if ( processing ) {
+				return;
 			}
 
+			processing = true;
 			this.dispatchEvent( Object.assign( new Event( 'change' ), {
 				status: this.status
 			} ) );
@@ -195,6 +199,7 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 				// Overwrite the past status.
 				pastStatus = this.status;
 			}
+			processing = false;
 		};
 		this.dropdownUpdateListener = ( event ) => {
 			const { data: message } = event;
@@ -226,6 +231,16 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 			this.dropdown.getMenu().toggleClipping( false );
 			unwrapWidget( this.dropdown.getMenu() ).style.width = '20em';
 		} );
+	}
+
+	/**
+	 * Performs cleanup
+	 */
+	close(): void {
+		window.deputy.comms.removeEventListener(
+			'pageStatusUpdate',
+			this.dropdownUpdateListener
+		);
 	}
 
 	/**

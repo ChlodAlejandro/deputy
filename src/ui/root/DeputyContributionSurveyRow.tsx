@@ -503,7 +503,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		) );
 
 		for ( const revision of diffs.values() ) {
-			const revisionUIEl = new DeputyContributionSurveyRevision( revision );
+			const revisionUIEl = new DeputyContributionSurveyRevision( revision, this.row );
 
 			revisionUIEl.on(
 				'update',
@@ -788,6 +788,21 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		this.loadData();
 
 		return this.rootElement;
+	}
+
+	/**
+	 * Performs cleanup before removal.
+	 */
+	close(): void {
+		this.state = DeputyContributionSurveyRowState.Closed;
+		window.deputy.comms.removeEventListener(
+			'pageStatusRequest',
+			this.statusRequestResponder
+		);
+
+		this.revisions.forEach( ( revision ) => {
+			revision.close();
+		} );
 	}
 
 	/**

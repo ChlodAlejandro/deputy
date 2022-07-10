@@ -1,5 +1,6 @@
 import 'broadcastchannel-polyfill';
 import { ContributionSurveyRowStatus } from './models/ContributionSurveyRow';
+import generateId from './util/generateId';
 
 /**
  * Generic message used to acknowledge an action. This is usually required by
@@ -71,11 +72,23 @@ export interface DeputyPageStatusRequestMessage {
  */
 export interface DeputyPageStatusResponseMessage {
 	type: 'pageStatusResponse';
+	/**
+	 * The ID of this case.
+	 */
 	caseId: number;
+	/**
+	 * The currently-selected status of this page on the case page.
+	 */
 	status: ContributionSurveyRowStatus;
+	/**
+	 * A list of the enabled statuses for this page on the case page.
+	 */
 	enabledStatuses: ContributionSurveyRowStatus[];
-	// Defined if a revision was given in the request.
-	revisionStatus?: boolean;
+	/**
+	 * The status of the revision on the case page. Only enabled if the `revision`
+	 * parameter was supplied in the request.
+	 */
+	revisionStatus: boolean;
 }
 
 /**
@@ -94,6 +107,14 @@ export interface DeputyPageStatusUpdateMessage {
 	disabledOptions?: ContributionSurveyRowStatus[];
 }
 
+export interface DeputyRevisionStatusUpdateMessage {
+	type: 'revisionStatusUpdate';
+	caseId: number;
+	page: string;
+	revision: number;
+	status: boolean;
+}
+
 /**
  * A constant map of specific one-way Deputy message types and their respective
  * response messages.
@@ -103,7 +124,8 @@ const OneWayDeputyMessageMap = <const>{
 	sessionResponse: 'sessionRequest',
 	pageStatusRequest: 'pageStatusResponse',
 	pageStatusResponse: 'pageStatusRequest',
-	pageStatusUpdate: 'acknowledge'
+	pageStatusUpdate: 'acknowledge',
+	revisionStatusUpdate: 'acknowledge'
 };
 
 export type DeputyRequestMessage = DeputySessionRequestMessage;
@@ -116,7 +138,8 @@ export type DeputyMessage =
 	| DeputySessionStartedMessage
 	| DeputyPageStatusRequestMessage
 	| DeputyPageStatusResponseMessage
-	| DeputyPageStatusUpdateMessage;
+	| DeputyPageStatusUpdateMessage
+	| DeputyRevisionStatusUpdateMessage;
 export type LowLevelDeputyMessage = DeputyMessage & {
 	_deputy: true;
 	_deputyMessageId: string;
@@ -182,7 +205,7 @@ export default class DeputyCommunications extends EventTarget {
 	 * @return The sent message object
 	 */
 	send( data: DeputyMessage ): LowLevelDeputyMessage {
-		const messageId = `${Date.now()}++${Math.random().toString().slice( 2 )}`;
+		const messageId = generateId();
 		const message: LowLevelDeputyMessage = Object.assign(
 			data, { _deputy: <const>true, _deputyMessageId: messageId }
 		);

@@ -247,11 +247,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 
 		// Detach listeners to stop listening to events.
 		this.rows.forEach( ( row ) => {
-			row.state = DeputyContributionSurveyRowState.Closed;
-			window.deputy.comms.removeEventListener(
-				'pageStatusRequest',
-				row.statusRequestResponder
-			);
+			row.close();
 		} );
 	}
 

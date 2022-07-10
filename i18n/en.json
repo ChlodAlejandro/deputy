@@ -7,6 +7,7 @@
     "deputy.close": "Close",
     "deputy.positiveDiff": "+{{FORMATNUM:$1}}",
     "deputy.negativeDiff": "-{{FORMATNUM:$1}}",
+    "deputy.moreInfo": "More information",
 
     "deputy.diff": "Review your changes",
     "deputy.diff.load": "Loading changes...",
@@ -42,7 +43,7 @@
     "deputy.session.row.details.edits": "{{PLURAL:$1|$1 edit|{{FORMATNUM:$1}} edits}}",
     "deputy.session.row.content.open": "Expand additional details",
     "deputy.session.row.content.close": "Collapse additional details",
-    "deputy.session.row.unfinishedWarning": "A assessment was given but not all revisions of the page have been assessed. The assessment will not be saved on the case page until all revisions are marked as assessed, but will be saved locally (on your browser) for later.",
+    "deputy.session.row.unfinishedWarning": "A assessment was given but not all revisions of the page have been assessed. The final assessment will not be saved on the case page until all revisions are marked as assessed, but will be saved locally (on your browser) for later.",
     "deputy.session.row.talk": "Open the talk page",
     "deputy.session.row.edit": "Edit this page",
     "deputy.session.row.history": "Open page history",
@@ -68,5 +69,10 @@
     "deputy.session.revision.tags": "{{PLURAL:$1|Tag|Tags}}:",
 
     "deputy.session.page.incommunicable": "Cannot find an active Deputy session. Please ensure that Deputy is running on a contributor investigation case page.",
-    "deputy.session.page.caseInfo.label": "Current case"
+    "deputy.session.page.caseInfo.label": "Current case",
+    "deputy.session.page.caseInfo.revision": "Revision #$1",
+    "deputy.session.page.caseInfo.revision.none": "Revision out of scope",
+    "deputy.session.page.caseInfo.revision.help": "The requested revision was out of scope for the current Deputy case page. It was likely made by a user who is not a subject of the case page, or has already been removed or assessed by another user. Tools will still be available, but you will not be able to mark this revision as \"assessed\".",
+    "deputy.session.page.caseInfo.assessed": "Assessed?",
+    "deputy.session.page.caseInfo.next": "Navigate to next unassessed revision"
 }

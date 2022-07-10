@@ -279,35 +279,33 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
     font-size: 0.9rem;
 
     display: flex;
-    align-items: end;
+    align-items: center;
 }
 
-.dp-pt-caseInfo {
+.dp-pt-section {
     display: inline-block;
     white-space: nowrap;
 }
 
-.dp-pt-caseInfo-label {
+.dp-pt-section + .dp-pt-section {
+    margin-left: 16px;
+    padding-left: 16px;
+    border-left: 1px solid gray;
+}
+
+.dp-pt-section-label {
     font-weight: bold;
     font-size: 0.6rem;
     color: #4a5054;
     text-transform: uppercase;
 }
 
-.dp-pt-caseInfo-name {
+.dp-pt-caseInfo {
     font-weight: bold;
     font-size: 1.3rem;
     pointer-events: none;
 }
 
-.dp-pt-completedCheckbox {
-    font-size: 1.2em;
-    align-self: center;
-}
-
-.dp-pt-separator {
-    margin: 0 16px;
-    border-right: 1px solid gray;
-    font-size: 1.5rem;
-    align-self: center;
+.dp-pt-missingRevision {
+    white-space: normal;
 }

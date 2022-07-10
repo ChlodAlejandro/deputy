@@ -1,5 +1,5 @@
 import { DeputyPageStatusResponseMessage } from '../DeputyCommunications';
-import DeputyPageToolbar from '../ui/page/DeputyPageToolbar';
+import DeputyPageToolbar, { DeputyPageToolbarOptions } from '../ui/page/DeputyPageToolbar';
 
 /**
  * Controls everything related to a page that is the subject of an active
@@ -29,6 +29,11 @@ export default class DeputyPageSession {
 	}
 
 	/**
+	 * An active DeputyPageToolbar, if any is available.
+	 */
+	toolbar: DeputyPageToolbar;
+
+	/**
 	 *
 	 * @param data
 	 */
@@ -38,11 +43,50 @@ export default class DeputyPageSession {
 			'oojs-ui-windows',
 			'oojs-ui.styles.icons-interactions',
 			'oojs-ui.styles.icons-movement'
-		], async () => {
-			const toolbar = new DeputyPageToolbar( data );
-			await toolbar.prepare();
-			document.getElementsByTagName( 'body' )[ 0 ].appendChild( toolbar.render() );
+		], () => {
+			mw.hook( 'wikipage.diff' ).add( async () => {
+				// Attempt to get new revision data *with revision ID*.
+				data = await DeputyPageSession.getPageDetails(
+					window.deputy.currentPage,
+					mw.config.get( 'wgRevisionId' )
+				);
+
+				const openPromise = this.appendToolbar( {
+					...data,
+					forceRevision: this.toolbar != null ||
+						// Is a diff page.
+						mw.config.get( 'wgDiffNewId' ) != null
+				} );
+
+				if (
+					this.toolbar &&
+					this.toolbar.revision !== mw.config.get( 'wgRevisionId' )
+				) {
+					const oldToolbar = this.toolbar;
+					openPromise.then( () => {
+						oldToolbar.close();
+					} );
+
+				}
+
+				this.toolbar = await openPromise;
+			} );
 		} );
+	}
+
+	/**
+	 * Creates the Deputy page toolbar and appends it to the DOM.
+	 *
+	 * @param data Data for constructing the toolbar
+	 */
+	async appendToolbar( data: DeputyPageToolbarOptions ): Promise<DeputyPageToolbar> {
+		const toolbar = new DeputyPageToolbar( data );
+		await toolbar.prepare();
+
+		document.getElementsByTagName( 'body' )[ 0 ]
+			.appendChild( toolbar.render() );
+
+		return toolbar;
 	}
 
 }
