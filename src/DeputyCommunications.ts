@@ -1,38 +1,84 @@
 import 'broadcastchannel-polyfill';
 import { ContributionSurveyRowStatus } from './models/ContributionSurveyRow';
 
+/**
+ * Used to request for session information. Broadcast prior to actual session
+ * execution to avoid session conflicts. If no sessions are active, a timeout
+ * (default of 500ms) is expected to expire, meaning there are no active sessions.
+ */
 export interface DeputySessionRequestMessage {
 	type: 'sessionRequest';
 }
 
+/**
+ * Response to {@link DeputyPageStatusRequestMessage}. Contains current case page
+ * ID and active sessions.
+ */
 export interface DeputySessionResponseMessage {
 	type: 'sessionResponse';
 	caseId: number;
 	sections: string[];
 }
 
+/**
+ * Broadcast whenever a session is closed. This allows tabs that also have an
+ * active session to re-render options for starting a session.
+ */
 export interface DeputySessionClosedMessage {
 	type: 'sessionClosed';
 	caseId: number;
 }
 
+/**
+ * Broadcast whenever a session is started. This hides session-starting UI
+ * elements from other tabs to avoid session conflicts.
+ */
 export interface DeputySessionStartedMessage {
 	type: 'sessionStarted';
 	caseId: number;
 }
 
+/**
+ * Requests the status of a given page. Used prior to showing the page toolbar.
+ * If no response is received, the page is not part of an active CCI session and
+ * therefore will not be worked on.
+ *
+ * An optional `revision` parameter requests information for a specific revision.
+ * If checked, the returning {@link DeputyPageStatusResponseMessage} will also
+ * provide information on whether the revision is marked as assessed or not.
+ */
 export interface DeputyPageStatusRequestMessage {
-	type: 'pageStatusRequest',
+	type: 'pageStatusRequest';
 	caseId: number;
 	page: string;
 	revision?: number;
 }
 
+/**
+ * Response to {@link DeputyPageStatusRequestMessage}. Contains the current page
+ * status and the revision status (if requested).
+ */
 export interface DeputyPageStatusResponseMessage {
-	type: 'pageStatusResponse',
-	status: ContributionSurveyRowStatus
+	type: 'pageStatusResponse';
+	status: ContributionSurveyRowStatus;
 	// Defined if a revision was given in the request.
 	revisionStatus?: boolean;
+}
+
+/**
+ * Updates all listening instances of Deputy that a page's status (or status options)
+ * have changed. This is fired whenever the user manually changes the option, or if an
+ * option has been disabled/enabled following a change in the revision list.
+ */
+export interface DeputyPageStatusUpdateMessage {
+	type: 'pageStatusUpdate';
+	caseId: number;
+	page: string;
+	status: ContributionSurveyRowStatus;
+	// Newly-enabled options.
+	enabledOptions?: ContributionSurveyRowStatus[];
+	// Newly-disabled options.
+	disabledOptions?: ContributionSurveyRowStatus[];
 }
 
 /**
@@ -54,7 +100,8 @@ export type DeputyMessage =
 	| DeputySessionClosedMessage
 	| DeputySessionStartedMessage
 	| DeputyPageStatusRequestMessage
-	| DeputyPageStatusResponseMessage;
+	| DeputyPageStatusResponseMessage
+	| DeputyPageStatusUpdateMessage;
 export type LowLevelDeputyMessage = DeputyMessage & {
 	_deputy: true;
 	_deputyMessageId: string;
