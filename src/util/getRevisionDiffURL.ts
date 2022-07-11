@@ -24,6 +24,11 @@ export default function (
 		searchParams.set( 'oldid', from.toString() );
 	} else {
 		searchParams.set( 'diff', from.toString() );
+
+		// Strip oldid from URL.
+		if ( searchParams.has( 'oldid' ) ) {
+			searchParams.delete( 'oldid' );
+		}
 	}
 	url.search = '?' + searchParams.toString();
 	url.hash = '';

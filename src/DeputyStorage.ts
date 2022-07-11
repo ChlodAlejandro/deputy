@@ -39,12 +39,20 @@ interface DeputyDiffCacheStore {
 	value: ExpandedRevisionData;
 }
 
-export interface DeputyDiffStatus {
+export interface DeputyPageStatus {
 	hash: string,
-	casePageID: number,
-	page: string,
 	status: ContributionSurveyRowStatus,
 	comments: string
+}
+
+interface DeputyPageStatusStore {
+	/* `hash` */
+	key: string;
+	value: DeputyPageStatus;
+}
+
+export interface DeputyDiffStatus {
+	hash: string;
 }
 
 interface DeputyDiffStatusStore {
@@ -67,6 +75,7 @@ interface DeputyDatabase extends DBSchema {
 	casePageCache: DeputyCasePageCacheStore;
 	diffCache: DeputyDiffCacheStore;
 	diffStatus: DeputyDiffStatusStore;
+	pageStatus: DeputyPageStatusStore;
 	tagCache: DeputyTagCacheStore;
 }
 
@@ -100,6 +109,9 @@ export default class DeputyStorage {
 								keyPath: 'revid'
 							} );
 							db.createObjectStore( 'diffStatus', {
+								keyPath: 'hash'
+							} );
+							db.createObjectStore( 'pageStatus', {
 								keyPath: 'hash'
 							} );
 							db.createObjectStore( 'tagCache', {

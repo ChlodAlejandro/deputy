@@ -78,17 +78,10 @@ export default class DeputySession {
 			} else if ( DeputyCasePage.isCasePage() ) {
 				// TODO: Show "start work" with session replacement warning
 			} else {
-				// Normal page. Determine if this is being worked on, and then
-				// start a new session if it is.
-				const pageSession = await DeputyPageSession.getPageDetails(
-					window.deputy.currentPage
-				);
-
-				if ( pageSession ) {
-					// This page is being worked on, create a session.
-					this.pageSession = new DeputyPageSession();
-					this.pageSession.init( pageSession );
-				}
+				await this.normalPageInitialization();
+				window.deputy.comms.addEventListener( 'sessionStarted', () => {
+					this.normalPageInitialization();
+				} );
 			}
 		} else {
 			// No active session
@@ -115,6 +108,29 @@ export default class DeputySession {
 			.then( ( res ) => {
 				return res != null;
 			} );
+	}
+
+	/**
+	 * Detects if a session is currently active, attempt to get page details, and
+	 * start a page session if details have been found.
+	 *
+	 * @return `true` if a session was started, `false` otherwise.
+	 */
+	async normalPageInitialization(): Promise<boolean> {
+		// Normal page. Determine if this is being worked on, and then
+		// start a new session if it is.
+		const pageSession = await DeputyPageSession.getPageDetails(
+			window.deputy.currentPage
+		);
+
+		if ( pageSession ) {
+			// This page is being worked on, create a session.
+			this.pageSession = new DeputyPageSession();
+			this.pageSession.init( pageSession );
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**

@@ -1,4 +1,6 @@
-import { DeputyPageStatusResponseMessage } from '../DeputyCommunications';
+import {
+	DeputyPageStatusResponseMessage
+} from '../DeputyCommunications';
 import DeputyPageToolbar, { DeputyPageToolbarOptions } from '../ui/page/DeputyPageToolbar';
 
 /**
@@ -33,11 +35,15 @@ export default class DeputyPageSession {
 	 */
 	toolbar: DeputyPageToolbar;
 
+	readonly sessionCloseHandler = this.onSessionClosed.bind( this );
+
 	/**
 	 *
 	 * @param data
 	 */
 	init( data: DeputyPageStatusResponseMessage ) {
+		window.deputy.comms.addEventListener( 'sessionClosed', this.sessionCloseHandler );
+
 		mw.loader.using( [
 			'oojs-ui-core',
 			'oojs-ui-windows',
@@ -88,6 +94,21 @@ export default class DeputyPageSession {
 			.appendChild( toolbar.render() );
 
 		return toolbar;
+	}
+
+	/**
+	 * Cleanup toolbar, remove event listeners, and remove from DOM.
+	 */
+	close(): void {
+		this.toolbar?.close();
+		window.deputy.comms.removeEventListener( 'sessionClosed', this.sessionCloseHandler );
+	}
+
+	/**
+	 * Handler for when a session is closed.
+	 */
+	onSessionClosed(): void {
+		this.close();
 	}
 
 }

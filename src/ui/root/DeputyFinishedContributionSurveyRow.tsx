@@ -1,4 +1,5 @@
 import { h } from 'tsx-dom';
+import '../../types';
 import ContributionSurveyRow from '../../models/ContributionSurveyRow';
 import guessAuthor from '../../util/guessAuthor';
 
@@ -6,7 +7,7 @@ import guessAuthor from '../../util/guessAuthor';
  * Displayed when a ContributionSurveyRow has no remaining diffs. Deputy is not able
  * to perform the contribution survey itself, so there is no revision list.
  */
-export default class DeputyUnfinishedContributionSurveyRow {
+export default class DeputyFinishedContributionSurveyRow {
 
 	props: {
 		originalElement: HTMLLIElement,
@@ -28,7 +29,7 @@ export default class DeputyUnfinishedContributionSurveyRow {
 	 * @param props.originalElement
 	 * @return An HTML element
 	 */
-	constructor( props: DeputyUnfinishedContributionSurveyRow['props'] ) {
+	constructor( props: DeputyFinishedContributionSurveyRow['props'] ) {
 		this.props = props;
 	}
 

@@ -121,7 +121,7 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 		} );
 
 		this.nextRevisionButton.on( 'click', async () => {
-			this.nextRevisionButton.setDisabled( true );
+			this.setDisabled( true );
 
 			if ( this.options.nextRevision ) {
 				// No need to worry about swapping elements here, since `loadNewDiff`
@@ -139,20 +139,20 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 						OO.ui.alert(
 							mw.message( 'deputy.session.page.incommunicable' ).text()
 						);
-						this.nextRevisionButton.setDisabled( false );
+						this.setDisabled( false );
 					} else if ( nextRevisionData.revid != null ) {
 						await DiffPage.loadNewDiff( nextRevisionData.revid );
-						this.nextRevisionButton.setDisabled( false );
 					} else {
+						this.setDisabled( false );
 						this.nextRevisionButton.setDisabled( true );
 					}
 				} catch ( e ) {
 					console.error( e );
-					this.nextRevisionButton.setDisabled( false );
+					this.setDisabled( false );
 				}
 			} else if ( this.options.nextRevision !== false ) {
 				// Sets disabled to false if the value is null.
-				this.nextRevisionButton.setDisabled( false );
+				this.setDisabled( false );
 			}
 		} );
 
@@ -285,6 +285,17 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 			{ this.renderRevisionInfo() }
 			{ this.nextRevisionSection = this.renderNextRevisionButton() as HTMLElement }
 		</div> as HTMLElement;
+	}
+
+	/**
+	 * Sets the disabled state of the toolbar.
+	 *
+	 * @param disabled
+	 */
+	setDisabled( disabled: boolean ) {
+		this.statusDropdown?.setDisabled( disabled );
+		this.revisionCheckbox?.setDisabled( disabled );
+		this.nextRevisionButton?.setDisabled( disabled );
 	}
 
 	/**

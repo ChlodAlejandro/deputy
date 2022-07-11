@@ -9,9 +9,9 @@ import unwrapWidget from '../../util/unwrapWidget';
 import DeputyLoadingDots from './DeputyLoadingDots';
 import DeputyContributionSurveyRevision from './DeputyContributionSurveyRevision';
 import { ContributionSurveyRevision } from '../../models/ContributionSurveyRevision';
-import DeputyFinishedContributionSurveyRow from './DeputyUnfinishedContributionSurveyRow';
+import DeputyFinishedContributionSurveyRow from './DeputyFinishedContributionSurveyRow';
 import classMix from '../../util/classMix';
-import { DeputyDiffStatus } from '../../DeputyStorage';
+import { DeputyPageStatus } from '../../DeputyStorage';
 import {
 	DeputyMessageEvent,
 	DeputyPageNextRevisionRequest,
@@ -340,7 +340,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			if ( this.row.completed ) {
 				this.renderRow( diffs, this.renderFinished() );
 			} else {
-				this.renderRow( diffs, this.renderUnfinished( diffs ) );
+				this.renderRow( diffs, await this.renderUnfinished( diffs ) );
 
 				const savedStatus = await this.getSavedStatus();
 				if ( !this.wasFinished && savedStatus ) {
@@ -423,8 +423,8 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 * Gets the database-saved status. Used for getting the autosaved values of the status and
 	 * closing comments.
 	 */
-	async getSavedStatus(): Promise<DeputyDiffStatus> {
-		return await window.deputy.storage.db.get( 'diffStatus', this.autosaveHash );
+	async getSavedStatus(): Promise<DeputyPageStatus> {
+		return await window.deputy.storage.db.get( 'pageStatus', this.autosaveHash );
 	}
 
 	/**
@@ -432,10 +432,8 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 */
 	async saveStatus(): Promise<void> {
 		if ( this.statusModified ) {
-			await window.deputy.storage.db.put( 'diffStatus', {
+			await window.deputy.storage.db.put( 'pageStatus', {
 				hash: this.autosaveHash,
-				casePageID: this.row.casePage.pageId,
-				page: this.row.title.getPrefixedText(),
 				status: this.status,
 				comments: this.comments
 			} );
@@ -498,7 +496,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 * @param diffs
 	 * @return HTML element
 	 */
-	renderUnfinished( diffs: Map<number, ContributionSurveyRevision> ): JSX.Element {
+	async renderUnfinished( diffs: Map<number, ContributionSurveyRevision> ): Promise<JSX.Element> {
 		this.revisions = [];
 		const revisionList = document.createElement( 'div' );
 		revisionList.classList.add( 'dp-cs-row-revisions' );
@@ -526,6 +524,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 				}
 			);
 
+			await revisionUIEl.prepare();
 			revisionList.appendChild( revisionUIEl.render() );
 			this.revisions.push( revisionUIEl );
 		}

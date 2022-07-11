@@ -184,6 +184,10 @@
     opacity: 0;
 }
 
+.dp-cs-row-status .dp-cs-row-status--unknown:not(.oo-ui-optionWidget-selected) {
+    display: none;
+}
+
 .dp-cs-row-head > * {
     vertical-align: middle;
 }

@@ -38,6 +38,27 @@ export default class DeputyContributionSurveyRevision
 	}
 
 	/**
+	 * @return The hash used for autosave keys
+	 */
+	get autosaveHash(): string {
+		return `CASE--${
+			this.uiRow.row.casePage.title.getPrefixedDb()
+		}+PAGE--${
+			this.uiRow.row.title.getPrefixedDb()
+		}+REVISION--${
+			this.revision.revid
+		}`;
+	}
+
+	/**
+	 * A function (throttled with `mw.util.throttle`) that saves the current row's status
+	 * and comments to DeputyStorage to recover unsaved data or data that could not be saved
+	 * (e.g. status when some revisions remain unassessed).
+	 */
+	statusAutosaveFunction: () => void;
+	readonly revisionStatusUpdateListener = this.onRevisionStatusUpdate.bind( this );
+
+	/**
 	 * The checkbox to indicate that a diff has been checked by the user.
 	 *
 	 * @private
@@ -52,9 +73,36 @@ export default class DeputyContributionSurveyRevision
 		super();
 		this.revision = revision;
 		this.uiRow = row;
+
+		if ( this.statusAutosaveFunction == null ) {
+			this.statusAutosaveFunction = ( mw.util as any ).throttle( async () => {
+				await this.saveStatus();
+			}, 500 );
+		}
 	}
 
-	readonly revisionStatusUpdateListener = this.onRevisionStatusUpdate.bind( this );
+	/**
+	 * Save the status and comment for this row to DeputyStorage.
+	 */
+	async saveStatus(): Promise<void> {
+		if ( this.completed ) {
+			await window.deputy.storage.db.put( 'diffStatus', {
+				hash: this.autosaveHash
+			} );
+		} else {
+			await window.deputy.storage.db.delete( 'diffStatus', this.autosaveHash );
+		}
+	}
+
+	/**
+	 * Gets the database-saved status. Used for getting the autosaved values of the status and
+	 * closing comments.
+	 */
+	async getSavedStatus(): Promise<boolean> {
+		return ( await window.deputy.storage.db.get(
+			'diffStatus', this.autosaveHash
+		) ) != null;
+	}
 
 	/**
 	 * Listener for revision status updates from the root session.
@@ -85,6 +133,32 @@ export default class DeputyContributionSurveyRevision
 			'revisionStatusUpdate',
 			this.revisionStatusUpdateListener
 		);
+	}
+
+	/**
+	 * Prepares the completed checkbox (and preload it with a check if it's been saved in
+	 * the cache).
+	 */
+	async prepare(): Promise<void> {
+		this.completedCheckbox = new OO.ui.CheckboxInputWidget( {
+			label: mw.message( 'deputy.session.revision.assessed' ).text(),
+			selected: await this.getSavedStatus()
+		} );
+
+		this.completedCheckbox.on( 'change', ( checked: boolean ) => {
+			this.emit( 'update', checked, this.revision );
+			window.deputy.comms.send( {
+				type: 'revisionStatusUpdate',
+				caseId: this.uiRow.row.casePage.pageId,
+				page: this.uiRow.row.title.getPrefixedText(),
+				revision: this.revision.revid,
+				status: checked,
+				nextRevision: this.uiRow.revisions?.find(
+					( revision ) => !revision.completed
+				)?.revision.revid ?? null
+			} );
+			this.statusAutosaveFunction();
+		} );
 	}
 
 	/**
@@ -129,23 +203,6 @@ export default class DeputyContributionSurveyRevision
 			dangerouslySetInnerHTML={this.revision.parsedcomment}
 		/>;
 
-		this.completedCheckbox = new OO.ui.CheckboxInputWidget( {
-			label: mw.message( 'deputy.session.revision.assessed' ).text()
-		} );
-
-		this.completedCheckbox.on( 'change', ( checked: boolean ) => {
-			this.emit( 'update', checked, this.revision );
-			window.deputy.comms.send( {
-				type: 'revisionStatusUpdate',
-				caseId: this.uiRow.row.casePage.pageId,
-				page: this.uiRow.row.title.getPrefixedText(),
-				revision: this.revision.revid,
-				status: checked,
-				nextRevision: this.uiRow.revisions?.find(
-					( revision ) => !revision.completed
-				)?.revision.revid ?? null
-			} );
-		} );
 		window.deputy.comms.addEventListener(
 			'revisionStatusUpdate',
 			this.revisionStatusUpdateListener

@@ -114,9 +114,17 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 			}
 
 			const statusName = ContributionSurveyRowStatus[ status ];
+
+			// The following classes are used here:
+			// * dp-cs-row-status--unfinished
+			// * dp-cs-row-status--unknown
+			// * dp-cs-row-status--withviolations
+			// * dp-cs-row-status--withoutviolations
+			// * dp-cs-row-status--missing
 			const option = new OO.ui.MenuOptionWidget( {
+				classes: [ 'dp-cs-row-status--' + statusName.toLowerCase() ],
 				data: +status,
-				// eslint-disable-next-line mediawiki/msg-doc
+
 				label: mw.message(
 					'deputy.session.row.status.' +
 					statusName[ 0 ].toLowerCase() +
@@ -128,9 +136,6 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 				// Always disable if Unknown, as Unknown is merely a placeholder value.
 				disabled: +status === ContributionSurveyRowStatus.Unknown
 			} );
-			if ( +status === ContributionSurveyRowStatus.Unknown ) {
-				option.toggle( false );
-			}
 			this.options.set( +status, option );
 		}
 

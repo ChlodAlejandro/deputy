@@ -115,7 +115,7 @@ export default class ContributionSurveyRow {
 
 	/**
 	 * This variable returns true when
-	 * (a) the row has a non-unfinished and non-unknown status, and
+	 * (a) the row has a non-unfinished status, and
 	 * (b) there are no outstanding diffs in this row
 	 *
 	 * @return See description.
@@ -126,7 +126,6 @@ export default class ContributionSurveyRow {
 		}
 
 		return this.status !== ContributionSurveyRowStatus.Unfinished &&
-			this.status !== ContributionSurveyRowStatus.Unknown &&
 			this.diffs.size === 0;
 	}
 
