@@ -32,8 +32,21 @@
 <a href="#testing" id="testing" style="color: inherit; text-decoration: none;">
   <h2>Testing</h2>
 </a>
+
+<a href="#live-testing" id="live-testing" style="color: inherit; text-decoration: none;">
+  <h3>Live testing</h3>
+</a>
 <p><a href="https://github.com/ChlodAlejandro/deputy/releases/tag/v0.0.1">Pre-alpha release <code>v0.0.1</code></a> has been made as a technical demonstration. You may experiment with this version of Deputy, but keep in mind that it is <strong>extremely unstable</strong> and bugs may be found. Nevertheless, please <a href="https://github.com/ChlodAlejandro/deputy/issues">report bugs found</a> so that they may be actioned on.</p>
 <p>Starting version v0.1.0 (not yet released), Deputy&#39;s browser database will no longer be updated without proper handling of breaking changes. This will be the first version to be released on Wikipedia.</p>
+
+<a href="#automated-testing" id="automated-testing" style="color: inherit; text-decoration: none;">
+  <h3>Automated testing</h3>
+</a>
+<p>Unit and end-to-end tests exist for Deputy and can be found in the <a href="tests"><code>tests/</code></a> directory. These tests are run with Puppeteer and Jest. This ensures that Deputy&#39;s most vital components work as expected. Tests are still incomplete and coverage is not available, however by the end of the project, at least one end-to-end test should be finished.</p>
+<p>You can trigger automated testing by running the following:</p>
+<pre><code class="language-shell"><span class="hl-0">npm run </span><span class="hl-2">test</span>
+</code></pre>
+<p>You may also modify the browser to be used with Puppeteer using the <code>PUPPETEER_PRODUCT</code> environment variable. See the <a href="https://pptr.dev/#environment-variables">Puppeteer documentation</a> for more information. Automated tests are also run on GitHub, a log of which can be found <a href="https://github.com/ChlodAlejandro/deputy/actions/workflows/ci-cd.yml">here</a>.</p>
 
 <a href="#licensing" id="licensing" style="color: inherit; text-decoration: none;">
   <h2>Licensing</h2>
