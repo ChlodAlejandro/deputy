@@ -7,6 +7,23 @@ Deputy exposes a `deputy` variable on the `window` object for public use. The AP
 
 Deputy relies on modules from [Zoomiebot](https://github.com/ChlodAlejandro/zoomiebot/tree/master/bot/api/deputy/v1) to perform bulk data operations. Zoomiebot is hosted on Wikimedia Toolforge, more information can be found [here](https://github.com/ChlodAlejandro/zoomiebot#README).
 
+## Developing
+Run the development server with the following:
+```shell
+npm run dev
+```
+
+Import the script into your user JavaScript file of choice ([common.js](https://en.wikipedia.org/wiki/Special:MyPage/common.js)) with the following:
+```js
+mw.loader.load("http://localhost:45000/Deputy.js");
+mw.hook( 'deputy.preload' ).add( function () {
+	// Used to test in a sandbox environment than on the actual CCI pagespace.
+    // Feel free to change the values to fit your sandbox.
+	window.deputy.DeputyCase.rootPage = new mw.Title( 'User:Chlod/Scripts/Deputy/tests' );
+	window.deputy.DeputyCasePage.rootPage = new mw.Title( 'User:Chlod/Scripts/Deputy/tests' );
+} );
+```
+
 ## Testing
 [Pre-alpha release `v0.0.1`](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.0.1) has been made as a technical demonstration. You may experiment with this version of Deputy, but keep in mind that it is **extremely unstable** and bugs may be found. Nevertheless, please [report bugs found](https://github.com/ChlodAlejandro/deputy/issues) so that they may be actioned on.
 
