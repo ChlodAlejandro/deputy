@@ -12,7 +12,11 @@ import { ContributionSurveyRevision } from '../../models/ContributionSurveyRevis
 import DeputyFinishedContributionSurveyRow from './DeputyUnfinishedContributionSurveyRow';
 import classMix from '../../util/classMix';
 import { DeputyDiffStatus } from '../../DeputyStorage';
-import { DeputyMessageEvent, DeputyPageStatusRequestMessage } from '../../DeputyCommunications';
+import {
+	DeputyMessageEvent,
+	DeputyPageNextRevisionRequest,
+	DeputyPageStatusRequestMessage
+} from '../../DeputyCommunications';
 import DeputyCCIStatusDropdown from '../shared/DeputyCCIStatusDropdown';
 
 export enum DeputyContributionSurveyRowState {
@@ -121,6 +125,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 * Responder for session requests.
 	 */
 	readonly statusRequestResponder = this.sendStatusResponse.bind( this );
+	readonly nextRevisionRequestResponder = this.sendNextRevisionResponse.bind( this );
 
 	/**
 	 * A function (throttled with `mw.util.throttle`) that saves the current row's status
@@ -349,13 +354,21 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 				'pageStatusRequest',
 				this.statusRequestResponder
 			);
+			window.deputy.comms.addEventListener(
+				'pageNextRevisionRequest',
+				this.nextRevisionRequestResponder
+			);
 			this.state = DeputyContributionSurveyRowState.Ready;
 		} catch ( e ) {
+			console.error( 'Caught exception while loading data', e );
 			this.state = DeputyContributionSurveyRowState.Broken;
-			this.renderRow( null, new OO.ui.MessageWidget( {
-				type: 'error',
-				label: mw.message( 'deputy.session.row.error', e.message ).text()
-			} ) );
+			this.renderRow( null, unwrapWidget(
+				new OO.ui.MessageWidget( {
+					type: 'error',
+					label: mw.message( 'deputy.session.row.error', e.message ).text()
+				} )
+			) );
+			this.setDisabled( true );
 		}
 	}
 
@@ -503,7 +516,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		) );
 
 		for ( const revision of diffs.values() ) {
-			const revisionUIEl = new DeputyContributionSurveyRevision( revision, this.row );
+			const revisionUIEl = new DeputyContributionSurveyRevision( revision, this );
 
 			revisionUIEl.on(
 				'update',
@@ -799,8 +812,12 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			'pageStatusRequest',
 			this.statusRequestResponder
 		);
+		window.deputy.comms.removeEventListener(
+			'pageNextRevisionRequest',
+			this.nextRevisionRequestResponder
+		);
 
-		this.revisions.forEach( ( revision ) => {
+		this.revisions?.forEach( ( revision ) => {
 			revision.close();
 		} );
 	}
@@ -836,9 +853,50 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 					enabledStatuses: this.statusDropdown.getEnabledOptions(),
 					revisionStatus: event.data.revision ? this.revisions.find(
 						( r ) => r.revision.revid === event.data.revision
-					)?.completed : undefined
+					)?.completed : undefined,
+					nextRevision: this.revisions?.find(
+						( revision ) => !revision.completed
+					)?.revision.revid ?? null
 				}
 			);
+		}
+	}
+
+	/**
+	 *
+	 * @param event
+	 */
+	sendNextRevisionResponse(
+		event: DeputyMessageEvent<DeputyPageNextRevisionRequest>
+	): void {
+		if (
+			event.data.caseId === this.row.casePage.pageId &&
+			event.data.page === this.row.title.getPrefixedText()
+		) {
+			if ( !this.revisions ) {
+				window.deputy.comms.reply( event.data, {
+					type: 'pageNextRevisionResponse',
+					revid: null
+				} );
+			} else {
+				// If `event.data.after` == null, this will be `undefined`.
+				const baseRevision = this.revisions
+					.find( ( r ) => r.revision.revid === event.data.after );
+				const baseRevisionIndex = baseRevision == null ?
+					0 : this.revisions.indexOf( baseRevision );
+
+				const exactRevision = this.revisions.find(
+					( r, i ) => i > baseRevisionIndex && !r.completed
+				);
+				const firstRevision = exactRevision == null ?
+					this.revisions.find( ( r ) => !r.completed ) : null;
+
+				// Returns `null` if an `exactRevision` or a `firstRevision` were not found.
+				window.deputy.comms.reply( event.data, {
+					type: 'pageNextRevisionResponse',
+					revid: ( exactRevision ?? firstRevision )?.revision?.revid ?? null
+				} );
+			}
 		}
 	}
 

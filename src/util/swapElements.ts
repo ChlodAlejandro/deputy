@@ -7,7 +7,13 @@
  * @return `element2`, for chaining
  */
 export default function <T extends Element> ( element1: T, element2: T ): T {
-	element1.insertAdjacentElement( 'afterend', element2 );
-	element1.parentElement.removeChild( element1 );
-	return element2;
+	try {
+		element1.insertAdjacentElement( 'afterend', element2 );
+		element1.parentElement.removeChild( element1 );
+		return element2;
+	} catch ( e ) {
+		console.error( e, { element1, element2 } );
+		// Caught for debug only. Rethrow.
+		throw e;
+	}
 }

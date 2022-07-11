@@ -4,7 +4,7 @@ import { h } from 'tsx-dom';
 import getRevisionDiffURL from '../../util/getRevisionDiffURL';
 import unwrapWidget from '../../util/unwrapWidget';
 import { DeputyMessageEvent, DeputyRevisionStatusUpdateMessage } from '../../DeputyCommunications';
-import ContributionSurveyRow from '../../models/ContributionSurveyRow';
+import type DeputyContributionSurveyRow from './DeputyContributionSurveyRow';
 
 /**
  * A specific revision for a section row.
@@ -20,7 +20,7 @@ export default class DeputyContributionSurveyRevision
 	/**
 	 * The row that this revision belongs to.
 	 */
-	row: ContributionSurveyRow;
+	uiRow: DeputyContributionSurveyRow;
 
 	/**
 	 * @return `true` the current revision has been checked by the user or `false` if not.
@@ -48,10 +48,10 @@ export default class DeputyContributionSurveyRevision
 	 * @param revision
 	 * @param row
 	 */
-	constructor( revision: ContributionSurveyRevision, row: ContributionSurveyRow ) {
+	constructor( revision: ContributionSurveyRevision, row: DeputyContributionSurveyRow ) {
 		super();
 		this.revision = revision;
-		this.row = row;
+		this.uiRow = row;
 	}
 
 	readonly revisionStatusUpdateListener = this.onRevisionStatusUpdate.bind( this );
@@ -66,8 +66,8 @@ export default class DeputyContributionSurveyRevision
 		{ data }: DeputyMessageEvent<DeputyRevisionStatusUpdateMessage>
 	): void {
 		if (
-			this.row.casePage.pageId === data.caseId &&
-			this.row.title.getPrefixedText() === data.page &&
+			this.uiRow.row.casePage.pageId === data.caseId &&
+			this.uiRow.row.title.getPrefixedText() === data.page &&
 			this.revision.revid === data.revision
 		) {
 			this.completedCheckbox.setSelected( data.status );
@@ -135,6 +135,16 @@ export default class DeputyContributionSurveyRevision
 
 		this.completedCheckbox.on( 'change', ( checked: boolean ) => {
 			this.emit( 'update', checked, this.revision );
+			window.deputy.comms.send( {
+				type: 'revisionStatusUpdate',
+				caseId: this.uiRow.row.casePage.pageId,
+				page: this.uiRow.row.title.getPrefixedText(),
+				revision: this.revision.revid,
+				status: checked,
+				nextRevision: this.uiRow.revisions?.find(
+					( revision ) => !revision.completed
+				)?.revision.revid ?? null
+			} );
 		} );
 		window.deputy.comms.addEventListener(
 			'revisionStatusUpdate',

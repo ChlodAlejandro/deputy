@@ -89,6 +89,11 @@ export interface DeputyPageStatusResponseMessage {
 	 * parameter was supplied in the request.
 	 */
 	revisionStatus: boolean;
+	/**
+	 * The first unassessed revision of the page. Returns `false` if all revisions for
+	 * the page have been assessed.
+	 */
+	nextRevision: number | false;
 }
 
 /**
@@ -113,6 +118,29 @@ export interface DeputyRevisionStatusUpdateMessage {
 	page: string;
 	revision: number;
 	status: boolean;
+	/**
+	 * The first unassessed revision of the page.
+	 */
+	nextRevision: number;
+}
+
+export interface DeputyPageNextRevisionRequest {
+	type: 'pageNextRevisionRequest';
+	caseId: number;
+	page: string;
+	/**
+	 * The revision to use as a stepping point. If supplied, the provided revision will
+	 * be the first revision that is not assessed that comes *after* this given revision ID.
+	 *
+	 * If the given revision is the last revision available, this will wrap and return the
+	 * first unassessed revision.
+	 */
+	after: number;
+}
+
+export interface DeputyPageNextRevisionResponse {
+	type: 'pageNextRevisionResponse';
+	revid: number;
 }
 
 /**
@@ -125,7 +153,9 @@ const OneWayDeputyMessageMap = <const>{
 	pageStatusRequest: 'pageStatusResponse',
 	pageStatusResponse: 'pageStatusRequest',
 	pageStatusUpdate: 'acknowledge',
-	revisionStatusUpdate: 'acknowledge'
+	revisionStatusUpdate: 'acknowledge',
+	pageNextRevisionRequest: 'pageNextRevisionResponse',
+	pageNextRevisionResponse: 'pageNextRevisionRequest'
 };
 
 export type DeputyRequestMessage = DeputySessionRequestMessage;
@@ -139,7 +169,9 @@ export type DeputyMessage =
 	| DeputyPageStatusRequestMessage
 	| DeputyPageStatusResponseMessage
 	| DeputyPageStatusUpdateMessage
-	| DeputyRevisionStatusUpdateMessage;
+	| DeputyRevisionStatusUpdateMessage
+	| DeputyPageNextRevisionRequest
+	| DeputyPageNextRevisionResponse;
 export type LowLevelDeputyMessage = DeputyMessage & {
 	_deputy: true;
 	_deputyMessageId: string;

@@ -41,6 +41,11 @@
     animation-delay: -0.5s;
 }
 
+#mw-content-text.dp-reloading {
+    opacity: 0.2;
+    pointer-events: none;
+}
+
 /*
 ===============================================================================
 
@@ -291,6 +296,7 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
     margin-left: 16px;
     padding-left: 16px;
     border-left: 1px solid gray;
+    margin-right: 8px;
 }
 
 .dp-pt-section-label {
@@ -308,4 +314,8 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
 
 .dp-pt-missingRevision {
     white-space: normal;
+}
+
+.dp-pageToolbar .dp-cs-row-status {
+    width: 5.4em;
 }

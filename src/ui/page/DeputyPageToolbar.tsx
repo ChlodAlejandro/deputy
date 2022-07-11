@@ -10,6 +10,8 @@ import {
 	DeputyRevisionStatusUpdateMessage
 } from '../../DeputyCommunications';
 import generateId from '../../util/generateId';
+import DiffPage from '../../wiki/DiffPage';
+import swapElements from '../../util/swapElements';
 
 export interface DeputyPageToolbarOptions extends Omit<DeputyPageStatusResponseMessage, 'type'> {
 	/**
@@ -38,6 +40,7 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 	revisionCheckbox: any;
 	statusDropdown: DeputyCCIStatusDropdown;
 	nextRevisionButton: any;
+	nextRevisionSection: HTMLElement;
 
 	/**
 	 * The revision ID that this toolbar is associated with.
@@ -104,6 +107,67 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 	}
 
 	/**
+	 * Renders the next revision button. Used to navigate to the next unassessed revision
+	 * for a row.
+	 *
+	 * @return The OOUI ButtonWidget element.
+	 */
+	renderNextRevisionButton(): JSX.Element {
+		this.nextRevisionButton = new OO.ui.ButtonWidget( {
+			invisibleLabel: true,
+			label: mw.message( 'deputy.session.page.diff.next' ).text(),
+			title: mw.message( 'deputy.session.page.diff.next' ).text(),
+			icon: this.revision == null ? 'play' : 'next'
+		} );
+
+		this.nextRevisionButton.on( 'click', async () => {
+			this.nextRevisionButton.setDisabled( true );
+
+			if ( this.options.nextRevision ) {
+				// No need to worry about swapping elements here, since `loadNewDiff`
+				// will fire the `wikipage.diff` MW hook. This means this element will
+				// be rebuilt from scratch anyway.
+				try {
+					const nextRevisionData = await window.deputy.comms.sendAndWait( {
+						type: 'pageNextRevisionRequest',
+						caseId: this.options.caseId,
+						page: this.row.title.getPrefixedText(),
+						after: this.revision
+					} );
+
+					if ( nextRevisionData == null ) {
+						OO.ui.alert(
+							mw.message( 'deputy.session.page.incommunicable' ).text()
+						);
+						this.nextRevisionButton.setDisabled( false );
+					} else if ( nextRevisionData.revid != null ) {
+						await DiffPage.loadNewDiff( nextRevisionData.revid );
+						this.nextRevisionButton.setDisabled( false );
+					} else {
+						this.nextRevisionButton.setDisabled( true );
+					}
+				} catch ( e ) {
+					console.error( e );
+					this.nextRevisionButton.setDisabled( false );
+				}
+			} else if ( this.options.nextRevision !== false ) {
+				// Sets disabled to false if the value is null.
+				this.nextRevisionButton.setDisabled( false );
+			}
+		} );
+
+		if ( this.options.nextRevision == null ) {
+			this.nextRevisionButton.setDisabled( true );
+		}
+
+		return <div class="dp-pt-section">
+			<div class="dp-pt-section-content">
+				{ unwrapWidget( this.nextRevisionButton ) }
+			</div>
+		</div>;
+	}
+
+	/**
 	 * Renders the "revision" section on the toolbar.
 	 *
 	 * @return The "Revision #XXXXXXXXXX" section
@@ -118,7 +182,8 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 		}
 
 		this.revisionCheckbox = new OO.ui.CheckboxInputWidget( {
-			label: mw.message( 'deputy.session.revision.assessed' ).text()
+			label: mw.message( 'deputy.session.revision.assessed' ).text(),
+			selected: this.options.revisionStatus
 		} );
 
 		let lastStatus = this.revisionCheckbox.isSelected();
@@ -138,7 +203,8 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 				caseId: this.row.casePage.pageId,
 				page: this.row.title.getPrefixedText(),
 				revision: this.revision,
-				status: selected
+				status: selected,
+				nextRevision: null
 			} );
 
 			if ( response == null ) {
@@ -217,6 +283,7 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 			{ this.renderStatusDropdown() }
 			{ this.renderCaseInfo() }
 			{ this.renderRevisionInfo() }
+			{ this.nextRevisionSection = this.renderNextRevisionButton() as HTMLElement }
 		</div> as HTMLElement;
 	}
 
@@ -242,11 +309,21 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 	): void {
 		if (
 			this.row.casePage.pageId === data.caseId &&
-			this.row.title.getPrefixedText() === data.page &&
-			this.revision === data.revision &&
-			this.revisionCheckbox.isSelected() !== data.status
+			this.row.title.getPrefixedText() === data.page
 		) {
-			this.revisionCheckbox.setSelected( data.status );
+			if (
+				this.revision === data.revision &&
+				this.revisionCheckbox.isSelected() !== data.status
+			) {
+				this.revisionCheckbox.setSelected( data.status );
+			}
+
+			this.options.nextRevision = data.nextRevision;
+			// Re-render button.
+			swapElements(
+				this.nextRevisionSection,
+				this.nextRevisionSection = this.renderNextRevisionButton() as HTMLElement
+			);
 		}
 	}
 
