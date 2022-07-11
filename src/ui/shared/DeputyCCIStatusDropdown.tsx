@@ -128,6 +128,9 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 				// Always disable if Unknown, as Unknown is merely a placeholder value.
 				disabled: +status === ContributionSurveyRowStatus.Unknown
 			} );
+			if ( +status === ContributionSurveyRowStatus.Unknown ) {
+				option.toggle( false );
+			}
 			this.options.set( +status, option );
 		}
 
@@ -213,7 +216,7 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 					this.setOptionDisabled( enabled, false, false );
 				}
 				for ( const disabled of message.disabledOptions ?? [] ) {
-					this.setOptionDisabled( disabled, false, false );
+					this.setOptionDisabled( disabled, true, false );
 				}
 
 				// Update the status.

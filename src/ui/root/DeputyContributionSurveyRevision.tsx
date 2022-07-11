@@ -70,7 +70,7 @@ export default class DeputyContributionSurveyRevision
 			this.uiRow.row.title.getPrefixedText() === data.page &&
 			this.revision.revid === data.revision
 		) {
-			this.completedCheckbox.setSelected( data.status );
+			this.completed = data.status;
 			window.deputy.comms.reply( data, {
 				type: 'acknowledge'
 			} );

@@ -395,7 +395,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 
 		if ( this.revisions && this.statusDropdown ) {
 			this.statusDropdown.setOptionDisabled(
-				ContributionSurveyRowStatus.Unfinished, this.completed
+				ContributionSurveyRowStatus.Unfinished, this.completed, true
 			);
 
 			const unfinishedWithStatus = this.statusModified && !this.completed;
