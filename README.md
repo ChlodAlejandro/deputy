@@ -25,9 +25,21 @@ mw.hook( 'deputy.preload' ).add( function () {
 ```
 
 ## Testing
+
+### Live testing
 [Pre-alpha release `v0.0.1`](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.0.1) has been made as a technical demonstration. You may experiment with this version of Deputy, but keep in mind that it is **extremely unstable** and bugs may be found. Nevertheless, please [report bugs found](https://github.com/ChlodAlejandro/deputy/issues) so that they may be actioned on.
 
 Starting version v0.1.0 (not yet released), Deputy's browser database will no longer be updated without proper handling of breaking changes. This will be the first version to be released on Wikipedia.
+
+### Automated testing
+Unit and end-to-end tests exist for Deputy and can be found in the [`tests/`](tests) directory. These tests are run with Puppeteer and Jest. This ensures that Deputy's most vital components work as expected. Tests are still incomplete and coverage is not available, however by the end of the project, at least one end-to-end test should be finished.
+
+You can trigger automated testing by running the following:
+```shell
+npm run test
+```
+
+You may also modify the browser to be used with Puppeteer using the `PUPPETEER_PRODUCT` environment variable. See the [Puppeteer documentation](https://pptr.dev/#environment-variables) for more information. Automated tests are also run on GitHub, a log of which can be found [here](https://github.com/ChlodAlejandro/deputy/actions/workflows/ci-cd.yml).
 
 ## Licensing
 
