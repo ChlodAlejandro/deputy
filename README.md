@@ -32,7 +32,7 @@ The userscript is bundled with multiple dependencies, all of which have been man
 * [tslib](https://github.com/Microsoft/tslib) - 0BSD, Microsoft - For TypeScript polyfills and helper functions.
 * [idb](https://github.com/jakearchibald/idb) - ISC, Jake Archibald - IndexedDB wrapper for ease of use.
 * [broadcastchannel-polyfill](https://github.com/JSmith01/broadcastchannel-polyfill) - Unlicense, Joshua Bell - Polyfill for BroadcastChannel (facilitates communication between tabs).
-* [tsx-dom](https://github.com/Lusito/tsx-dom) - MIT, Santo Pfingsten - TSX/JSX that compiles to native `HTMLElement`s;
+* [tsx-dom](https://github.com/Lusito/tsx-dom) - MIT, Santo Pfingsten - TSX/JSX that compiles to native `HTMLElement`s.
 
 ## Funding
 The initial development of Deputy is covered by a [Wikimedia Foundation Rapid Grant](https://w.wiki/4xk$).
