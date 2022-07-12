@@ -297,9 +297,14 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
 }
 
 .dp-pt-section + .dp-pt-section {
+    /* TODO: Recheck RTL compatibility */
     margin-left: 16px;
     padding-left: 16px;
     border-left: 1px solid gray;
+}
+
+.dp-pt-section:last-child {
+    /* TODO: Recheck RTL compatibility */
     margin-right: 8px;
 }
 
@@ -308,6 +313,10 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
     font-size: 0.6rem;
     color: #4a5054;
     text-transform: uppercase;
+}
+
+.dp-pt-section-content .oo-ui-buttonElement:last-child {
+    margin-right: 0;
 }
 
 .dp-pt-caseInfo {
@@ -322,4 +331,13 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
 
 .dp-pageToolbar .dp-cs-row-status {
     width: 5.4em;
+}
+
+.dp-pt-analysis .oo-ui-menuSelectWidget {
+    min-width: 300px;
+}
+
+.dp-pt-analysis .oo-ui-menuOptionWidget {
+    padding-top: 8px;
+    padding-bottom: 8px;
 }

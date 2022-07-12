@@ -13,6 +13,8 @@ import generateId from '../../util/generateId';
 import DiffPage from '../../wiki/DiffPage';
 import swapElements from '../../util/swapElements';
 import normalizeTitle from '../../util/normalizeTitle';
+import DeputyPageAnalysisMenu from './DeputyPageAnalysisMenu';
+import EarwigCopyvioDetector from '../../wiki/EarwigCopyvioDetector';
 
 export interface DeputyPageToolbarOptions extends Omit<DeputyPageStatusResponseMessage, 'type'> {
 	/**
@@ -61,6 +63,16 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 		if ( options.revisionStatus != null ) {
 			this.revision = mw.config.get( 'wgRevisionId' );
 		}
+
+		this.runAsyncJobs();
+	}
+
+	/**
+	 * Runs asynchronous preparation jobs. Makes loading more seamless later in execution,
+	 * as this will run functions that cache data in the background.
+	 */
+	async runAsyncJobs(): Promise<void> {
+		await EarwigCopyvioDetector.getSupported();
 	}
 
 	/**
@@ -107,67 +119,6 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 			<a class="dp-pt-section-content dp-pt-caseInfo">{
 				this.row.casePage.getCaseName()
 			}</a>
-		</div>;
-	}
-
-	/**
-	 * Renders the next revision button. Used to navigate to the next unassessed revision
-	 * for a row.
-	 *
-	 * @return The OOUI ButtonWidget element.
-	 */
-	renderNextRevisionButton(): JSX.Element {
-		this.nextRevisionButton = new OO.ui.ButtonWidget( {
-			invisibleLabel: true,
-			label: mw.message( 'deputy.session.page.diff.next' ).text(),
-			title: mw.message( 'deputy.session.page.diff.next' ).text(),
-			icon: this.revision == null ? 'play' : 'next'
-		} );
-
-		this.nextRevisionButton.on( 'click', async () => {
-			this.setDisabled( true );
-
-			if ( this.options.nextRevision ) {
-				// No need to worry about swapping elements here, since `loadNewDiff`
-				// will fire the `wikipage.diff` MW hook. This means this element will
-				// be rebuilt from scratch anyway.
-				try {
-					const nextRevisionData = await window.deputy.comms.sendAndWait( {
-						type: 'pageNextRevisionRequest',
-						caseId: this.options.caseId,
-						page: this.row.title.getPrefixedText(),
-						after: this.revision
-					} );
-
-					if ( nextRevisionData == null ) {
-						OO.ui.alert(
-							mw.message( 'deputy.session.page.incommunicable' ).text()
-						);
-						this.setDisabled( false );
-					} else if ( nextRevisionData.revid != null ) {
-						await DiffPage.loadNewDiff( nextRevisionData.revid );
-					} else {
-						this.setDisabled( false );
-						this.nextRevisionButton.setDisabled( true );
-					}
-				} catch ( e ) {
-					console.error( e );
-					this.setDisabled( false );
-				}
-			} else if ( this.options.nextRevision !== false ) {
-				// Sets disabled to false if the value is null.
-				this.setDisabled( false );
-			}
-		} );
-
-		if ( this.options.nextRevision == null ) {
-			this.nextRevisionButton.setDisabled( true );
-		}
-
-		return <div class="dp-pt-section">
-			<div class="dp-pt-section-content">
-				{ unwrapWidget( this.nextRevisionButton ) }
-			</div>
 		</div>;
 	}
 
@@ -280,6 +231,88 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 	}
 
 	/**
+	 * Renders the next revision button. Used to navigate to the next unassessed revision
+	 * for a row.
+	 *
+	 * @return The OOUI ButtonWidget element.
+	 */
+	renderNextRevisionButton(): JSX.Element {
+		this.nextRevisionButton = new OO.ui.ButtonWidget( {
+			invisibleLabel: true,
+			label: mw.message( 'deputy.session.page.diff.next' ).text(),
+			title: mw.message( 'deputy.session.page.diff.next' ).text(),
+			icon: this.revision == null ? 'play' : 'next'
+		} );
+
+		this.nextRevisionButton.on( 'click', async () => {
+			this.setDisabled( true );
+
+			if ( this.options.nextRevision ) {
+				// No need to worry about swapping elements here, since `loadNewDiff`
+				// will fire the `wikipage.diff` MW hook. This means this element will
+				// be rebuilt from scratch anyway.
+				try {
+					const nextRevisionData = await window.deputy.comms.sendAndWait( {
+						type: 'pageNextRevisionRequest',
+						caseId: this.options.caseId,
+						page: this.row.title.getPrefixedText(),
+						after: this.revision
+					} );
+
+					if ( nextRevisionData == null ) {
+						OO.ui.alert(
+							mw.message( 'deputy.session.page.incommunicable' ).text()
+						);
+						this.setDisabled( false );
+					} else if ( nextRevisionData.revid != null ) {
+						await DiffPage.loadNewDiff( nextRevisionData.revid );
+					} else {
+						this.setDisabled( false );
+						this.nextRevisionButton.setDisabled( true );
+					}
+				} catch ( e ) {
+					console.error( e );
+					this.setDisabled( false );
+				}
+			} else if ( this.options.nextRevision !== false ) {
+				// Sets disabled to false if the value is null.
+				this.setDisabled( false );
+			}
+		} );
+
+		if ( this.options.nextRevision == null ) {
+			this.nextRevisionButton.setDisabled( true );
+		}
+
+		return <div class="dp-pt-section">
+			<div class="dp-pt-section-content">
+				{ unwrapWidget( this.nextRevisionButton ) }
+			</div>
+		</div>;
+	}
+
+	/**
+	 * Renders an "Analysis" OOUI PopupButtonWidget, which contains links to
+	 * analysis tools and other page information.
+	 *
+	 * @return The section HTML
+	 */
+	renderAnalysisSection(): JSX.Element {
+		const popupButton = new OO.ui.ToggleButtonWidget( {
+			label: mw.message( 'deputy.session.page.analysis' ).text(),
+			framed: false,
+			indicator: 'up'
+		} );
+
+		return <div class="dp-pt-section">
+			<div class="dp-pt-section-content dp-pt-analysis">
+				{ new DeputyPageAnalysisMenu( this, popupButton ).render() }
+				{ unwrapWidget( popupButton ) }
+			</div>
+		</div>;
+	}
+
+	/**
 	 * @inheritDoc
 	 */
 	render(): HTMLElement {
@@ -288,6 +321,7 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 			{ this.renderCaseInfo() }
 			{ this.renderRevisionInfo() }
 			{ this.nextRevisionSection = this.renderNextRevisionButton() as HTMLElement }
+			{ this.renderAnalysisSection() }
 		</div> as HTMLElement;
 	}
 
