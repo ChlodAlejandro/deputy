@@ -76,8 +76,9 @@ export default class DeputySession {
 					await casePage.bumpActive();
 				}
 			} else if ( DeputyCasePage.isCasePage() ) {
-				// TODO: Show "start work" with session replacement warning
-				console.log( 'session replacement warning goes here' );
+				const casePage = await DeputyCasePage.build();
+
+				await DeputyRootSession.initOverwriteMessage( casePage );
 			} else {
 				await this.normalPageInitialization();
 				window.deputy.comms.addEventListener( 'sessionStarted', () => {

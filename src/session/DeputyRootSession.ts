@@ -6,10 +6,15 @@ import unwrapWidget from '../util/unwrapWidget';
 import swapElements from '../util/swapElements';
 import DeputyCCISessionTabActiveMessage from '../ui/root/DeputyCCISessionTabActiveMessage';
 import sectionHeadingName from '../util/sectionHeadingName';
-import { DeputyMessageEvent, DeputySessionRequestMessage } from '../DeputyCommunications';
+import {
+	DeputyMessageEvent,
+	DeputySessionRequestMessage,
+	DeputySessionStopMessage
+} from '../DeputyCommunications';
 import DeputyCCISessionAddSection from '../ui/root/DeputyCCISessionAddSection';
 import DeputyContributionSurveySection from '../ui/root/DeputyContributionSurveySection';
 import { SessionInformation } from './DeputySession';
+import DeputyCCISessionOverwriteMessage from '../ui/root/DeputyCCISessionOverwriteMessage';
 
 /**
  * The DeputyRootSession. Instantiated only when:
@@ -33,13 +38,89 @@ export default class DeputyRootSession {
 	static async initEntryInterface( _casePage?: DeputyCasePage ): Promise<void> {
 		const continuing = _casePage != null;
 		const casePage = continuing ? _casePage : await DeputyCasePage.build();
+		const startLink: HTMLElement[] = [];
 
 		casePage.findContributionSurveyHeadings()
 			.forEach( ( heading: ContributionSurveyHeading ) => {
-				heading.appendChild(
-					DeputyCCISessionStartLink( heading, casePage )
-				);
+				const link = DeputyCCISessionStartLink( heading, casePage );
+				startLink.push( link as HTMLElement );
+				heading.appendChild( link );
 			} );
+
+		window.deputy.comms.addEventListener( 'sessionStarted', () => {
+			// Re-build interface.
+			startLink.forEach( ( link: HTMLElement ) => {
+				removeElement( link );
+			} );
+			window.deputy.session.init();
+		}, { once: true } );
+	}
+
+	/**
+	 * Shows the interface for continuing a previous session. This includes
+	 * the `[continue CCI session]` notice at the top of each CCI page section heading
+	 * and a single message box showing when the page was last worked on on top of the
+	 * first CCI heading found.
+	 *
+	 * @param casePage The case page to continue with
+	 */
+	static async initOverwriteMessage( casePage: DeputyCasePage ): Promise<void> {
+		await mw.loader.using(
+			[ 'oojs-ui-core', 'oojs-ui.styles.icons-content' ],
+			() => {
+				const firstHeading = casePage.findContributionSurveyHeadings()[ 0 ];
+				if ( firstHeading ) {
+					// Insert element directly into widget (not as text, or else event
+					// handlers will be destroyed).
+					const messageBox = new OO.ui.MessageWidget( {
+						classes: [
+							'deputy', 'dp-cs-session-notice', 'dp-cs-session-otherActive'
+						],
+						type: 'notice',
+						icon: 'alert',
+						label: new OO.ui.HtmlSnippet(
+							DeputyCCISessionOverwriteMessage().innerHTML
+						)
+					} );
+
+					const stopButton = new OO.ui.ButtonWidget( {
+						classes: [ 'dp-cs-session-stop' ],
+						label: mw.message( 'deputy.session.otherActive.button' ).text(),
+						flags: [ 'primary', 'destructive' ]
+					} );
+					stopButton.on( 'click', async () => {
+						const session = await window.deputy.comms.sendAndWait( {
+							type: 'sessionStop'
+						} );
+
+						if ( session === null ) {
+							// Session did not close cleanly. Tab must be closed. Force-stop
+							// the session.
+							await window.deputy.session.clearSession();
+							removeElement( unwrapWidget( messageBox ) );
+							await window.deputy.session.init();
+						} else {
+							// Handled by session close listener.
+						}
+					} );
+					window.deputy.comms.addEventListener( 'sessionClosed', () => {
+						// Closed externally. Re-build interface.
+						removeElement( unwrapWidget( messageBox ) );
+						window.deputy.session.init();
+					} );
+					swapElements(
+						unwrapWidget( messageBox )
+							.querySelector( '.dp-cs-session-stop' ),
+						unwrapWidget( stopButton )
+					);
+
+					firstHeading.insertAdjacentElement(
+						'beforebegin',
+						unwrapWidget( messageBox )
+					);
+				}
+			}
+		);
 	}
 
 	/**
@@ -83,6 +164,7 @@ export default class DeputyRootSession {
 							await this.initTabActiveInterface();
 						};
 						continueButton.on( 'click', () => {
+							removeElement( unwrapWidget( messageBox ) );
 							DeputyRootSession.continueSession( casePage );
 							window.deputy.comms.removeEventListener(
 								'sessionStarted',
@@ -109,6 +191,48 @@ export default class DeputyRootSession {
 				}
 			)
 		] );
+	}
+
+	/**
+	 * Shows the interface for an attempted Deputy execution on a different tab than
+	 * expected. This prevents Deputy from running entirely to avoid loss of progress
+	 * and desynchronization.
+	 *
+	 * @param _casePage The current case page (not the active one)
+	 */
+	static async initTabActiveInterface( _casePage?: DeputyCasePage ): Promise<void> {
+		const casePage = _casePage ?? await DeputyCasePage.build();
+
+		return mw.loader.using(
+			[ 'oojs-ui-core', 'oojs-ui.styles.icons-content' ],
+			() => {
+				const firstHeading = casePage.findContributionSurveyHeadings()[ 0 ];
+				if ( firstHeading ) {
+					const messageBox = new OO.ui.MessageWidget( {
+						classes: [
+							'deputy', 'dp-cs-session-notice', 'dp-cs-session-tabActive'
+						],
+						type: 'info',
+						label: new OO.ui.HtmlSnippet(
+							DeputyCCISessionTabActiveMessage().innerHTML
+						)
+					} );
+					firstHeading.insertAdjacentElement(
+						'beforebegin',
+						unwrapWidget( messageBox )
+					);
+
+					window.deputy.comms.addEventListener(
+						'sessionClosed',
+						async () => {
+							removeElement( unwrapWidget( messageBox ) );
+							await window.deputy.session.init();
+						},
+						{ once: true }
+					);
+				}
+			}
+		);
 	}
 
 	/**
@@ -168,48 +292,6 @@ export default class DeputyRootSession {
 	}
 
 	/**
-	 * Shows the interface for an attempted Deputy execution on a different tab than
-	 * expected. This prevents Deputy from running entirely to avoid loss of progress
-	 * and desynchronization.
-	 *
-	 * @param _casePage The current case page (not the active one)
-	 */
-	static async initTabActiveInterface( _casePage?: DeputyCasePage ): Promise<void> {
-		const casePage = _casePage ?? await DeputyCasePage.build();
-
-		return mw.loader.using(
-			[ 'oojs-ui-core', 'oojs-ui.styles.icons-content' ],
-			() => {
-				const firstHeading = casePage.findContributionSurveyHeadings()[ 0 ];
-				if ( firstHeading ) {
-					const messageBox = new OO.ui.MessageWidget( {
-						classes: [
-							'deputy', 'dp-cs-session-notice', 'dp-cs-session-tabActive'
-						],
-						type: 'info',
-						label: new OO.ui.HtmlSnippet(
-							DeputyCCISessionTabActiveMessage().innerHTML
-						)
-					} );
-					firstHeading.insertAdjacentElement(
-						'beforebegin',
-						unwrapWidget( messageBox )
-					);
-
-					window.deputy.comms.addEventListener(
-						'sessionClosed',
-						async () => {
-							removeElement( unwrapWidget( messageBox ) );
-							await window.deputy.session.init();
-						},
-						{ once: true }
-					);
-				}
-			}
-		);
-	}
-
-	/**
 	 * The current active session, if one exists.
 	 */
 	session: SessionInformation;
@@ -231,6 +313,7 @@ export default class DeputyRootSession {
 	 * Responder for session requests.
 	 */
 	readonly sessionRequestResponder = this.sendSessionResponse.bind( this );
+	readonly sessionStopResponder = this.handleStopRequest.bind( this );
 
 	/*
 	 * =========================================================================
@@ -274,6 +357,7 @@ export default class DeputyRootSession {
 			} );
 
 		window.deputy.comms.addEventListener( 'sessionRequest', this.sessionRequestResponder );
+		window.deputy.comms.addEventListener( 'sessionStop', this.sessionStopResponder );
 		window.deputy.comms.send( { type: 'sessionStarted', caseId: this.session.casePageId } );
 
 		await new Promise<void>( ( res ) => {
@@ -345,6 +429,22 @@ export default class DeputyRootSession {
 	}
 
 	/**
+	 * Handles a session stop request.
+	 *
+	 * @param event
+	 */
+	async handleStopRequest(
+		event: DeputyMessageEvent<DeputySessionStopMessage>
+	): Promise<void> {
+		await this.closeSession();
+		window.deputy.comms.reply(
+			event.data, {
+				type: 'acknowledge'
+			}
+		);
+	}
+
+	/**
 	 * Adds the "start working on this section" or "reload page" overlay and button
 	 * to a given section.
 	 *
@@ -385,12 +485,15 @@ export default class DeputyRootSession {
 		this.closeSessionUI();
 
 		await this.casePage.saveToCache();
-		const oldSession = this.session;
+		const oldSessionId = this.session.casePageId;
 		window.deputy.comms.removeEventListener(
 			'sessionRequest', this.sessionRequestResponder
 		);
 		await window.deputy.session.clearSession();
-		window.deputy.comms.send( { type: 'sessionClosed', caseId: oldSession.casePageId } );
+		window.deputy.comms.send( { type: 'sessionClosed', caseId: oldSessionId } );
+
+		// Re-initialize session interface objects.
+		await window.deputy.session.init();
 	}
 
 	/**

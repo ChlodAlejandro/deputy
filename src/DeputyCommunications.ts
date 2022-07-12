@@ -52,6 +52,24 @@ export interface DeputySessionStartedMessage {
 }
 
 /**
+ * Broadcast whenever a session is ready for use. This means row status requests
+ * other listeners have been attached and are ready for use.
+ *
+ * TODO: Currently unused. To be worked on later.
+ */
+export interface DeputySessionReadyMessage {
+	type: 'sessionReady';
+	caseId: number;
+}
+
+/**
+ * Asks the currently-active Deputy session to stop and close immediately.
+ */
+export interface DeputySessionStopMessage {
+	type: 'sessionStop';
+}
+
+/**
  * Requests the status of a given page. Used prior to showing the page toolbar.
  * If no response is received, the page is not part of an active CCI session and
  * therefore will not be worked on.
@@ -159,6 +177,7 @@ export interface DeputyPageNextRevisionResponse {
 const OneWayDeputyMessageMap = <const>{
 	sessionRequest: 'sessionResponse',
 	sessionResponse: 'sessionRequest',
+	sessionStop: 'acknowledge',
 	pageStatusRequest: 'pageStatusResponse',
 	pageStatusResponse: 'pageStatusRequest',
 	pageStatusUpdate: 'acknowledge',
@@ -175,6 +194,8 @@ export type DeputyMessage =
 	| DeputyResponseMessage
 	| DeputySessionClosedMessage
 	| DeputySessionStartedMessage
+	| DeputySessionReadyMessage
+	| DeputySessionStopMessage
 	| DeputyPageStatusRequestMessage
 	| DeputyPageStatusResponseMessage
 	| DeputyPageStatusUpdateMessage
