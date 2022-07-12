@@ -1,7 +1,7 @@
 {
     "name": "deputy",
     "description": "[task tracking](https://trello.com/b/UmI82e0y/deputy)",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "main": "src/deputy.js",
     "scripts": {
         "test": "jest",
