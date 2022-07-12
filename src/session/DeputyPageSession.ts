@@ -13,15 +13,15 @@ export default class DeputyPageSession {
 	 * Attempts to grab page details from a session. If a session does not exist,
 	 * this will return null.
 	 *
-	 * @param title The title of the page to get information for. Defaults to current.
 	 * @param revision The revision of the page to get information for.
 	 *  If the page is being viewed normally (not in a diff or permanent link), then
 	 *  this value should be set to null. This ensures that a generic toolbar is
 	 *  used instead of the revision-specific toolbar.
+	 * @param title The title of the page to get information for. Defaults to current.
 	 */
 	static async getPageDetails(
-		title: mw.Title,
-		revision?: number
+		revision?: number,
+		title: mw.Title = window.deputy.currentPage
 	): Promise<DeputyPageStatusResponseMessage | null> {
 		return window.deputy.comms.sendAndWait( {
 			type: 'pageStatusRequest',
@@ -54,7 +54,7 @@ export default class DeputyPageSession {
 			mw.hook( 'wikipage.diff' ).add( async () => {
 				// Attempt to get new revision data *with revision ID*.
 				data = await DeputyPageSession.getPageDetails(
-					window.deputy.currentPage,
+					mw.config.get( 'wgDiffNewId' ) ||
 					mw.config.get( 'wgRevisionId' )
 				);
 

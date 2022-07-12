@@ -77,9 +77,13 @@ export default class DeputySession {
 				}
 			} else if ( DeputyCasePage.isCasePage() ) {
 				// TODO: Show "start work" with session replacement warning
+				console.log( 'session replacement warning goes here' );
 			} else {
 				await this.normalPageInitialization();
 				window.deputy.comms.addEventListener( 'sessionStarted', () => {
+					// This misses by a few seconds right now since sessionStarted is
+					// called when the sessionStarts but not when it is ready.
+					// TODO: Fix that.
 					this.normalPageInitialization();
 				} );
 			}
@@ -120,7 +124,8 @@ export default class DeputySession {
 		// Normal page. Determine if this is being worked on, and then
 		// start a new session if it is.
 		const pageSession = await DeputyPageSession.getPageDetails(
-			window.deputy.currentPage
+			mw.config.get( 'wgDiffNewId' ) ||
+			mw.config.get( 'wgRevisionId' )
 		);
 
 		if ( pageSession ) {

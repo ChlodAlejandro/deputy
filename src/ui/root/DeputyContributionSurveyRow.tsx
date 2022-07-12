@@ -843,11 +843,16 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	sendStatusResponse(
 		event: DeputyMessageEvent<DeputyPageStatusRequestMessage>
 	): void {
-		if ( event.data.page === this.row.title.getPrefixedText() ) {
+		if (
+			event.data.page === this.row.title.getPrefixedText() ||
+			this.revisions.some( ( r ) => r.revision.revid === event.data.revision )
+		) {
 			window.deputy.comms.reply(
 				event.data, {
 					type: 'pageStatusResponse',
 					caseId: this.row.casePage.pageId,
+					caseTitle: this.row.casePage.title.getPrefixedText(),
+					title: this.row.title.getPrefixedText(),
 					status: this.status,
 					enabledStatuses: this.statusDropdown.getEnabledOptions(),
 					revisionStatus: event.data.revision ? this.revisions.find(

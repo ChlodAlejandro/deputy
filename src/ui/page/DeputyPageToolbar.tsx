@@ -12,6 +12,7 @@ import {
 import generateId from '../../util/generateId';
 import DiffPage from '../../wiki/DiffPage';
 import swapElements from '../../util/swapElements';
+import normalizeTitle from '../../util/normalizeTitle';
 
 export interface DeputyPageToolbarOptions extends Omit<DeputyPageStatusResponseMessage, 'type'> {
 	/**
@@ -67,8 +68,11 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 	 */
 	async prepare(): Promise<void> {
 		this.row = {
-			casePage: await DeputyCase.build( this.options.caseId ),
-			title: window.deputy.currentPage
+			casePage: await DeputyCase.build(
+				this.options.caseId,
+				normalizeTitle( this.options.caseTitle )
+			),
+			title: normalizeTitle( this.options.title )
 		};
 	}
 

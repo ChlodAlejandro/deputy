@@ -2,9 +2,7 @@ import { h } from 'tsx-dom';
 import DeputyCasePage, { ContributionSurveyHeading } from '../../wiki/DeputyCasePage';
 import { DeputyUIElement } from '../DeputyUIElement';
 import unwrapWidget from '../../util/unwrapWidget';
-import DeputyContributionSurveyRow, {
-	DeputyContributionSurveyRowState
-} from './DeputyContributionSurveyRow';
+import DeputyContributionSurveyRow from './DeputyContributionSurveyRow';
 import ContributionSurveyRow from '../../models/ContributionSurveyRow';
 import ContributionSurveySection from '../../models/ContributionSurveySection';
 import DeputyReviewDialog from './DeputyReviewDialog';
@@ -208,8 +206,11 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 				return;
 			}
 			const anchor: HTMLElement = li.querySelector( 'a:first-of-type' );
-
-			rowElements[ new mw.Title( anchor.innerText ).getPrefixedText() ] = li as HTMLLIElement;
+			// Avoid enlisting if the anchor can't be found (invalid row).
+			if ( anchor ) {
+				rowElements[ new mw.Title( anchor.innerText ).getPrefixedText() ] =
+					li as HTMLLIElement;
+			}
 		}
 
 		const sectionWikitext = ( await this.getSection() ).originalWikitext;

@@ -77,6 +77,15 @@ export interface DeputyPageStatusResponseMessage {
 	 */
 	caseId: number;
 	/**
+	 * The title of the case. This can be used later to build a {@link DeputyCase}.
+	 */
+	caseTitle: string;
+	/**
+	 * The title of the page requested. This is used in situations where the page title
+	 * is different from the title in the row (such as in moved or histmerged pages).
+	 */
+	title: string;
+	/**
 	 * The currently-selected status of this page on the case page.
 	 */
 	status: ContributionSurveyRowStatus;
