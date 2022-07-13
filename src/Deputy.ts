@@ -65,6 +65,7 @@ class Deputy {
 	currentPageId = mw.config.get( 'wgArticleId' );
 
 	wiki: mw.Api;
+	wikiRest: mw.Rest;
 	api: DeputyAPI;
 	storage: DeputyStorage;
 	prefs: DeputyPreferences;
@@ -101,6 +102,7 @@ class Deputy {
 				errorsuselocal: true
 			}
 		} );
+		this.wikiRest = new mw.Rest();
 
 		// Inject CSS
 		mw.util.addCSS( deputyStyles );

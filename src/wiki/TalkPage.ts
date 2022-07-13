@@ -51,7 +51,8 @@ export default class TalkPage {
 		await window.deputy.wiki.postWithEditToken(
 			Object.assign( {
 				// Overridable options.
-				redirect: true
+				redirect: this.talkPage.getNamespaceId() !==
+					mw.config.get( 'wgNamespaceIds' ).user_talk
 			}, editOptions, {
 				// Non-overridable options
 				action: 'edit',
@@ -78,18 +79,17 @@ export default class TalkPage {
 		options: TalkPageEditOptions = {},
 		editOptions: Record<string, any> = {}
 	): Promise<void> {
-		await window.deputy.wiki.postWithEditToken(
+		await window.deputy.wiki.newSection(
+			this.talkPage,
+			sectionTitle,
+			message,
 			Object.assign( {
 				// Overridable options.
-				redirect: true
+				redirect: this.talkPage.getNamespaceId() !==
+					mw.config.get( 'wgNamespaceIds' ).user_talk
 			}, editOptions, {
 				// Non-overridable options
-				action: 'edit',
-				title: this.talkPage.getPrefixedText(),
-				summary: decorateEditSummary( options.summary ),
-				section: 'new',
-				sectiontitle: sectionTitle,
-				text: message
+				summary: decorateEditSummary( options.summary )
 			} )
 		);
 	}
