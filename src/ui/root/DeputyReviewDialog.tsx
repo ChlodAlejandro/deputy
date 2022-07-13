@@ -3,62 +3,57 @@ import unwrapWidget from '../../util/unwrapWidget';
 import swapElements from '../../util/swapElements';
 import { h } from 'tsx-dom';
 
-// This is one of those "TypeScript, trust me" moments. This is what happens when
-// a library can't handle ES extends. I pray that some day OOUI can be an
-// actually-usable library that uses ES classes instead of... this...
-
-type DeputyReviewDialogFunction = ( ( config: any ) => void ) & {
-	static: any;
-	super: any;
-};
-
 export interface DeputyReviewDialogData {
 	from: string;
 	to: string;
 	title: mw.Title;
 }
 
-let DeputyReviewDialog: DeputyReviewDialogFunction = null;
+let InternalDeputyReviewDialog: any;
 
 /**
- * Creates a new DeputyReviewDialog.
- *
- * @param _data
- * @return A DeputyReviewDialog (extends from OO.ui.ProcessDialog)
+ * Initializes the process dialog.
  */
-export default function ( _data: DeputyReviewDialogData ): any {
-	if ( DeputyReviewDialog == null ) {
-		/**
-		 * @param config
-		 * @param config.data
-		 * @param config.size
-		 */
-		DeputyReviewDialog = function ( config: {
-			size: string,
-			data: DeputyReviewDialogData
-		} ) {
-			config.size = config.size || 'larger';
-			( DeputyReviewDialog as any ).super.call( this, config );
-		} as DeputyReviewDialogFunction;
+function initDeputyReviewDialog() {
+	InternalDeputyReviewDialog = class DeputyReviewDialog extends OO.ui.ProcessDialog {
 
-		OO.inheritClass( DeputyReviewDialog, OO.ui.ProcessDialog );
-
-		DeputyReviewDialog.static.name = 'deputyReviewDialog';
-		DeputyReviewDialog.static.title = mw.message( 'deputy.diff' ).text();
-		DeputyReviewDialog.static.actions = [
-			{
-				action: 'close',
-				label: mw.message( 'deputy.close' ).text(),
-				flags: 'safe'
-			}
-		];
-		DeputyReviewDialog.prototype.getBodyHeight = function () {
-			return 500;
+		static static = {
+			name: 'deputyReviewDialog',
+			title: mw.message( 'deputy.diff' ).text(),
+			actions: [
+				{
+					action: 'close',
+					label: mw.message( 'deputy.close' ).text(),
+					flags: 'safe'
+				}
+			]
 		};
 
-		// Add content to the dialog body and setup event handlers.
-		DeputyReviewDialog.prototype.initialize = function ( ...args: [] ) {
-			DeputyReviewDialog.super.prototype.initialize.apply( this, args );
+		data: any;
+
+		/**
+		 *
+		 * @param config
+		 */
+		constructor( config: DeputyReviewDialogData & { size: string } ) {
+			config.size = config.size || 'larger';
+			super( config );
+			this.data = config;
+		}
+
+		/**
+		 * @return The body height of this dialog.
+		 */
+		getBodyHeight(): number {
+			return 500;
+		}
+
+		/**
+		 *
+		 * @param {...any} args
+		 */
+		initialize( ...args: any[] ): void {
+			super.initialize.apply( this, args );
 
 			this.element = <div style={ {
 				display: 'flex',
@@ -81,11 +76,14 @@ export default function ( _data: DeputyReviewDialogData ): any {
 			this.content = new OO.ui.PanelLayout( { expanded: true, padded: true } );
 			unwrapWidget( this.content ).appendChild( this.element );
 			this.$body.append( this.content.$element );
-		};
+		}
 
-		DeputyReviewDialog.prototype.getReadyProcess = function ( data: any ) {
-			return ( DeputyReviewDialog.super.prototype.getReadyProcess
-				.call( this, data ) as typeof window.OO.ui.Process )
+		/**
+		 * @param data
+		 * @return The ready process for this object.
+		 */
+		getReadyProcess( data: any ) {
+			return ( super.getReadyProcess.call( this, data ) as typeof window.OO.ui.Process )
 				.next( new Promise<void>( ( res ) => {
 					// Load MediaWiki diff styles
 					mw.loader.using( 'mediawiki.diff.styles', () => res() );
@@ -140,10 +138,13 @@ export default function ( _data: DeputyReviewDialogData ): any {
 						);
 					}
 				}, this );
-		};
+		}
 
-		// Specify processes to handle the actions.
-		DeputyReviewDialog.prototype.getActionProcess = function ( action: string ) {
+		/**
+		 * @param action
+		 * @return The action process
+		 */
+		getActionProcess( action: string ) {
 			if ( action === 'close' ) {
 				return new OO.ui.Process( function () {
 					this.close( {
@@ -152,10 +153,21 @@ export default function ( _data: DeputyReviewDialogData ): any {
 				}, this );
 			}
 			// Fallback to parent handler
-			return DeputyReviewDialog.super.prototype.getActionProcess.call( this, action );
-		};
+			return super.getActionProcess.call( this, action );
+		}
+
+	};
+}
+
+/**
+ * Creates a new DeputyReviewDialog.
+ *
+ * @param config
+ * @return A DeputyReviewDialog
+ */
+export default function ( config: DeputyReviewDialogData ) {
+	if ( !InternalDeputyReviewDialog ) {
+		initDeputyReviewDialog();
 	}
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore
-	return new DeputyReviewDialog( { data: _data } );
+	return new InternalDeputyReviewDialog( config );
 }

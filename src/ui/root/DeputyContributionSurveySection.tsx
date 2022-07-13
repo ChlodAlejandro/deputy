@@ -366,9 +366,6 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		} );
 
 		this.reviewButton.on( 'click', async () => {
-			// DeputyReviewDialog is a pain in the ass. Disabled type checking for it.
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
 			const reviewDialog = DeputyReviewDialog( {
 				from: ( await this.getSection() ).originalWikitext,
 				to: this.wikitext,
