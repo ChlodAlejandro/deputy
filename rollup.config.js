@@ -38,7 +38,9 @@ export default {
 	output: {
 		dir: 'build',
 		format: 'iife',
-		banner: blockCommentIfy( fs.readFileSync( path.join( __dirname, 'BANNER.txt' ) ) )
+		banner: blockCommentIfy( fs.readFileSync( path.join( __dirname, 'BANNER.txt' ) ) ) +
+			'\n// <nowiki>',
+		footer: '// </nowiki>\n// <3'
 	},
 	plugins: [
 		commonjs(),
