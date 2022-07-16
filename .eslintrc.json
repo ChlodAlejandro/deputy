@@ -59,6 +59,9 @@
         "@typescript-eslint/no-loop-func": "error",
         "no-loop-func": "off",
 
+        "@typescript-eslint/no-redeclare": "error",
+        "no-redeclare": "off",
+
         "no-return-assign": "off",
         "no-use-before-define": "off",
         "no-console": "off",
