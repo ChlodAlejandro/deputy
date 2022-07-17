@@ -1,5 +1,5 @@
 import ParsoidDocument from '@chlodalejandro/parsoid';
-import last from '../../util/last';
+import last from '../../../util/last';
 import CopiedTemplate from './CopiedTemplate';
 
 /**
@@ -40,13 +40,15 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 	originalNoticeCount: number;
 
 	/**
-	 *
+	 * Creates a new CTE-specific ParsoidDocument. This extends from the existing
+	 * ParsoidDocument with functions specifically catered for pages that have
+	 * {{copied}} (or will have) templates.
 	 */
 	constructor() {
 		super();
 
-		// Event listeners should be fired synchronously. `super` listener should
-		// have been run by this point.
+		// Event listeners should be fired synchronously. Load listener found in
+		// `super` should have been run by this point.
 		this.iframe.addEventListener( 'load', () => {
 			if ( this.iframe.contentWindow.document.URL === 'about:blank' ) {
 				// Blank document loaded. Ignore.

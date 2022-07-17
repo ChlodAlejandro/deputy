@@ -3,8 +3,8 @@ import CopiedTemplateRow, {
 	RawCopiedTemplateRow
 } from './CopiedTemplateRow';
 import { MediaWikiData, TemplateData, TemplateDataModifier } from './MediaWikiData';
-import ParsoidDocument from '@chlodalejandro/parsoid';
 import RowChangeEvent from './RowChangeEvent';
+import CTEParsoidDocument from './CTEParsoidDocument';
 
 /**
  * Represents a single {{copied}} template in the Parsoid document.
@@ -14,7 +14,7 @@ export default class CopiedTemplate extends EventTarget {
 	/**
 	 * The ParsoidDocument of this template.
 	 */
-	parsoid: ParsoidDocument;
+	parsoid: CTEParsoidDocument;
 	/**
 	 * The Parsoid element of this template.
 	 */
@@ -63,7 +63,7 @@ export default class CopiedTemplate extends EventTarget {
 	 * @param i
 	 *        The identifier of this template within the {@link MediaWikiData}
 	 */
-	constructor( parsoidDocument: ParsoidDocument, parsoidElement: HTMLElement, i: number ) {
+	constructor( parsoidDocument: CTEParsoidDocument, parsoidElement: HTMLElement, i: number ) {
 		super();
 		this.parsoid = parsoidDocument;
 		this.element = parsoidElement;
