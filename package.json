@@ -47,7 +47,7 @@
         "jest-puppeteer": "^6.1.0",
         "oojs-ui": "^0.43.2",
         "puppeteer": "^15.3.2",
-        "rollup": "^2.75.6",
+        "rollup": "^2.77.0",
         "rollup-plugin-node-license": "^0.2.1",
         "rollup-plugin-string": "^3.0.0",
         "serve-handler": "^6.1.3",
