@@ -27,7 +27,7 @@ export interface RawCopiedTemplateRow {
 	/**
 	 * The original article.
 	 */
-	from: string;
+	from?: string;
 	/**
 	 * The revision ID from which the content was copied from.
 	 */
@@ -60,6 +60,16 @@ export interface RawCopiedTemplateRow {
 	 * Whether or not this copy was made from the results of a merge discussion.
 	 */
 	merge?: string;
+}
+
+/**
+ * Special interface that requires the "from" parameter.
+ */
+export interface ExistingRawCopiedTemplateRow extends RawCopiedTemplateRow {
+	/**
+	 * @inheritDoc
+	 */
+	from: string;
 }
 
 /**

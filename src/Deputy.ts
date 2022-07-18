@@ -169,6 +169,7 @@ class Deputy {
 mw.loader.using( [
 	'mediawiki.api',
 	'mediawiki.Title',
+	'mediawiki.util',
 	'oojs'
 ], function () {
 	performHacks();

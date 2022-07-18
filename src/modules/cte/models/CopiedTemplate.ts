@@ -1,5 +1,5 @@
 import CopiedTemplateRow, {
-	copiedTemplateRowParameters, isCopiedTemplateRowParameter,
+	copiedTemplateRowParameters, ExistingRawCopiedTemplateRow, isCopiedTemplateRowParameter,
 	RawCopiedTemplateRow
 } from './CopiedTemplateRow';
 import { MediaWikiData, TemplateData, TemplateDataModifier } from './MediaWikiData';
@@ -164,7 +164,7 @@ export default class CopiedTemplate extends EventTarget {
 						row[ `${key}1` ] = params[ `${key}1` ].wt;
 					}
 				} );
-				rows.push( new CopiedTemplateRow( row as RawCopiedTemplateRow, this ) );
+				rows.push( new CopiedTemplateRow( row as ExistingRawCopiedTemplateRow, this ) );
 			}
 
 			// Numbered
@@ -187,7 +187,7 @@ export default class CopiedTemplate extends EventTarget {
 							row[ key ] = params[ key ].wt;
 						}
 					} );
-					rows.push( new CopiedTemplateRow( row as RawCopiedTemplateRow, this ) );
+					rows.push( new CopiedTemplateRow( row as ExistingRawCopiedTemplateRow, this ) );
 				} else if ( !( i === 1 && rows.length > 0 ) ) {
 					// Row doesn't exist. Stop parsing from here.
 					continueExtracting = false;
