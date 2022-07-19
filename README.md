@@ -8,7 +8,7 @@ Deputy exposes a `deputy` variable on the `window` object for public use. The AP
 Deputy relies on modules from [Zoomiebot](https://github.com/ChlodAlejandro/zoomiebot/tree/master/bot/api/deputy/v1) to perform bulk data operations. Zoomiebot is hosted on Wikimedia Toolforge, more information can be found [here](https://github.com/ChlodAlejandro/zoomiebot#README).
 
 ## Developing
-Run the development server with the following:
+Run the development server with the following. Be sure to run `npm install` first to download required dependencies.
 ```shell
 npm run dev
 ```
@@ -23,6 +23,8 @@ mw.hook( 'deputy.preload' ).add( function () {
 	window.deputy.DeputyCasePage.rootPage = new mw.Title( 'User:Chlod/Scripts/Deputy/tests' );
 } );
 ```
+
+This project uses TypeScript, but some parts of the tool are weakly-typed. This is due to a lack of types and unorthodox JavaScript patterns on the part of reliant libraries, namely [OOUI](https://www.mediawiki.org/wiki/OOUI), which makes it difficult to enforce types. Tread carefully when modifying files that extend off of OOUI widgets or similar, as the use of many `any` types may prevent you from knowing when something might break.
 
 ## Testing
 

@@ -6,6 +6,8 @@ import unwrapWidget from '../../../util/unwrapWidget';
 import CopiedTemplateRow from '../models/CopiedTemplateRow';
 import CTEParsoidDocument from '../models/CTEParsoidDocument';
 import RowChangeEvent from '../models/RowChangeEvent';
+import CopiedTemplateEditorDialog from './CopiedTemplateEditorDialog';
+import { OOUIBookletLayout } from '../../../types';
 
 export interface CopiedTemplatePageData {
 	/**
@@ -42,10 +44,8 @@ function initCopiedTemplatePage() {
 		copiedTemplate: CopiedTemplate;
 		/**
 		 * The parent of this page.
-		 *
-		 * Set to `any` due to OOUI's lack of proper TypeScript support.
 		 */
-		parent: any;
+		parent: ReturnType<typeof CopiedTemplateEditorDialog>;
 
 		// ELEMENTS
 		/**
@@ -96,7 +96,7 @@ function initCopiedTemplatePage() {
 				// Find the last row's page in the layout.
 				const lastPage =
 					// Get the last row's page (or this page if we don't have a thing)
-					parent.layout.getPage(
+					( parent.layout as OOUIBookletLayout ).getPage(
 						copiedTemplate.rows.length === 1 ?
 							this.name :
 							copiedTemplate.rows[ copiedTemplate.rows.length - 2 ].id
@@ -104,7 +104,6 @@ function initCopiedTemplatePage() {
 				const lastPageIndex =
 					parent.layout.stackLayout.getItems().indexOf( lastPage );
 				parent.layout.addPages( [
-					// TODO: Finish importing CTE row page
 					CopiedTemplateRowPage( {
 						copiedTemplateRow: event.row,
 						parent
@@ -112,7 +111,7 @@ function initCopiedTemplatePage() {
 				], lastPageIndex + 1 );
 			} );
 
-			// Removes a child row from the MenuLayout parent once it has been destroyed.
+			// Removes a child row from the BookletLayout parent once it has been destroyed.
 			copiedTemplate.addEventListener( 'destroy', () => {
 				// Check if we haven't been deleted yet.
 				if ( parent.layout.getPage( this.name ) ) {
@@ -363,7 +362,7 @@ function initCopiedTemplatePage() {
 		}
 
 		/**
-		 * Sets up the outline item of this page. Used in the MenuLayout.
+		 * Sets up the outline item of this page. Used in the BookletLayout.
 		 */
 		setupOutlineItem() {
 			/** @member any */

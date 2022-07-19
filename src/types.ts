@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/require-jsdoc */
 import { Deputy } from './Deputy';
 
 export type PromiseOrNot<T> = Promise<T> | T;
@@ -31,31 +32,31 @@ interface OOEventEmitter {
  * @author OOUI Team and other contributors
  */
 declare class Process {
-	/**
-	 *
-	 */
 	constructor(
-		step: number | JQueryPromiseOrPromise<any> | ( ( data: any ) => any ),
+		step?: number | JQueryPromiseOrPromise<any> | ( ( data: any ) => any ),
 		context?: any
 	);
-	/**
-	 * Add step to the end of the process.
-	 */
 	next(
 		step: number | JQueryPromiseOrPromise<any> | ( ( data: any ) => any ),
 		context?: any
 	): Process;
-	/**
-	 * Add step to the beginning of the process.
-	 */
 	first(
 		step: number | JQueryPromiseOrPromise<any> | ( ( data: any ) => any ),
 		context?: any
 	): Process;
-	/**
-	 * Start the process.
-	 */
 	execute(): JQuery.Promise<any>;
+}
+
+export declare class OOUIBookletLayout {
+	pages: Record<string, any>;
+	$element: JQuery<any>;
+
+	constructor( config: any );
+	on( event: string, callback: ( any: any ) => any ): void;
+	off( event: string, callback: ( any: any ) => any ): void;
+	addPages( pages: any[], index?: number ): void;
+	getPage( name: string ): any;
+	clearPages(): void;
 }
 
 declare global {
@@ -65,7 +66,9 @@ declare global {
 		ui: any & {
 			confirm( message: string, options?: any ): JQuery.Promise<boolean>;
 			alert( message: string, options?: any ): JQuery.Promise<boolean>;
-			Process: Process;
+			Process: typeof Process;
+			Error: any;
+			BookletLayout: typeof OOUIBookletLayout;
 		}
 	};
 

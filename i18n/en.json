@@ -88,6 +88,26 @@
 
     "deputy.cte": "'Copied' Notice Editor",
 
+    "deputy.cte.close": "Close",
+    "deputy.cte.add": "Add a notice",
+    "deputy.cte.merge": "Merge all notices",
+    "deputy.cte.merge.confirm": "You are about to merge $1 {{PLURAL:$1|notice|notices}}. Continue?",
+    "deputy.cte.reset": "Reset all changes",
+    "deputy.cte.reset.confirm": "This will reset all changes. Proceed?",
+    "deputy.cte.delete": "Delete all notices",
+    "deputy.cte.delete.confirm": "You are about to delete $1 {{PLURAL:$1|notice|notices}}, containing $2 {{PLURAL:$2|entry|entries}} in total. Continue?",
+
+    "deputy.cte.invalid": "Some fields are still invalid.",
+    "deputy.cte.adding": "Adding content attribution notices",
+    "deputy.cte.modifying": "Modifying content attribution notices",
+
+    "deputy.cte.dirty": "This dialog did not close properly last time. Your changes will be reset.",
+    "deputy.cte.empty.header": "No notices",
+    "deputy.cte.empty.removed": "All notices will be removed from the page. To reset your changes and restore previous templates, press the reset button at the bottom of the dialog.",
+    "deputy.cte.empty.none": "There are currently no notices on the talk page.",
+    "deputy.cte.empty.add": "Add a notice",
+    "deputy.cte.noSpot": "Sorry, but a notice cannot be automatically added. Please contact the developer to possibly add support for this talk page.",
+
     "deputy.cte.copied.label": "Copied $1",
     "deputy.cte.copied.merge": "Merge",
     "deputy.cte.copied.merge.title": "Merge 'copied' templates",
@@ -102,8 +122,40 @@
     "deputy.cte.copied.remove.confirm": "This will destroy $1 {{PLURAL:$1|entry|entries}}. Continue?",
     "deputy.cte.copied.add": "Add entry",
 
+    "deputy.cte.copied.entry.label": "Template entry",
+
     "deputy.cte.copied.entry.remove": "Remove entry",
     "deputy.cte.copied.entry.copy": "Copy attribution edit summary",
     "deputy.cte.copied.entry.copy.lacking": "Attribution edit summary copied to clipboard with lacking properties. Ensure that `from` is supplied.",
-    "deputy.cte.copied.entry.copy.success": "Attribution edit summary copied to clipboard."
+    "deputy.cte.copied.entry.copy.success": "Attribution edit summary copied to clipboard.",
+
+    "deputy.cte.copied.from.placeholder": "Page A",
+    "deputy.cte.copied.from.label": "Page copied from",
+    "deputy.cte.copied.from.help": "This is the page from which the content was copied from.",
+    "deputy.cte.copied.from_oldid.placeholder": "from_oldid",
+    "deputy.cte.copied.from_oldid.label": "Revision ID",
+    "deputy.cte.copied.from_oldid.help": "The specific revision ID at the time that the content was copied, if known.",
+    "deputy.cte.copied.to.placeholder": "Page B",
+    "deputy.cte.copied.to.label": "Page copied to",
+    "deputy.cte.copied.to.help": "This is the page where the content was copied into.",
+    "deputy.cte.copied.to_diff.placeholder": "to_diff",
+    "deputy.cte.copied.to_diff.label": "Revision ID",
+    "deputy.cte.copied.to_diff.help": "The specific revision ID of the revision that copied content into the target page. If the copying spans multiple revisions, this is the ID of the last revision that copies content into the page.",
+    "deputy.cte.copied.to_oldid.placeholder": "to_oldid",
+    "deputy.cte.copied.to_oldid.label": "Starting revision ID",
+    "deputy.cte.copied.to_oldid.help": "The ID of the revision before any content was copied. This can be omitted unless multiple revisions copied content into the page.",
+    "deputy.cte.copied.diff.placeholder": "https://en.wikipedia.org/w/index.php?diff=123456",
+    "deputy.cte.copied.diff.label": "Diff URL",
+    "deputy.cte.copied.diff.help": "The URL of the diff. Using <code>to_diff</code> and <code>to_oldid</code> is preferred, although supplying this parameter will override both.",
+    "deputy.cte.copied.merge.label": "Merged",
+    "deputy.cte.copied.merge.help": "Whether the copying was done as a result of merging two pages.",
+    "deputy.cte.copied.afd.placeholder": "AfD page (without Wikipedia:Articles for deletion/)",
+    "deputy.cte.copied.afd.label": "AfD page",
+    "deputy.cte.copied.afd.help": "The AfD page if the copy was made due to an AfD closed as \"merge\".",
+
+    "deputy.cte.copied.advanced": "Advanced",
+    "deputy.cte.copied.dateInvalid": "The previous date value, \"$1\", was not a valid date.",
+    "deputy.cte.copied.diffDeprecate": "The <code>to_diff</code> and <code>to_oldid</code> parameters are preferred in favor of the <code>diff</code> parameter.",
+    "deputy.cte.copied.diffDeprecate.replace": "The current value of '$1', \"$2\", will be replaced with \"$3\". Continue?",
+    "deputy.cte.copied.diffDeprecate.failed": "Cannot convert `diff` parameter to URL. See your browser console for more details."
 }
