@@ -55,7 +55,7 @@ function getPlugins() {
 		nodeResolve( { browser: false } ),
 		typescript(),
 		json(),
-		string( { include: 'src/css/*.css' } ),
+		string( { include: 'src/**/*.css' } ),
 		license()
 	].filter( ( v ) => !!v );
 }

@@ -56,6 +56,10 @@ function initCopiedTemplateRowPage() {
 		 * An array of OOUI FieldLayout widgets that contain inputs for this row.
 		 */
 		fieldLayouts: Record<CopiedTemplateRowParameter | 'toggle', any>;
+		/**
+		 * The label of this page. Used in the BookletLayout and header.
+		 */
+		label: string;
 
 		/**
 		 * @param config Configuration to be passed to the element.
@@ -71,14 +75,13 @@ function initCopiedTemplateRowPage() {
 
 			const finalConfig = {
 				label: `${copiedTemplateRow.from || '???'} to ${copiedTemplateRow.to || '???'}`,
-				icon: 'parameter',
-				level: 1,
 				classes: [ 'cte-page-row' ]
 			};
 			super( copiedTemplateRow.id, finalConfig );
 
 			this.parent = parent;
 			this.copiedTemplateRow = copiedTemplateRow;
+			this.label = finalConfig.label;
 
 			this.copiedTemplateRow.parent.addEventListener( 'destroy', () => {
 				// Check if the page hasn't been deleted yet.
@@ -106,7 +109,7 @@ function initCopiedTemplateRowPage() {
 		render(): any {
 			this.layout = new OO.ui.FieldsetLayout( {
 				icon: 'parameter',
-				label: 'Template row',
+				label: mw.message( 'deputy.cte.copied.entry.label' ).text(),
 				classes: [ 'cte-fieldset' ]
 			} );
 
@@ -228,11 +231,6 @@ function initCopiedTemplateRowPage() {
 							)
 					);
 
-			this.layout = new OO.ui.FieldsetLayout( {
-				icon: 'parameter',
-				label: mw.message( 'deputy.cte.copied.entry.label' ).text(),
-				classes: [ 'cte-fieldset' ]
-			} );
 			this.inputs = {
 				from: new mw.widgets.TitleInputWidget( {
 					$overlay: this.parent.$overlay,
@@ -582,8 +580,8 @@ function initCopiedTemplateRowPage() {
 				this.outlineItem
 					.setMovable( true )
 					.setRemovable( true )
-					.setIcon( this.icon )
-					.setLevel( this.level )
+					.setIcon( 'parameter' )
+					.setLevel( 1 )
 					.setLabel( this.label );
 			}
 		}

@@ -11,6 +11,8 @@ const rootDirectory = path.resolve( __dirname, '..' );
 const buildDirectory = path.resolve( rootDirectory, 'build' );
 const sourceDirectory = path.resolve( rootDirectory, 'src' );
 
+let rebuildsPaused = false;
+
 /**
  * @type {childProcess.ChildProcess}
  */
@@ -82,6 +84,7 @@ async function rebuild() {
 // Start!
 
 ( async function () {
+	console.log( chalk.gray( 'Hotkeys: [r]ebuild, [p]ause, [q]uit' ) );
 	console.log( chalk.blue( 'Building for the first time...' ) );
 	await rebuild();
 
@@ -116,6 +119,10 @@ async function rebuild() {
 	 *
 	 */
 	function startRebuild() {
+		if ( rebuildsPaused ) {
+			return;
+		}
+
 		console.log( chalk.blue( 'Rebuilding...' ) );
 		if ( rebuild.active ) {
 			return;
@@ -139,6 +146,15 @@ async function rebuild() {
 			if ( data[ 0 ] === 114 ) {
 				// R
 				startRebuild();
+			} else if ( data[ 0 ] === 112 ) {
+				// P
+				rebuildsPaused = !rebuildsPaused;
+				console.log(
+					chalk.yellowBright( `Rebuilds ${rebuildsPaused ? 'paused' : 'resumed'}` )
+				);
+			} else if ( data[ 0 ] === 113 ) {
+				// Q
+				process.exit();
 			} else if ( data[ 0 ] === 3 ) {
 				// Ctrl + C
 				process.exit();

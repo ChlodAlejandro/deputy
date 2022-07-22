@@ -8,6 +8,7 @@ import CTEParsoidDocument from '../models/CTEParsoidDocument';
 import RowChangeEvent from '../models/RowChangeEvent';
 import CopiedTemplateEditorDialog from './CopiedTemplateEditorDialog';
 import { OOUIBookletLayout } from '../../../types';
+import removeElement from '../../../util/removeElement';
 
 export interface CopiedTemplatePageData {
 	/**
@@ -60,6 +61,21 @@ function initCopiedTemplatePage() {
 		 * Fields of input widgets in `inputSet`.
 		 */
 		fields: Record<string, any>;
+		/**
+		 * The label of this page. Used in the BookletLayout and header.
+		 */
+		label: string;
+		/**
+		 * The preview panel. A <div> that encloses MediaWiki parser output: the rendered
+		 * preview of the template.
+		 */
+		previewPanel: HTMLElement;
+
+		/**
+		 * A throttled function that updates the preview panel.
+		 */
+		updatePreview: () => Promise<void> =
+			( mw.util as any ).throttle( this.updatePreviewPanel.bind( this ), 1000 );
 
 		/**
 		 * @param config Configuration to be passed to the element.
@@ -73,13 +89,12 @@ function initCopiedTemplatePage() {
 				throw new Error( 'Reference template (CopiedTemplate) is required' );
 			}
 
+			const label = mw.message(
+				'deputy.cte.copied.label',
+				config.copiedTemplate.name
+			).text();
 			const finalConfig = {
-				label: mw.message(
-					'deputy.cte.copied.label',
-					config.copiedTemplate.name
-				).text(),
-				icon: 'puzzle',
-				level: 0,
+				label: label,
 				classes: [ 'cte-page-template' ]
 			};
 			super(
@@ -90,6 +105,7 @@ function initCopiedTemplatePage() {
 			this.document = config.copiedTemplate.parsoid;
 			this.copiedTemplate = config.copiedTemplate;
 			this.parent = config.parent;
+			this.label = label;
 
 			// Adds listener to handle added rows to the template.
 			copiedTemplate.addEventListener( 'rowAdd', ( event: RowChangeEvent ) => {
@@ -171,7 +187,7 @@ function initCopiedTemplatePage() {
 				}
 			} );
 			const addButton = new OO.ui.ButtonWidget( {
-				label: mw.message( 'deputy.cte.copied.addRow' ).text()
+				label: mw.message( 'deputy.cte.copied.add' ).text()
 			} );
 			addButton.on( 'click', () => {
 				this.copiedTemplate.addRow( new CopiedTemplateRow( {
@@ -292,33 +308,46 @@ function initCopiedTemplatePage() {
 		}
 
 		/**
+		 * Updates the preview panel rendered with `renderPreviewPanel()`.
+		 */
+		private async updatePreviewPanel(): Promise<void> {
+			if ( !this.previewPanel ) {
+				// Skip if still unavailable.
+				return;
+			}
+
+			await this.copiedTemplate.generatePreview().then( ( data ) => {
+				this.previewPanel.innerHTML = data;
+
+				const emptyStateNotice = this.previewPanel.querySelector<HTMLElement>(
+					'.ext-discussiontools-emptystate'
+				);
+				if ( emptyStateNotice ) {
+					removeElement( emptyStateNotice );
+				}
+
+				// Infuse collapsibles
+				( $( this.previewPanel ).find( '.collapsible' ) as any )
+					.makeCollapsible();
+			} );
+		}
+
+		/**
 		 * Renders the preview "panel". Not an actual panel, but rather a <div> that
 		 * shows a preview of the template to be saved.
 		 *
 		 * @return A <div> element, containing an HTML render of the template wikitext.
 		 */
 		renderPreviewPanel(): JSX.Element {
-			const previewPanel = <div class="cte-preview" />;
-
-			// TODO: .throttle not supported in `types-mediawiki`
-			const update: () => void = ( mw.util as any ).throttle(
-				async () => {
-					await this.copiedTemplate.generatePreview().then( ( data ) => {
-						previewPanel.innerHTML = data;
-
-						// Infuse collapsibles
-						( $( previewPanel ).find( '.collapsible' ) as any )
-							.makeCollapsible();
-					} );
-				}
-			);
+			this.previewPanel = <div class="cte-preview" /> as HTMLElement;
 
 			// Listen for changes
 			this.copiedTemplate.addEventListener( 'save', () => {
-				update();
+				this.updatePreview();
 			} );
+			this.updatePreview();
 
-			return previewPanel;
+			return this.previewPanel;
 		}
 
 		/**
@@ -371,8 +400,8 @@ function initCopiedTemplatePage() {
 				this.outlineItem
 					.setMovable( true )
 					.setRemovable( true )
-					.setIcon( this.icon )
-					.setLevel( this.level )
+					.setIcon( 'puzzle' )
+					.setLevel( 0 )
 					.setLabel( this.label );
 			}
 		}

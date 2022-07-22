@@ -7,9 +7,13 @@ const exitBlockList: string[] = [];
  * @return `false`.
  */
 const exitBlock = ( event: BeforeUnloadEvent ): boolean => {
-	event.preventDefault();
-	return event.returnValue = false;
+	if ( exitBlockList.length > 0 ) {
+		event.preventDefault();
+		return event.returnValue = false;
+	}
 };
+
+window.addEventListener( 'beforeunload', exitBlock );
 
 /**
  * Blocks navigation to prevent data loss. This function takes in a
@@ -29,8 +33,6 @@ export function blockExit( key?: string ) {
 			exitBlockList.push( key );
 		}
 	}
-
-	window.addEventListener( 'beforeunload', exitBlock );
 }
 
 /**
@@ -51,9 +53,5 @@ export function unblockExit( key?: string ) {
 		}
 	} else {
 		exitBlockList.splice( 0, exitBlockList.length );
-	}
-
-	if ( exitBlockList.length === 0 ) {
-		window.addEventListener( 'beforeunload', exitBlock );
 	}
 }

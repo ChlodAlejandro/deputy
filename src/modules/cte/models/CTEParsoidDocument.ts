@@ -3,6 +3,24 @@ import last from '../../../util/last';
 import CopiedTemplate from './CopiedTemplate';
 
 /**
+ * An event dispatched when a template inside a `CopiedTemplateEditorDialog` is inserted.
+ */
+export class TemplateInsertEvent extends Event {
+
+	template: CopiedTemplate;
+
+	/**
+	 * @param template The template that was inserted
+	 * @param eventInitDict
+	 */
+	constructor( template: CopiedTemplate, eventInitDict?: EventInit ) {
+		super( 'templateInsert', eventInitDict );
+		this.template = template;
+	}
+
+}
+
+/**
  * An object containing an {@link HTMLIFrameElement} along with helper functions
  * to make manipulation easier.
  */
@@ -64,7 +82,11 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 	 * Finds this document's {{copied}} notices.
 	 */
 	findCopiedNotices() {
-		this.copiedNotices = [];
+		if ( !this.copiedNotices ) {
+			this.copiedNotices = [];
+		}
+
+		const newCopiedNotices: CopiedTemplate[] = [];
 		this.buildIndex();
 
 		for ( const templateElement of this.findTemplate(
@@ -76,19 +98,30 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 			)
 		) ) {
 			// This is a copied template.
-			const notice = new CopiedTemplate(
-				this,
-				templateElement.originalElement,
-				templateElement.i
+			const existing = this.copiedNotices.find(
+				( v ) => v.element === templateElement.originalElement
 			);
-			this.copiedNotices.push(
-				notice
-			);
-			notice.addEventListener( 'destroy', () => {
-				const i = this.copiedNotices.indexOf( notice );
-				this.copiedNotices.splice( i, 1 );
-			} );
+			if ( existing ) {
+				// Record exists, reuse that same object (prevents memory leaks).
+				newCopiedNotices.push( existing );
+			} else {
+				// Not yet in the existing array, create a new object.
+				const notice = new CopiedTemplate(
+					this,
+					templateElement.originalElement,
+					templateElement.i
+				);
+				newCopiedNotices.push(
+					notice
+				);
+				notice.addEventListener( 'destroy', () => {
+					const i = this.copiedNotices.indexOf( notice );
+					this.copiedNotices.splice( i, 1 );
+				} );
+			}
 		}
+
+		this.copiedNotices = newCopiedNotices;
 	}
 
 	/**
@@ -170,6 +203,9 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 		// Insert.
 		element.insertAdjacentElement( position, template );
 		this.findCopiedNotices();
-		this.dispatchEvent( new Event( 'insert' ) );
+		const templateObject = this.copiedNotices.find(
+			( v ) => v.element === template
+		);
+		this.dispatchEvent( new TemplateInsertEvent( templateObject ) );
 	}
 }

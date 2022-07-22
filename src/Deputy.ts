@@ -11,14 +11,14 @@ import getPageContent from './util/getPageContent';
 import cloneRegex from './util/cloneRegex';
 import { DeputyPreferences } from './DeputyPreferences';
 import performHacks from './util/performHacks';
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import deputyStyles from './css/deputy.css';
 import DeputyCase from './wiki/DeputyCase';
 import unwrapWidget from './util/unwrapWidget';
 import CopiedTemplateEditor from './modules/cte/CopiedTemplateEditor';
 import DeputyLanguage from './DeputyLanguage';
+import deputyVersion from './DeputyVersion';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import deputyStyles from './css/deputy.css';
 
 /**
  * The main class for Deputy. Entry point for execution.
@@ -56,7 +56,7 @@ class Deputy {
 	 *
 	 * @type {string}
 	 */
-	version = '0.0.1';
+	version = deputyVersion;
 	/**
 	 * The current page as an mw.Title.
 	 */

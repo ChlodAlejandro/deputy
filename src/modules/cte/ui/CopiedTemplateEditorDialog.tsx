@@ -1,6 +1,6 @@
 import '../../../types';
 import CopiedTemplatesEmptyPage from './CopiedTemplatesEmptyPage';
-import CTEParsoidDocument from '../models/CTEParsoidDocument';
+import CTEParsoidDocument, { TemplateInsertEvent } from '../models/CTEParsoidDocument';
 import CopiedTemplatePage from './CopiedTemplatePage';
 import CopiedTemplateRowPage from './CopiedTemplateRowPage';
 import errorToOO from '../../../util/errorToOO';
@@ -10,6 +10,8 @@ import decorateEditSummary from '../../../util/decorateEditSummary';
 import CopiedTemplate from '../models/CopiedTemplate';
 import { OOUIBookletLayout } from '../../../types';
 import type CopiedTemplateEditor from '../CopiedTemplateEditor';
+import getObjectValues from '../../../util/getObjectValues';
+import last from '../../../util/last';
 
 interface CopiedTemplateEditorDialogData {
 	main: CopiedTemplateEditor;
@@ -128,9 +130,37 @@ function initCopiedTemplateEditorDialog() {
 				}
 			} );
 
-			this.parsoid.addEventListener( 'insert', () => {
-				this.rebuildPages();
-			} );
+			this.parsoid.addEventListener(
+				'templateInsert',
+				( event: TemplateInsertEvent ) => {
+					const toPush = [];
+					toPush.push( CopiedTemplatePage( {
+						copiedTemplate: event.template,
+						parent: this
+					} ) );
+					for ( const row of event.template.rows ) {
+						toPush.push( CopiedTemplateRowPage( {
+							copiedTemplateRow: row,
+							parent: this
+						} ) );
+					}
+
+					// Find where to insert the template.
+					// This will look for the last row page of the template prior (or the
+					// template row if a row page does not exist) and insert after that.
+					const lastTemplateIndex =
+						Math.max( 0, this.parsoid.copiedNotices.indexOf( event.template ) - 1 );
+					const lastTemplate = this.parsoid.copiedNotices[ lastTemplateIndex ];
+					const pagesArray: any[] = getObjectValues( this.layout.pages );
+					const beforePage = last( pagesArray.filter(
+						( page ) => page.copiedTemplateRow != null &&
+							page.copiedTemplateRow.parent != null &&
+							page.copiedTemplateRow.parent === lastTemplate
+					) );
+					const beforePageIndex = pagesArray.indexOf( beforePage );
+					this.layout.addPages( toPush, beforePageIndex + 1 );
+				}
+			);
 
 			this.$body.append( this.layout.$element );
 		}
@@ -223,6 +253,26 @@ function initCopiedTemplateEditorDialog() {
 		}
 
 		/**
+		 * Gets this dialog's ready process. Called after the dialog has opened.
+		 *
+		 * @return An OOUI Process
+		 */
+		getReadyProcess() {
+			const process = super.getReadyProcess();
+
+			process.next( () => {
+				for ( const page of getObjectValues( this.layout.pages ) ) {
+					// Dirty check to see if this is a CopiedTemplatePage.
+					if ( ( page as any ).updatePreview != null ) {
+						page.updatePreview();
+					}
+				}
+			}, this );
+
+			return process;
+		}
+
+		/**
 		 * Gets this dialog's action process. Handles all actions (primarily dialog
 		 * button clicks, etc.)
 		 *
@@ -252,6 +302,7 @@ function initCopiedTemplateEditorDialog() {
 							utf8: 'true',
 							title: this.parsoid.getPage(),
 							text: await this.parsoid.toWikitext(),
+							// TODO: l10n
 							summary: decorateEditSummary( `${
 								this.parsoid.originalNoticeCount > 0 ?
 									'Modifying' : 'Adding'
@@ -352,8 +403,7 @@ function initCopiedTemplateEditorDialog() {
 					this.parsoid.reset();
 					this.parsoid.destroy();
 
-					// TODO: Reimplement main CTE class.
-					// window.CopiedTemplateEditor.toggleButtons( true );
+					this.main.toggleButtons( true );
 				}, this );
 			}
 
