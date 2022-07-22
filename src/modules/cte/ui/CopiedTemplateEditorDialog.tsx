@@ -9,6 +9,15 @@ import unwrapWidget from '../../../util/unwrapWidget';
 import decorateEditSummary from '../../../util/decorateEditSummary';
 import CopiedTemplate from '../models/CopiedTemplate';
 import { OOUIBookletLayout } from '../../../types';
+import type CopiedTemplateEditor from '../CopiedTemplateEditor';
+
+interface CopiedTemplateEditorDialogData {
+	main: CopiedTemplateEditor;
+	/**
+	 * Extra classes for this dialog.
+	 */
+	classes?: string[];
+}
 
 let InternalCopiedTemplateEditorDialog: any;
 
@@ -21,7 +30,7 @@ function initCopiedTemplateEditorDialog() {
 
 		static static = {
 			name: 'copiedTemplateEditorDialog',
-			title: mw.message( 'deputy.copiedTemplateEditorDialog.title' ).text(),
+			title: mw.message( 'deputy.cte' ).text(),
 			size: 'larger',
 			actions: [
 				{
@@ -79,11 +88,17 @@ function initCopiedTemplateEditorDialog() {
 		 * Parsoid document for this dialog.
 		 */
 		readonly parsoid: CTEParsoidDocument = new CTEParsoidDocument();
+		/**
+		 * The main CTE instance handling this page.
+		 */
+		readonly main: CopiedTemplateEditor;
 
 		/**
+		 * @param config
 		 */
-		constructor() {
-			super( {} );
+		constructor( config: CopiedTemplateEditorDialogData ) {
+			super( config );
+			this.main = config.main;
 		}
 
 		/**
@@ -174,7 +189,7 @@ function initCopiedTemplateEditorDialog() {
 		getSetupProcess( data: any ) {
 			const process = super.getSetupProcess( data );
 
-			if ( this.parsoid.getDocument() !== null ) {
+			if ( this.parsoid.getDocument() != null ) {
 				// Reset the frame.
 				process.first( () => {
 					return OO.ui.alert(
@@ -229,26 +244,26 @@ function initCopiedTemplateEditorDialog() {
 					}
 
 					// Saves the page.
-					process.next( async function () {
+					process.next( async () => {
 						return new mw.Api().postWithEditToken( {
 							action: 'edit',
 							format: 'json',
 							formatversion: '2',
 							utf8: 'true',
-							title: this.parsoidDocument.page,
-							text: await this.parsoidDocument.toWikitext(),
+							title: this.parsoid.getPage(),
+							text: await this.parsoid.toWikitext(),
 							summary: decorateEditSummary( `${
-								this.parsoidDocument.originalNoticeCount > 0 ?
+								this.parsoid.originalNoticeCount > 0 ?
 									'Modifying' : 'Adding'
 							} content attribution notices` )
 						} ).catch( errorToOO );
 					}, this );
 
 					// Page redirect
-					process.next( function () {
+					process.next( () => {
 						unblockExit( 'cte' );
 						if (
-							mw.config.get( 'wgPageName' ) === this.parsoidDocument.page
+							mw.config.get( 'wgPageName' ) === this.parsoid.getPage()
 						) {
 							// If on the talk page, reload the page.
 							window.location.reload();
@@ -257,18 +272,18 @@ function initCopiedTemplateEditorDialog() {
 							window.location.href =
 								mw.config.get( 'wgArticlePath' ).replace(
 									/\$1/g,
-									encodeURIComponent( this.parsoidDocument.page )
+									encodeURIComponent( this.parsoid.getPage() )
 								);
 						}
 					}, this );
 					break;
 				case 'reset':
-					process.next( function () {
+					process.next( () => {
 						return OO.ui.confirm(
 							mw.message( 'deputy.cte.reset.confirm' ).text()
 						).done( ( confirmed: boolean ) => {
 							if ( confirmed ) {
-								this.parsoidDocument.reloadFrame().then( () => {
+								this.parsoid.reload().then( () => {
 									this.layout.clearPages();
 									this.rebuildPages();
 								} );
@@ -277,21 +292,21 @@ function initCopiedTemplateEditorDialog() {
 					}, this );
 					break;
 				case 'merge':
-					process.next( function () {
-						const notices = this.parsoidDocument.copiedNotices.length;
+					process.next( () => {
+						const notices = this.parsoid.copiedNotices.length;
 						if ( notices > 1 ) {
 							return OO.ui.confirm(
-								mw.message( 'deputy.cte.merge.confirm', notices ).text()
+								mw.message( 'deputy.cte.merge.confirm', `${notices}` ).text()
 							).done( ( confirmed: boolean ) => {
 								if ( !confirmed ) {
 									return;
 								}
 
-								const pivot = this.parsoidDocument.copiedNotices[ 0 ];
-								while ( this.parsoidDocument.copiedNotices.length > 1 ) {
-									let template = this.parsoidDocument.copiedNotices[ 0 ];
+								const pivot = this.parsoid.copiedNotices[ 0 ];
+								while ( this.parsoid.copiedNotices.length > 1 ) {
+									let template = this.parsoid.copiedNotices[ 0 ];
 									if ( template === pivot ) {
-										template = this.parsoidDocument.copiedNotices[ 1 ];
+										template = this.parsoid.copiedNotices[ 1 ];
 									}
 									pivot.merge( template, { delete: true } );
 								}
@@ -302,35 +317,40 @@ function initCopiedTemplateEditorDialog() {
 					}, this );
 					break;
 				case 'delete':
-					process.next( function () {
-						const notices = this.parsoidDocument.copiedNotices.length;
-						const rows = this.parsoidDocument.copiedNotices
+					process.next( () => {
+						// Original copied notice count.
+						const notices = this.parsoid.copiedNotices.length;
+						const rows = this.parsoid.copiedNotices
 							.reduce( ( p: number, n: CopiedTemplate ) => p + n.rows.length, 0 );
 						return OO.ui.confirm(
-							mw.message( 'deputy.cte.delete.confirm', notices, rows ).text()
+							mw.message(
+								'deputy.cte.delete.confirm',
+								`${notices}`,
+								`${rows}`
+							).text()
 						).done( ( confirmed: boolean ) => {
 							if ( confirmed ) {
-								while ( this.parsoidDocument.copiedNotices.length > 0 ) {
-									this.parsoidDocument.copiedNotices[ 0 ].destroy();
+								while ( this.parsoid.copiedNotices.length > 0 ) {
+									this.parsoid.copiedNotices[ 0 ].destroy();
 								}
 							}
 						} );
 					}, this );
 					break;
 				case 'add':
-					process.next( function () {
+					process.next( () => {
 						this.addTemplate();
 					}, this );
 					break;
 			}
 
 			if ( action === 'save' || action === 'close' ) {
-				process.next( function () {
+				process.next( () => {
 					this.close( { action: action } );
 					// Already unblocked if "save", but this cuts down on code footprint.
 					unblockExit( 'cte' );
-					this.parsoidDocument.resetFrame();
-					this.parsoidDocument.destroyFrame();
+					this.parsoid.reset();
+					this.parsoid.destroy();
 
 					// TODO: Reimplement main CTE class.
 					// window.CopiedTemplateEditor.toggleButtons( true );
@@ -346,11 +366,12 @@ function initCopiedTemplateEditorDialog() {
 /**
  * Creates a new CopiedTemplateEditorDialog.
  *
+ * @param config
  * @return A CopiedTemplateEditorDialog object
  */
-export default function () {
+export default function ( config: CopiedTemplateEditorDialogData ) {
 	if ( !InternalCopiedTemplateEditorDialog ) {
 		initCopiedTemplateEditorDialog();
 	}
-	return new InternalCopiedTemplateEditorDialog();
+	return new InternalCopiedTemplateEditorDialog( config );
 }

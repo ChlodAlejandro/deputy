@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
-import '../../../types';
 import { h } from 'tsx-dom';
+import '../../../types';
 import CopiedTemplateRow, { CopiedTemplateRowParameter } from '../models/CopiedTemplateRow';
 import RowChangeEvent from '../models/RowChangeEvent';
 import unwrapWidget from '../../../util/unwrapWidget';
@@ -77,7 +77,8 @@ function initCopiedTemplateRowPage() {
 			};
 			super( copiedTemplateRow.id, finalConfig );
 
-			this.copiedTemplateRow = config.copiedTemplateRow;
+			this.parent = parent;
+			this.copiedTemplateRow = copiedTemplateRow;
 
 			this.copiedTemplateRow.parent.addEventListener( 'destroy', () => {
 				// Check if the page hasn't been deleted yet.
@@ -234,7 +235,7 @@ function initCopiedTemplateRowPage() {
 			} );
 			this.inputs = {
 				from: new mw.widgets.TitleInputWidget( {
-					$overlay: this.this.parent.$overlay,
+					$overlay: this.parent.$overlay,
 					placeholder: mw.message( 'deputy.cte.copied.from.placeholder' ).text(),
 					value: copiedTemplateRow.from,
 					validate: /^.+$/g

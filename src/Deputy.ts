@@ -4,7 +4,6 @@ import DeputyCommunications from './DeputyCommunications';
 import DeputySession from './session/DeputySession';
 import DeputyCasePage from './wiki/DeputyCasePage';
 import normalizeTitle from './util/normalizeTitle';
-import deputyEnglish from '../i18n/en.json';
 import DeputyAPI from './api/DeputyAPI';
 import sectionHeadingName from './util/sectionHeadingName';
 import ContributionSurveyRow from './models/ContributionSurveyRow';
@@ -17,6 +16,9 @@ import performHacks from './util/performHacks';
 // @ts-ignore
 import deputyStyles from './css/deputy.css';
 import DeputyCase from './wiki/DeputyCase';
+import unwrapWidget from './util/unwrapWidget';
+import CopiedTemplateEditor from './modules/cte/CopiedTemplateEditor';
+import DeputyLanguage from './DeputyLanguage';
 
 /**
  * The main class for Deputy. Entry point for execution.
@@ -64,6 +66,8 @@ class Deputy {
 	 */
 	currentPageId = mw.config.get( 'wgArticleId' );
 
+	// Components
+
 	wiki: mw.Api;
 	wikiRest: mw.Rest;
 	api: DeputyAPI;
@@ -72,10 +76,28 @@ class Deputy {
 	comms: DeputyCommunications;
 	session: DeputySession;
 
+	// Modules
 	/**
-	 * OOUI WindowManager. Instantiated only when needed.
+	 * CopiedTemplateEditor instance.
 	 */
-	windowManager: any;
+	cte: CopiedTemplateEditor = new CopiedTemplateEditor( this );
+
+	/**
+	 * An OOUI WindowManager. Automatically instantiated when needed. See the
+	 * `windowManager` getter for instantiation.
+	 */
+	_windowManager: any;
+
+	/**
+	 * @return An OOUI window manager
+	 */
+	get windowManager(): any {
+		if ( !this._windowManager ) {
+			this._windowManager = new OO.ui.WindowManager();
+			document.body.appendChild( unwrapWidget( this._windowManager ) );
+		}
+		return this._windowManager;
+	}
 
 	/**
 	 * Private constructor. To access Deputy, use `window.deputy` or Deputy.instance.
@@ -106,44 +128,8 @@ class Deputy {
 
 		// Inject CSS
 		mw.util.addCSS( deputyStyles );
-		// TODO: The goal is to have Deputy load the file for the current wgUserLanguage.
-		// Internationalization
-		let stringsLoaded = false;
-		if ( window.deputyLang ) {
-			if ( typeof window.deputyLang === 'object' ) {
-				for ( const key in window.deputyLang ) {
-					mw.messages.set( key, window.deputyLang[ key ] );
-				}
-				stringsLoaded = true;
-			} else {
-				const langFile = await getPageContent( window.deputyLang );
-				try {
-					if ( langFile.contentFormat !== 'application/json' ) {
-						// Anti-pattern, but JSON.parse throws so this catches both of those.
-						// noinspection ExceptionCaughtLocallyJS
-						throw new Error( 'Language file is not JSON' );
-					}
-
-					const langData = JSON.parse( langFile );
-					for ( const key in langData ) {
-						mw.messages.set( key, langData[ key ] );
-					}
-					stringsLoaded = true;
-				} catch ( e ) {
-					mw.notify(
-						'Deputy: Requested language page is not a valid JSON file.',
-						{ type: 'error' }
-					);
-				}
-			}
-		}
-
-		// Run if (a) no deputyLang set, or (b) language file loading fails
-		if ( !stringsLoaded ) {
-			for ( const key in deputyEnglish ) {
-				mw.messages.set( key, ( deputyEnglish as Record<string, string> )[ key ] );
-			}
-		}
+		// Load languages
+		await DeputyLanguage.load();
 
 		// Initialize the storage.
 		this.storage = new DeputyStorage();

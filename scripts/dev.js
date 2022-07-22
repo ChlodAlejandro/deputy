@@ -33,7 +33,8 @@ async function rebuild() {
 			'run', 'build'
 		],
 		{
-			cwd: rootDirectory
+			cwd: rootDirectory,
+			env: process.env
 		}
 	);
 

@@ -1,4 +1,5 @@
 import typescript from 'rollup-plugin-typescript2';
+import sourcemaps from 'rollup-plugin-sourcemaps';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import { string } from 'rollup-plugin-string';
 import commonjs from '@rollup/plugin-commonjs';
@@ -6,6 +7,8 @@ import json from '@rollup/plugin-json';
 import license from 'rollup-plugin-node-license';
 import * as fs from 'fs';
 import * as path from 'path';
+
+const production = process.env.NODE_ENV === 'production';
 
 /**
  * Converts standard text to block comments.
@@ -31,23 +34,84 @@ function blockCommentIfy( text ) {
 }
 
 /**
- * @type {import('rollup').RollupOptions}
+ * Loads a banner file.
+ *
+ * @param {string} bannerPath Path parts to the banner file
+ * @return {string} A fully-decorated banner
  */
-export default {
-	input: 'src/Deputy.ts',
-	output: {
-		dir: 'build',
-		format: 'iife',
-		banner: blockCommentIfy( fs.readFileSync( path.join( __dirname, 'BANNER.txt' ) ) ) +
-			'\n// <nowiki>',
-		footer: '// </nowiki>\n// <3'
-	},
-	plugins: [
+function loadBanner( ...bannerPath ) {
+	return blockCommentIfy( fs.readFileSync( path.join( __dirname, ...bannerPath ) ) );
+}
+
+/**
+ * Get plugins for this Rollup instance.
+ *
+ * @return {Plugin[]}
+ */
+function getPlugins() {
+	return [
+		!production && sourcemaps(),
 		commonjs(),
-		nodeResolve( { browser: true } ),
+		nodeResolve( { browser: false } ),
 		typescript(),
 		json(),
 		string( { include: 'src/css/*.css' } ),
 		license()
-	]
-};
+	].filter( ( v ) => !!v );
+}
+
+/**
+ * Automatically disable a given component based on environment variables.
+ *
+ * Setting the `DEPUTY_ONLY` environment variable will allow only projects with the
+ * assigned key to be built. Setting the `DEPUTY_NO` environment variable will disallow
+ * all projects with the assigned key from being built.
+ *
+ * @param {string} key
+ * @param {import('rollup').RollupOptions} options
+ * @return {import('rollup').RollupOptions} Options if enabled, `false`, if otherwise.
+ */
+function autoDisable( key, options ) {
+	if ( process.env.DEPUTY_ONLY ) {
+		// Filter out not included.
+		return process.env.DEPUTY_ONLY.split( ',' ).indexOf( key ) !== -1 && options;
+	} else if ( process.env.DEPUTY_NO ) {
+		// Filter out disabled.
+		return process.env.DEPUTY_NO.split( ',' ).indexOf( key ) === -1 && options;
+	} else {
+		// Always enable.
+		return options;
+	}
+}
+
+/**
+ * @type {import('rollup').RollupOptions[]}
+ */
+export default [
+	// Deputy core
+	autoDisable( 'deputy', {
+		input: 'src/Deputy.ts',
+		output: {
+			sourcemap: true,
+			dir: 'build',
+			format: 'iife',
+			banner: loadBanner( 'BANNER.txt' ) +
+				'\n// <nowiki>',
+			footer: '// </nowiki>\n// <3'
+		},
+		plugins: getPlugins()
+	} ),
+	// Standalone Copied Template Editor
+	autoDisable( 'cte', {
+		input: 'src/modules/cte/CopiedTemplateEditorStandalone.ts',
+		output: {
+			sourcemap: true,
+			dir: 'build',
+			format: 'iife',
+			banner: loadBanner( 'src', 'modules', 'cte', 'BANNER.txt' ) +
+				'\n// <nowiki>',
+			footer: '// </nowiki>\n// <3'
+		},
+		plugins: getPlugins()
+	} )
+].filter( ( v ) => !!v );

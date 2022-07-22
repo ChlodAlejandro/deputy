@@ -23,9 +23,9 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 	 * spaces must be replaced with underscores.
 	 */
 	static readonly copiedTemplateAliases = <const>[
-		'template:copied',
-		'template:copied_from',
-		'template:copywithin'
+		'copied',
+		'copied_from',
+		'copywithin'
 	];
 
 	/**
@@ -65,8 +65,16 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 	 */
 	findCopiedNotices() {
 		this.copiedNotices = [];
+		this.buildIndex();
 
-		for ( const templateElement of this.findTemplate( /c/gi ) ) {
+		for ( const templateElement of this.findTemplate(
+			new RegExp(
+				CTEParsoidDocument.copiedTemplateAliases.map(
+					( v ) => `(${mw.util.escapeRegExp( v )})`
+				).join( '|' ),
+				'gi'
+			)
+		) ) {
 			// This is a copied template.
 			const notice = new CopiedTemplate(
 				this,
