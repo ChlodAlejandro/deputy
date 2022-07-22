@@ -9,5 +9,8 @@
  *
  * This ensures that the version is available, even if the core is not loaded.
  * It also keeps standalone versions lightweight to avoid too much additional code.
+ *
+ * This file is automatically modified by npm when running `npm version ...`. Avoid
+ * modifying it manually.
  */
-export default '0.0.2';
+export default /* v */'0.0.2'/* v */;

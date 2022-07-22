@@ -1,10 +1,11 @@
 {
     "name": "deputy",
     "description": "[task tracking](https://trello.com/b/UmI82e0y/deputy)",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "main": "src/deputy.js",
     "scripts": {
         "test": "jest",
+        "version": "node scripts/sync-version.js",
         "clean": "shx rm -rf build .rollup.cache",
         "prebuild": "shx mkdir -p build/i18n/ && shx cp -Rf i18n/* build/i18n/",
         "build": "npm run prebuild && rollup -c",
