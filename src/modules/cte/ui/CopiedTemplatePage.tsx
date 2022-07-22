@@ -211,6 +211,7 @@ function initCopiedTemplatePage() {
 		 */
 		renderMergePanel(): JSX.Element {
 			const mergePanel = new OO.ui.FieldsetLayout( {
+				classes: [ 'cte-merge-panel' ],
 				icon: 'tableMergeCells',
 				label: mw.message( 'deputy.cte.copied.merge.title' ).text()
 			} );
@@ -239,14 +240,14 @@ function initCopiedTemplatePage() {
 				}
 			} );
 
-			mergePanel.addItems( new OO.ui.ActionFieldLayout(
+			const mergeFieldLayout = new OO.ui.ActionFieldLayout(
 				mergeTarget,
 				mergeTargetButton,
 				{
 					label: mw.message( 'deputy.cte.copied.merge.from.label' ).text(),
 					align: 'left'
 				}
-			) );
+			);
 			this.mergeButton.on( 'click', () => {
 				mergePanel.toggle();
 			} );
@@ -276,7 +277,7 @@ function initCopiedTemplatePage() {
 					}
 				} );
 			} );
-			mergePanel.$element.append( mergeAllButton.$element[ 0 ] );
+
 			const recalculateOptions = () => {
 				const options = [];
 				for ( const notice of this.document.copiedNotices ) {
@@ -304,6 +305,7 @@ function initCopiedTemplatePage() {
 			};
 			mergePanel.on( 'toggle', recalculateOptions );
 
+			mergePanel.addItems( [ mergeFieldLayout, mergeAllButton ] );
 			return unwrapWidget( mergePanel );
 		}
 

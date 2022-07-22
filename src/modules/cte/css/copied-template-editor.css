@@ -2,6 +2,12 @@
     margin-left: 0;
     margin-right: 0;
 }
+.cte-merge-panel {
+    padding: 16px;
+    z-index: 20;
+    border: 1px solid lightgray;
+    margin-bottom: 8px;
+}
 .cte-temop {
     margin: 8px;
 }
@@ -39,8 +45,7 @@
 .cte-fieldset-date .mw-widgets-datetime-dateTimeInputWidget-editField {
     min-width: 2.5ch !important;
 }
-.cte-fieldset-date :not(.mw-widgets-datetime-dateTimeInputWidget-empty) >
-.mw-widgets-datetime-dateTimeInputWidget-handle {
+.cte-fieldset-date :not(.mw-widgets-datetime-dateTimeInputWidget-empty) > .mw-widgets-datetime-dateTimeInputWidget-handle {
     padding-right: 0;
 }
 .cte-page-template,

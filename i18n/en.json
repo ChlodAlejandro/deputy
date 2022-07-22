@@ -115,9 +115,9 @@
     "deputy.cte.copied.merge.from.label": "Notices to merge",
     "deputy.cte.copied.merge.from.select": "Select a notice",
     "deputy.cte.copied.merge.from.empty": "No notices to merge",
-    "deputy.cte.copied.merge.all": "Merge",
+    "deputy.cte.copied.merge.all": "Merge all",
     "deputy.cte.copied.merge.all.confirm": "You are about to merge $1 'copied' {{PLURAL:$1|notice|notices}} into this notice. Continue?",
-    "deputy.cte.template.merge.button": "Merge",
+    "deputy.cte.copied.merge.button": "Merge",
 
     "deputy.cte.copied.remove": "Remove notice",
     "deputy.cte.copied.remove.confirm": "This will destroy $1 {{PLURAL:$1|entry|entries}}. Continue?",
