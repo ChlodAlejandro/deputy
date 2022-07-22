@@ -145,6 +145,9 @@ class Deputy {
 		this.session = new DeputySession();
 		await this.session.init();
 
+		// Load CTE entry buttons
+		this.cte.preInit();
+
 		console.log( 'Loaded!' );
 
 		mw.hook( 'deputy.load' ).fire( this );

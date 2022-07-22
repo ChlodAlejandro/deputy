@@ -13,8 +13,10 @@ import generateId from '../../util/generateId';
 import DiffPage from '../../wiki/DiffPage';
 import swapElements from '../../util/swapElements';
 import normalizeTitle from '../../util/normalizeTitle';
-import DeputyPageAnalysisMenu from './DeputyPageAnalysisMenu';
 import EarwigCopyvioDetector from '../../wiki/EarwigCopyvioDetector';
+import DeputyPageMenu, { DeputyPageMenuOption } from './DeputyPageMenu';
+import deputyPageAnalysisOptions from './DeputyPageAnalysisOptions';
+import deputyPageTools from './DeputyPageTools';
 
 export interface DeputyPageToolbarOptions extends Omit<DeputyPageStatusResponseMessage, 'type'> {
 	/**
@@ -292,22 +294,42 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 	}
 
 	/**
-	 * Renders an "Analysis" OOUI PopupButtonWidget, which contains links to
-	 * analysis tools and other page information.
+	 * Renders a OOUI PopupButtonWidget and a menu, which contains a given set of
+	 * menu options.
 	 *
+	 * @param label The label of the section
+	 * @param options The section menu options
 	 * @return The section HTML
 	 */
-	renderAnalysisSection(): JSX.Element {
+	private renderMenu( label: string, options: DeputyPageMenuOption[] ): JSX.Element[] {
 		const popupButton = new OO.ui.ToggleButtonWidget( {
-			label: mw.message( 'deputy.session.page.analysis' ).text(),
+			label: label,
 			framed: false,
 			indicator: 'up'
 		} );
 
+		return [
+			new DeputyPageMenu( options, this, popupButton ).render(),
+			unwrapWidget( popupButton )
+		];
+	}
+
+	/**
+	 * Renders the "Analysis" and "Tools" sections.
+	 *
+	 * @return The section HTML
+	 */
+	renderMenus(): JSX.Element {
 		return <div class="dp-pt-section">
-			<div class="dp-pt-section-content dp-pt-analysis">
-				{ new DeputyPageAnalysisMenu( this, popupButton ).render() }
-				{ unwrapWidget( popupButton ) }
+			<div class="dp-pt-section-content dp-pt-menu">
+				{this.renderMenu(
+					mw.message( 'deputy.session.page.analysis' ).text(),
+					deputyPageAnalysisOptions()
+				)}
+				{this.renderMenu(
+					mw.message( 'deputy.session.page.tools' ).text(),
+					deputyPageTools()
+				)}
 			</div>
 		</div>;
 	}
@@ -321,7 +343,7 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 			{ this.renderCaseInfo() }
 			{ this.renderRevisionInfo() }
 			{ this.nextRevisionSection = this.renderNextRevisionButton() as HTMLElement }
-			{ this.renderAnalysisSection() }
+			{ this.renderMenus() }
 		</div> as HTMLElement;
 	}
 

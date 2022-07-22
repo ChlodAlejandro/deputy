@@ -86,6 +86,8 @@
     "deputy.session.page.earwigRevision": "Earwig's Copyvio Detector (revision)",
     "deputy.session.page.earwigUnsupported": "Earwig's Copyvio Detector does not support this wiki.",
 
+    "deputy.session.page.tools": "Tools",
+
     "deputy.cte": "'Copied' Notice Editor",
 
     "deputy.cte.edit": "Modify content attribution notices for this page",

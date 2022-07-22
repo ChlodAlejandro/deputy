@@ -13,9 +13,11 @@ declare global {
 }
 
 /**
- *
+ * Main class for CopiedTemplateEditor.
  */
 export default class CopiedTemplateEditor {
+
+	readonly CopiedTemplate = CopiedTemplate;
 
 	/**
 	 * An instance of Deputy. This is commonly `window.deputy`. Instantiating this class
@@ -28,6 +30,27 @@ export default class CopiedTemplateEditor {
 	 * this will be a set value.
 	 */
 	_windowManager: any;
+
+	/**
+	 * The `loader` variable is set (in JavaScript) by a CTE loader. This prevents UI
+	 * elements (such as "start" buttons and the toolbox link) from being appended
+	 * to the DOM twice.
+	 */
+	loader?: boolean;
+
+	/**
+	 * Whether the core has been loaded or not. Set to `true` here, since this is
+	 * obviously the core class.
+	 */
+	loaded = true;
+	/**
+	 * Determines the start state of the start buttons. This depends on `toggleButtons`.
+	 */
+	startState: boolean;
+	/**
+	 * Pencil icon buttons on {{copied}} templates that open CTE.
+	 */
+	startButtons: any[] = [];
 
 	/**
 	 * @return The responsible window manager for this class.
@@ -43,21 +66,6 @@ export default class CopiedTemplateEditor {
 			return this.deputy.windowManager;
 		}
 	}
-
-	readonly CopiedTemplate = CopiedTemplate;
-
-	/**
-	 * The `loader` variable is set (in JavaScript) by a CTE loader. This prevents UI
-	 * elements (such as "start" buttons and the toolbox link) from being appended
-	 * to the DOM twice.
-	 */
-	loader?: boolean;
-	/**
-	 * Whether the core has been loaded or not. Set to `true` here, since this is
-	 * obviously the core class.
-	 */
-	loaded = true;
-	startButtons: any[] = [];
 
 	/**
 	 *
@@ -130,6 +138,8 @@ export default class CopiedTemplateEditor {
 				}
 			}
 		);
+
+		this.startState = true;
 	}
 
 	/**
@@ -175,6 +185,8 @@ export default class CopiedTemplateEditor {
 	 * @param state The new state.
 	 */
 	toggleButtons( state?: boolean ) {
+		this.startState = state ?? !( this.startState || false );
+
 		for ( const button of this.startButtons ) {
 			button.setDisabled( state == null ? !button.isDisabled() : !state );
 		}

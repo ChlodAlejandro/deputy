@@ -291,6 +291,18 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
     align-items: center;
 }
 
+@media only screen and (max-width: 768px) {
+    .dp-pageToolbar {
+        flex-wrap: wrap;
+        bottom: 0;
+        left: 0;
+        border-left: 0;
+        border-bottom: 0;
+        border-right: 0;
+        width: 100%;
+    }
+}
+
 .dp-pt-section {
     display: inline-block;
     white-space: nowrap;
@@ -333,11 +345,11 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
     width: 5.4em;
 }
 
-.dp-pt-analysis .oo-ui-menuSelectWidget {
+.dp-pt-menu .oo-ui-menuSelectWidget {
     min-width: 300px;
 }
 
-.dp-pt-analysis .oo-ui-menuOptionWidget {
+.dp-pt-menu .oo-ui-menuOptionWidget {
     padding-top: 8px;
     padding-bottom: 8px;
 }
