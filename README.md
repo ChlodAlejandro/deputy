@@ -29,7 +29,7 @@ This project uses TypeScript, but some parts of the tool are weakly-typed. This 
 ## Testing
 
 ### Live testing
-[Pre-alpha release `v0.0.1`](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.0.1) has been made as a technical demonstration. You may experiment with this version of Deputy, but keep in mind that it is **extremely unstable** and bugs may be found. Nevertheless, please [report bugs found](https://github.com/ChlodAlejandro/deputy/issues) so that they may be actioned on.
+[Pre-alpha releases](https://github.com/ChlodAlejandro/deputy/releases/) are being made available as technical demonstrations. You may experiment with these version of Deputy, but keep in mind that they are **extremely unstable** and significant bugs may be found. Nevertheless, please [report bugs found](https://github.com/ChlodAlejandro/deputy/issues) so that they may be actioned on.
 
 Starting version v0.1.0 (not yet released), Deputy's browser database will no longer be updated without proper handling of breaking changes. This will be the first version to be released on Wikipedia.
 
