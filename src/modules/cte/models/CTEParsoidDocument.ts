@@ -21,10 +21,37 @@ export class TemplateInsertEvent extends Event {
 }
 
 /**
+ * Extension class of ParsoidDocument's node. Used to type `parsoidDocument` in the
+ * below function. Since the original node is always instantiated with `this`, it
+ * can be assumed that `parsoidDocument` is a valid CTEParsoidDocument.
+ */
+export class CTEParsoidTransclusionTemplateNode extends ParsoidDocument.Node {
+
+	/**
+	 * Upgrades a vanilla ParsoidDocument.Node to a CTEParsoidTransclusionTemplateNode.
+	 *
+	 * @param node The node to upgrade
+	 * @param document The document to attach
+	 * @return A CTEParsoidTransclusionTemplateNode
+	 */
+	static upgradeNode(
+		node: InstanceType<typeof ParsoidDocument.Node>,
+		document: CTEParsoidDocument
+	) {
+		return new CTEParsoidTransclusionTemplateNode(
+			document, node.originalElement, node.data, node.i, node.autosave
+		);
+	}
+
+	parsoidDocument: CTEParsoidDocument;
+}
+
+/**
  * An object containing an {@link HTMLIFrameElement} along with helper functions
  * to make manipulation easier.
  */
 export default class CTEParsoidDocument extends ParsoidDocument {
+	static readonly Node: typeof CTEParsoidTransclusionTemplateNode;
 
 	static addedRows = 1;
 	/**
@@ -107,9 +134,7 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 			} else {
 				// Not yet in the existing array, create a new object.
 				const notice = new CopiedTemplate(
-					this,
-					templateElement.originalElement,
-					templateElement.i
+					CTEParsoidTransclusionTemplateNode.upgradeNode( templateElement, this )
 				);
 				newCopiedNotices.push(
 					notice

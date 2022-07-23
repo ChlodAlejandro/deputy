@@ -123,15 +123,15 @@ export default class CopiedTemplateEditor {
 									title: mw.message( 'deputy.cte.edit' ).text(),
 									label: mw.message( 'deputy.cte.edit' ).text()
 								} ).setInvisibleLabel( true );
-								window.CopiedTemplateEditor.startButtons.push( startButton );
+								this.startButtons.push( startButton );
 								const td = document.createElement( 'td' );
 								td.style.paddingRight = '0.9em';
 								td.appendChild( startButton.$element[ 0 ] );
 								e.appendChild( td );
 
 								startButton.on( 'click', () => {
-									window.CopiedTemplateEditor.toggleButtons( false );
-									window.CopiedTemplateEditor.openEditDialog();
+									this.toggleButtons( false );
+									this.openEditDialog();
 								} );
 							} );
 					} );

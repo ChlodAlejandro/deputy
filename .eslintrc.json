@@ -62,10 +62,11 @@
         "@typescript-eslint/no-redeclare": "error",
         "no-redeclare": "off",
 
-        "no-return-assign": "off",
+        "@typescript-eslint/no-use-before-define": "error",
         "no-use-before-define": "off",
-        "no-console": "off",
-        "@typescript-eslint/no-use-before-define": ["error"]
+
+        "no-return-assign": "off",
+        "no-console": "off"
     },
     "ignorePatterns": [ "*.d.ts", "external/" ]
 }

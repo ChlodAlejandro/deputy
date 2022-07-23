@@ -1,32 +1,14 @@
 import CopiedTemplateRow, {
-	copiedTemplateRowParameters, ExistingRawCopiedTemplateRow, isCopiedTemplateRowParameter,
-	RawCopiedTemplateRow
+	copiedTemplateRowParameters,
+	ExistingRawCopiedTemplateRow, RawCopiedTemplateRow
 } from './CopiedTemplateRow';
-import { MediaWikiData, TemplateData, TemplateDataModifier } from './MediaWikiData';
 import RowChangeEvent from './RowChangeEvent';
-import CTEParsoidDocument from './CTEParsoidDocument';
+import AttributionNotice from './AttributionNotice';
 
 /**
  * Represents a single {{copied}} template in the Parsoid document.
  */
-export default class CopiedTemplate extends EventTarget {
-
-	/**
-	 * The ParsoidDocument of this template.
-	 */
-	parsoid: CTEParsoidDocument;
-	/**
-	 * The Parsoid element of this template.
-	 */
-	element: HTMLElement;
-	/**
-	 * The identifier of this template within the {@link MediaWikiData}
-	 */
-	i: number;
-	/**
-	 * A unique name for this template.
-	 */
-	name: string;
+export default class CopiedTemplate extends AttributionNotice {
 
 	// TEMPLATE OPTIONS
 
@@ -53,71 +35,51 @@ export default class CopiedTemplate extends EventTarget {
 	}
 
 	/**
-	 * Creates a new CopiedTemplate class.
+	 * Checks if this current template has row parameters with a given suffix, or no
+	 * suffix if not supplied.
 	 *
-	 * @param parsoidDocument
-	 *        The ParsoidDocument of this template. Serves as the context for document
-	 *        operations.
-	 * @param parsoidElement
-	 *        The HTML element from the Parsoid DOM.
-	 * @param i
-	 *        The identifier of this template within the {@link MediaWikiData}
+	 * @param suffix The suffix of the parameter
+	 * @return `true` if parameters exist
+	 * @private
 	 */
-	constructor( parsoidDocument: CTEParsoidDocument, parsoidElement: HTMLElement, i: number ) {
-		super();
-		this.parsoid = parsoidDocument;
-		this.element = parsoidElement;
-		this.i = i;
-		this.name = this.element.getAttribute( 'about' )
-			.replace( /^#mwt/, '' ) + '-' + i;
-		this.parse();
+	private hasRowParameters( suffix: number | '' = '' ): boolean {
+		return Object.keys( this.node.getParameters() ).some( ( v ) =>
+			copiedTemplateRowParameters.map( ( v2 ) => `${v2}${suffix}` )
+				.indexOf( v ) !== -1
+		);
 	}
 
 	/**
-	 * Access the element template data and automatically modify the element's
-	 * `data-mw` attribute to reflect the possibly-modified data.
+	 * Extracts parameters from `this.node` and returns a {@link CopiedTemplateRow}.
 	 *
-	 * @param callback The callback for data-modifying operations.
+	 * @param suffix The suffix of the parameter
+	 * @return A {@link CopiedTemplateRow}, or null if no parameters were found.
+	 * @private
 	 */
-	accessTemplateData( callback: TemplateDataModifier ) {
-		const jsonData: MediaWikiData = JSON.parse(
-			this.element.getAttribute( 'data-mw' )
-		);
+	private extractRowParameters( suffix: number | '' = '' ): CopiedTemplateRow {
+		const row: RawCopiedTemplateRow = {};
 
-		let templateData: TemplateData;
-		let index: number;
-		jsonData.parts.forEach(
-			( v, k ) => {
-				if ( v != null && v.template !== undefined && v.template.i === this.i ) {
-					templateData = v;
-					index = k;
+		copiedTemplateRowParameters.forEach( ( key ) => {
+			if ( this.node.hasParameter( key ) !== undefined ) {
+				row[ key ] = this.node.getParameter( key );
+			} else if (
+				suffix === '' && this.node.getParameter( `${key}1` ) !== undefined
+			) {
+				// Non-numbered parameter not found but a numbered parameter with
+				// an index of 1 was. Fall back to that value.
+				row[ key ] = this.node.getParameter( `${key}1` );
+			} else if (
+				suffix === 1 && this.node.getParameter( `${key}` )
+			) {
+				// This is i = 1, so fall back to a non-numbered parameter (if exists)
+				const unnumberedParamValue = this.node.getParameter( `${key}` );
+				if ( unnumberedParamValue !== undefined ) {
+					row[ key ] = unnumberedParamValue;
 				}
 			}
-		);
-		if ( templateData === undefined ) {
-			throw new TypeError( 'Invalid `i` given to template.' );
-		}
+		} );
 
-		templateData = callback( templateData );
-
-		if ( templateData === undefined ) {
-			jsonData.parts.splice( index, 1 );
-		} else {
-			jsonData.parts[ index ] = templateData;
-		}
-
-		this.element.setAttribute(
-			'data-mw',
-			JSON.stringify( jsonData )
-		);
-
-		if ( jsonData.parts.length === 0 ) {
-			this.parsoid.getDocument().querySelectorAll( `[about="${
-				this.element.getAttribute( 'about' )
-			}"]` ).forEach( ( e ) => {
-				e.parentElement.removeChild( e );
-			} );
-		}
+		return new CopiedTemplateRow( row as ExistingRawCopiedTemplateRow, this );
 	}
 
 	/**
@@ -129,65 +91,28 @@ export default class CopiedTemplate extends EventTarget {
 	parse() {
 		this.accessTemplateData( ( templateData ) => {
 			/** @type {Object.<string, {wt: string}>} */
-			const params = templateData.template.params;
 
-			// /**
-			//  * The parameters of this template.
-			//  * @type {Object.<string, string>}
-			//  */
-			// this.params = Object.fromEntries(
-			//     Object.entries(params)
-			//         .map(([k, v]) => [k, v.wt])
-			// );
-			if ( params.collapse !== undefined ) {
-				this.collapsed = params.collapse.wt.trim().length > 0;
+			if ( this.node.getParameter( 'collapse' ) ) {
+				this.collapsed = this.node.getParameter( 'collapse' ).trim().length > 0;
 			}
-			if ( params.small !== undefined ) {
-				this.small = params.small.wt.trim().length > 0;
+			if ( this.node.getParameter( 'small' ) ) {
+				this.small = this.node.getParameter( 'small' ).trim().length > 0;
 			}
 
 			// Extract {{copied}} rows.
 			const rows = [];
 
 			// Numberless
-			if (
-				Object.keys( params ).some(
-					( v ) => isCopiedTemplateRowParameter( v )
-				)
-			) {
+			if ( this.hasRowParameters() ) {
 				// If `from`, `to`, ..., or `merge` is found.
-				const row: Record<string, any> = {};
-				copiedTemplateRowParameters.forEach( ( key ) => {
-					if ( params[ key ] !== undefined ) {
-						row[ key ] = params[ key ].wt;
-					} else if ( params[ `${key}1` ] !== undefined ) {
-						row[ `${key}1` ] = params[ `${key}1` ].wt;
-					}
-				} );
-				rows.push( new CopiedTemplateRow( row as ExistingRawCopiedTemplateRow, this ) );
+				rows.push( this.extractRowParameters() );
 			}
 
 			// Numbered
 			let i = 1, continueExtracting = true;
 			do {
-				// Intentional usage.
-				// eslint-disable-next-line @typescript-eslint/no-loop-func
-				if ( Object.keys( params ).some( ( v ) =>
-					copiedTemplateRowParameters.map( ( v2 ) => `${v2}${i}` )
-						.indexOf( v ) !== -1
-				) ) {
-					const row: Record<string, any> = {};
-					// Intentional usage.
-					// TODO: Have this not trigger ESLint.
-					// eslint-disable-next-line @typescript-eslint/no-loop-func
-					copiedTemplateRowParameters.forEach( ( key ) => {
-						if ( params[ `${key}${i}` ] !== undefined ) {
-							row[ key ] = params[ `${key}${i}` ].wt;
-						} else if ( i === 1 && params[ key ] !== undefined ) {
-							row[ key ] = params[ key ].wt;
-						}
-					} );
-					rows.push( new CopiedTemplateRow( row as ExistingRawCopiedTemplateRow, this ) );
+				if ( this.hasRowParameters( i ) ) {
+					rows.push( this.extractRowParameters( i ) );
 				} else if ( !( i === 1 && rows.length > 0 ) ) {
 					// Row doesn't exist. Stop parsing from here.
 					continueExtracting = false;
@@ -210,36 +135,71 @@ export default class CopiedTemplate extends EventTarget {
 	 * Saves the current template data to the Parsoid element.
 	 */
 	save() {
+		this.node.setParameter( 'collapse', this.collapsed ? 'yes' : null );
+		this.node.setParameter( 'small', this.small ? 'yes' : null );
+
+		const existingParameters = this.node.getParameters();
+		for ( const param in existingParameters ) {
+			if ( copiedTemplateRowParameters.some( ( v ) => param.startsWith( v ) ) ) {
+				// This is a row parameter. Remove it in preparation for rebuild (further below).
+				this.node.removeParameter( param );
+			}
+		}
+
+		if ( this._rows.length === 1 ) {
+			// If there is only one row, don't bother with numbered rows.
+			for ( const param of copiedTemplateRowParameters ) {
+				if ( this._rows[ 0 ][ param ] !== undefined ) {
+					this.node.setParameter( param, this._rows[ 0 ][ param ] );
+				}
+			}
+		} else {
+			// If there are multiple rows, add number prefixes (except for i = 0).
+			for ( let i = 0; i < this._rows.length; i++ ) {
+				for ( const param of copiedTemplateRowParameters ) {
+					if ( this._rows[ i ][ param ] !== undefined ) {
+						this.node.setParameter(
+							param + ( i === 0 ? '' : i + 1 ),
+							this._rows[ i ][ param ]
+						);
+					}
+				}
+			}
+		}
+
+		this.dispatchEvent( new Event( 'save' ) );
+	}
+
+	/**
+	 * Destroys this template completely.
+	 */
+	destroy() {
+		this.dispatchEvent( new Event( 'destroy' ) );
+		this.accessTemplateData( () => undefined );
+		// Self-destruct
+		Object.keys( this ).forEach( ( k ) => delete ( this as any )[ k ] );
+	}
+
+	/**
+	 * Gets the wikitext for this {{copied}} template.
+	 *
+	 * @return The wikitext for the template
+	 */
+	toWikitext() {
+		let wikitext = '{{';
 		this.accessTemplateData( ( data ) => {
-			const params: Record<string, { wt: string }> = {};
-
-			if ( this.collapsed ) {
-				params.collapse = { wt: 'yes' };
-			}
-			if ( this.small ) {
-				params.small = { wt: 'yes' };
-			}
-
-			if ( this._rows.length === 1 ) {
-				for ( const k of copiedTemplateRowParameters ) {
-					if ( this._rows[ 0 ][ k ] !== undefined ) {
-						params[ k ] = { wt: this._rows[ 0 ][ k ] };
-					}
+			wikitext += data.template.target.wt;
+			for ( const key in data.template.params ) {
+				if ( !Object.hasOwnProperty.call( data.template.params, key ) ) {
+					continue;
 				}
-			} else {
-				for ( let i = 0; i < this._rows.length; i++ ) {
-					for ( const k of copiedTemplateRowParameters ) {
-						if ( this._rows[ i ][ k ] !== undefined ) {
-							params[ k + ( i === 0 ? '' : i + 1 ) ] = { wt: this._rows[ i ][ k ] };
-						}
-					}
-				}
-			}
 
-			data.template.params = params;
+				const value = data.template.params[ key ];
+				wikitext += `| ${key} = ${value.wt}\n`;
+			}
 			return data;
 		} );
-		this.dispatchEvent( new Event( 'save' ) );
+		return wikitext + '}}';
 	}
 
 	/**
@@ -268,16 +228,6 @@ export default class CopiedTemplate extends EventTarget {
 	}
 
 	/**
-	 * Destroys this template completely.
-	 */
-	destroy() {
-		this.dispatchEvent( new Event( 'destroy' ) );
-		this.accessTemplateData( () => undefined );
-		// Self-destruct
-		Object.keys( this ).forEach( ( k ) => delete ( this as any )[ k ] );
-	}
-
-	/**
 	 * Copies in the rows of another {@link CopiedTemplate}, and
 	 * optionally deletes that template or clears its contents.
 	 *
@@ -303,44 +253,6 @@ export default class CopiedTemplate extends EventTarget {
 		if ( options.delete ) {
 			template.destroy();
 		}
-	}
-
-	/**
-	 * Gets the wikitext for this {{copied}} template.
-	 *
-	 * @return The wikitext for the template
-	 */
-	toWikitext() {
-		let wikitext = '{{';
-		this.accessTemplateData( ( data ) => {
-			wikitext += data.template.target.wt;
-			for ( const key in data.template.params ) {
-				if ( !Object.hasOwnProperty.call( data.template.params, key ) ) {
-					continue;
-				}
-
-				const value = data.template.params[ key ];
-				wikitext += `| ${key} = ${value.wt}\n`;
-			}
-			return data;
-		} );
-		return wikitext + '}}';
-	}
-
-	/**
-	 * Converts this template to parsed HTML.
-	 *
-	 * @return {Promise<string>}
-	 */
-	async generatePreview() {
-		return new mw.Api().post( {
-			action: 'parse',
-			format: 'json',
-			formatversion: '2',
-			utf8: 1,
-			title: this.parsoid.getPage(),
-			text: this.toWikitext()
-		} ).then( ( data ) => data.parse.text );
 	}
 
 }
