@@ -51,6 +51,10 @@ export default class CopiedTemplateEditor {
 	 * Pencil icon buttons on {{copied}} templates that open CTE.
 	 */
 	startButtons: any[] = [];
+	/**
+	 * The CopiedTemplateEditorDialog. The face of the operation.
+	 */
+	dialog: any;
 
 	/**
 	 * @return The responsible window manager for this class.
@@ -83,7 +87,7 @@ export default class CopiedTemplateEditor {
 		if (
 			// Button not yet appended
 			document.getElementById( 'pt-cte' ) == null &&
-			// Not ephemeral namespace
+			// Not virtual namespace
 			mw.config.get( 'wgNamespaceNumber' ) >= 0
 		) {
 			mw.util.addPortletLink(
@@ -163,19 +167,21 @@ export default class CopiedTemplateEditor {
 		], () => {
 			mw.util.addCSS( cteStyles );
 
-			// The following classes are used here:
-			// * deputy
-			// * copied-template-editor
-			const dialog = CopiedTemplateEditorDialog( {
-				main: this,
-				classes: [
-					// Attach "deputy" class if Deputy.
-					this.deputy ? 'deputy' : null,
-					'copied-template-editor'
-				].filter( ( v ) => !!v )
-			} );
-			this.windowManager.addWindows( [ dialog ] );
-			this.windowManager.openWindow( dialog );
+			if ( !this.dialog ) {
+				// The following classes are used here:
+				// * deputy
+				// * copied-template-editor
+				this.dialog = CopiedTemplateEditorDialog( {
+					main: this,
+					classes: [
+						// Attach "deputy" class if Deputy.
+						this.deputy ? 'deputy' : null,
+						'copied-template-editor'
+					].filter( ( v ) => !!v )
+				} );
+				this.windowManager.addWindows( [ this.dialog ] );
+			}
+			this.windowManager.openWindow( this.dialog );
 		} );
 	}
 

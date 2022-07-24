@@ -1,8 +1,8 @@
 import '../../../types';
-import CopiedTemplatesEmptyPage from './CopiedTemplatesEmptyPage';
+import CopiedTemplatesEmptyPage from './pages/CopiedTemplatesEmptyPage';
 import CTEParsoidDocument, { TemplateInsertEvent } from '../models/CTEParsoidDocument';
-import CopiedTemplatePage from './CopiedTemplatePage';
-import CopiedTemplateRowPage from './CopiedTemplateRowPage';
+import CopiedTemplatePage from './pages/CopiedTemplatePage';
+import CopiedTemplateRowPage from './pages/CopiedTemplateRowPage';
 import errorToOO from '../../../util/errorToOO';
 import { blockExit, unblockExit } from '../../../util/blockExit';
 import unwrapWidget from '../../../util/unwrapWidget';
@@ -12,6 +12,7 @@ import { OOUIBookletLayout } from '../../../types';
 import type CopiedTemplateEditor from '../CopiedTemplateEditor';
 import getObjectValues from '../../../util/getObjectValues';
 import last from '../../../util/last';
+import { h } from 'tsx-dom';
 
 interface CopiedTemplateEditorDialogData {
 	main: CopiedTemplateEditor;
@@ -48,36 +49,6 @@ function initCopiedTemplateEditorDialog() {
 					title: mw.message( 'deputy.close' ).text(),
 					invisibleLabel: true,
 					action: 'close'
-				},
-				{
-					action: 'add',
-					icon: 'add',
-					label: mw.message( 'deputy.cte.add' ).text(),
-					title: mw.message( 'deputy.cte.add' ).text(),
-					invisibleLabel: true
-				},
-				{
-					action: 'merge',
-					icon: 'tableMergeCells',
-					label: mw.message( 'deputy.cte.merge' ).text(),
-					title: mw.message( 'deputy.cte.merge' ).text(),
-					invisibleLabel: true
-				},
-				{
-					action: 'reset',
-					icon: 'reload',
-					label: mw.message( 'deputy.cte.reset' ).text(),
-					title: mw.message( 'deputy.cte.reset' ).text(),
-					invisibleLabel: true,
-					flags: [ 'destructive' ]
-				},
-				{
-					action: 'delete',
-					icon: 'trash',
-					label: mw.message( 'deputy.cte.delete' ).text(),
-					title: mw.message( 'deputy.cte.delete' ).text(),
-					invisibleLabel: true,
-					flags: [ 'destructive' ]
 				}
 			]
 		};
@@ -123,6 +94,8 @@ function initCopiedTemplateEditorDialog() {
 
 			this.layout.on( 'remove', () => {
 				if ( Object.keys( this.layout.pages ).length === 0 ) {
+					// If no pages left, append the "no notices" page.
+
 					this.layout.addPages( [ CopiedTemplatesEmptyPage( {
 						parent: this,
 						parsoid: this.parsoid
@@ -162,7 +135,125 @@ function initCopiedTemplateEditorDialog() {
 				}
 			);
 
+			this.renderMenuActions();
 			this.$body.append( this.layout.$element );
+		}
+
+		/**
+		 * Renders the collection of actions at the top of the page menu. Also
+		 * appends the panel to the layout.
+		 */
+		renderMenuActions() {
+			const addButton = new OO.ui.ButtonWidget( {
+				icon: 'add',
+				framed: false,
+				invisibleLabel: true,
+				label: mw.message( 'deputy.cte.add' ).text(),
+				title: mw.message( 'deputy.cte.add' ).text(),
+				flags: [ 'progressive' ]
+			} );
+			addButton.on( 'click', () => {
+				// TODO: Add support for adding different template types.
+				this.addTemplate();
+			} );
+
+			const mergeButton = new OO.ui.ButtonWidget( {
+				icon: 'tableMergeCells',
+				framed: false,
+				invisibleLabel: true,
+				label: mw.message( 'deputy.cte.merge' ).text(),
+				title: mw.message( 'deputy.cte.merge' ).text(),
+				disabled: ( this.parsoid.copiedNotices?.length ?? 0 ) < 2
+			} );
+			mergeButton.on( 'click', () => {
+				const notices = this.parsoid.copiedNotices.length;
+				if ( notices > 1 ) {
+					return OO.ui.confirm(
+						mw.message( 'deputy.cte.merge.confirm', `${notices}` ).text()
+					).done( ( confirmed: boolean ) => {
+						if ( !confirmed ) {
+							return;
+						}
+
+						CopiedTemplate.mergeTemplates( this.parsoid.copiedNotices );
+					} );
+				} else {
+					return OO.ui.alert( 'There are no templates to merge.' );
+				}
+			} );
+
+			const resetButton = new OO.ui.ButtonWidget( {
+				icon: 'reload',
+				framed: false,
+				invisibleLabel: true,
+				label: mw.message( 'deputy.cte.reset' ).text(),
+				title: mw.message( 'deputy.cte.reset' ).text()
+			} );
+			resetButton.on( 'click', () => {
+				return OO.ui.confirm(
+					mw.message( 'deputy.cte.reset.confirm' ).text()
+				).done( ( confirmed: boolean ) => {
+					if ( confirmed ) {
+						this.parsoid.reload().then( () => {
+							this.layout.clearPages();
+							this.rebuildPages();
+						} );
+					}
+				} );
+			} );
+
+			const deleteButton = new OO.ui.ButtonWidget( {
+				icon: 'trash',
+				framed: false,
+				invisibleLabel: true,
+				label: mw.message( 'deputy.cte.delete' ).text(),
+				title: mw.message( 'deputy.cte.delete' ).text(),
+				flags: [ 'destructive' ]
+			} );
+			deleteButton.on( 'click', () => {
+				// Original copied notice count.
+				const notices = this.parsoid.copiedNotices.length;
+				const rows = this.parsoid.copiedNotices
+					.reduce( ( p: number, n: CopiedTemplate ) => p + n.rows.length, 0 );
+				return OO.ui.confirm(
+					mw.message(
+						'deputy.cte.delete.confirm',
+						`${notices}`,
+						`${rows}`
+					).text()
+				).done( ( confirmed: boolean ) => {
+					if ( confirmed ) {
+						while ( this.parsoid.copiedNotices.length > 0 ) {
+							this.parsoid.copiedNotices[ 0 ].destroy();
+						}
+					}
+				} );
+			} );
+
+			this.layout.on( 'remove', () => {
+				if ( this.parsoid.copiedNotices ) {
+					mergeButton.setDisabled( this.parsoid.copiedNotices.length < 2 );
+					deleteButton.setDisabled( this.parsoid.copiedNotices.length === 0 );
+				}
+			} );
+			this.parsoid.addEventListener( 'templateInsert', () => {
+				if ( this.parsoid.copiedNotices ) {
+					mergeButton.setDisabled( this.parsoid.copiedNotices.length < 2 );
+					deleteButton.setDisabled( this.parsoid.copiedNotices.length === 0 );
+				}
+			} );
+
+			const actionPanel = <div class="cte-actionPanel">
+				{ unwrapWidget( addButton ) }
+				{ unwrapWidget( mergeButton ) }
+				{ unwrapWidget( resetButton ) }
+				{ unwrapWidget( deleteButton ) }
+			</div>;
+
+			const targetPanel = unwrapWidget( this.layout ).querySelector(
+				'.oo-ui-menuLayout .oo-ui-menuLayout-menu'
+			);
+			targetPanel.insertAdjacentElement( 'afterbegin', actionPanel );
 		}
 
 		/**
@@ -170,7 +261,7 @@ function initCopiedTemplateEditorDialog() {
 		 */
 		rebuildPages(): void {
 			const pages = [];
-			for ( const template of this.parsoid.copiedNotices ) {
+			for ( const template of ( this.parsoid.copiedNotices ?? [] ) ) {
 				console.log( template );
 				if ( template.rows === undefined ) {
 					// Likely deleted. Skip.
@@ -219,34 +310,25 @@ function initCopiedTemplateEditorDialog() {
 		getSetupProcess( data: any ) {
 			const process = super.getSetupProcess( data );
 
-			if ( this.parsoid.getDocument() != null ) {
-				// Reset the frame.
-				process.first( () => {
-					return OO.ui.alert(
-						mw.message( 'deputy.cte.dirty' ).text()
-					).done( () => {
-						this.parsoid.reset();
-					} );
-				} );
-			}
-
-			// Load the talk page
-			process.next( () => {
-				return this.parsoid.loadPage(
+			if ( this.parsoid.getDocument() == null ) {
+				// Load the talk page
+				process.next( this.parsoid.loadPage(
 					new mw.Title( mw.config.get( 'wgPageName' ) )
 						.getTalkPage()
 						.getPrefixedText()
-				).catch( errorToOO as any );
-			} );
+				).catch( errorToOO as any ).then( () => true ) );
+			}
 
 			// Rebuild the list of pages
 			process.next( () => {
-				return this.rebuildPages();
+				this.rebuildPages();
+				return true;
 			} );
 
 			// Block exits
 			process.next( () => {
 				blockExit( 'cte' );
+				return true;
 			} );
 
 			return process;
@@ -281,132 +363,71 @@ function initCopiedTemplateEditorDialog() {
 		 */
 		getActionProcess( action: string ) {
 			const process = super.getActionProcess( action );
-			switch ( action ) {
-				case 'save':
-					// Quick and dirty validity check.
-					if (
-						unwrapWidget( this.layout )
-							.querySelector( '.oo-ui-flaggedElement-invalid' ) != null
-					) {
-						return new OO.ui.Process( () => {
-							OO.ui.alert( mw.message( 'deputy.cte.invalid' ).text() );
-						} );
-					}
+			if ( action === 'save' ) {
+				// Quick and dirty validity check.
+				if (
+					unwrapWidget( this.layout )
+						.querySelector( '.oo-ui-flaggedElement-invalid' ) != null
+				) {
+					return new OO.ui.Process( () => {
+						OO.ui.alert( mw.message( 'deputy.cte.invalid' ).text() );
+					} );
+				}
 
-					// Saves the page.
-					process.next( async () => {
-						return new mw.Api().postWithEditToken( {
-							action: 'edit',
-							format: 'json',
-							formatversion: '2',
-							utf8: 'true',
-							title: this.parsoid.getPage(),
-							text: await this.parsoid.toWikitext(),
-							// TODO: l10n
-							summary: decorateEditSummary( `${
-								this.parsoid.originalNoticeCount > 0 ?
-									'Modifying' : 'Adding'
-							} content attribution notices` )
-						} ).catch( errorToOO );
-					}, this );
+				// Saves the page.
+				process.next( async () => {
+					return new mw.Api().postWithEditToken( {
+						action: 'edit',
+						format: 'json',
+						formatversion: '2',
+						utf8: 'true',
+						title: this.parsoid.getPage(),
+						text: await this.parsoid.toWikitext(),
+						// TODO: l10n
+						summary: decorateEditSummary( `${
+							this.parsoid.originalNoticeCount > 0 ?
+								'Modifying' : 'Adding'
+						} content attribution notices` )
+					} ).catch( errorToOO );
+				}, this );
 
-					// Page redirect
-					process.next( () => {
-						unblockExit( 'cte' );
-						if (
-							mw.config.get( 'wgPageName' ) === this.parsoid.getPage()
-						) {
-							// If on the talk page, reload the page.
-							window.location.reload();
-						} else {
-							// If on another page, open the talk page.
-							window.location.href =
-								mw.config.get( 'wgArticlePath' ).replace(
-									/\$1/g,
-									encodeURIComponent( this.parsoid.getPage() )
-								);
-						}
-					}, this );
-					break;
-				case 'reset':
-					process.next( () => {
-						return OO.ui.confirm(
-							mw.message( 'deputy.cte.reset.confirm' ).text()
-						).done( ( confirmed: boolean ) => {
-							if ( confirmed ) {
-								this.parsoid.reload().then( () => {
-									this.layout.clearPages();
-									this.rebuildPages();
-								} );
-							}
-						} );
-					}, this );
-					break;
-				case 'merge':
-					process.next( () => {
-						const notices = this.parsoid.copiedNotices.length;
-						if ( notices > 1 ) {
-							return OO.ui.confirm(
-								mw.message( 'deputy.cte.merge.confirm', `${notices}` ).text()
-							).done( ( confirmed: boolean ) => {
-								if ( !confirmed ) {
-									return;
-								}
-
-								const pivot = this.parsoid.copiedNotices[ 0 ];
-								while ( this.parsoid.copiedNotices.length > 1 ) {
-									let template = this.parsoid.copiedNotices[ 0 ];
-									if ( template === pivot ) {
-										template = this.parsoid.copiedNotices[ 1 ];
-									}
-									pivot.merge( template, { delete: true } );
-								}
-							} );
-						} else {
-							return OO.ui.alert( 'There are no templates to merge.' );
-						}
-					}, this );
-					break;
-				case 'delete':
-					process.next( () => {
-						// Original copied notice count.
-						const notices = this.parsoid.copiedNotices.length;
-						const rows = this.parsoid.copiedNotices
-							.reduce( ( p: number, n: CopiedTemplate ) => p + n.rows.length, 0 );
-						return OO.ui.confirm(
-							mw.message(
-								'deputy.cte.delete.confirm',
-								`${notices}`,
-								`${rows}`
-							).text()
-						).done( ( confirmed: boolean ) => {
-							if ( confirmed ) {
-								while ( this.parsoid.copiedNotices.length > 0 ) {
-									this.parsoid.copiedNotices[ 0 ].destroy();
-								}
-							}
-						} );
-					}, this );
-					break;
-				case 'add':
-					process.next( () => {
-						this.addTemplate();
-					}, this );
-					break;
-			}
-
-			if ( action === 'save' || action === 'close' ) {
+				// Page redirect
 				process.next( () => {
-					this.close( { action: action } );
-					// Already unblocked if "save", but this cuts down on code footprint.
 					unblockExit( 'cte' );
-					this.parsoid.reset();
-					this.parsoid.destroy();
-
-					this.main.toggleButtons( true );
+					if (
+						mw.config.get( 'wgPageName' ) === this.parsoid.getPage()
+					) {
+						// If on the talk page, reload the page.
+						window.location.reload();
+					} else {
+						// If on another page, open the talk page.
+						window.location.href =
+							mw.config.get( 'wgArticlePath' ).replace(
+								/\$1/g,
+								encodeURIComponent( this.parsoid.getPage() )
+							);
+					}
 				}, this );
 			}
 
+			process.next( () => {
+				this.close( { action: action } );
+			}, this );
+
+			return process;
+		}
+
+		/**
+		 * Gets the teardown process. Called when the dialog is closing.
+		 */
+		getTeardownProcess() {
+			const process = super.getTeardownProcess();
+			process.next( () => {
+				// Already unblocked if "save", but this cuts down on code footprint.
+				unblockExit( 'cte' );
+
+				this.main.toggleButtons( true );
+			} );
 			return process;
 		}
 

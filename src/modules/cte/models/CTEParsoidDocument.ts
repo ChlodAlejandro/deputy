@@ -106,6 +106,15 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 	}
 
 	/**
+	 * @inheritDoc
+	 */
+	reset() {
+		super.reset();
+		this.originalNoticeCount = undefined;
+		this.copiedNotices = undefined;
+	}
+
+	/**
 	 * Finds this document's {{copied}} notices.
 	 */
 	findCopiedNotices() {

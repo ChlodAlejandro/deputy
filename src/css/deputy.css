@@ -6,44 +6,52 @@
 ===============================================================================
 */
 * > .deputy.dp-heading {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
 }
 
 *:hover > .deputy.dp-heading:not(.dp-heading--active) {
-    opacity: 1;
-    pointer-events: all;
+	opacity: 1;
+	pointer-events: all;
 }
 
 .dp-loadingDots-1, .dp-loadingDots-2, .dp-loadingDots-3 {
-    display: inline-block;
-    margin: 0.1em 0.6em 0.1em 0.1em;
-    width: 0.8em;
-    height: 0.8em;
-    background-color: rgba(0, 0, 0, 50%);
-    animation: dp-loadingDots linear 3s infinite;
-    border-radius: 50%;
+	display: inline-block;
+	margin: 0.1em 0.6em 0.1em 0.1em;
+	width: 0.8em;
+	height: 0.8em;
+	background-color: rgba(0, 0, 0, 50%);
+	animation: dp-loadingDots linear 3s infinite;
+	border-radius: 50%;
 }
 
 @keyframes dp-loadingDots {
-    0% { background-color: rgba(0, 0, 0, 10%); }
-    16% { background-color: rgba(0, 0, 0, 40%); }
-    32% { background-color: rgba(0, 0, 0, 10%); }
-    100% { background-color: rgba(0, 0, 0, 10%); }
+	0% {
+		background-color: rgba(0, 0, 0, 10%);
+	}
+	16% {
+		background-color: rgba(0, 0, 0, 40%);
+	}
+	32% {
+		background-color: rgba(0, 0, 0, 10%);
+	}
+	100% {
+		background-color: rgba(0, 0, 0, 10%);
+	}
 }
 
 .dp-loadingDots-1 {
-    animation-delay: -1s;
+	animation-delay: -1s;
 }
 
 .dp-loadingDots-2 {
-    animation-delay: -0.5s;
+	animation-delay: -0.5s;
 }
 
 #mw-content-text.dp-reloading {
-    opacity: 0.2;
-    pointer-events: none;
+	opacity: 0.2;
+	pointer-events: none;
 }
 
 /*
@@ -54,9 +62,9 @@
 ===============================================================================
 */
 .dp-review-progress {
-    flex: 1;
-    width: 60%;
-    min-width: 300px;
+	flex: 1;
+	width: 60%;
+	min-width: 300px;
 }
 
 /*
@@ -67,55 +75,55 @@
 ===============================================================================
 */
 .deputy.dp-sessionStarter {
-    font-size: small;
-    font-weight: normal;
-    margin-left: 0.25em;
-    vertical-align: baseline;
-    line-height: 1em;
+	font-size: small;
+	font-weight: normal;
+	margin-left: 0.25em;
+	vertical-align: baseline;
+	line-height: 1em;
 }
 
 .deputy.dp-sessionStarter::before {
-    content: '\200B';
+	content: '\200B';
 }
 
 .mw-content-ltr .deputy.dp-sessionStarter .dp-sessionStarter-bracket:first-of-type,
 .mw-content-rtl .deputy.dp-sessionStarter .dp-sessionStarter-bracket:not(:first-of-type) {
-    margin-right: 0.25em;
-    color: #54595d;
+	margin-right: 0.25em;
+	color: #54595d;
 }
 
 .client-js .deputy.dp-sessionStarter .dp-sessionStarter-bracket:first-of-type,
 .client-js .deputy.dp-sessionStarter .dp-sessionStarter-bracket:not(:first-of-type) {
-    margin-left: 0.25em;
-    color:#54595d
+	margin-left: 0.25em;
+	color: #54595d
 }
 
 .dp-cs-session-continue {
-    margin-top: 8px;
+	margin-top: 8px;
 }
 
 .dp-cs-section-add {
-    position: absolute;
-    top: 0;
-    /* -1.6em derived from MediaWiki list margins. */
-    left: -1.6em;
-    width: calc(100% + 1.6em);
-    height: 100%;
+	position: absolute;
+	top: 0;
+	/* -1.6em derived from MediaWiki list margins. */
+	left: -1.6em;
+	width: calc(100% + 1.6em);
+	height: 100%;
 
-    background-color: rgba(255, 255, 255, 75%);
+	background-color: rgba(255, 255, 255, 75%);
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .dp-cs-section-add .dp-cs-section-addButton {
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out;
+	opacity: 0;
+	transition: opacity 0.2s ease-in-out;
 }
 
 .dp-cs-section-add:hover .dp-cs-section-addButton {
-    opacity: 1;
+	opacity: 1;
 }
 
 /*
@@ -126,148 +134,149 @@
 ===============================================================================
 */
 .dp-cs-session-notice {
-    margin-top: 8px;
-    position: sticky;
-    top: 8px;
-    z-index: 50;
+	margin-top: 8px;
+	position: sticky;
+	top: 8px;
+	z-index: 50;
 }
 
 .skin-vector-2022.vector-sticky-header-visible .dp-cs-session-notice {
-    top: calc(3.125rem + 8px);
+	top: calc(3.125rem + 8px);
 }
 
 .dp-cs-section-footer {
-    position: relative;
-    padding: 8px;
+	position: relative;
+	padding: 8px;
 }
 
 .dp-cs-section-progress {
-    margin-top: 8px;
-    max-height: 0;
-    transition: max-height 0.2s ease-in-out;
+	margin-top: 8px;
+	max-height: 0;
+	transition: max-height 0.2s ease-in-out;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	overflow: hidden;
 }
 
 .dp-cs-section-progress.active {
-    max-height: 50px;
+	max-height: 50px;
 }
 
 .dp-cs-section-progress .oo-ui-progressBarWidget {
-    flex: 1
+	flex: 1
 }
 
 .dp-cs-section-closingCommentsField {
-    margin-top: 8px;
+	margin-top: 8px;
 }
 
 .dp-cs-row {
-    margin-bottom: 8px;
+	margin-bottom: 8px;
 }
 
 .dp-cs-row .dp--loadingDots {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.4em;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.4em;
 }
 
 .dp-cs-row-status {
-    max-width: 5.4em;
+	max-width: 5.4em;
 }
 
 .dp-cs-row-status .oo-ui-dropdownWidget-handle .oo-ui-labelElement-label {
-    width: 0;
-    opacity: 0;
+	width: 0;
+	opacity: 0;
 }
 
 .dp-cs-row-status .dp-cs-row-status--unknown:not(.oo-ui-optionWidget-selected) {
-    display: none;
+	display: none;
 }
 
 .dp-cs-row-head > * {
-    vertical-align: middle;
+	vertical-align: middle;
 }
 
 body.mediawiki.ltr .dp-cs-row-head > :not(:first-child):not(:last-child),
 body.mediawiki.ltr .dp-cs-row-head > :not(:first-child):not(:last-child) {
-    margin-right: 16px;
+	margin-right: 16px;
 }
+
 body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child),
 body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
-    margin-left: 16px;
+	margin-left: 16px;
 }
 
 .dp-cs-row-links {
-    margin-right: 0 !important;
+	margin-right: 0 !important;
 }
 
 .dp-cs-row-links > :not(:last-child) {
-    margin-right: 8px !important;
+	margin-right: 8px !important;
 }
 
 .dp-cs-row-title {
-    font-weight: bold;
-    font-size: 1.2em;
-    vertical-align: middle;
+	font-weight: bold;
+	font-size: 1.2em;
+	vertical-align: middle;
 }
 
 .dp-cs-row-details {
-    color: #4a5054;
-    font-weight: bold;
+	color: #4a5054;
+	font-weight: bold;
 }
 
 .dp-cs-row-toggle .oo-ui-iconElement-icon {
-    background-size: 1em;
+	background-size: 1em;
 }
 
 .dp-cs-row-toggle .oo-ui-buttonElement-button {
-    border-radius: 50%;
+	border-radius: 50%;
 }
 
 .dp-cs-row .history-user,
 .dp-cs-row .mw-changeslist-date {
-    margin-left: 0.4em;
-    margin-right: 0.2em;
+	margin-left: 0.4em;
+	margin-right: 0.2em;
 }
 
 .dp-cs-row-content {
-    padding: 16px;
-    background-color: rgba(0, 0, 0, 4%);
-    margin: 4px 0;
+	padding: 16px;
+	background-color: rgba(0, 0, 0, 4%);
+	margin: 4px 0;
 }
 
 .dp-cs-row-content.dp-cs-row-content-empty {
-    display: none !important;
+	display: none !important;
 }
 
 .dp-cs-row-unfinishedWarning {
-    margin-bottom: 8px;
+	margin-bottom: 8px;
 }
 
 .dp-cs-row-closeComments {
-    font-family: monospace, monospace;
-    font-size: small;
+	font-family: monospace, monospace;
+	font-size: small;
 }
 
 .dp-cs-row-closeComments:not(:last-child) {
-    margin-bottom: 8px;
+	margin-bottom: 8px;
 }
 
 .dp-cs-row-finished .oo-ui-fieldLayout:first-child {
-    margin-top: 0;
+	margin-top: 0;
 }
 
 .dp-cs-row-finished .oo-ui-fieldLayout {
-    margin-top: 8px;
+	margin-top: 8px;
 }
 
 .dp-cs-row-revisions .mw-tag-markers .mw-tag-marker:not(:first-child),
 .dp-cs-row-detail:not(:first-child) {
-    margin-left: 0.2em;
+	margin-left: 0.2em;
 }
 
 /*
@@ -278,78 +287,78 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
 ===============================================================================
 */
 .dp-pageToolbar {
-    position: fixed;
-    bottom: 8px;
-    left: 8px;
+	position: fixed;
+	bottom: 8px;
+	left: 8px;
 
-    padding: 8px;
-    background-color: #fff;
-    border: 1px solid gray;
-    font-size: 0.9rem;
+	padding: 8px;
+	background-color: #fff;
+	border: 1px solid gray;
+	font-size: 0.9rem;
 
-    display: flex;
-    align-items: center;
+	display: flex;
+	align-items: center;
 }
 
 @media only screen and (max-width: 768px) {
-    .dp-pageToolbar {
-        flex-wrap: wrap;
-        bottom: 0;
-        left: 0;
-        border-left: 0;
-        border-bottom: 0;
-        border-right: 0;
-        width: 100%;
-    }
+	.dp-pageToolbar {
+		flex-wrap: wrap;
+		bottom: 0;
+		left: 0;
+		border-left: 0;
+		border-bottom: 0;
+		border-right: 0;
+		width: 100%;
+	}
 }
 
 .dp-pt-section {
-    display: inline-block;
-    white-space: nowrap;
+	display: inline-block;
+	white-space: nowrap;
 }
 
 .dp-pt-section + .dp-pt-section {
-    /* TODO: Recheck RTL compatibility */
-    margin-left: 16px;
-    padding-left: 16px;
-    border-left: 1px solid gray;
+	/* TODO: Recheck RTL compatibility */
+	margin-left: 16px;
+	padding-left: 16px;
+	border-left: 1px solid gray;
 }
 
 .dp-pt-section:last-child {
-    /* TODO: Recheck RTL compatibility */
-    margin-right: 8px;
+	/* TODO: Recheck RTL compatibility */
+	margin-right: 8px;
 }
 
 .dp-pt-section-label {
-    font-weight: bold;
-    font-size: 0.6rem;
-    color: #4a5054;
-    text-transform: uppercase;
+	font-weight: bold;
+	font-size: 0.6rem;
+	color: #4a5054;
+	text-transform: uppercase;
 }
 
 .dp-pt-section-content .oo-ui-buttonElement:last-child {
-    margin-right: 0;
+	margin-right: 0;
 }
 
 .dp-pt-caseInfo {
-    font-weight: bold;
-    font-size: 1.3rem;
-    pointer-events: none;
+	font-weight: bold;
+	font-size: 1.3rem;
+	pointer-events: none;
 }
 
 .dp-pt-missingRevision {
-    white-space: normal;
+	white-space: normal;
 }
 
 .dp-pageToolbar .dp-cs-row-status {
-    width: 5.4em;
+	width: 5.4em;
 }
 
 .dp-pt-menu .oo-ui-menuSelectWidget {
-    min-width: 300px;
+	min-width: 300px;
 }
 
 .dp-pt-menu .oo-ui-menuOptionWidget {
-    padding-top: 8px;
-    padding-bottom: 8px;
+	padding-top: 8px;
+	padding-bottom: 8px;
 }

@@ -22,7 +22,7 @@ export default class DiffPage {
 	 * @see https://w.wiki/5Roy
 	 */
 	static async loadNewDiff( diff: number, options: DiffPageLoadOptions = {} ): Promise<void> {
-		const diffURL = getRevisionDiffURL(
+		const diffUrl = getRevisionDiffURL(
 			diff,
 			options.oldid ?? null,
 			true
@@ -31,7 +31,7 @@ export default class DiffPage {
 		const contentText = document.querySelector( '#mw-content-text' );
 		contentText.classList.add( 'dp-reloading' );
 
-		const diffDoc = await fetch( diffURL )
+		const diffDoc = await fetch( diffUrl )
 			.then( ( r ) => r.blob(), () => {
 				mw.loader.using( [
 					'oojs-ui-core', 'oojs-ui-windows'
@@ -77,7 +77,7 @@ export default class DiffPage {
 			$( document.querySelector( 'body > table.diff' ) )
 		);
 
-		history.pushState( {}, null, diffURL );
+		history.pushState( {}, null, diffUrl );
 	}
 
 }

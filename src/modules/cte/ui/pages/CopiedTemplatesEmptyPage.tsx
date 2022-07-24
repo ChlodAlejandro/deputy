@@ -1,5 +1,5 @@
-import '../../../types';
-import CTEParsoidDocument from '../models/CTEParsoidDocument';
+import '../../../../types';
+import CTEParsoidDocument from '../../models/CTEParsoidDocument';
 import { h } from 'tsx-dom';
 
 export interface CopiedTemplatesEmptyPageData {
@@ -37,12 +37,7 @@ function initCopiedTemplatesEmptyPage() {
 		 * @param config Configuration to be passed to the element.
 		 */
 		constructor( config: CopiedTemplatesEmptyPageData ) {
-			const finalConfig = {
-				label: 'No templates',
-				icon: 'puzzle',
-				level: 0
-			};
-			super( 'cte-no-templates', finalConfig );
+			super( 'cte-no-templates', {} );
 
 			this.parent = config.parent;
 			this.parsoid = config.parsoid;
@@ -90,12 +85,7 @@ function initCopiedTemplatesEmptyPage() {
 			/** @member any */
 			if ( this.outlineItem !== undefined ) {
 				/** @member any */
-				this.outlineItem
-					.setMovable( true )
-					.setRemovable( true )
-					.setIcon( this.icon )
-					.setLevel( this.level )
-					.setLabel( this.label );
+				this.outlineItem.toggle( false );
 			}
 		}
 

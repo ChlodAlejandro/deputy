@@ -1,14 +1,14 @@
 import { h } from 'tsx-dom';
-import '../../../types';
-import CopiedTemplate from '../models/CopiedTemplate';
+import '../../../../types';
+import CopiedTemplate from '../../models/CopiedTemplate';
 import CopiedTemplateRowPage from './CopiedTemplateRowPage';
-import unwrapWidget from '../../../util/unwrapWidget';
-import CopiedTemplateRow from '../models/CopiedTemplateRow';
-import CTEParsoidDocument from '../models/CTEParsoidDocument';
-import RowChangeEvent from '../models/RowChangeEvent';
-import CopiedTemplateEditorDialog from './CopiedTemplateEditorDialog';
-import { OOUIBookletLayout } from '../../../types';
-import removeElement from '../../../util/removeElement';
+import unwrapWidget from '../../../../util/unwrapWidget';
+import CopiedTemplateRow from '../../models/CopiedTemplateRow';
+import CTEParsoidDocument from '../../models/CTEParsoidDocument';
+import RowChangeEvent from '../../models/RowChangeEvent';
+import CopiedTemplateEditorDialog from '../CopiedTemplateEditorDialog';
+import { OOUIBookletLayout } from '../../../../types';
+import removeElement from '../../../../util/removeElement';
 
 export interface CopiedTemplatePageData {
 	/**
@@ -265,13 +265,10 @@ function initCopiedTemplatePage() {
 				).done( ( confirmed: boolean ) => {
 					if ( confirmed ) {
 						// Recursively merge all templates
-						while ( this.document.copiedNotices.length > 1 ) {
-							let template = this.document.copiedNotices[ 0 ];
-							if ( template === this.copiedTemplate ) {
-								template = this.document.copiedNotices[ 1 ];
-							}
-							this.copiedTemplate.merge( template, { delete: true } );
-						}
+						CopiedTemplate.mergeTemplates(
+							this.document.copiedNotices,
+							this.copiedTemplate
+						);
 						mergeTarget.setValue( null );
 						mergePanel.toggle( false );
 					}
@@ -321,12 +318,20 @@ function initCopiedTemplatePage() {
 			await this.copiedTemplate.generatePreview().then( ( data ) => {
 				this.previewPanel.innerHTML = data;
 
+				// Remove DiscussionTools empty talk page notice
 				const emptyStateNotice = this.previewPanel.querySelector<HTMLElement>(
 					'.ext-discussiontools-emptystate'
 				);
 				if ( emptyStateNotice ) {
 					removeElement( emptyStateNotice );
 				}
+
+				// Make all anchor links open in a new tab (prevents exit navigation)
+				this.previewPanel.querySelectorAll( 'a' )
+					.forEach( ( el: HTMLElement ) => {
+						el.setAttribute( 'target', '_blank' );
+						el.setAttribute( 'rel', 'noopener' );
+					} );
 
 				// Infuse collapsibles
 				( $( this.previewPanel ).find( '.collapsible' ) as any )
@@ -386,7 +391,7 @@ function initCopiedTemplatePage() {
 				this.copiedTemplate.save();
 			} );
 
-			return <div class="cte-temop">
+			return <div class="cte-templateOptions">
 				<div>{ unwrapWidget( this.fields.collapse ) }</div>
 				<div>{ unwrapWidget( this.fields.small ) }</div>
 			</div>;

@@ -1,66 +1,101 @@
 .cte-preview .copiednotice {
-    margin-left: 0;
-    margin-right: 0;
+	margin-left: 0;
+	margin-right: 0;
 }
+
 .cte-merge-panel {
-    padding: 16px;
-    z-index: 20;
-    border: 1px solid lightgray;
-    margin-bottom: 8px;
+	padding: 16px;
+	z-index: 20;
+	border: 1px solid lightgray;
+	margin-bottom: 8px;
 }
-.cte-temop {
-    margin: 8px;
+
+.copied-template-editor .oo-ui-bookletLayout-outlinePanel {
+	bottom: 32px;
 }
-.cte-temop > div {
-    width: 50%;
-    display: inline-block;
+
+.cte-actionPanel {
+	height: 32px;
+	width: 100%;
+	position: absolute;
+	bottom: 0;
+	z-index: 1;
+	background-color: white;
+	border-top: 1px solid #c8ccd1;
 }
+
+.cte-actionPanel > .oo-ui-buttonElement {
+	display: inline-block;
+	margin: 0 !important;
+}
+
+.cte-templateOptions {
+	margin: 8px;
+}
+
+.cte-templateOptions > div {
+	width: 50%;
+	display: inline-block;
+}
+
 .cte-fieldset {
-    border: 1px solid gray;
-    background-color: #ddf7ff;
-    padding: 16px;
-    min-width: 200px;
+	border: 1px solid gray;
+	background-color: #ddf7ff;
+	padding: 16px;
+	min-width: 200px;
 }
+
 .cte-fieldset-date {
-    float: left;
-    margin-top: 10px !important;
+	float: left;
+	margin-top: 10px !important;
 }
+
 .cte-fieldset-advswitch {
-    float: right;
+	float: right;
 }
+
 .cte-fieldset-advswitch .oo-ui-fieldLayout-field,
 .cte-fieldset-date .oo-ui-fieldLayout-field {
-    display: inline-block !important;
+	display: inline-block !important;
 }
+
 .cte-fieldset-advswitch .oo-ui-fieldLayout-header {
-    display: inline-block !important;
-    margin-right: 16px;
+	display: inline-block !important;
+	margin-right: 16px;
 }
+
 .cte-fieldset-date .oo-ui-iconElement-icon {
-    left: 0.5em;
-    width: 1em;
-    height: 1em;
-    top: 0.4em;
+	left: 0.5em;
+	width: 1em;
+	height: 1em;
+	top: 0.4em;
 }
+
 .cte-fieldset-date .mw-widgets-datetime-dateTimeInputWidget-editField {
-    min-width: 2.5ch !important;
+	min-width: 2.5ch !important;
 }
+
 .cte-fieldset-date :not(.mw-widgets-datetime-dateTimeInputWidget-empty) > .mw-widgets-datetime-dateTimeInputWidget-handle {
-    padding-right: 0;
+	padding-right: 0;
 }
+
 .cte-page-template,
 .cte-fieldset-date.oo-ui-actionFieldLayout.oo-ui-fieldLayout-align-top .oo-ui-fieldLayout-header {
-    padding-bottom: 0 !important;
+	padding-bottom: 0 !important;
 }
+
 .cte-page-row {
-    padding-top: 0 !important;
+	padding-top: 0 !important;
 }
+
 .copied-template-editor .oo-ui-fieldsetLayout.oo-ui-iconElement > .oo-ui-fieldsetLayout-header {
-    position: relative;
+	position: relative;
 }
+
 .oo-ui-actionFieldLayout.oo-ui-fieldLayout-align-top .oo-ui-fieldLayout-header {
-    padding-bottom: 6px !important;
+	padding-bottom: 6px !important;
 }
+
 .oo-ui-windowManager-modal > .oo-ui-window.oo-ui-dialog.oo-ui-messageDialog {
-    z-index: 200;
+	z-index: 200;
 }

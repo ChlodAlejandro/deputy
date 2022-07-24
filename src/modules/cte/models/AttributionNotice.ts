@@ -5,8 +5,6 @@ import { MediaWikiData, TemplateData, TemplateDataModifier } from './MediaWikiDa
  * The AttributionNotice abstract class serves as the blueprint for other
  * subclasses that are instances of AttributionNotices (e.g {@link CopiedTemplate}).
  * It provides the basic functionality for the processing of attribution notices.
- *
- *
  */
 export default abstract class AttributionNotice extends EventTarget {
 

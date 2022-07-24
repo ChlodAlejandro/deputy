@@ -1,5 +1,9 @@
 root = true
 
+[src/**/*.css]
+end_of_line = lf
+indent_style = tab
+
 [{src, scripts, types}/**.{js,ts}]
 end_of_line = lf
 insert_final_newline = true
