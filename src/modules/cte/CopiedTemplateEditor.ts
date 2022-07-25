@@ -5,6 +5,8 @@ import CopiedTemplate from './models/CopiedTemplate';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import cteStyles from './css/copied-template-editor.css';
+import deputyCteEnglish from '../../../i18n/cte/en.json';
+import DeputyLanguage from '../../DeputyLanguage';
 
 declare global {
 	interface Window {
@@ -83,7 +85,9 @@ export default class CopiedTemplateEditor {
 	 * Perform actions that run *before* CTE starts (prior to execution). This involves
 	 * adding in necessary UI elements that serve as an entry point to CTE.
 	 */
-	preInit(): void {
+	async preInit(): Promise<void> {
+		await DeputyLanguage.load( 'cte', deputyCteEnglish );
+
 		if (
 			// Button not yet appended
 			document.getElementById( 'pt-cte' ) == null &&

@@ -50,12 +50,19 @@ function loadBanner( ...bannerPath ) {
  */
 function getPlugins() {
 	return [
+		// Inserts sourcemaps
 		!production && sourcemaps(),
+		// Makes Common.js imports possible
 		commonjs(),
+		// Handles Node-like resolution
 		nodeResolve( { browser: false } ),
+		// Transpiles TypeScript
 		typescript(),
+		// Allows JSON imports (i18n files)
 		json(),
+		// Allows file imports as standard strings (CSS files)
 		string( { include: 'src/**/*.css' } ),
+		// Appends license information
 		license()
 	].filter( ( v ) => !!v );
 }
@@ -71,7 +78,7 @@ function getPlugins() {
  * @param {import('rollup').RollupOptions} options
  * @return {import('rollup').RollupOptions} Options if enabled, `false`, if otherwise.
  */
-function autoDisable( key, options ) {
+function auto( key, options ) {
 	if ( process.env.DEPUTY_ONLY ) {
 		// Filter out not included.
 		return process.env.DEPUTY_ONLY.split( ',' ).indexOf( key ) !== -1 && options;
@@ -89,7 +96,7 @@ function autoDisable( key, options ) {
  */
 export default [
 	// Deputy core
-	autoDisable( 'deputy', {
+	auto( 'deputy', {
 		input: 'src/Deputy.ts',
 		output: {
 			sourcemap: true,
@@ -102,7 +109,7 @@ export default [
 		plugins: getPlugins()
 	} ),
 	// Standalone Copied Template Editor
-	autoDisable( 'cte', {
+	auto( 'cte', {
 		input: 'src/modules/cte/CopiedTemplateEditorStandalone.ts',
 		output: {
 			sourcemap: true,
