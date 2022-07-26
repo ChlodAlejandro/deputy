@@ -4,32 +4,15 @@ import CopiedTemplateRow, {
 } from './CopiedTemplateRow';
 import RowChangeEvent from './RowChangeEvent';
 import AttributionNotice from './AttributionNotice';
+import { AttributionNoticePageLayout } from '../ui/pages/AttributionNoticePageLayout';
+import CopiedTemplatePage from '../ui/pages/CopiedTemplatePage';
+import { AttributionNoticePageGenerator } from '../ui/pages/AttributionNoticePageGenerator';
 
 /**
  * Represents a single {{copied}} template in the Parsoid document.
  */
-export default class CopiedTemplate extends AttributionNotice {
-
-	/**
-	 * Merge an array of CopiedTemplates into one big CopiedTemplate. Other templates
-	 * will be destroyed.
-	 *
-	 * @param templateList The list of templates to merge
-	 * @param pivot The template to merge into. If not supplied, the first template
-	 *              in the list will be used.
-	 */
-	static mergeTemplates( templateList: CopiedTemplate[], pivot?: CopiedTemplate ) {
-		pivot = pivot ?? templateList[ 0 ];
-		while ( templateList.length > 1 ) {
-			const template = templateList[ 0 ];
-			if ( template === pivot ) {
-				// Pop the pivot template out of the list.
-				templateList.shift();
-				continue;
-			}
-			pivot.merge( template, { delete: true } );
-		}
-	}
+export default class CopiedTemplate
+	extends AttributionNotice implements AttributionNoticePageGenerator {
 
 	// TEMPLATE OPTIONS
 
@@ -199,6 +182,16 @@ export default class CopiedTemplate extends AttributionNotice {
 		this.accessTemplateData( () => undefined );
 		// Self-destruct
 		Object.keys( this ).forEach( ( k ) => delete ( this as any )[ k ] );
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	generatePage( dialog: any ): AttributionNoticePageLayout {
+		return CopiedTemplatePage( {
+			copiedTemplate: this,
+			parent: dialog
+		} );
 	}
 
 	/**

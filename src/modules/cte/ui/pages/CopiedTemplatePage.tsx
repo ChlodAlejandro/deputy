@@ -1,6 +1,6 @@
 import { h } from 'tsx-dom';
 import '../../../../types';
-import CopiedTemplate from '../../models/CopiedTemplate';
+import type CopiedTemplate from '../../models/CopiedTemplate';
 import CopiedTemplateRowPage from './CopiedTemplateRowPage';
 import unwrapWidget from '../../../../util/unwrapWidget';
 import CopiedTemplateRow from '../../models/CopiedTemplateRow';
@@ -9,6 +9,8 @@ import RowChangeEvent from '../../models/RowChangeEvent';
 import CopiedTemplateEditorDialog from '../CopiedTemplateEditorDialog';
 import { OOUIBookletLayout } from '../../../../types';
 import removeElement from '../../../../util/removeElement';
+import { AttributionNoticePageLayout } from './AttributionNoticePageLayout';
+import TemplateMerger from '../../models/TemplateMerger';
 
 export interface CopiedTemplatePageData {
 	/**
@@ -33,7 +35,8 @@ let InternalCopiedTemplatePage: any;
  * a OOUI PageLayout.
  */
 function initCopiedTemplatePage() {
-	InternalCopiedTemplatePage = class CopiedTemplatePage extends OO.ui.PageLayout {
+	InternalCopiedTemplatePage = class CopiedTemplatePage
+		extends OO.ui.PageLayout implements AttributionNoticePageLayout {
 
 		/**
 		 * The ParsoidDocument that this {{copied}} template is from.
@@ -70,6 +73,10 @@ function initCopiedTemplatePage() {
 		 * preview of the template.
 		 */
 		previewPanel: HTMLElement;
+		/**
+		 * All child pages of this CopiedTemplatePage. Garbage collected when rechecked.
+		 */
+		childPages: Map<CopiedTemplateRow, ReturnType<typeof CopiedTemplateRowPage>> = new Map();
 
 		/**
 		 * A throttled function that updates the preview panel.
@@ -142,6 +149,30 @@ function initCopiedTemplatePage() {
 				this.renderPreviewPanel(),
 				this.renderTemplateOptions()
 			);
+		}
+
+		/**
+		 * @inheritDoc
+		 */
+		getChildren(): AttributionNoticePageLayout[] {
+			const rows = this.copiedTemplate.rows;
+			const rowPages: AttributionNoticePageLayout[] = [];
+
+			for ( const row of rows ) {
+				if ( !this.childPages.has( row ) ) {
+					this.childPages.set( row, row.generatePage( this.parent ) );
+				}
+				rowPages.push( this.childPages.get( row ) );
+			}
+
+			// Delete deleted rows from cache.
+			this.childPages.forEach( ( page, row ) => {
+				if ( rowPages.indexOf( page ) === -1 ) {
+					this.pageCache.delete( row );
+				}
+			} );
+
+			return rowPages;
 		}
 
 		/**
@@ -229,7 +260,7 @@ function initCopiedTemplatePage() {
 				label: mw.message( 'deputy.cte.copied.merge.button' ).text()
 			} );
 			mergeTargetButton.on( 'click', () => {
-				const template = this.document.copiedNotices.find(
+				const template = this.document.findCopiedNotices().find(
 					( v ) => v.name === mergeTarget.value
 				);
 				if ( template ) {
@@ -256,17 +287,18 @@ function initCopiedTemplatePage() {
 				flags: [ 'progressive' ]
 			} );
 			mergeAllButton.on( 'click', () => {
+				const notices = this.document.findCopiedNotices();
 				// Confirm before merging.
 				OO.ui.confirm(
 					mw.message(
 						'deputy.cte.copied.merge.all.confirm',
-						`${this.document.copiedNotices.length - 1}`
+						`${notices.length - 1}`
 					).text()
 				).done( ( confirmed: boolean ) => {
 					if ( confirmed ) {
 						// Recursively merge all templates
-						CopiedTemplate.mergeTemplates(
-							this.document.copiedNotices,
+						TemplateMerger.copied(
+							notices,
 							this.copiedTemplate
 						);
 						mergeTarget.setValue( null );
@@ -276,8 +308,9 @@ function initCopiedTemplatePage() {
 			} );
 
 			const recalculateOptions = () => {
+				const notices = this.document.findCopiedNotices();
 				const options = [];
-				for ( const notice of this.document.copiedNotices ) {
+				for ( const notice of notices ) {
 					if ( notice === this.copiedTemplate ) {
 						continue;
 					}
@@ -422,7 +455,7 @@ function initCopiedTemplatePage() {
  * @param config Configuration to be passed to the element.
  * @return A CopiedTemplatePage object
  */
-export default function ( config: CopiedTemplatePageData ) {
+export default function ( config: CopiedTemplatePageData ): AttributionNoticePageLayout {
 	if ( !InternalCopiedTemplatePage ) {
 		initCopiedTemplatePage();
 	}

@@ -1,12 +1,15 @@
 import CTEParsoidDocument, { CTEParsoidTransclusionTemplateNode } from './CTEParsoidDocument';
 import { MediaWikiData, TemplateData, TemplateDataModifier } from './MediaWikiData';
+import { AttributionNoticePageLayout } from '../ui/pages/AttributionNoticePageLayout';
+import { AttributionNoticePageGenerator } from '../ui/pages/AttributionNoticePageGenerator';
 
 /**
  * The AttributionNotice abstract class serves as the blueprint for other
  * subclasses that are instances of AttributionNotices (e.g {@link CopiedTemplate}).
  * It provides the basic functionality for the processing of attribution notices.
  */
-export default abstract class AttributionNotice extends EventTarget {
+export default abstract class AttributionNotice
+	extends EventTarget implements AttributionNoticePageGenerator {
 
 	/**
 	 * The template transclusion node that serves as a reference to an
@@ -117,6 +120,13 @@ export default abstract class AttributionNotice extends EventTarget {
 	 * subclass can mark itself as destroyed or wipe its values.
 	 */
 	abstract destroy(): void;
+
+	/**
+	 * Generates an OOUI PageLayout for this notice. Used by the main dialog to generate
+	 * pages. **Do not cache** - the dialog is responsible for caching.
+	 */
+	abstract generatePage( dialog: /* CopiedTemplateEditorDialog */ any ):
+		AttributionNoticePageLayout;
 
 	/**
 	 * Gets a wikitext string representation of this template. Used for

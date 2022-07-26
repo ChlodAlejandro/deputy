@@ -2,6 +2,8 @@
  * Copied template rows as strings.
  */
 import CopiedTemplate from './CopiedTemplate';
+import CopiedTemplateRowPage from '../ui/pages/CopiedTemplateRowPage';
+import { AttributionNoticePageGenerator } from '../ui/pages/AttributionNoticePageGenerator';
 
 export const copiedTemplateRowParameters = <const>[
 	'from', 'from_oldid', 'to', 'to_diff',
@@ -75,7 +77,8 @@ export interface ExistingRawCopiedTemplateRow extends RawCopiedTemplateRow {
 /**
  * Represents a row/entry in a {{copied}} template.
  */
-export default class CopiedTemplateRow implements RawCopiedTemplateRow {
+export default class CopiedTemplateRow
+implements RawCopiedTemplateRow, AttributionNoticePageGenerator {
 
 	/** @inheritDoc **/
 	from: string;
@@ -167,6 +170,16 @@ export default class CopiedTemplateRow implements RawCopiedTemplateRow {
 	clone( parent: CopiedTemplate ): CopiedTemplateRow {
 		// noinspection JSCheckFunctionSignatures
 		return new CopiedTemplateRow( this, parent );
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	generatePage( dialog: any ): ReturnType<typeof CopiedTemplateRowPage> {
+		return CopiedTemplateRowPage( {
+			copiedTemplateRow: this,
+			parent: dialog
+		} );
 	}
 
 }

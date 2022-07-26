@@ -1,18 +1,17 @@
 import '../../../types';
 import CopiedTemplatesEmptyPage from './pages/CopiedTemplatesEmptyPage';
 import CTEParsoidDocument, { TemplateInsertEvent } from '../models/CTEParsoidDocument';
-import CopiedTemplatePage from './pages/CopiedTemplatePage';
-import CopiedTemplateRowPage from './pages/CopiedTemplateRowPage';
 import errorToOO from '../../../util/errorToOO';
 import { blockExit, unblockExit } from '../../../util/blockExit';
 import unwrapWidget from '../../../util/unwrapWidget';
 import decorateEditSummary from '../../../util/decorateEditSummary';
-import CopiedTemplate from '../models/CopiedTemplate';
 import { OOUIBookletLayout } from '../../../types';
 import type CopiedTemplateEditor from '../CopiedTemplateEditor';
 import getObjectValues from '../../../util/getObjectValues';
-import last from '../../../util/last';
 import { h } from 'tsx-dom';
+import AttributionNotice from '../models/AttributionNotice';
+import { AttributionNoticePageLayout } from './pages/AttributionNoticePageLayout';
+import TemplateMerger from '../models/TemplateMerger';
 
 interface CopiedTemplateEditorDialogData {
 	main: CopiedTemplateEditor;
@@ -65,6 +64,19 @@ function initCopiedTemplateEditorDialog() {
 		 * The main CTE instance handling this page.
 		 */
 		readonly main: CopiedTemplateEditor;
+		/**
+		 * A map of OOUI PageLayouts keyed by their notices. These PageLayouts also include
+		 * functions specific to AttributionNoticePageLayout, such as functions to get child
+		 * pages.
+		 */
+		readonly pageCache: Map<AttributionNotice, AttributionNoticePageLayout> = new Map();
+
+		// ELEMENTS
+
+		/**
+		 * The "merge" OOUI ButtonWidget.
+		 */
+		mergeButton: any;
 
 		/**
 		 * @param config
@@ -106,37 +118,51 @@ function initCopiedTemplateEditorDialog() {
 			this.parsoid.addEventListener(
 				'templateInsert',
 				( event: TemplateInsertEvent ) => {
-					const toPush = [];
-					toPush.push( CopiedTemplatePage( {
-						copiedTemplate: event.template,
-						parent: this
-					} ) );
-					for ( const row of event.template.rows ) {
-						toPush.push( CopiedTemplateRowPage( {
-							copiedTemplateRow: row,
-							parent: this
-						} ) );
+					if ( !this.pageCache.has( event.template ) ) {
+						this.pageCache.set( event.template, event.template.generatePage( this ) );
+						this.rebuildPages();
 					}
-
-					// Find where to insert the template.
-					// This will look for the last row page of the template prior (or the
-					// template row if a row page does not exist) and insert after that.
-					const lastTemplateIndex =
-						Math.max( 0, this.parsoid.copiedNotices.indexOf( event.template ) - 1 );
-					const lastTemplate = this.parsoid.copiedNotices[ lastTemplateIndex ];
-					const pagesArray: any[] = getObjectValues( this.layout.pages );
-					const beforePage = last( pagesArray.filter(
-						( page ) => page.copiedTemplateRow != null &&
-							page.copiedTemplateRow.parent != null &&
-							page.copiedTemplateRow.parent === lastTemplate
-					) );
-					const beforePageIndex = pagesArray.indexOf( beforePage );
-					this.layout.addPages( toPush, beforePageIndex + 1 );
 				}
 			);
 
 			this.renderMenuActions();
 			this.$body.append( this.layout.$element );
+		}
+
+		/**
+		 * Rebuilds the pages of this dialog.
+		 */
+		rebuildPages(): void {
+			const notices = this.parsoid.findNotices();
+			const pages: AttributionNoticePageLayout[] = [];
+
+			for ( const notice of notices ) {
+				let cachedPage = this.pageCache.get( notice );
+
+				if ( cachedPage == null ) {
+					cachedPage = notice.generatePage( this );
+					this.pageCache.set( notice, cachedPage );
+				}
+
+				pages.push( cachedPage );
+
+				if ( cachedPage.getChildren != null ) {
+					pages.push( ...cachedPage.getChildren() );
+				}
+			}
+
+			const removed = getObjectValues( this.layout.pages )
+				.filter( ( item ) => pages.indexOf( item ) === -1 );
+			this.layout.removePages( removed );
+			// Existing pages will be moved.
+			this.layout.addPages( pages );
+
+			// Delete deleted pages from cache.
+			this.pageCache.forEach( ( page, notice ) => {
+				if ( removed.indexOf( page ) !== -1 ) {
+					this.pageCache.delete( notice );
+				}
+			} );
 		}
 
 		/**
@@ -157,25 +183,28 @@ function initCopiedTemplateEditorDialog() {
 				this.addTemplate();
 			} );
 
-			const mergeButton = new OO.ui.ButtonWidget( {
+			this.mergeButton = new OO.ui.ButtonWidget( {
 				icon: 'tableMergeCells',
 				framed: false,
 				invisibleLabel: true,
 				label: mw.message( 'deputy.cte.merge' ).text(),
 				title: mw.message( 'deputy.cte.merge' ).text(),
-				disabled: ( this.parsoid.copiedNotices?.length ?? 0 ) < 2
+				disabled: true
 			} );
-			mergeButton.on( 'click', () => {
-				const notices = this.parsoid.copiedNotices.length;
-				if ( notices > 1 ) {
+			this.mergeButton.on( 'click', () => {
+				const notices = this.parsoid.findCopiedNotices();
+				if ( notices.length > 1 ) {
 					return OO.ui.confirm(
-						mw.message( 'deputy.cte.merge.confirm', `${notices}` ).text()
+						mw.message(
+							'deputy.cte.merge.confirm',
+							`${notices.length}`
+						).text()
 					).done( ( confirmed: boolean ) => {
 						if ( !confirmed ) {
 							return;
 						}
 
-						CopiedTemplate.mergeTemplates( this.parsoid.copiedNotices );
+						TemplateMerger.copied( notices );
 					} );
 				} else {
 					return OO.ui.alert( 'There are no templates to merge.' );
@@ -212,40 +241,35 @@ function initCopiedTemplateEditorDialog() {
 			} );
 			deleteButton.on( 'click', () => {
 				// Original copied notice count.
-				const notices = this.parsoid.copiedNotices.length;
-				const rows = this.parsoid.copiedNotices
-					.reduce( ( p: number, n: CopiedTemplate ) => p + n.rows.length, 0 );
+				const notices = this.parsoid.findNotices();
 				return OO.ui.confirm(
 					mw.message(
 						'deputy.cte.delete.confirm',
-						`${notices}`,
-						`${rows}`
+						`${notices.length}`
 					).text()
 				).done( ( confirmed: boolean ) => {
 					if ( confirmed ) {
-						while ( this.parsoid.copiedNotices.length > 0 ) {
-							this.parsoid.copiedNotices[ 0 ].destroy();
+						for ( const notice of notices ) {
+							notice.destroy();
 						}
 					}
 				} );
 			} );
 
 			this.layout.on( 'remove', () => {
-				if ( this.parsoid.copiedNotices ) {
-					mergeButton.setDisabled( this.parsoid.copiedNotices.length < 2 );
-					deleteButton.setDisabled( this.parsoid.copiedNotices.length === 0 );
-				}
+				const notices = this.parsoid.findNotices();
+				this.mergeButton.setDisabled( notices.length < 2 );
+				deleteButton.setDisabled( notices.length === 0 );
 			} );
 			this.parsoid.addEventListener( 'templateInsert', () => {
-				if ( this.parsoid.copiedNotices ) {
-					mergeButton.setDisabled( this.parsoid.copiedNotices.length < 2 );
-					deleteButton.setDisabled( this.parsoid.copiedNotices.length === 0 );
-				}
+				const notices = this.parsoid.findNotices();
+				this.mergeButton.setDisabled( notices.length < 2 );
+				deleteButton.setDisabled( notices.length === 0 );
 			} );
 
 			const actionPanel = <div class="cte-actionPanel">
 				{ unwrapWidget( addButton ) }
-				{ unwrapWidget( mergeButton ) }
+				{ unwrapWidget( this.mergeButton ) }
 				{ unwrapWidget( resetButton ) }
 				{ unwrapWidget( deleteButton ) }
 			</div>;
@@ -254,32 +278,6 @@ function initCopiedTemplateEditorDialog() {
 				'.oo-ui-menuLayout .oo-ui-menuLayout-menu'
 			);
 			targetPanel.insertAdjacentElement( 'afterbegin', actionPanel );
-		}
-
-		/**
-		 * Rebuilds the pages of this dialog.
-		 */
-		rebuildPages(): void {
-			const pages = [];
-			for ( const template of ( this.parsoid.copiedNotices ?? [] ) ) {
-				console.log( template );
-				if ( template.rows === undefined ) {
-					// Likely deleted. Skip.
-					continue;
-				}
-				pages.push( CopiedTemplatePage( {
-					copiedTemplate: template,
-					parent: this
-				} ) );
-				for ( const row of template.rows ) {
-					pages.push( CopiedTemplateRowPage( {
-						copiedTemplateRow: row,
-						parent: this
-					} ) );
-				}
-			}
-			this.layout.clearPages();
-			this.layout.addPages( pages );
 		}
 
 		/**
@@ -341,6 +339,11 @@ function initCopiedTemplateEditorDialog() {
 		 */
 		getReadyProcess() {
 			const process = super.getReadyProcess();
+
+			// Recheck state of merge button
+			this.mergeButton.setDisabled(
+				( this.parsoid.findCopiedNotices().length ?? 0 ) < 2
+			);
 
 			process.next( () => {
 				for ( const page of getObjectValues( this.layout.pages ) ) {
@@ -419,6 +422,8 @@ function initCopiedTemplateEditorDialog() {
 
 		/**
 		 * Gets the teardown process. Called when the dialog is closing.
+		 *
+		 * @return An OOUI process.
 		 */
 		getTeardownProcess() {
 			const process = super.getTeardownProcess();

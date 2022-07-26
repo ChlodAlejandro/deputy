@@ -54,7 +54,8 @@ export declare class OOUIBookletLayout {
 	constructor( config: any );
 	on( event: string, callback: ( any: any ) => any ): void;
 	off( event: string, callback: ( any: any ) => any ): void;
-	addPages( pages: any[], index?: number ): void;
+	addPages( pages: any[], index?: number ): OOUIBookletLayout;
+	removePages( pages: any[] ): OOUIBookletLayout;
 	getPage( name: string ): any;
 	clearPages(): void;
 }

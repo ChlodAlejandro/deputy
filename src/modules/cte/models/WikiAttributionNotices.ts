@@ -1,9 +1,7 @@
 import nsId from '../../../util/nsId';
 import getObjectValues from '../../../util/getObjectValues';
 import toRedirectsObject from '../../../util/toRedirectsObject';
-import AttributionNotice from './AttributionNotice';
 import CopiedTemplate from './CopiedTemplate';
-import CopiedTemplatePage from '../ui/pages/CopiedTemplatePage';
 
 /**
  * An object mapping notice types to their expected on-wiki page titles.
@@ -62,17 +60,6 @@ export default class WikiAttributionNotices {
 		// TODO: Implement
 		// backwardsCopy: class Null {}
 	};
-	/**
-	 * An object mapping notice types to their respective OOUI PageLayouts.
-	 */
-	static readonly attributionNoticeClassPages:
-		Record<SupportedAttributionNoticeType, ( options: any ) => any> = {
-			copied: CopiedTemplatePage
-			// mergedFrom: null,
-			// mergedTo: null,
-			// translatedPage: null,
-			// backwardsCopy: null
-		};
 
 	/**
 	 * Initializes.
@@ -148,8 +135,11 @@ export default class WikiAttributionNotices {
 		// templateAliasRegExp setup
 
 		const summarizedTitles = [];
+
 		for ( const titles of getObjectValues( this.templateAliasCache ) ) {
-			summarizedTitles.push( titles );
+			for ( const title of titles ) {
+				summarizedTitles.push( title.getPrefixedDb() );
+			}
 		}
 		this.templateAliasRegExp = new RegExp(
 			summarizedTitles.map( ( v ) => `(${mw.util.escapeRegExp( v )})` ).join( '|' ),

@@ -118,7 +118,7 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 		const notices: AttributionNotice[] = [];
 
 		for (
-			const node of this.findTemplate( WikiAttributionNotices.templateAliasRegExp )
+			const node of this.findTemplate( WikiAttributionNotices.templateAliasRegExp, true )
 		) {
 			if ( !this.notices.has( node.originalElement ) ) {
 				// Notice not yet cached, but this is an attribution notice.

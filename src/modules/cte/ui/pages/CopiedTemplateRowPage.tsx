@@ -7,6 +7,7 @@ import unwrapWidget from '../../../../util/unwrapWidget';
 import copyToClipboard from '../../../../util/copyToClipboard';
 import getObjectValues from '../../../../util/getObjectValues';
 import CopiedTemplateEditorDialog from '../CopiedTemplateEditorDialog';
+import { AttributionNoticePageLayout } from './AttributionNoticePageLayout';
 
 export interface CopiedTemplateRowPageData {
 	/**
@@ -29,7 +30,8 @@ let InternalCopiedTemplateRowPage: any;
  * a OOUI PageLayout.
  */
 function initCopiedTemplateRowPage() {
-	InternalCopiedTemplateRowPage = class CopiedTemplateRowPage extends OO.ui.PageLayout {
+	InternalCopiedTemplateRowPage = class CopiedTemplateRowPage
+		extends OO.ui.PageLayout implements AttributionNoticePageLayout {
 
 		/**
 		 * The row that this page refers to.
@@ -595,7 +597,7 @@ function initCopiedTemplateRowPage() {
  * @param config Configuration to be passed to the element.
  * @return A CopiedTemplateRowPage object
  */
-export default function ( config: CopiedTemplateRowPageData ) {
+export default function ( config: CopiedTemplateRowPageData ): AttributionNoticePageLayout {
 	if ( !InternalCopiedTemplateRowPage ) {
 		initCopiedTemplateRowPage();
 	}

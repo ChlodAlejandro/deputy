@@ -9,7 +9,7 @@
     "deputy.cte.reset": "Reset all changes",
     "deputy.cte.reset.confirm": "This will reset all changes. Proceed?",
     "deputy.cte.delete": "Delete all notices",
-    "deputy.cte.delete.confirm": "You are about to delete $1 {{PLURAL:$1|notice|notices}}, containing $2 {{PLURAL:$2|entry|entries}} in total. Continue?",
+    "deputy.cte.delete.confirm": "You are about to delete $1 {{PLURAL:$1|notice|notices}}. Continue?",
 
     "deputy.cte.invalid": "Some fields are still invalid.",
     "deputy.cte.adding": "Adding content attribution notices",
