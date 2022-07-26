@@ -1,5 +1,7 @@
 import ParsoidDocument from '@chlodalejandro/parsoid';
 import last from '../../../util/last';
+import AttributionNotice from './AttributionNotice';
+import WikiAttributionNotices from './WikiAttributionNotices';
 import CopiedTemplate from './CopiedTemplate';
 
 /**
@@ -7,13 +9,13 @@ import CopiedTemplate from './CopiedTemplate';
  */
 export class TemplateInsertEvent extends Event {
 
-	template: CopiedTemplate;
+	template: AttributionNotice;
 
 	/**
 	 * @param template The template that was inserted
 	 * @param eventInitDict
 	 */
-	constructor( template: CopiedTemplate, eventInitDict?: EventInit ) {
+	constructor( template: AttributionNotice, eventInitDict?: EventInit ) {
 		super( 'templateInsert', eventInitDict );
 		this.template = template;
 	}
@@ -64,25 +66,15 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 		'<html><body><section data-mw-section-id="0"></section></body></html>';
 
 	/**
-	 * Aliases of the {{copied}} template. This must be in lowercase and all
-	 * spaces must be replaced with underscores.
+	 * A map of all Parsoid HTML elements and their attribution notices. When notices are
+	 * detected, they are added here. ParsoidTemplateTransclusionNode is not used here
+	 * since they are regenerated every time `findTemplate` is called.
 	 */
-	static readonly copiedTemplateAliases = <const>[
-		'copied',
-		'copied_from',
-		'copywithin'
-	];
-
-	/**
-	 * A list of {{copied}} notices in the document.
-	 *
-	 * @type {CopiedTemplate[]}
-	 */
-	copiedNotices: CopiedTemplate[];
+	notices: Map<HTMLElement, AttributionNotice> = new Map();
 	/**
 	 * The original number of {{copied}} notices in the document.
 	 */
-	originalNoticeCount: number;
+	originalCount: number = null;
 
 	/**
 	 * Creates a new CTE-specific ParsoidDocument. This extends from the existing
@@ -100,8 +92,8 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 				return;
 			}
 
-			this.findCopiedNotices();
-			this.originalNoticeCount = this.copiedNotices.length;
+			const notices = this.findCopiedNotices();
+			this.originalCount = notices.length;
 		} );
 	}
 
@@ -110,52 +102,53 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 	 */
 	reset() {
 		super.reset();
-		this.originalNoticeCount = undefined;
-		this.copiedNotices = undefined;
+		this.originalCount = undefined;
+		this.notices.clear();
+	}
+
+	/**
+	 * Finds all content attribution notices in the talk page. This includes {{copied}},
+	 * {{merged to}}, {{merged from}}, etc.
+	 *
+	 * @return An array of AttributionNotice objects.
+	 */
+	findNotices(): AttributionNotice[] {
+		this.buildIndex();
+		// Used instead of `this.notices.values()` to exclude nodes that are no longer on the DOM.
+		const notices: AttributionNotice[] = [];
+
+		for (
+			const node of this.findTemplate( WikiAttributionNotices.templateAliasRegExp )
+		) {
+			if ( !this.notices.has( node.originalElement ) ) {
+				// Notice not yet cached, but this is an attribution notice.
+				// Now to determine what type.
+				const type = WikiAttributionNotices.getTemplateNoticeType(
+					node.getTarget().href
+				);
+
+				const noticeInstance = new (
+					WikiAttributionNotices.attributionNoticeClasses[ type ]
+				)( CTEParsoidTransclusionTemplateNode.upgradeNode( node, this ) );
+				this.notices.set( node.originalElement, noticeInstance );
+			}
+
+			notices.push( this.notices.get( node.originalElement ) );
+		}
+
+		return notices;
 	}
 
 	/**
 	 * Finds this document's {{copied}} notices.
+	 *
+	 * @return An array of all CopiedTemplate objects found
 	 */
-	findCopiedNotices() {
-		if ( !this.copiedNotices ) {
-			this.copiedNotices = [];
-		}
-
-		const newCopiedNotices: CopiedTemplate[] = [];
-		this.buildIndex();
-
-		for ( const templateElement of this.findTemplate(
-			new RegExp(
-				CTEParsoidDocument.copiedTemplateAliases.map(
-					( v ) => `(${mw.util.escapeRegExp( v )})`
-				).join( '|' ),
-				'gi'
-			)
-		) ) {
-			// This is a copied template.
-			const existing = this.copiedNotices.find(
-				( v ) => v.element === templateElement.originalElement
-			);
-			if ( existing ) {
-				// Record exists, reuse that same object (prevents memory leaks).
-				newCopiedNotices.push( existing );
-			} else {
-				// Not yet in the existing array, create a new object.
-				const notice = new CopiedTemplate(
-					CTEParsoidTransclusionTemplateNode.upgradeNode( templateElement, this )
-				);
-				newCopiedNotices.push(
-					notice
-				);
-				notice.addEventListener( 'destroy', () => {
-					const i = this.copiedNotices.indexOf( notice );
-					this.copiedNotices.splice( i, 1 );
-				} );
-			}
-		}
-
-		this.copiedNotices = newCopiedNotices;
+	findCopiedNotices(): CopiedTemplate[] {
+		return this.findNotices().filter(
+			( notice ) => notice instanceof
+				WikiAttributionNotices.attributionNoticeClasses.copied
+		) as CopiedTemplate[];
 	}
 
 	/**
@@ -237,9 +230,7 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 		// Insert.
 		element.insertAdjacentElement( position, template );
 		this.findCopiedNotices();
-		const templateObject = this.copiedNotices.find(
-			( v ) => v.element === template
-		);
+		const templateObject = this.notices.get( template );
 		this.dispatchEvent( new TemplateInsertEvent( templateObject ) );
 	}
 }

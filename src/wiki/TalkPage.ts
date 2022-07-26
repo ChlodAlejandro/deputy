@@ -1,5 +1,6 @@
 import normalizeTitle from '../util/normalizeTitle';
 import decorateEditSummary from '../util/decorateEditSummary';
+import nsId from '../util/nsId';
 
 /**
  * Options for performing edits with {@link TalkPage}.
@@ -52,7 +53,7 @@ export default class TalkPage {
 			Object.assign( {
 				// Overridable options.
 				redirect: this.talkPage.getNamespaceId() !==
-					mw.config.get( 'wgNamespaceIds' ).user_talk
+					nsId( 'user_talk' )
 			}, editOptions, {
 				// Non-overridable options
 				action: 'edit',
@@ -86,7 +87,7 @@ export default class TalkPage {
 			Object.assign( {
 				// Overridable options.
 				redirect: this.talkPage.getNamespaceId() !==
-					mw.config.get( 'wgNamespaceIds' ).user_talk
+					nsId( 'user_talk' )
 			}, editOptions, {
 				// Non-overridable options
 				summary: decorateEditSummary( options.summary )

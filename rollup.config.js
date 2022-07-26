@@ -1,14 +1,16 @@
 import typescript from 'rollup-plugin-typescript2';
 import sourcemaps from 'rollup-plugin-sourcemaps';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
-import { string } from 'rollup-plugin-string';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import license from 'rollup-plugin-node-license';
+import { createFilter } from 'rollup-pluginutils';
 import * as fs from 'fs';
 import * as path from 'path';
 
 const production = process.env.NODE_ENV === 'production';
+
+// UTILS
 
 /**
  * Converts standard text to block comments.
@@ -43,6 +45,35 @@ function loadBanner( ...bannerPath ) {
 	return blockCommentIfy( fs.readFileSync( path.join( __dirname, ...bannerPath ) ) );
 }
 
+// TRANSFORMS
+
+/**
+ * Loads CSS files as strings. Facilitates CSS loading through `mw.util`.
+ *
+ * @param {Object} options Options for the plugin.
+ * @param {boolean} options.minify Whether to perform a simple CSS minify.
+ * @return The plugin
+ */
+function cssString( options = { minify: true } ) {
+	const filter = createFilter( 'src/**/*.css' );
+
+	return {
+		name: 'CSS as string',
+		transform( code, id ) {
+			if ( filter( id ) ) {
+				return {
+					code: `export default ${JSON.stringify(
+						options.minify ? code.replace( /[\n\t]/g, '' ) : code
+					)};`,
+					map: { mappings: '' }
+				};
+			}
+		}
+	};
+}
+
+// OPTIONS
+
 /**
  * Get plugins for this Rollup instance.
  *
@@ -50,6 +81,8 @@ function loadBanner( ...bannerPath ) {
  */
 function getPlugins() {
 	return [
+		// Appends license information
+		license(),
 		// Inserts sourcemaps
 		!production && sourcemaps(),
 		// Makes Common.js imports possible
@@ -60,10 +93,8 @@ function getPlugins() {
 		typescript(),
 		// Allows JSON imports (i18n files)
 		json(),
-		// Allows file imports as standard strings (CSS files)
-		string( { include: 'src/**/*.css' } ),
-		// Appends license information
-		license()
+		// Transform CSS to standard JS strings
+		cssString()
 	].filter( ( v ) => !!v );
 }
 

@@ -385,7 +385,7 @@ function initCopiedTemplateEditorDialog() {
 						text: await this.parsoid.toWikitext(),
 						// TODO: l10n
 						summary: decorateEditSummary( `${
-							this.parsoid.originalNoticeCount > 0 ?
+							this.parsoid.originalCount > 0 ?
 								'Modifying' : 'Adding'
 						} content attribution notices` )
 					} ).catch( errorToOO );

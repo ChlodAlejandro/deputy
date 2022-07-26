@@ -5,6 +5,7 @@ import getRevisionDiffURL from '../../util/getRevisionDiffURL';
 import unwrapWidget from '../../util/unwrapWidget';
 import { DeputyMessageEvent, DeputyRevisionStatusUpdateMessage } from '../../DeputyCommunications';
 import type DeputyContributionSurveyRow from './DeputyContributionSurveyRow';
+import nsId from '../../util/nsId';
 
 /**
  * A specific revision for a section row.
@@ -181,11 +182,11 @@ export default class DeputyContributionSurveyRevision
 
 		const userPage = new mw.Title(
 			this.revision.user,
-			mw.config.get( 'wgNamespaceIds' ).user
+			nsId( 'user' )
 		);
 		const userTalkPage = new mw.Title(
 			this.revision.user,
-			mw.config.get( 'wgNamespaceIds' ).user_talk
+			nsId( 'user_talk' )
 		);
 		const userContribsPage = new mw.Title(
 			'Special:Contributions/' + this.revision.user

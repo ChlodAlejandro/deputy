@@ -2,6 +2,7 @@ import { h } from 'tsx-dom';
 import '../../types';
 import ContributionSurveyRow from '../../models/ContributionSurveyRow';
 import guessAuthor from '../../util/guessAuthor';
+import nsId from '../../util/nsId';
 
 /**
  * Displayed when a ContributionSurveyRow has no remaining diffs. Deputy is not able
@@ -64,7 +65,7 @@ export default class DeputyFinishedContributionSurveyRow {
 
 		if ( this.author ) {
 			const userPage = new mw.Title(
-				this.author, mw.config.get( 'wgNamespaceIds' ).user
+				this.author, nsId( 'user' )
 			);
 			const talkPage = userPage.getTalkPage();
 			const contribsPage = new mw.Title( 'Special:Contributions/' + this.author );

@@ -7,6 +7,7 @@ import CopiedTemplate from './models/CopiedTemplate';
 import cteStyles from './css/copied-template-editor.css';
 import deputyCteEnglish from '../../../i18n/cte/en.json';
 import DeputyLanguage from '../../DeputyLanguage';
+import WikiAttributionNotices from './models/WikiAttributionNotices';
 
 declare global {
 	interface Window {
@@ -168,8 +169,9 @@ export default class CopiedTemplateEditor {
 			'mediawiki.widgets',
 			'mediawiki.widgets.datetime',
 			'jquery.makeCollapsible'
-		], () => {
+		], async () => {
 			mw.util.addCSS( cteStyles );
+			await WikiAttributionNotices.init();
 
 			if ( !this.dialog ) {
 				// The following classes are used here:

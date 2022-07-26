@@ -27,7 +27,7 @@ export default class DeputyLanguage {
 					// of translations), but the user has a 'wgUserLanguage' differing from
 					// English.
 						mw.notify(
-						// No languages to fall back on. Do not translate this string.
+							// No languages to fall back on. Do not translate this string.
 							'Deputy: Could not load requested language file.',
 							{ type: 'error' }
 						);

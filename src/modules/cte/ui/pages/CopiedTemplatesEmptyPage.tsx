@@ -69,7 +69,7 @@ function initCopiedTemplatesEmptyPage() {
 				}</h3>,
 				<p>{
 					mw.message(
-						this.parsoid.originalNoticeCount > 0 ?
+						this.parsoid.originalCount > 0 ?
 							'deputy.cte.empty.removed' :
 							'deputy.cte.empty.none'
 					).text()
