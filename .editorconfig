@@ -1,6 +1,6 @@
 root = true
 
-[src/**/*.css]
+[{src/**/*.css,README.md}]
 end_of_line = lf
 indent_style = tab
 
