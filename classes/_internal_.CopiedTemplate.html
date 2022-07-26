@@ -23,6 +23,10 @@
 <li><a href="_internal_.AttributionNotice.html" class="tsd-signature-type" data-tsd-kind="Class">AttributionNotice</a>
 <ul class="tsd-hierarchy">
 <li><span class="target">CopiedTemplate</span></li></ul></li></ul></section>
+<section class="tsd-panel">
+<h4>Implements</h4>
+<ul class="tsd-hierarchy">
+<li><a href="../interfaces/_internal_.AttributionNoticePageGenerator.html" class="tsd-signature-type" data-tsd-kind="Interface">AttributionNoticePageGenerator</a></li></ul></section>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -54,13 +58,13 @@
 <a href="_internal_.CopiedTemplate.html#deleteRow" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>delete<wbr/>Row</span></a>
 <a href="_internal_.CopiedTemplate.html#destroy" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>destroy</span></a>
 <a href="_internal_.CopiedTemplate.html#extractRowParameters" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>extract<wbr/>Row<wbr/>Parameters</span></a>
+<a href="_internal_.CopiedTemplate.html#generatePage" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>generate<wbr/>Page</span></a>
 <a href="_internal_.CopiedTemplate.html#generatePreview" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>generate<wbr/>Preview</span></a>
 <a href="_internal_.CopiedTemplate.html#hasRowParameters" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>has<wbr/>Row<wbr/>Parameters</span></a>
 <a href="_internal_.CopiedTemplate.html#merge" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>merge</span></a>
 <a href="_internal_.CopiedTemplate.html#parse" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>parse</span></a>
 <a href="_internal_.CopiedTemplate.html#save" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>save</span></a>
 <a href="_internal_.CopiedTemplate.html#toWikitext" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>to<wbr/>Wikitext</span></a>
-<a href="_internal_.CopiedTemplate.html#mergeTemplates" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>merge<wbr/>Templates</span></a>
 </div></section></div></details></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Constructors</h2>
@@ -89,7 +93,7 @@
 <div class="tsd-comment tsd-typography"><p>All the rows of this template.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChlodAlejandro/deputy/blob/95c6f97/src/modules/cte/models/CopiedTemplate.ts#L49">src/modules/cte/models/CopiedTemplate.ts:49</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChlodAlejandro/deputy/blob/bc84517/src/modules/cte/models/CopiedTemplate.ts#L32">src/modules/cte/models/CopiedTemplate.ts:32</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="collapsed" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>collapsed</span><a href="#collapsed" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">collapsed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
@@ -97,7 +101,7 @@
 rows are two or more).</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChlodAlejandro/deputy/blob/95c6f97/src/modules/cte/models/CopiedTemplate.ts#L40">src/modules/cte/models/CopiedTemplate.ts:40</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChlodAlejandro/deputy/blob/bc84517/src/modules/cte/models/CopiedTemplate.ts#L23">src/modules/cte/models/CopiedTemplate.ts:23</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a id="name" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>name</span><a href="#name" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
@@ -105,7 +109,7 @@ rows are two or more).</p>
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="_internal_.AttributionNotice.html">AttributionNotice</a>.<a href="_internal_.AttributionNotice.html#name">name</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/ChlodAlejandro/deputy/blob/95c6f97/src/modules/cte/models/AttributionNotice.ts#L19">src/modules/cte/models/AttributionNotice.ts:19</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChlodAlejandro/deputy/blob/bc84517/src/modules/cte/models/AttributionNotice.ts#L22">src/modules/cte/models/AttributionNotice.ts:22</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a id="node" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>node</span><a href="#node" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">node<span class="tsd-signature-symbol">:</span> <a href="_internal_.CTEParsoidTransclusionTemplateNode.html" class="tsd-signature-type" data-tsd-kind="Class">CTEParsoidTransclusionTemplateNode</a></div>
@@ -114,14 +118,14 @@ element on the Parsoid DOM.</p>
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="_internal_.AttributionNotice.html">AttributionNotice</a>.<a href="_internal_.AttributionNotice.html#node">node</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/ChlodAlejandro/deputy/blob/95c6f97/src/modules/cte/models/AttributionNotice.ts#L15">src/modules/cte/models/AttributionNotice.ts:15</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChlodAlejandro/deputy/blob/bc84517/src/modules/cte/models/AttributionNotice.ts#L18">src/modules/cte/models/AttributionNotice.ts:18</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="small" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>small</span><a href="#small" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">small<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>Whether or not this notice is a right-floating box.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChlodAlejandro/deputy/blob/95c6f97/src/modules/cte/models/CopiedTemplate.ts#L44">src/modules/cte/models/CopiedTemplate.ts:44</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/ChlodAlejandro/deputy/blob/bc84517/src/modules/cte/models/CopiedTemplate.ts#L27">src/modules/cte/models/CopiedTemplate.ts:27</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Accessors</h2>
 <section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a id="element" class="tsd-anchor"></a>
@@ -248,6 +252,23 @@ use functions from <code>.node</code> instead, as these are much more stable.</p
 <div class="tsd-comment tsd-typography"><p>The suffix of the parameter</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="_internal_.CopiedTemplateRow.html" class="tsd-signature-type" data-tsd-kind="Class">CopiedTemplateRow</a></h4></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="generatePage" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>generate<wbr/>Page</span><a href="#generatePage" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature" id="generatePage.generatePage-1">generate<wbr/>Page<span class="tsd-signature-symbol">(</span>dialog<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_internal_.AttributionNoticePageLayout.html" class="tsd-signature-type" data-tsd-kind="Interface">AttributionNoticePageLayout</a></li></ul>
+<ul class="tsd-descriptions">
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Generates an OOUI PageLayout for this notice. Used by the main dialog to generate
+pages. <strong>Do not cache</strong> - the dialog is responsible for caching.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>dialog: <span class="tsd-signature-type">any</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="../interfaces/_internal_.AttributionNoticePageLayout.html" class="tsd-signature-type" data-tsd-kind="Interface">AttributionNoticePageLayout</a></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_internal_.AttributionNoticePageGenerator.html">AttributionNoticePageGenerator</a>.<a href="../interfaces/_internal_.AttributionNoticePageGenerator.html#generatePage">generatePage</a></p>
+<p>Overrides <a href="_internal_.AttributionNotice.html">AttributionNotice</a>.<a href="_internal_.AttributionNotice.html#generatePage">generatePage</a></p></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a id="generatePreview" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>generate<wbr/>Preview</span><a href="#generatePreview" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
@@ -341,29 +362,7 @@ parameters and parameters in the incorrect order!</p>
 <h3>Returns</h3><p>The wikitext for the template</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
-<p>Overrides <a href="_internal_.AttributionNotice.html">AttributionNotice</a>.<a href="_internal_.AttributionNotice.html#toWikitext">toWikitext</a></p></aside></li></ul></section>
-<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="mergeTemplates" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <span>merge<wbr/>Templates</span><a href="#mergeTemplates" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
-<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature" id="mergeTemplates.mergeTemplates-1">merge<wbr/>Templates<span class="tsd-signature-symbol">(</span>templateList<span class="tsd-signature-symbol">: </span><a href="_internal_.CopiedTemplate.html" class="tsd-signature-type" data-tsd-kind="Class">CopiedTemplate</a><span class="tsd-signature-symbol">[]</span>, pivot<span class="tsd-signature-symbol">?: </span><a href="_internal_.CopiedTemplate.html" class="tsd-signature-type" data-tsd-kind="Class">CopiedTemplate</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li></ul>
-<ul class="tsd-descriptions">
-<li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Merge an array of CopiedTemplates into one big CopiedTemplate. Other templates
-will be destroyed.</p>
-</div>
-<div class="tsd-parameters">
-<h4 class="tsd-parameters-title">Parameters</h4>
-<ul class="tsd-parameter-list">
-<li>
-<h5>templateList: <a href="_internal_.CopiedTemplate.html" class="tsd-signature-type" data-tsd-kind="Class">CopiedTemplate</a><span class="tsd-signature-symbol">[]</span></h5>
-<div class="tsd-comment tsd-typography"><p>The list of templates to merge</p>
-</div></li>
-<li>
-<h5><code class="tsd-tag ts-flagOptional">Optional</code> pivot: <a href="_internal_.CopiedTemplate.html" class="tsd-signature-type" data-tsd-kind="Class">CopiedTemplate</a></h5>
-<div class="tsd-comment tsd-typography"><p>The template to merge into. If not supplied, the first template
-             in the list will be used.</p>
-</div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4></li></ul></section></section></div>
+<p>Overrides <a href="_internal_.AttributionNotice.html">AttributionNotice</a>.<a href="_internal_.AttributionNotice.html#toWikitext">toWikitext</a></p></aside></li></ul></section></section></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
 <details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
@@ -404,13 +403,13 @@ will be destroyed.</p>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="_internal_.CopiedTemplate.html#deleteRow" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>delete<wbr/>Row</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="_internal_.CopiedTemplate.html#destroy" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>destroy</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="_internal_.CopiedTemplate.html#extractRowParameters" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>extract<wbr/>Row<wbr/>Parameters</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="_internal_.CopiedTemplate.html#generatePage" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>generate<wbr/>Page</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_internal_.CopiedTemplate.html#generatePreview" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>generate<wbr/>Preview</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="_internal_.CopiedTemplate.html#hasRowParameters" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>has<wbr/>Row<wbr/>Parameters</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="_internal_.CopiedTemplate.html#merge" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>merge</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="_internal_.CopiedTemplate.html#parse" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>parse</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="_internal_.CopiedTemplate.html#save" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>save</a></li>
-<li class="tsd-kind-method tsd-parent-kind-class"><a href="_internal_.CopiedTemplate.html#toWikitext" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>to<wbr/>Wikitext</a></li>
-<li class="tsd-kind-method tsd-parent-kind-class"><a href="_internal_.CopiedTemplate.html#mergeTemplates" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>merge<wbr/>Templates</a></li></ul></li></ul></nav></div></div>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="_internal_.CopiedTemplate.html#toWikitext" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>to<wbr/>Wikitext</a></li></ul></li></ul></nav></div></div>
 <div class="container tsd-generator">
 <p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div>
 <div class="overlay"></div><script src="../assets/main.js"></script></body></html>

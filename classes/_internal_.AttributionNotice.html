@@ -27,6 +27,10 @@ It provides the basic functionality for the processing of attribution notices.</
 <li><span class="target">AttributionNotice</span>
 <ul class="tsd-hierarchy">
 <li><a href="_internal_.CopiedTemplate.html" class="tsd-signature-type" data-tsd-kind="Class">CopiedTemplate</a></li></ul></li></ul></li></ul></section>
+<section class="tsd-panel">
+<h4>Implements</h4>
+<ul class="tsd-hierarchy">
+<li><a href="../interfaces/_internal_.AttributionNoticePageGenerator.html" class="tsd-signature-type" data-tsd-kind="Interface">AttributionNoticePageGenerator</a></li></ul></section>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -51,6 +55,7 @@ It provides the basic functionality for the processing of attribution notices.</
 <h3 class="tsd-index-heading">Methods</h3>
 <div class="tsd-index-list"><a href="_internal_.AttributionNotice.html#accessTemplateData" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="#FF4DB8" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12" id="icon-2048-path"></rect><path d="M9.162 16V7.24H10.578L11.514 10.072C11.602 10.328 11.674 10.584 11.73 10.84C11.794 11.088 11.842 11.28 11.874 11.416C11.906 11.28 11.954 11.088 12.018 10.84C12.082 10.584 12.154 10.324 12.234 10.06L13.122 7.24H14.538V16H13.482V12.82C13.482 12.468 13.49 12.068 13.506 11.62C13.53 11.172 13.558 10.716 13.59 10.252C13.622 9.78 13.654 9.332 13.686 8.908C13.726 8.476 13.762 8.1 13.794 7.78L12.366 12.16H11.334L9.894 7.78C9.934 8.092 9.97 8.456 10.002 8.872C10.042 9.28 10.078 9.716 10.11 10.18C10.142 10.636 10.166 11.092 10.182 11.548C10.206 12.004 10.218 12.428 10.218 12.82V16H9.162Z" fill="var(--color-text)" id="icon-2048-text"></path></svg><span>access<wbr/>Template<wbr/>Data</span></a>
 <a href="_internal_.AttributionNotice.html#destroy" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>destroy</span></a>
+<a href="_internal_.AttributionNotice.html#generatePage" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>generate<wbr/>Page</span></a>
 <a href="_internal_.AttributionNotice.html#generatePreview" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>generate<wbr/>Preview</span></a>
 <a href="_internal_.AttributionNotice.html#parse" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>parse</span></a>
 <a href="_internal_.AttributionNotice.html#save" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>save</span></a>
@@ -83,7 +88,7 @@ It provides the basic functionality for the processing of attribution notices.</
 <div class="tsd-comment tsd-typography"><p>A unique name for this template.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChlodAlejandro/deputy/blob/95c6f97/src/modules/cte/models/AttributionNotice.ts#L19">src/modules/cte/models/AttributionNotice.ts:19</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChlodAlejandro/deputy/blob/bc84517/src/modules/cte/models/AttributionNotice.ts#L22">src/modules/cte/models/AttributionNotice.ts:22</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="node" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>node</span><a href="#node" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">node<span class="tsd-signature-symbol">:</span> <a href="_internal_.CTEParsoidTransclusionTemplateNode.html" class="tsd-signature-type" data-tsd-kind="Class">CTEParsoidTransclusionTemplateNode</a></div>
@@ -91,7 +96,7 @@ It provides the basic functionality for the processing of attribution notices.</
 element on the Parsoid DOM.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChlodAlejandro/deputy/blob/95c6f97/src/modules/cte/models/AttributionNotice.ts#L15">src/modules/cte/models/AttributionNotice.ts:15</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/ChlodAlejandro/deputy/blob/bc84517/src/modules/cte/models/AttributionNotice.ts#L18">src/modules/cte/models/AttributionNotice.ts:18</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Accessors</h2>
 <section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class"><a id="element" class="tsd-anchor"></a>
@@ -154,6 +159,22 @@ use functions from <code>.node</code> instead, as these are much more stable.</p
 subclass can mark itself as destroyed or wipe its values.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="generatePage" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagAbstract">Abstract</code> <span>generate<wbr/>Page</span><a href="#generatePage" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature" id="generatePage.generatePage-1">generate<wbr/>Page<span class="tsd-signature-symbol">(</span>dialog<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_internal_.AttributionNoticePageLayout.html" class="tsd-signature-type" data-tsd-kind="Interface">AttributionNoticePageLayout</a></li></ul>
+<ul class="tsd-descriptions">
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Generates an OOUI PageLayout for this notice. Used by the main dialog to generate
+pages. <strong>Do not cache</strong> - the dialog is responsible for caching.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>dialog: <span class="tsd-signature-type">any</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="../interfaces/_internal_.AttributionNoticePageLayout.html" class="tsd-signature-type" data-tsd-kind="Interface">AttributionNoticePageLayout</a></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_internal_.AttributionNoticePageGenerator.html">AttributionNoticePageGenerator</a>.<a href="../interfaces/_internal_.AttributionNoticePageGenerator.html#generatePage">generatePage</a></p></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="generatePreview" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>generate<wbr/>Preview</span><a href="#generatePreview" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -226,6 +247,7 @@ previews.</p>
 <li class="tsd-kind-accessor tsd-parent-kind-class"><a href="_internal_.AttributionNotice.html#parsoid" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-262144-path"></use><use href="#icon-262144-text"></use></svg>parsoid</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="_internal_.AttributionNotice.html#accessTemplateData" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>access<wbr/>Template<wbr/>Data</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="_internal_.AttributionNotice.html#destroy" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>destroy</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="_internal_.AttributionNotice.html#generatePage" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>generate<wbr/>Page</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="_internal_.AttributionNotice.html#generatePreview" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>generate<wbr/>Preview</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="_internal_.AttributionNotice.html#parse" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>parse</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="_internal_.AttributionNotice.html#save" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>save</a></li>
