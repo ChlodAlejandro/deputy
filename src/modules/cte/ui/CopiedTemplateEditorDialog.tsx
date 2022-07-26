@@ -1,5 +1,5 @@
 import '../../../types';
-import CopiedTemplatesEmptyPage from './pages/CopiedTemplatesEmptyPage';
+import CopiedTemplatesEmptyPage from './pages/AttributionNoticesEmptyPage';
 import CTEParsoidDocument, { TemplateInsertEvent } from '../models/CTEParsoidDocument';
 import errorToOO from '../../../util/errorToOO';
 import { blockExit, unblockExit } from '../../../util/blockExit';

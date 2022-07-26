@@ -2,7 +2,7 @@ import '../../../../types';
 import CTEParsoidDocument from '../../models/CTEParsoidDocument';
 import { h } from 'tsx-dom';
 
-export interface CopiedTemplatesEmptyPageData {
+export interface AttributionNoticesEmptyPageData {
 	/**
 	 * The original document handling the dialog.
 	 */
@@ -15,14 +15,14 @@ export interface CopiedTemplatesEmptyPageData {
 	parent: /* CopiedTemplateEditorDialog */ any;
 }
 
-let InternalCopiedTemplatesEmptyPage: any;
+let InternalAttributionNoticesEmptyPage: any;
 
 /**
  * Initializes the process element.
  */
-function initCopiedTemplatesEmptyPage() {
-	InternalCopiedTemplatesEmptyPage = class CopiedTemplatesEmptyPage
-		extends OO.ui.PageLayout implements CopiedTemplatesEmptyPageData {
+function initAttributionNoticesEmptyPage() {
+	InternalAttributionNoticesEmptyPage = class AttributionNoticesEmptyPage
+		extends OO.ui.PageLayout implements AttributionNoticesEmptyPageData {
 
 		/**
 		 * @inheritdoc
@@ -36,7 +36,7 @@ function initCopiedTemplatesEmptyPage() {
 		/**
 		 * @param config Configuration to be passed to the element.
 		 */
-		constructor( config: CopiedTemplatesEmptyPageData ) {
+		constructor( config: AttributionNoticesEmptyPageData ) {
 			super( 'cte-no-templates', {} );
 
 			this.parent = config.parent;
@@ -93,14 +93,14 @@ function initCopiedTemplatesEmptyPage() {
 }
 
 /**
- * Creates a new CopiedTemplatesEmptyPage.
+ * Creates a new AttributionNoticesEmptyPage.
  *
  * @param config Configuration to be passed to the element.
- * @return A CopiedTemplatesEmptyPage object
+ * @return A AttributionNoticesEmptyPage object
  */
-export default function ( config: CopiedTemplatesEmptyPageData ) {
-	if ( !InternalCopiedTemplatesEmptyPage ) {
-		initCopiedTemplatesEmptyPage();
+export default function ( config: AttributionNoticesEmptyPageData ) {
+	if ( !InternalAttributionNoticesEmptyPage ) {
+		initAttributionNoticesEmptyPage();
 	}
-	return new InternalCopiedTemplatesEmptyPage( config );
+	return new InternalAttributionNoticesEmptyPage( config );
 }
