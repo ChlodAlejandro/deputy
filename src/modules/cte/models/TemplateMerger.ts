@@ -17,12 +17,11 @@ export default class TemplateMerger {
 		pivot = pivot ?? templateList[ 0 ];
 		while ( templateList.length > 0 ) {
 			const template = templateList[ 0 ];
-			if ( template === pivot ) {
-				// Pop the pivot template out of the list.
-				templateList.shift();
-				continue;
+			if ( template !== pivot ) {
+				pivot.merge( template, { delete: true } );
 			}
-			pivot.merge( template, { delete: true } );
+			// Pop the pivot template out of the list.
+			templateList.shift();
 		}
 	}
 
