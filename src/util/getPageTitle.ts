@@ -1,4 +1,5 @@
 import normalizeTitle from './normalizeTitle';
+import MwApi from '../MwApi';
 
 /**
  * Gets the page title of a given page ID.
@@ -6,7 +7,7 @@ import normalizeTitle from './normalizeTitle';
  * @param pageID
  */
 export default async function ( pageID: number ): Promise<mw.Title> {
-	const pageIdQuery = await window.deputy.wiki.get( {
+	const pageIdQuery = await MwApi.action.get( {
 		action: 'query',
 		pageids: pageID
 	} );

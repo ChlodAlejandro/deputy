@@ -1,6 +1,7 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
 import { ExpandedRevisionData } from './api/ExpandedRevisionData';
 import { ContributionSurveyRowStatus } from './models/ContributionSurveyRow';
+import MwApi from './MwApi';
 
 /**
  * General key-value store. Used for storing single-variable data
@@ -173,7 +174,7 @@ export default class DeputyStorage {
 			// 7 days
 			Date.now() - ( await this.getKV( 'tagCacheAge' ) ?? 0 ) > 6048e5
 		) {
-			await window.deputy.wiki.getMessages( [ '*' ], {
+			await MwApi.action.getMessages( [ '*' ], {
 				amenableparser: true,
 				amincludelocal: true,
 				amprefix: 'tag-'

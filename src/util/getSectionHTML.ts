@@ -1,5 +1,6 @@
 import normalizeTitle from './normalizeTitle';
 import getSectionId from './getSectionId';
+import MwApi from '../MwApi';
 
 /**
  * Get the parser output HTML of a specific page section.
@@ -18,7 +19,7 @@ export default async function (
 		section = await getSectionId( page, section );
 	}
 
-	return window.deputy.wiki.get( {
+	return MwApi.action.get( {
 		action: 'parse',
 		prop: 'text|wikitext',
 		page: normalizeTitle( page ).getPrefixedText(),

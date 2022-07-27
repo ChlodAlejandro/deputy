@@ -3,6 +3,7 @@
 
     "deputy.cte.edit": "Modify content attribution notices for this page",
     "deputy.cte.close": "Close",
+    "deputy.cte.save": "Save",
     "deputy.cte.add": "Add a notice",
     "deputy.cte.merge": "Merge all notices",
     "deputy.cte.merge.confirm": "You are about to merge $1 {{PLURAL:$1|notice|notices}}. Continue?",
@@ -71,5 +72,7 @@
     "deputy.cte.copied.dateInvalid": "The previous date value, \"$1\", was not a valid date.",
     "deputy.cte.copied.diffDeprecate": "The <code>to_diff</code> and <code>to_oldid</code> parameters are preferred in favor of the <code>diff</code> parameter.",
     "deputy.cte.copied.diffDeprecate.replace": "The current value of '$1', \"$2\", will be replaced with \"$3\". Continue?",
-    "deputy.cte.copied.diffDeprecate.failed": "Cannot convert `diff` parameter to URL. See your browser console for more details."
+    "deputy.cte.copied.diffDeprecate.failed": "Cannot convert `diff` parameter to URL. See your browser console for more details.",
+
+    "deputy.cte.splitArticle.label": "Split article $1"
 }

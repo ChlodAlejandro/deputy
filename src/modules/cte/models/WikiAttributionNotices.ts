@@ -2,12 +2,15 @@ import nsId from '../../../util/nsId';
 import getObjectValues from '../../../util/getObjectValues';
 import toRedirectsObject from '../../../util/toRedirectsObject';
 import CopiedTemplate from './templates/CopiedTemplate';
+import MwApi from '../../../MwApi';
+import SplitArticleTemplate from './templates/SplitArticleTemplate';
 
 /**
  * An object mapping notice types to their expected on-wiki page titles.
  */
 export const attributionNoticeTemplatePages = {
-	copied: 'Copied'
+	copied: 'Copied',
+	splitArticle: 'Split article'
 	// mergedFrom: 'Merged-from',
 	// mergedTo: 'Merged-to',
 	// translatedPage: 'Translated page',
@@ -50,7 +53,8 @@ export default class WikiAttributionNotices {
 	 * An object mapping notice types to their respective class.
 	 */
 	static readonly attributionNoticeClasses = <const>{
-		copied: CopiedTemplate
+		copied: CopiedTemplate,
+		splitArticle: SplitArticleTemplate
 		// TODO: Implement
 		// mergedFrom: class Null {},
 		// TODO: Implement
@@ -68,7 +72,11 @@ export default class WikiAttributionNotices {
 		const attributionNoticeTemplates: Record<string, mw.Title> = {};
 		const templateAliasCache: Record<string, mw.Title[]> = {};
 		for ( const key of Object.keys( attributionNoticeTemplatePages ) ) {
-			attributionNoticeTemplates[ key ] = new mw.Title( key, nsId( 'template' ) );
+			attributionNoticeTemplates[ key ] = new mw.Title(
+				attributionNoticeTemplatePages[
+					key as SupportedAttributionNoticeType
+				], nsId( 'template' )
+			);
 			templateAliasCache[ key ] = [ attributionNoticeTemplates[ key ] ];
 		}
 		this.attributionNoticeTemplates = attributionNoticeTemplates as
@@ -78,7 +86,7 @@ export default class WikiAttributionNotices {
 
 		// templateAliasCache setup
 
-		const aliasRequest = await window.deputy.wiki.get( {
+		const aliasRequest = await MwApi.action.get( {
 			action: 'query',
 			format: 'json',
 			prop: 'linkshere',

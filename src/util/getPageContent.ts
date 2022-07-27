@@ -1,4 +1,5 @@
 import normalizeTitle from './normalizeTitle';
+import MwApi from '../MwApi';
 
 /**
  * Get the content of a page on-wiki.
@@ -11,7 +12,7 @@ import normalizeTitle from './normalizeTitle';
 export default function (
 	page: mw.Title|string|number,
 	extraOptions: Record<string, any> = {},
-	api: mw.Api = window.deputy.wiki
+	api: mw.Api = MwApi.action
 ): PromiseLike<string & { contentFormat: string }> {
 	return api.get( {
 		action: 'query',

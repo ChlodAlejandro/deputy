@@ -12,6 +12,7 @@ import getSectionId from '../../util/getSectionId';
 import getSectionHTML from '../../util/getSectionHTML';
 import removeElement from '../../util/removeElement';
 import decorateEditSummary from '../../util/decorateEditSummary';
+import MwApi from '../../MwApi';
 
 /**
  * The contribution survey section UI element. This includes a list of revisions
@@ -298,7 +299,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			);
 		}
 
-		return window.deputy.wiki.postWithEditToken( {
+		return MwApi.action.postWithEditToken( {
 			action: 'edit',
 			pageid: this.casePage.pageId,
 			section: sectionId,

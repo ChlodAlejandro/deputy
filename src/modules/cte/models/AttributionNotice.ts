@@ -1,7 +1,8 @@
-import CTEParsoidDocument, { CTEParsoidTransclusionTemplateNode } from './CTEParsoidDocument';
+import CTEParsoidDocument from './CTEParsoidDocument';
 import { MediaWikiData, TemplateData, TemplateDataModifier } from './MediaWikiData';
 import { AttributionNoticePageLayout } from '../ui/pages/AttributionNoticePageLayout';
 import { AttributionNoticePageGenerator } from '../ui/pages/AttributionNoticePageGenerator';
+import { CTEParsoidTransclusionTemplateNode } from './CTEParsoidTransclusionTemplateNode';
 
 /**
  * The AttributionNotice abstract class serves as the blueprint for other
@@ -31,7 +32,7 @@ export default abstract class AttributionNotice
 	 * @return The HTMLElement of the node
 	 */
 	get element(): HTMLElement {
-		return this.node.originalElement;
+		return this.node.element;
 	}
 
 	/**
@@ -131,8 +132,25 @@ export default abstract class AttributionNotice
 	/**
 	 * Gets a wikitext string representation of this template. Used for
 	 * previews.
+	 *
+	 * @return wikitext.
 	 */
-	abstract toWikitext(): string;
+	toWikitext(): string {
+		let wikitext = '{{';
+		this.accessTemplateData( ( data ) => {
+			wikitext += data.template.target.wt;
+			for ( const key in data.template.params ) {
+				if ( !Object.hasOwnProperty.call( data.template.params, key ) ) {
+					continue;
+				}
+
+				const value = data.template.params[ key ];
+				wikitext += `| ${key} = ${value.wt}\n`;
+			}
+			return data;
+		} );
+		return wikitext + '}}';
+	}
 
 	/**
 	 * Converts this notice to parsed HTML.

@@ -5,9 +5,7 @@ import CopiedTemplateRowPage from './CopiedTemplateRowPage';
 import unwrapWidget from '../../../../util/unwrapWidget';
 import CopiedTemplateRow from '../../models/templates/CopiedTemplateRow';
 import CTEParsoidDocument from '../../models/CTEParsoidDocument';
-import RowChangeEvent from '../../events/RowChangeEvent';
 import CopiedTemplateEditorDialog from '../CopiedTemplateEditorDialog';
-import { OOUIBookletLayout } from '../../../../types';
 import removeElement from '../../../../util/removeElement';
 import { AttributionNoticePageLayout } from './AttributionNoticePageLayout';
 import TemplateMerger from '../../models/TemplateMerger';
@@ -114,32 +112,14 @@ function initCopiedTemplatePage() {
 			this.parent = config.parent;
 			this.label = label;
 
-			// Adds listener to handle added rows to the template.
-			copiedTemplate.addEventListener( 'rowAdd', ( event: RowChangeEvent ) => {
-				// Find the last row's page in the layout.
-				const lastPage =
-					// Get the last row's page (or this page if we don't have a thing)
-					( parent.layout as OOUIBookletLayout ).getPage(
-						copiedTemplate.rows.length === 1 ?
-							this.name :
-							copiedTemplate.rows[ copiedTemplate.rows.length - 2 ].id
-					);
-				const lastPageIndex =
-					parent.layout.stackLayout.getItems().indexOf( lastPage );
-				parent.layout.addPages( [
-					CopiedTemplateRowPage( {
-						copiedTemplateRow: event.row,
-						parent
-					} )
-				], lastPageIndex + 1 );
+			copiedTemplate.addEventListener( 'rowAdd', () => {
+				parent.rebuildPages();
 			} );
-
-			// Removes a child row from the BookletLayout parent once it has been destroyed.
+			copiedTemplate.addEventListener( 'rowDelete', () => {
+				parent.rebuildPages();
+			} );
 			copiedTemplate.addEventListener( 'destroy', () => {
-				// Check if we haven't been deleted yet.
-				if ( parent.layout.getPage( this.name ) ) {
-					parent.layout.removePages( [ this ] );
-				}
+				parent.rebuildPages();
 			} );
 
 			this.$element.append(

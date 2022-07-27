@@ -20,7 +20,6 @@ import deputyVersion from './DeputyVersion';
 // @ts-ignore
 import deputyStyles from './css/deputy.css';
 import deputyCoreEnglish from '../i18n/core/en.json';
-import { ResourceRoot } from './DeputyResources';
 
 /**
  * The main class for Deputy. Entry point for execution.
@@ -53,19 +52,6 @@ class Deputy {
 		sectionHeadingName: sectionHeadingName
 	};
 
-	/* ! [ START ] PARTS THAT WIKI OPERATORS CAN CHANGE */
-
-	/**
-	 * The root of all Deputy resources. This should serve static data that Deputy will
-	 * use to load resources such as language files.
-	 */
-	readonly resourceRoot: ResourceRoot = {
-		type: 'url',
-		url: new URL( 'https://zoomiebot.toolforge.org/deputy/' )
-	};
-
-	/* ! [  END  ] PARTS THAT WIKI OPERATORS CAN CHANGE */
-
 	/**
 	 * This version of Deputy.
 	 *
@@ -83,9 +69,6 @@ class Deputy {
 
 	// Components
 
-	wiki: mw.Api;
-	wikiRest: mw.Rest;
-	wikiHome: mw.ForeignApi | mw.Api;
 	api: DeputyAPI;
 	storage: DeputyStorage;
 	prefs: DeputyPreferences;
@@ -129,18 +112,6 @@ class Deputy {
 	 */
 	async init() {
 		mw.hook( 'deputy.preload' ).fire( this );
-
-		this.wiki = new mw.Api( {
-			parameters: {
-				format: 'json',
-				formatversion: 2,
-				utf8: 1,
-				errorformat: 'html',
-				errorlang: mw.config.get( 'wgUserLanguage' ),
-				errorsuselocal: true
-			}
-		} );
-		this.wikiRest = new mw.Rest();
 
 		// Inject CSS
 		mw.util.addCSS( deputyStyles );

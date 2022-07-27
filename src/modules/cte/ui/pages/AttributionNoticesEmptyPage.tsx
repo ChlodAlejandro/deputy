@@ -1,6 +1,7 @@
 import '../../../../types';
 import CTEParsoidDocument from '../../models/CTEParsoidDocument';
 import { h } from 'tsx-dom';
+import AttributionNoticeAddMenu from '../AttributionNoticeAddMenu';
 
 export interface AttributionNoticesEmptyPageData {
 	/**
@@ -59,10 +60,12 @@ function initAttributionNoticesEmptyPage() {
 				label: mw.message( 'deputy.cte.empty.add' ).text(),
 				flags: [ 'progressive' ]
 			} );
-			add.on( 'click', () => {
-				this.parent.addTemplate();
-			} );
 
+			this.parent.$overlay.append(
+				new AttributionNoticeAddMenu(
+					this.parsoid, add
+				).render()
+			);
 			this.$element.append(
 				<h3>{
 					mw.message( 'deputy.cte.empty.header' ).text()

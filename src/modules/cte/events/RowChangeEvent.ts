@@ -1,12 +1,10 @@
-import CopiedTemplateRow from '../models/templates/CopiedTemplateRow';
-
 /**
  * An event that reflects a change in a given {{copied}} template
  * row.
  */
 export default class RowChangeEvent extends Event {
 
-	row: CopiedTemplateRow;
+	row: any;
 
 	/**
 	 * Creates a new RowChangeEvent.
@@ -14,7 +12,10 @@ export default class RowChangeEvent extends Event {
 	 * @param type The event type.
 	 * @param row The changed row.
 	 */
-	constructor( type: 'rowAdd' | 'rowDelete', row: CopiedTemplateRow ) {
+	constructor(
+		type: 'rowAdd' | 'rowDelete',
+		row: any
+	) {
 		super( type );
 		this.row = row;
 	}

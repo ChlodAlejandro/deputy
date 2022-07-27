@@ -42,11 +42,13 @@ export type ResourceRoot = WikiResourceRoot | StandardResourceRoot;
 export class DeputyResources {
 
 	/**
-	 * @return The ResourceRoot as set in {@link Deputy}.
+	 * The root of all Deputy resources. This should serve static data that Deputy will
+	 * use to load resources such as language files.
 	 */
-	static get root(): ResourceRoot {
-		return window.deputy.resourceRoot;
-	}
+	static readonly root: ResourceRoot = {
+		type: 'url',
+		url: new URL( 'https://zoomiebot.toolforge.org/deputy/' )
+	};
 
 	/**
 	 * A `mw.ForeignApi` for accessing a wiki resource root. If the resource root is not

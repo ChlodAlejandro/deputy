@@ -13,6 +13,7 @@ import AttributionNotice from '../models/AttributionNotice';
 import { AttributionNoticePageLayout } from './pages/AttributionNoticePageLayout';
 import TemplateMerger from '../models/TemplateMerger';
 import TemplateInsertEvent from '../events/TemplateInsertEvent';
+import AttributionNoticeAddMenu from './AttributionNoticeAddMenu';
 
 interface CopiedTemplateEditorDialogData {
 	main: CopiedTemplateEditor;
@@ -38,15 +39,15 @@ function initCopiedTemplateEditorDialog() {
 			actions: [
 				{
 					flags: [ 'primary', 'progressive' ],
-					label: mw.message( 'deputy.save' ).text(),
-					title: mw.message( 'deputy.save' ).text(),
+					label: mw.message( 'deputy.cte.save' ).text(),
+					title: mw.message( 'deputy.cte.save' ).text(),
 					action: 'save'
 				},
 				{
 					flags: [ 'safe', 'close' ],
 					icon: 'close',
-					label: mw.message( 'deputy.close' ).text(),
-					title: mw.message( 'deputy.close' ).text(),
+					label: mw.message( 'deputy.cte.close' ).text(),
+					title: mw.message( 'deputy.cte.close' ).text(),
 					invisibleLabel: true,
 					action: 'close'
 				}
@@ -179,10 +180,6 @@ function initCopiedTemplateEditorDialog() {
 				title: mw.message( 'deputy.cte.add' ).text(),
 				flags: [ 'progressive' ]
 			} );
-			addButton.on( 'click', () => {
-				// TODO: Add support for adding different template types.
-				this.addTemplate();
-			} );
 
 			this.mergeButton = new OO.ui.ButtonWidget( {
 				icon: 'tableMergeCells',
@@ -268,6 +265,12 @@ function initCopiedTemplateEditorDialog() {
 				deleteButton.setDisabled( notices.length === 0 );
 			} );
 
+			this.$overlay.append(
+				new AttributionNoticeAddMenu(
+					this.parsoid, addButton
+				).render()
+			);
+
 			const actionPanel = <div class="cte-actionPanel">
 				{ unwrapWidget( addButton ) }
 				{ unwrapWidget( this.mergeButton ) }
@@ -279,24 +282,6 @@ function initCopiedTemplateEditorDialog() {
 				'.oo-ui-menuLayout .oo-ui-menuLayout-menu'
 			);
 			targetPanel.insertAdjacentElement( 'afterbegin', actionPanel );
-		}
-
-		/**
-		 * Adds a new template to this dialog.
-		 * TODO: Support more than just a {{copied}} template.
-		 */
-		addTemplate() {
-			const spot = this.parsoid.findCopiedNoticeSpot();
-
-			if ( spot === null ) {
-				// Not able to find a spot. Should theoretically be impossible since
-				// there is a catch-all "beforebegin" section 0 spot. But just in case.
-				OO.ui.notify(
-					mw.message( 'deputy.cte.noSpot' ).text()
-				);
-			} else {
-				this.parsoid.insertNewNotice( spot );
-			}
 		}
 
 		/**

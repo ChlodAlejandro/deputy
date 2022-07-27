@@ -1,6 +1,7 @@
 import normalizeTitle from '../util/normalizeTitle';
 import decorateEditSummary from '../util/decorateEditSummary';
 import nsId from '../util/nsId';
+import MwApi from '../MwApi';
 
 /**
  * Options for performing edits with {@link TalkPage}.
@@ -49,7 +50,7 @@ export default class TalkPage {
 		editOptions: Record<string, any> = {}
 	): Promise<void> {
 		const finalMessage = '\n'.repeat( ( options.newLines ?? 2 ) ) + message;
-		await window.deputy.wiki.postWithEditToken(
+		await MwApi.action.postWithEditToken(
 			Object.assign( {
 				// Overridable options.
 				redirect: this.talkPage.getNamespaceId() !==
@@ -80,7 +81,7 @@ export default class TalkPage {
 		options: TalkPageEditOptions = {},
 		editOptions: Record<string, any> = {}
 	): Promise<void> {
-		await window.deputy.wiki.newSection(
+		await MwApi.action.newSection(
 			this.talkPage,
 			sectionTitle,
 			message,

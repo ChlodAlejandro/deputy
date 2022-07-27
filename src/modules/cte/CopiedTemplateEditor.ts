@@ -25,7 +25,7 @@ export default class CopiedTemplateEditor {
 	/**
 	 * An instance of Deputy. This is commonly `window.deputy`. Instantiating this class
 	 * with a Deputy instances enables connection with the Deputy core, which shares the
-	 * OOUI window manager for Deputy.
+	 * OOUI window manager and API manager for Deputy.
 	 */
 	readonly deputy?: Deputy;
 	/**
@@ -33,6 +33,11 @@ export default class CopiedTemplateEditor {
 	 * this will be a set value.
 	 */
 	_windowManager: any;
+	/**
+	 * A MediaWiki API object. If this class is instantiated standalone (without Deputy),
+	 * this will be a set value.
+	 */
+	_wiki: mw.Api;
 
 	/**
 	 * The `loader` variable is set (in JavaScript) by a CTE loader. This prevents UI

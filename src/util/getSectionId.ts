@@ -1,4 +1,5 @@
 import normalizeTitle from './normalizeTitle';
+import MwApi from '../MwApi';
 
 /**
  * Get the ID of a section from its heading.
@@ -7,7 +8,7 @@ import normalizeTitle from './normalizeTitle';
  * @param sectionName The section name to get the ID of
  */
 export default async function ( page: mw.Title | string, sectionName: string ) {
-	const parseRequest = await window.deputy.wiki.get( {
+	const parseRequest = await MwApi.action.get( {
 		action: 'parse',
 		page: normalizeTitle( page ).getPrefixedText(),
 		prop: 'sections'

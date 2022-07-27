@@ -2,6 +2,7 @@ import '../../types';
 import unwrapWidget from '../../util/unwrapWidget';
 import swapElements from '../../util/swapElements';
 import { h } from 'tsx-dom';
+import MwApi from '../../MwApi';
 
 export interface DeputyReviewDialogData {
 	from: string;
@@ -90,7 +91,7 @@ function initDeputyReviewDialog() {
 				} ) )
 				.next( async () => {
 					// Load diff HTML
-					const compareRequest = await window.deputy.wiki.post( {
+					const compareRequest = await MwApi.action.post( {
 						action: 'compare',
 						fromtitle: this.data.title.getPrefixedText(),
 						fromslots: 'main',

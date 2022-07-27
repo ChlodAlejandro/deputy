@@ -4,7 +4,6 @@ import '../../../../types';
 import CopiedTemplateRow, {
 	CopiedTemplateRowParameter
 } from '../../models/templates/CopiedTemplateRow';
-import RowChangeEvent from '../../events/RowChangeEvent';
 import unwrapWidget from '../../../../util/unwrapWidget';
 import copyToClipboard from '../../../../util/copyToClipboard';
 import getObjectValues from '../../../../util/getObjectValues';
@@ -88,19 +87,11 @@ function initCopiedTemplateRowPage() {
 			this.label = finalConfig.label;
 
 			this.copiedTemplateRow.parent.addEventListener( 'destroy', () => {
-				// Check if the page hasn't been deleted yet.
-				if ( parent.layout.getPage( this.name ) ) {
-					parent.layout.removePages( [ this ] );
-				}
+				parent.rebuildPages();
 			} );
-			this.copiedTemplateRow.parent.addEventListener(
-				'rowDelete',
-				( event: RowChangeEvent ) => {
-					if ( event.row.id === this.name ) {
-						parent.layout.removePages( [ this ] );
-					}
-				}
-			);
+			this.copiedTemplateRow.parent.addEventListener( 'rowDelete', () => {
+				parent.rebuildPages();
+			} );
 
 			this.$element.append( this.render().$element );
 		}

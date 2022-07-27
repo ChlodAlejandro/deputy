@@ -3,7 +3,7 @@
  */
 import CopiedTemplate from './CopiedTemplate';
 import CopiedTemplateRowPage from '../../ui/pages/CopiedTemplateRowPage';
-import { AttributionNoticePageGenerator } from '../../ui/pages/AttributionNoticePageGenerator';
+import { AttributionNoticeRow } from '../AttributionNoticeRow';
 
 export const copiedTemplateRowParameters = <const>[
 	'from', 'from_oldid', 'to', 'to_diff',
@@ -78,7 +78,7 @@ export interface ExistingRawCopiedTemplateRow extends RawCopiedTemplateRow {
  * Represents a row/entry in a {{copied}} template.
  */
 export default class CopiedTemplateRow
-implements RawCopiedTemplateRow, AttributionNoticePageGenerator {
+	extends AttributionNoticeRow<CopiedTemplate> implements RawCopiedTemplateRow {
 
 	/** @inheritDoc **/
 	from: string;
@@ -137,6 +137,7 @@ implements RawCopiedTemplateRow, AttributionNoticePageGenerator {
 	 * @param parent
 	 */
 	constructor( rowObjects: RawCopiedTemplateRow, parent: CopiedTemplate ) {
+		super();
 		this.from = rowObjects.from;
 		// eslint-disable-next-line camelcase
 		this.from_oldid = rowObjects.from_oldid;

@@ -1,6 +1,7 @@
 import cloneRegex from '../util/cloneRegex';
 import { ContributionSurveyRevision } from './ContributionSurveyRevision';
 import DeputyCasePage from '../wiki/DeputyCasePage';
+import MwApi from '../MwApi';
 
 export enum ContributionSurveyRowStatus {
 	// The row has not been processed yet.
@@ -236,7 +237,7 @@ export default class ContributionSurveyRow {
 			}
 			return acc;
 		}, [ 'list-wrapper' ] );
-		await window.deputy.wiki.loadMessagesIfMissing(
+		await MwApi.action.loadMessagesIfMissing(
 			tags.map( ( v ) => 'tag-' + v ), {
 				amenableparser: true
 			}

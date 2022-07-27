@@ -1,35 +1,12 @@
 import ParsoidDocument from '@chlodalejandro/parsoid';
 import last from '../../../util/last';
 import AttributionNotice from './AttributionNotice';
-import WikiAttributionNotices from './WikiAttributionNotices';
+import WikiAttributionNotices, { SupportedAttributionNoticeType } from './WikiAttributionNotices';
 import CopiedTemplate from './templates/CopiedTemplate';
 import TemplateInsertEvent from '../events/TemplateInsertEvent';
-
-/**
- * Extension class of ParsoidDocument's node. Used to type `parsoidDocument` in the
- * below function. Since the original node is always instantiated with `this`, it
- * can be assumed that `parsoidDocument` is a valid CTEParsoidDocument.
- */
-export class CTEParsoidTransclusionTemplateNode extends ParsoidDocument.Node {
-
-	/**
-	 * Upgrades a vanilla ParsoidDocument.Node to a CTEParsoidTransclusionTemplateNode.
-	 *
-	 * @param node The node to upgrade
-	 * @param document The document to attach
-	 * @return A CTEParsoidTransclusionTemplateNode
-	 */
-	static upgradeNode(
-		node: InstanceType<typeof ParsoidDocument.Node>,
-		document: CTEParsoidDocument
-	) {
-		return new CTEParsoidTransclusionTemplateNode(
-			document, node.originalElement, node.data, node.i, node.autosave
-		);
-	}
-
-	parsoidDocument: CTEParsoidDocument;
-}
+import { CTEParsoidTransclusionTemplateNode } from './CTEParsoidTransclusionTemplateNode';
+import TemplateFactory from './TemplateFactory';
+import moveToStart from '../../../util/moveToStart';
 
 /**
  * An object containing an {@link HTMLIFrameElement} along with helper functions
@@ -103,7 +80,7 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 		for (
 			const node of this.findTemplate( WikiAttributionNotices.templateAliasRegExp, true )
 		) {
-			if ( !this.notices.has( node.originalElement ) ) {
+			if ( !this.notices.has( node.element ) ) {
 				// Notice not yet cached, but this is an attribution notice.
 				// Now to determine what type.
 				const type = WikiAttributionNotices.getTemplateNoticeType(
@@ -113,10 +90,10 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 				const noticeInstance = new (
 					WikiAttributionNotices.attributionNoticeClasses[ type ]
 				)( CTEParsoidTransclusionTemplateNode.upgradeNode( node, this ) );
-				this.notices.set( node.originalElement, noticeInstance );
+				this.notices.set( node.element, noticeInstance );
 			}
 
-			notices.push( this.notices.get( node.originalElement ) );
+			notices.push( this.notices.get( node.element ) );
 		}
 
 		return notices;
@@ -137,12 +114,51 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 	/**
 	 * Look for a good spot to place a {{copied}} template.
 	 *
+	 * @param type The type of the notice to look a spot for.
 	 * @return A spot to place the template, `null` if a spot could not be found.
 	 */
-	findCopiedNoticeSpot(): [InsertPosition, HTMLElement|null] {
+	findNoticeSpot(
+		type: SupportedAttributionNoticeType
+	): [InsertPosition, HTMLElement|null] {
+		// TODO: Just use a simple "if" for {{translated page}}.
+		const positionIndices: Record<SupportedAttributionNoticeType, number> = {
+			copied: 0,
+			splitArticle: 1
+		};
+		const positionIndex = positionIndices[ type ];
+		const variableSpots: [InsertPosition, HTMLElement|null][] = [
+			[
+				positionIndex >= positionIndices.copied ? 'afterend' : 'beforebegin',
+				positionIndex >= positionIndices.copied ?
+					last( this.document.querySelectorAll( '.copiednotice' ) ) :
+					this.document.querySelector( '.copiednotice' )
+			],
+			[
+				positionIndex >= positionIndices.splitArticle ? 'afterend' : 'beforebegin',
+				positionIndex >= positionIndices.splitArticle ?
+					last( this.document.querySelectorAll( '.box-split-article' ) ) :
+					this.document.querySelector( '.box-split-article' )
+			],
+			[
+				// TODO: replace `copied` with `mergedTo` when it's available.
+				positionIndex >= positionIndices.copied ? 'afterend' : 'beforebegin',
+				positionIndex >= positionIndices.copied ?
+					last( this.document.querySelectorAll( '.box-merged-to' ) ) :
+					this.document.querySelector( '.box-merged-to' )
+			],
+			[
+				// TODO: replace `copied` with `mergedFrom` when it's available.
+				positionIndex >= positionIndices.copied ? 'afterend' : 'beforebegin',
+				positionIndex >= positionIndices.copied ?
+					last( this.document.querySelectorAll( '.box-merged-from' ) ) :
+					this.document.querySelector( '.box-merged-from' )
+			]
+		];
+
+		moveToStart( variableSpots, positionIndex );
+
 		const possibleSpots: [InsertPosition, HTMLElement|null][] = [
-			// After an existing {{copied}} notice
-			[ 'afterend', last( this.document.querySelectorAll( '.copiednotice[data-mw]' ) ) ],
+			...variableSpots,
 			// After the {{to do}} template
 			[ 'afterend', last( this.document.querySelectorAll( '.t-todo' ) ) ],
 			// After the WikiProject banner shell
@@ -153,67 +169,66 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 				}"]` )
 			) : null ],
 			// After all WikiProject banners
-			[ 'afterend', last( this.document.querySelectorAll( '.wpb[data-mw]' ) ) ],
+			[ 'afterend', last( this.document.querySelectorAll( '.wpb' ) ) ],
 			// After the last talk page message box that is not a small box
 			[ 'afterend', last( this.document.querySelectorAll(
-				// eslint-disable-next-line max-len
-				'[data-mw-section-id="0"] .tmbox[data-mw]:not(.mbox-small):not(.talkheader[data-mw])'
+				'[data-mw-section-id="0"] .tmbox:not(.mbox-small):not(.talkheader)'
 			) ) ],
 			// After the talk page header
-			[ 'afterend', this.document.querySelector( '.talkheader[data-mw]' ) ],
+			[ 'afterend', this.document.querySelector( '.talkheader' ) ],
 			// At the start of the talk page
 			[ 'afterbegin', this.document.querySelector( 'section[data-mw-section-id="0"]' ) ]
 		];
 
 		for ( const spot of possibleSpots ) {
 			if ( spot[ 1 ] != null ) {
-				return spot;
+				if ( spot[ 1 ].hasAttribute( 'data-mw' ) ) {
+					return spot;
+				} else {
+					const identifier = (
+						spot[ 1 ].getAttribute( 'about' ) ??
+						spot[ 1 ].getAttribute( 'id' )
+					).replace( /^#/, '' );
+
+					// Find the last element from that specific transclusion.
+					const transclusionRoot = last(
+						this.document.querySelectorAll(
+							`#${identifier}, [about="#${identifier}"]`
+						)
+					);
+
+					return [
+						spot[ 0 ],
+						transclusionRoot as HTMLElement
+					];
+				}
 			}
 		}
 		return null;
 	}
 
 	/**
-	 * Inserts a new {{copied}} template.
+	 * Inserts a new attribution notice of a given type.
 	 *
+	 * @param type A notice type
 	 * @param spot The spot to place the template.
+	 * @param spot."0" See {@link CTEParsoidDocument.findNoticeSpot()}[0]
+	 * @param spot."1" See {@link CTEParsoidDocument.findNoticeSpot()}[1]
 	 */
-	insertNewNotice( spot: [InsertPosition, Element] ) {
-		const position = spot[ 0 ];
-		let element = spot[ 1 ];
-
-		// If the element was inside a template, get the last element of that template instead.
-		if (
-			element.hasAttribute( 'about' ) &&
-			element.getAttribute( 'about' ).startsWith( '#mwt' )
-		) {
-			const transclusionSet = this.document.querySelectorAll(
-				`[about="${element.getAttribute( 'about' )}"]`
-			);
-			element = transclusionSet.item( transclusionSet.length - 1 );
-		}
-
-		const template = document.createElement( 'span' );
-		template.setAttribute( 'about', `N${CTEParsoidDocument.addedRows++}` );
-		template.setAttribute( 'typeof', 'mw:Transclusion' );
-		template.setAttribute( 'data-mw', JSON.stringify( {
-			parts: [ {
-				template: {
-					target: { wt: 'copied\n', href: './Template:Copied' },
-					params: {
-						to: {
-							wt: new mw.Title( this.page ).getSubjectPage().getPrefixedText()
-						}
-					},
-					i: 0
-				}
-			} ]
-		} ) );
+	insertNewNotice(
+		type: SupportedAttributionNoticeType,
+		[ position, element ]: [ InsertPosition, Element ]
+	) {
+		const template = ( <Record<
+			SupportedAttributionNoticeType, ( document: CTEParsoidDocument ) => AttributionNotice>
+		>{
+			copied: TemplateFactory.copied,
+			splitArticle: TemplateFactory.splitArticle
+		} )[ type ]( this );
 
 		// Insert.
-		element.insertAdjacentElement( position, template );
-		this.findCopiedNotices();
-		const templateObject = this.notices.get( template );
-		this.dispatchEvent( new TemplateInsertEvent( templateObject ) );
+		element.insertAdjacentElement( position, template.element );
+		this.notices.set( template.element, template );
+		this.dispatchEvent( new TemplateInsertEvent( template ) );
 	}
 }
