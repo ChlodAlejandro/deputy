@@ -1,7 +1,7 @@
 import nsId from '../../../util/nsId';
 import getObjectValues from '../../../util/getObjectValues';
 import toRedirectsObject from '../../../util/toRedirectsObject';
-import CopiedTemplate from './CopiedTemplate';
+import CopiedTemplate from './templates/CopiedTemplate';
 
 /**
  * An object mapping notice types to their expected on-wiki page titles.

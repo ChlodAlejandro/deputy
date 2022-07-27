@@ -1,4 +1,4 @@
-import CopiedTemplateRow from './CopiedTemplateRow';
+import CopiedTemplateRow from '../models/templates/CopiedTemplateRow';
 
 /**
  * An event that reflects a change in a given {{copied}} template

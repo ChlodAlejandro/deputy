@@ -1,8 +1,10 @@
 /* eslint-disable camelcase */
 import { h } from 'tsx-dom';
 import '../../../../types';
-import CopiedTemplateRow, { CopiedTemplateRowParameter } from '../../models/CopiedTemplateRow';
-import RowChangeEvent from '../../models/RowChangeEvent';
+import CopiedTemplateRow, {
+	CopiedTemplateRowParameter
+} from '../../models/templates/CopiedTemplateRow';
+import RowChangeEvent from '../../events/RowChangeEvent';
 import unwrapWidget from '../../../../util/unwrapWidget';
 import copyToClipboard from '../../../../util/copyToClipboard';
 import getObjectValues from '../../../../util/getObjectValues';

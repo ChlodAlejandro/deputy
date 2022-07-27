@@ -2,11 +2,11 @@ import CopiedTemplateRow, {
 	copiedTemplateRowParameters,
 	ExistingRawCopiedTemplateRow, RawCopiedTemplateRow
 } from './CopiedTemplateRow';
-import RowChangeEvent from './RowChangeEvent';
-import AttributionNotice from './AttributionNotice';
-import { AttributionNoticePageLayout } from '../ui/pages/AttributionNoticePageLayout';
-import CopiedTemplatePage from '../ui/pages/CopiedTemplatePage';
-import { AttributionNoticePageGenerator } from '../ui/pages/AttributionNoticePageGenerator';
+import RowChangeEvent from '../../events/RowChangeEvent';
+import AttributionNotice from '../AttributionNotice';
+import { AttributionNoticePageLayout } from '../../ui/pages/AttributionNoticePageLayout';
+import CopiedTemplatePage from '../../ui/pages/CopiedTemplatePage';
+import { AttributionNoticePageGenerator } from '../../ui/pages/AttributionNoticePageGenerator';
 
 /**
  * Represents a single {{copied}} template in the Parsoid document.

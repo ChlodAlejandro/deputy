@@ -1,6 +1,6 @@
 import '../../../types';
 import CopiedTemplatesEmptyPage from './pages/AttributionNoticesEmptyPage';
-import CTEParsoidDocument, { TemplateInsertEvent } from '../models/CTEParsoidDocument';
+import CTEParsoidDocument from '../models/CTEParsoidDocument';
 import errorToOO from '../../../util/errorToOO';
 import { blockExit, unblockExit } from '../../../util/blockExit';
 import unwrapWidget from '../../../util/unwrapWidget';
@@ -12,6 +12,7 @@ import { h } from 'tsx-dom';
 import AttributionNotice from '../models/AttributionNotice';
 import { AttributionNoticePageLayout } from './pages/AttributionNoticePageLayout';
 import TemplateMerger from '../models/TemplateMerger';
+import TemplateInsertEvent from '../events/TemplateInsertEvent';
 
 interface CopiedTemplateEditorDialogData {
 	main: CopiedTemplateEditor;

@@ -2,25 +2,8 @@ import ParsoidDocument from '@chlodalejandro/parsoid';
 import last from '../../../util/last';
 import AttributionNotice from './AttributionNotice';
 import WikiAttributionNotices from './WikiAttributionNotices';
-import CopiedTemplate from './CopiedTemplate';
-
-/**
- * An event dispatched when a template inside a `CopiedTemplateEditorDialog` is inserted.
- */
-export class TemplateInsertEvent extends Event {
-
-	template: AttributionNotice;
-
-	/**
-	 * @param template The template that was inserted
-	 * @param eventInitDict
-	 */
-	constructor( template: AttributionNotice, eventInitDict?: EventInit ) {
-		super( 'templateInsert', eventInitDict );
-		this.template = template;
-	}
-
-}
+import CopiedTemplate from './templates/CopiedTemplate';
+import TemplateInsertEvent from '../events/TemplateInsertEvent';
 
 /**
  * Extension class of ParsoidDocument's node. Used to type `parsoidDocument` in the

@@ -1,4 +1,4 @@
-import type CopiedTemplate from './CopiedTemplate';
+import type CopiedTemplate from './templates/CopiedTemplate';
 
 /**
  * Merges templates together. Its own class to avoid circular dependencies.

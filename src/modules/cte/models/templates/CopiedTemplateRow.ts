@@ -2,8 +2,8 @@
  * Copied template rows as strings.
  */
 import CopiedTemplate from './CopiedTemplate';
-import CopiedTemplateRowPage from '../ui/pages/CopiedTemplateRowPage';
-import { AttributionNoticePageGenerator } from '../ui/pages/AttributionNoticePageGenerator';
+import CopiedTemplateRowPage from '../../ui/pages/CopiedTemplateRowPage';
+import { AttributionNoticePageGenerator } from '../../ui/pages/AttributionNoticePageGenerator';
 
 export const copiedTemplateRowParameters = <const>[
 	'from', 'from_oldid', 'to', 'to_diff',

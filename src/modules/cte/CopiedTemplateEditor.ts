@@ -1,7 +1,7 @@
 import CopiedTemplateEditorDialog from './ui/CopiedTemplateEditorDialog';
 import type { Deputy } from '../../Deputy';
 import unwrapWidget from '../../util/unwrapWidget';
-import CopiedTemplate from './models/CopiedTemplate';
+import CopiedTemplate from './models/templates/CopiedTemplate';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import cteStyles from './css/copied-template-editor.css';

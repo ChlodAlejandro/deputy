@@ -1,11 +1,11 @@
 import { h } from 'tsx-dom';
 import '../../../../types';
-import type CopiedTemplate from '../../models/CopiedTemplate';
+import type CopiedTemplate from '../../models/templates/CopiedTemplate';
 import CopiedTemplateRowPage from './CopiedTemplateRowPage';
 import unwrapWidget from '../../../../util/unwrapWidget';
-import CopiedTemplateRow from '../../models/CopiedTemplateRow';
+import CopiedTemplateRow from '../../models/templates/CopiedTemplateRow';
 import CTEParsoidDocument from '../../models/CTEParsoidDocument';
-import RowChangeEvent from '../../models/RowChangeEvent';
+import RowChangeEvent from '../../events/RowChangeEvent';
 import CopiedTemplateEditorDialog from '../CopiedTemplateEditorDialog';
 import { OOUIBookletLayout } from '../../../../types';
 import removeElement from '../../../../util/removeElement';
