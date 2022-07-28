@@ -1,7 +1,7 @@
 import CTEParsoidDocument from './CTEParsoidDocument';
 import { MediaWikiData, TemplateData, TemplateDataModifier } from './MediaWikiData';
 import { AttributionNoticePageLayout } from '../ui/pages/AttributionNoticePageLayout';
-import { AttributionNoticePageGenerator } from '../ui/pages/AttributionNoticePageGenerator';
+import { AttributionNoticePageGenerator } from '../ui/AttributionNoticePageGenerator';
 import { CTEParsoidTransclusionTemplateNode } from './CTEParsoidTransclusionTemplateNode';
 
 /**

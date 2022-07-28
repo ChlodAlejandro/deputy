@@ -167,3 +167,6 @@ export default class WikiAttributionNotices {
 	}
 
 }
+
+export type AttributionNoticeTypeClass<T extends SupportedAttributionNoticeType> =
+	InstanceType<typeof WikiAttributionNotices.attributionNoticeClasses[T]>;

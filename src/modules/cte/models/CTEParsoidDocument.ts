@@ -1,8 +1,10 @@
 import ParsoidDocument from '@chlodalejandro/parsoid';
 import last from '../../../util/last';
 import AttributionNotice from './AttributionNotice';
-import WikiAttributionNotices, { SupportedAttributionNoticeType } from './WikiAttributionNotices';
-import CopiedTemplate from './templates/CopiedTemplate';
+import WikiAttributionNotices, {
+	AttributionNoticeTypeClass,
+	SupportedAttributionNoticeType
+} from './WikiAttributionNotices';
 import TemplateInsertEvent from '../events/TemplateInsertEvent';
 import { CTEParsoidTransclusionTemplateNode } from './CTEParsoidTransclusionTemplateNode';
 import TemplateFactory from './TemplateFactory';
@@ -52,7 +54,7 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 				return;
 			}
 
-			const notices = this.findCopiedNotices();
+			const notices = this.findNoticeType( 'copied' );
 			this.originalCount = notices.length;
 		} );
 	}
@@ -102,13 +104,16 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 	/**
 	 * Finds this document's {{copied}} notices.
 	 *
+	 * @param type
 	 * @return An array of all CopiedTemplate objects found
 	 */
-	findCopiedNotices(): CopiedTemplate[] {
+	findNoticeType<T extends SupportedAttributionNoticeType>(
+		type: T
+	): AttributionNoticeTypeClass<T>[] {
 		return this.findNotices().filter(
 			( notice ) => notice instanceof
-				WikiAttributionNotices.attributionNoticeClasses.copied
-		) as CopiedTemplate[];
+				WikiAttributionNotices.attributionNoticeClasses[ type ]
+		) as AttributionNoticeTypeClass<T>[];
 	}
 
 	/**

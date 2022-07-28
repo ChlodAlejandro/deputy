@@ -35,7 +35,7 @@ function initCopiedTemplateEditorDialog() {
 		static static = {
 			name: 'copiedTemplateEditorDialog',
 			title: mw.message( 'deputy.cte' ).text(),
-			size: 'larger',
+			size: 'huge',
 			actions: [
 				{
 					flags: [ 'primary', 'progressive' ],
@@ -92,7 +92,7 @@ function initCopiedTemplateEditorDialog() {
 		 * @return The body height of this dialog.
 		 */
 		getBodyHeight(): number {
-			return 500;
+			return 900;
 		}
 
 		/**
@@ -185,16 +185,17 @@ function initCopiedTemplateEditorDialog() {
 				icon: 'tableMergeCells',
 				framed: false,
 				invisibleLabel: true,
-				label: mw.message( 'deputy.cte.merge' ).text(),
-				title: mw.message( 'deputy.cte.merge' ).text(),
+				label: mw.message( 'deputy.cte.mergeAll' ).text(),
+				title: mw.message( 'deputy.cte.mergeAll' ).text(),
 				disabled: true
 			} );
+			// TODO: Repair mergeButton
 			this.mergeButton.on( 'click', () => {
-				const notices = this.parsoid.findCopiedNotices();
+				const notices = this.parsoid.findNoticeType( 'copied' );
 				if ( notices.length > 1 ) {
 					return OO.ui.confirm(
 						mw.message(
-							'deputy.cte.merge.confirm',
+							'deputy.cte.mergeAll.confirm',
 							`${notices.length}`
 						).text()
 					).done( ( confirmed: boolean ) => {
@@ -256,12 +257,14 @@ function initCopiedTemplateEditorDialog() {
 
 			this.layout.on( 'remove', () => {
 				const notices = this.parsoid.findNotices();
-				this.mergeButton.setDisabled( notices.length < 2 );
+				// TODO: Repair mergeButton
+				// this.mergeButton.setDisabled( notices.length < 2 );
 				deleteButton.setDisabled( notices.length === 0 );
 			} );
 			this.parsoid.addEventListener( 'templateInsert', () => {
 				const notices = this.parsoid.findNotices();
-				this.mergeButton.setDisabled( notices.length < 2 );
+				// TODO: Repair mergeButton
+				// this.mergeButton.setDisabled( notices.length < 2 );
 				deleteButton.setDisabled( notices.length === 0 );
 			} );
 
@@ -328,7 +331,7 @@ function initCopiedTemplateEditorDialog() {
 
 			// Recheck state of merge button
 			this.mergeButton.setDisabled(
-				( this.parsoid.findCopiedNotices().length ?? 0 ) < 2
+				( this.parsoid.findNoticeType( 'copied' ).length ?? 0 ) < 2
 			);
 
 			process.next( () => {

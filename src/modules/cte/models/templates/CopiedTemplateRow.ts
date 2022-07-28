@@ -65,16 +65,6 @@ export interface RawCopiedTemplateRow {
 }
 
 /**
- * Special interface that requires the "from" parameter.
- */
-export interface ExistingRawCopiedTemplateRow extends RawCopiedTemplateRow {
-	/**
-	 * @inheritDoc
-	 */
-	from: string;
-}
-
-/**
  * Represents a row/entry in a {{copied}} template.
  */
 export default class CopiedTemplateRow
@@ -104,32 +94,7 @@ export default class CopiedTemplateRow
 
 	id: string;
 
-	/**
-	 * The parent of a given copied template row. This is the {{copied}} template
-	 * that this row is a part of.
-	 */
-	private _parent: CopiedTemplate;
-
-	/**
-	 * @return The parent of a given copied template row. This is the {{copied}}
-	 * template that this row is a part of.
-	 */
-	get parent() {
-		return this._parent;
-	}
-
-	/**
-	 * Sets the parent. Automatically moves this template from one
-	 * parent's row set to another.
-	 *
-	 * @param newParent The new parent.
-	 */
-	set parent( newParent ) {
-		this._parent.deleteRow( this );
-		newParent.addRow( this );
-		this._parent = newParent;
-	}
-
+	// noinspection JSDeprecatedSymbols
 	/**
 	 * Creates a new RawCopiedTemplateRow
 	 *
@@ -163,14 +128,10 @@ export default class CopiedTemplateRow
 	}
 
 	/**
-	 * Clones this row.
-	 *
-	 * @param parent The parent of this new row.
-	 * @return The cloned row
+	 * @inheritDoc
 	 */
 	clone( parent: CopiedTemplate ): CopiedTemplateRow {
-		// noinspection JSCheckFunctionSignatures
-		return new CopiedTemplateRow( this, parent );
+		return super.clone( parent ) as CopiedTemplateRow;
 	}
 
 	/**

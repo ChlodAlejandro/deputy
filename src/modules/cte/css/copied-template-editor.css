@@ -1,3 +1,16 @@
+.copied-template-editor .oo-ui-window-frame {
+	width: 1000px !important;
+}
+
+.copied-template-editor .oo-ui-menuLayout > .oo-ui-menuLayout-menu {
+	height: 20em;
+	width: 20em;
+}
+
+.copied-template-editor .oo-ui-menuLayout > .oo-ui-menuLayout-content {
+	left: 20em;
+}
+
 .cte-preview .copiednotice {
 	margin-left: 0;
 	margin-right: 0;
@@ -31,11 +44,11 @@
 
 .cte-templateOptions {
 	margin: 8px;
+	display: flex;
 }
 
-.cte-templateOptions > div {
-	width: 50%;
-	display: inline-block;
+.cte-templateOptions > * {
+	flex: 1;
 }
 
 .cte-fieldset {
@@ -64,7 +77,7 @@
 	margin-right: 16px;
 }
 
-.cte-fieldset-date .oo-ui-iconElement-icon {
+.copied-template-editor .mw-widgets-datetime-dateTimeInputWidget-handle .oo-ui-iconElement-icon {
 	left: 0.5em;
 	width: 1em;
 	height: 1em;

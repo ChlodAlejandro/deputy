@@ -1,8 +1,12 @@
 import '../../../../types';
 import { AttributionNoticePageLayout } from './AttributionNoticePageLayout';
 import CopiedTemplateEditorDialog from '../CopiedTemplateEditorDialog';
-import SplitArticleTemplateRow from '../../models/templates/SplitArticleTemplateRow';
+import SplitArticleTemplateRow, {
+	SplitArticleTemplateRowParameter
+} from '../../models/templates/SplitArticleTemplateRow';
 import { h } from 'tsx-dom';
+import getObjectValues from '../../../../util/getObjectValues';
+import unwrapWidget from '../../../../util/unwrapWidget';
 
 export interface SplitArticleTemplateRowPageData {
 	/**
@@ -29,6 +33,10 @@ function initSplitArticleTemplateRowPage() {
 
 		splitArticleTemplateRow: SplitArticleTemplateRow;
 		parent: ReturnType<typeof CopiedTemplateEditorDialog>;
+
+		// Elements
+		inputs: Record<SplitArticleTemplateRowParameter, any>;
+		fieldLayouts: Record<SplitArticleTemplateRowParameter, any>;
 
 		/**
 		 * @param config Configuration to be passed to the element.
@@ -72,16 +80,167 @@ function initSplitArticleTemplateRowPage() {
 		render() {
 			this.layout = new OO.ui.FieldsetLayout( {
 				icon: 'parameter',
-				label: mw.message( 'deputy.cte.copied.entry.label' ).text(),
+				label: mw.message( 'deputy.cte.splitArticle.entry.label' ).text(),
 				classes: [ 'cte-fieldset' ]
 			} );
 
-			this.layout.$element.append( <div>
-				${this.splitArticleTemplateRow.to} || ${this.splitArticleTemplateRow.from_oldid} ||
-				${this.splitArticleTemplateRow.date} || ${this.splitArticleTemplateRow.diff}
-			</div> );
+			this.layout.$element.append( this.renderButtons() );
+			this.layout.addItems( this.renderFields() );
 
 			return this.layout;
+		}
+
+		/**
+		 * Renders a set of buttons used to modify a specific {{copied}} template row.
+		 *
+		 * @return An array of OOUI FieldLayouts
+		 */
+		renderButtons(): JSX.Element {
+			const deleteButton = new OO.ui.ButtonWidget( {
+				icon: 'trash',
+				title: mw.message( 'deputy.cte.splitArticle.entry.remove' ).text(),
+				framed: false,
+				flags: [ 'destructive' ]
+			} );
+			deleteButton.on( 'click', () => {
+				this.splitArticleTemplateRow.parent.deleteRow( this.splitArticleTemplateRow );
+			} );
+
+			return <div style={{
+				float: 'right',
+				position: 'absolute',
+				top: '0.5em',
+				right: '0.5em'
+			}}>
+				{ unwrapWidget( deleteButton )}
+			</div>;
+		}
+
+		/**
+		 * Renders a set of OOUI InputWidgets and FieldLayouts, eventually returning an
+		 * array of each FieldLayout to append to the FieldsetLayout.
+		 *
+		 * @return An array of OOUI FieldLayouts
+		 */
+		renderFields(): any[] {
+			const rowDate = this.splitArticleTemplateRow.date;
+			const parsedDate =
+				( rowDate == null || rowDate.trim().length === 0 ) ?
+					undefined : (
+						!isNaN( new Date( rowDate.trim() + ' UTC' ).getTime() ) ?
+							( new Date( rowDate.trim() + ' UTC' ) ) : (
+								!isNaN( new Date( rowDate.trim() ).getTime() ) ?
+									new Date( rowDate.trim() ) : null
+							)
+					);
+
+			this.inputs = {
+				to: new mw.widgets.TitleInputWidget( {
+					$overlay: this.parent.$overlay,
+					required: true,
+					value: this.splitArticleTemplateRow.to || '',
+					placeholder: mw.message( 'deputy.cte.splitArticle.to.placeholder' ).text()
+				} ),
+				// eslint-disable-next-line camelcase
+				from_oldid: new OO.ui.TextInputWidget( {
+					$overlay: this.parent.$overlay,
+					value: this.splitArticleTemplateRow.from_oldid || '',
+					placeholder: mw.message( 'deputy.cte.splitArticle.to.placeholder' ).text()
+				} ),
+				date: new mw.widgets.datetime.DateTimeInputWidget( {
+					$overlay: this.parent.$overlay,
+					required: true,
+					calendar: null,
+					icon: 'calendar',
+					clearable: true,
+					value: parsedDate
+				} ),
+				diff: new OO.ui.TextInputWidget( {
+					$overlay: this.parent.$overlay,
+					value: this.splitArticleTemplateRow.from_oldid || '',
+					placeholder: mw.message( 'deputy.cte.splitArticle.diff.placeholder' ).text(),
+					validate: ( value: string ) => {
+						if ( value.trim().length === 0 ) {
+							return true;
+						}
+						try {
+							return typeof new URL( value ).href === 'string';
+						} catch ( e ) {
+							return false;
+						}
+					}
+				} )
+			};
+			this.fieldLayouts = {
+				to: new OO.ui.FieldLayout( this.inputs.to, {
+					$overlay: this.parent.$overlay,
+					align: 'top',
+					label: mw.message( 'deputy.cte.splitArticle.to.label' ).text(),
+					help: mw.message( 'deputy.cte.splitArticle.to.help' ).text()
+				} ),
+				// eslint-disable-next-line camelcase
+				from_oldid: new OO.ui.FieldLayout( this.inputs.from_oldid, {
+					$overlay: this.parent.$overlay,
+					align: 'left',
+					label: mw.message( 'deputy.cte.splitArticle.from_oldid.label' ).text(),
+					help: mw.message( 'deputy.cte.splitArticle.from_oldid.help' ).text()
+				} ),
+				date: new OO.ui.FieldLayout( this.inputs.date, {
+					$overlay: this.parent.$overlay,
+					align: 'left',
+					label: mw.message( 'deputy.cte.splitArticle.date.label' ).text(),
+					help: mw.message( 'deputy.cte.splitArticle.date.help' ).text()
+				} ),
+				diff: new OO.ui.FieldLayout( this.inputs.diff, {
+					$overlay: this.parent.$overlay,
+					align: 'left',
+					label: mw.message( 'deputy.cte.splitArticle.diff.label' ).text(),
+					help: mw.message( 'deputy.cte.splitArticle.diff.help' ).text()
+				} )
+			};
+
+			for ( const _field in this.inputs ) {
+				const field = _field as SplitArticleTemplateRowParameter;
+				const input = this.inputs[ field ];
+
+				// Attach the change listener
+				input.on( 'change', ( value: string ) => {
+					if ( input instanceof mw.widgets.datetime.DateTimeInputWidget ) {
+						this.splitArticleTemplateRow[ field ] =
+							new Date( value ).toLocaleDateString( 'en-GB', {
+								year: 'numeric', month: 'long', day: 'numeric'
+							} );
+						if ( value.length > 0 ) {
+							this.fieldLayouts[ field ].setWarnings( [] );
+						}
+					} else {
+						this.splitArticleTemplateRow[ field ] = value;
+					}
+					this.splitArticleTemplateRow.parent.save();
+				} );
+
+				if ( input instanceof OO.ui.TextInputWidget ) {
+					// Rechecks the validity of the field.
+					input.setValidityFlag();
+				}
+			}
+
+			this.inputs.to.on( 'change', () => {
+				this.outlineItem.setLabel(
+					`${
+						this.splitArticleTemplateRow.to || '???'
+					} on ${this.splitArticleTemplateRow.date || '???'}`
+				);
+			} );
+			this.inputs.date.on( 'change', () => {
+				this.outlineItem.setLabel(
+					`${
+						this.splitArticleTemplateRow.to || '???'
+					} on ${this.splitArticleTemplateRow.date || '???'}`
+				);
+			} );
+
+			return getObjectValues( this.fieldLayouts );
 		}
 
 		/**

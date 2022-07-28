@@ -1,18 +1,21 @@
+// noinspection JSDeprecatedSymbols
+
 import SplitArticleTemplate from './SplitArticleTemplate';
 import CopiedTemplateRowPage from '../../ui/pages/CopiedTemplateRowPage';
 import { AttributionNoticeRow } from '../AttributionNoticeRow';
 import SplitArticleTemplateRowPage from '../../ui/pages/SplitArticleTemplateRowPage';
 
 export interface RawSplitArticleTemplateRow {
-	to: string;
-	from_oldid: string;
-	date: string;
+	to?: string;
+	from_oldid?: string;
+	date?: string;
 	diff?: string;
 }
 
 export const splitArticleTemplateRowParameters = <const>[
 	'to', 'from_oldid', 'date', 'diff'
 ];
+export type SplitArticleTemplateRowParameter = typeof splitArticleTemplateRowParameters[number];
 
 /**
  * Represents a row/entry in a {{split article}} template.
@@ -32,32 +35,6 @@ export default class SplitArticleTemplateRow
 	diff: string;
 
 	id: string;
-
-	/**
-	 * The parent of a given copied template row. This is the {{split article}} template
-	 * that this row is a part of.
-	 */
-	private _parent: SplitArticleTemplate;
-
-	/**
-	 * @return The parent of a given copied template row. This is the {{split article}}
-	 * template that this row is a part of.
-	 */
-	get parent() {
-		return this._parent;
-	}
-
-	/**
-	 * Sets the parent. Automatically moves this template from one
-	 * parent's row set to another.
-	 *
-	 * @param newParent The new parent.
-	 */
-	set parent( newParent ) {
-		this._parent.deleteRow( this );
-		newParent.addRow( this );
-		this._parent = newParent;
-	}
 
 	/**
 	 * Creates a new RawCopiedTemplateRow
@@ -86,14 +63,10 @@ export default class SplitArticleTemplateRow
 	}
 
 	/**
-	 * Clones this row.
-	 *
-	 * @param parent The parent of this new row.
-	 * @return The cloned row
+	 * @inheritDoc
 	 */
 	clone( parent: SplitArticleTemplate ): SplitArticleTemplateRow {
-		// noinspection JSCheckFunctionSignatures
-		return new SplitArticleTemplateRow( this, parent );
+		return super.clone( parent ) as SplitArticleTemplateRow;
 	}
 
 	/**

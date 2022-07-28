@@ -5,8 +5,8 @@
     "deputy.cte.close": "Close",
     "deputy.cte.save": "Save",
     "deputy.cte.add": "Add a notice",
-    "deputy.cte.merge": "Merge all notices",
-    "deputy.cte.merge.confirm": "You are about to merge $1 {{PLURAL:$1|notice|notices}}. Continue?",
+    "deputy.cte.mergeAll": "Merge all notices",
+    "deputy.cte.mergeAll.confirm": "You are about to merge $1 {{PLURAL:$1|notice|notices}}. Continue?",
     "deputy.cte.reset": "Reset all changes",
     "deputy.cte.reset.confirm": "This will reset all changes. Proceed?",
     "deputy.cte.delete": "Delete all notices",
@@ -23,15 +23,16 @@
     "deputy.cte.empty.add": "Add a notice",
     "deputy.cte.noSpot": "Sorry, but a notice cannot be automatically added. Please contact the developer to possibly add support for this talk page.",
 
+    "deputy.cte.merge": "Merge",
+    "deputy.cte.merge.title": "Merge notices",
+    "deputy.cte.merge.from.label": "Notices to merge",
+    "deputy.cte.merge.from.select": "Select a notice",
+    "deputy.cte.merge.from.empty": "No notices to merge",
+    "deputy.cte.merge.all": "Merge all",
+    "deputy.cte.merge.all.confirm": "You are about to merge $1 'copied' {{PLURAL:$1|notice|notices}} into this notice. Continue?",
+    "deputy.cte.merge.button": "Merge",
+
     "deputy.cte.copied.label": "Copied $1",
-    "deputy.cte.copied.merge": "Merge",
-    "deputy.cte.copied.merge.title": "Merge 'copied' templates",
-    "deputy.cte.copied.merge.from.label": "Notices to merge",
-    "deputy.cte.copied.merge.from.select": "Select a notice",
-    "deputy.cte.copied.merge.from.empty": "No notices to merge",
-    "deputy.cte.copied.merge.all": "Merge all",
-    "deputy.cte.copied.merge.all.confirm": "You are about to merge $1 'copied' {{PLURAL:$1|notice|notices}} into this notice. Continue?",
-    "deputy.cte.copied.merge.button": "Merge",
 
     "deputy.cte.copied.remove": "Remove notice",
     "deputy.cte.copied.remove.confirm": "This will destroy $1 {{PLURAL:$1|entry|entries}}. Continue?",
@@ -43,6 +44,9 @@
     "deputy.cte.copied.entry.copy": "Copy attribution edit summary",
     "deputy.cte.copied.entry.copy.lacking": "Attribution edit summary copied to clipboard with lacking properties. Ensure that `from` is supplied.",
     "deputy.cte.copied.entry.copy.success": "Attribution edit summary copied to clipboard.",
+
+    "deputy.cte.copied.collapse": "Collapse",
+    "deputy.cte.copied.small": "Small",
 
     "deputy.cte.copied.from.placeholder": "Page A",
     "deputy.cte.copied.from.label": "Page copied from",
@@ -74,5 +78,28 @@
     "deputy.cte.copied.diffDeprecate.replace": "The current value of '$1', \"$2\", will be replaced with \"$3\". Continue?",
     "deputy.cte.copied.diffDeprecate.failed": "Cannot convert `diff` parameter to URL. See your browser console for more details.",
 
-    "deputy.cte.splitArticle.label": "Split article $1"
+    "deputy.cte.splitArticle.label": "Split article $1",
+
+    "deputy.cte.splitArticle.remove": "Remove notice",
+    "deputy.cte.splitArticle.remove.confirm": "This will destroy $1 {{PLURAL:$1|entry|entries}}. Continue?",
+    "deputy.cte.splitArticle.add": "Add entry",
+
+    "deputy.cte.splitArticle.entry.label": "Template entry",
+    "deputy.cte.splitArticle.entry.remove": "Remove entry",
+
+    "deputy.cte.splitArticle.collapse": "Collapse",
+    "deputy.cte.splitArticle.from": "From",
+    "deputy.cte.splitArticle.from.help": "This is the page where the content was split from. In most cases, this is the current page, and can be left blank.",
+
+    "deputy.cte.splitArticle.to.placeholder": "Subpage A",
+    "deputy.cte.splitArticle.to.label": "Page split to",
+    "deputy.cte.splitArticle.to.help": "This is the name of page that material was copied to; the \"merge target\".",
+    "deputy.cte.splitArticle.from_oldid.placeholder": "from_oldid",
+    "deputy.cte.splitArticle.from_oldid.label": "As of revision ID",
+    "deputy.cte.splitArticle.from_oldid.help": "The revision ID of the original page prior to the split. This is the revision that still contains content that will eventually become part of the split, with the following revision (or succeeding revisions) progressively transferring content to the other pages.",
+    "deputy.cte.splitArticle.date.label": "Date of split",
+    "deputy.cte.splitArticle.date.help": "The date that the split occurred.",
+    "deputy.cte.splitArticle.diff.placeholder": "https://en.wikipedia.org/w/index.php?diff=123456&oldid=123455",
+    "deputy.cte.splitArticle.diff.label": "Diff URL",
+    "deputy.cte.splitArticle.diff.help": "The diff URL of the split."
 }

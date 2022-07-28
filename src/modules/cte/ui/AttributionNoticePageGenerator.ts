@@ -1,4 +1,4 @@
-import { AttributionNoticePageLayout } from './AttributionNoticePageLayout';
+import { AttributionNoticePageLayout } from './pages/AttributionNoticePageLayout';
 
 export interface AttributionNoticePageGenerator {
 

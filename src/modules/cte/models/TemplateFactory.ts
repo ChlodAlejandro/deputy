@@ -38,7 +38,7 @@ export default class TemplateFactory {
 	 * @return A new CopiedTemplate
 	 */
 	static copied( document: CTEParsoidDocument ): CopiedTemplate {
-		const templateWikitext = this.getTemplateWikitext( 'copied' );
+		const templateWikitext = TemplateFactory.getTemplateWikitext( 'copied' );
 		const node = CTEParsoidTransclusionTemplateNode.fromNew(
 			document,
 			templateWikitext,
@@ -59,12 +59,14 @@ export default class TemplateFactory {
 	 * @return A new SplitArticleTemplate
 	 */
 	static splitArticle( document: CTEParsoidDocument ): SplitArticleTemplate {
-		const templateWikitext = this.getTemplateWikitext( 'splitArticle' );
+		const templateWikitext = TemplateFactory.getTemplateWikitext( 'splitArticle' );
 		const node = CTEParsoidTransclusionTemplateNode.fromNew(
 			document,
 			templateWikitext,
 			{
-				from: new mw.Title( document.getPage() ).getSubjectPage().getPrefixedText()
+				from: new mw.Title( document.getPage() ).getSubjectPage().getPrefixedText(),
+				// Blank string to trigger row creation
+				to: ''
 			}
 		);
 		node.element.setAttribute( 'about', `N${TemplateFactory.noticeCount++}` );

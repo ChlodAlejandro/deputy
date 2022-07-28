@@ -1,4 +1,4 @@
-import { AttributionNoticePageGenerator } from '../../ui/pages/AttributionNoticePageGenerator';
+import { AttributionNoticePageGenerator } from '../../ui/AttributionNoticePageGenerator';
 import { AttributionNoticePageLayout } from '../../ui/pages/AttributionNoticePageLayout';
 import { copiedTemplateRowParameters } from './CopiedTemplateRow';
 import SplitArticleTemplateRow, {
@@ -16,13 +16,17 @@ export default class SplitArticleTemplate
 	implements AttributionNoticePageGenerator {
 
 	from: string;
+	collapse: boolean;
 
 	/**
 	 * @inheritDoc
 	 */
 	parse(): void {
-		if ( this.node.getParameter( 'from' ) ) {
+		if ( this.node.hasParameter( 'from' ) ) {
 			this.from = this.node.getParameter( 'from' ).trim();
+		}
+		if ( this.node.hasParameter( 'collapse' ) ) {
+			this.collapse = this.node.getParameter( 'collapse' ).trim().length > 0;
 		}
 
 		// Extract {{copied}} rows.
@@ -64,8 +68,6 @@ export default class SplitArticleTemplate
 	 * @inheritDoc
 	 */
 	save(): void {
-		this.node.setParameter( 'from', this.from );
-
 		const existingParameters = this.node.getParameters();
 		for ( const param in existingParameters ) {
 			if ( copiedTemplateRowParameters.some( ( v ) => param.startsWith( v ) ) ) {
@@ -74,11 +76,14 @@ export default class SplitArticleTemplate
 			}
 		}
 
+		this.node.setParameter( 'collapse', this.collapse ? 'yes' : null );
+		this.node.setParameter( 'from', this.from );
+
 		this._rows.forEach( ( row, i ) => {
-			this.node.setParameter( `to${i > 1 ? i : ''}`, row.to );
-			this.node.setParameter( `from_oldid${i > 1 ? i : ''}`, row.from_oldid );
-			this.node.setParameter( `date${i > 1 ? i : ''}`, row.date );
-			this.node.setParameter( `diff${i > 1 ? i : ''}`, row.diff );
+			this.node.setParameter( `to${i > 0 ? i + 1 : ''}`, row.to );
+			this.node.setParameter( `from_oldid${i > 0 ? i + 1 : ''}`, row.from_oldid );
+			this.node.setParameter( `date${i > 0 ? i + 1 : ''}`, row.date );
+			this.node.setParameter( `diff${i > 0 ? i + 1 : ''}`, row.diff );
 		} );
 
 		this.dispatchEvent( new Event( 'save' ) );

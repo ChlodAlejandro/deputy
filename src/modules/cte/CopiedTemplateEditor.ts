@@ -125,7 +125,11 @@ export default class CopiedTemplateEditor {
 					mw.hook( 'wikipage.content' ).add( () => {
 						// Find all {{copied}} templates and append our special button.
 						// This runs on the actual document, not the Parsoid document.
-						document.querySelectorAll( '.copiednotice > tbody > tr' )
+						document.querySelectorAll(
+							[ 'copiednotice', 'box-split-article' ].map(
+								( v ) => `.${v} > tbody > tr`
+							).join( ', ' )
+						)
 							.forEach( ( e ) => {
 								if ( e.classList.contains( 'cte-upgraded' ) ) {
 									return;
@@ -175,6 +179,9 @@ export default class CopiedTemplateEditor {
 			'mediawiki.widgets.datetime',
 			'jquery.makeCollapsible'
 		], async () => {
+			OO.ui.WindowManager.static.sizes.huge = {
+				width: 1100
+			};
 			mw.util.addCSS( cteStyles );
 			await WikiAttributionNotices.init();
 

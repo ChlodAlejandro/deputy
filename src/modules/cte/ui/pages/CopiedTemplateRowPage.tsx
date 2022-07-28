@@ -332,9 +332,9 @@ function initCopiedTemplateRowPage() {
 				} ),
 				merge: new OO.ui.FieldLayout( this.inputs.merge, {
 					$overlay: this.parent.$overlay,
-					label: mw.message( 'deputy.cte.copied.merge.label' ).text(),
+					label: mw.message( 'deputy.cte.merge.label' ).text(),
 					align: 'inline',
-					help: mw.message( 'deputy.cte.copied.merge.help' ).text()
+					help: mw.message( 'deputy.cte.merge.help' ).text()
 				} ),
 				afd: new OO.ui.FieldLayout( this.inputs.afd, {
 					$overlay: this.parent.$overlay,

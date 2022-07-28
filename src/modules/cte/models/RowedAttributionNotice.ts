@@ -1,12 +1,14 @@
 import AttributionNotice from './AttributionNotice';
 import RowChangeEvent from '../events/RowChangeEvent';
+import { AttributionNoticeRow, AttributionNoticeRowParent } from './AttributionNoticeRow';
 
 /**
  * This is a sub-abstract class of {@link AttributionNotice} that represents any
  * attribution notice template that can contain multiple entries (or rows).
  */
-export default abstract class RowedAttributionNotice<RowClass>
-	extends AttributionNotice {
+export default abstract class RowedAttributionNotice<
+	RowClass extends AttributionNoticeRow<RowedAttributionNotice<RowClass>>
+	> extends AttributionNotice {
 
 	/**
 	 * All the rows of this template.
@@ -95,6 +97,41 @@ export default abstract class RowedAttributionNotice<RowClass>
 			this._rows.splice( i, 1 );
 			this.save();
 			this.dispatchEvent( new RowChangeEvent( 'rowDelete', row ) );
+		}
+
+		if ( this._rows.length === 0 ) {
+			this.destroy();
+		}
+	}
+
+	/**
+	 * Copies in the rows of another {@link SplitArticleTemplate}, and
+	 * optionally deletes that template or clears its contents.
+	 *
+	 * @param template The template to copy from.
+	 * @param options Options for this merge.
+	 * @param options.delete
+	 *        Whether the reference template will be deleted after merging.
+	 * @param options.clear
+	 *        Whether the reference template's rows will be cleared after merging.
+	 */
+	merge(
+		template: RowedAttributionNotice<RowClass>,
+		options: { delete?: boolean, clear?: boolean } = {}
+	) {
+		if ( template.rows === undefined || template === this ) {
+			// Deleted or self
+			return;
+		}
+		for ( const row of template.rows ) {
+			if ( options.clear ) {
+				row.parent = this;
+			} else {
+				( this as AttributionNoticeRowParent ).addRow( row.clone( this ) );
+			}
+		}
+		if ( options.delete ) {
+			template.destroy();
 		}
 	}
 

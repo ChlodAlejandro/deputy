@@ -4,7 +4,7 @@ import CopiedTemplateRow, {
 } from './CopiedTemplateRow';
 import { AttributionNoticePageLayout } from '../../ui/pages/AttributionNoticePageLayout';
 import CopiedTemplatePage from '../../ui/pages/CopiedTemplatePage';
-import { AttributionNoticePageGenerator } from '../../ui/pages/AttributionNoticePageGenerator';
+import { AttributionNoticePageGenerator } from '../../ui/AttributionNoticePageGenerator';
 import RowedAttributionNotice from '../RowedAttributionNotice';
 
 /**
@@ -129,10 +129,10 @@ export default class CopiedTemplate
 	 * Destroys this template completely.
 	 */
 	destroy() {
-		this.dispatchEvent( new Event( 'destroy' ) );
-		this.accessTemplateData( () => undefined );
+		this.node.destroy();
 		// Self-destruct
 		Object.keys( this ).forEach( ( k ) => delete ( this as any )[ k ] );
+		this.dispatchEvent( new Event( 'destroy' ) );
 	}
 
 	/**

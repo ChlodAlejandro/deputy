@@ -6,9 +6,8 @@ import unwrapWidget from '../../../../util/unwrapWidget';
 import CopiedTemplateRow from '../../models/templates/CopiedTemplateRow';
 import CTEParsoidDocument from '../../models/CTEParsoidDocument';
 import CopiedTemplateEditorDialog from '../CopiedTemplateEditorDialog';
-import removeElement from '../../../../util/removeElement';
 import { AttributionNoticePageLayout } from './AttributionNoticePageLayout';
-import TemplateMerger from '../../models/TemplateMerger';
+import { renderMergePanel, renderPreviewPanel } from '../RowPageShared';
 
 export interface CopiedTemplatePageData {
 	/**
@@ -77,12 +76,6 @@ function initCopiedTemplatePage() {
 		childPages: Map<CopiedTemplateRow, ReturnType<typeof CopiedTemplateRowPage>> = new Map();
 
 		/**
-		 * A throttled function that updates the preview panel.
-		 */
-		updatePreview: () => Promise<void> =
-			( mw.util as any ).throttle( this.updatePreviewPanel.bind( this ), 1000 );
-
-		/**
 		 * @param config Configuration to be passed to the element.
 		 */
 		constructor( config: CopiedTemplatePageData ) {
@@ -125,8 +118,12 @@ function initCopiedTemplatePage() {
 			this.$element.append(
 				this.renderButtons(),
 				this.renderHeader(),
-				this.renderMergePanel(),
-				this.renderPreviewPanel(),
+				renderMergePanel(
+					'copied',
+					this.copiedTemplate,
+					this.mergeButton
+				),
+				renderPreviewPanel( this.copiedTemplate ),
 				this.renderTemplateOptions()
 			);
 		}
@@ -148,7 +145,7 @@ function initCopiedTemplatePage() {
 			// Delete deleted rows from cache.
 			this.childPages.forEach( ( page, row ) => {
 				if ( rowPages.indexOf( page ) === -1 ) {
-					this.pageCache.delete( row );
+					this.childPages.delete( row );
 				}
 			} );
 
@@ -172,7 +169,7 @@ function initCopiedTemplatePage() {
 
 			this.mergeButton = new OO.ui.ButtonWidget( {
 				icon: 'tableMergeCells',
-				title: mw.message( 'deputy.cte.copied.merge' ).text(),
+				title: mw.message( 'deputy.cte.merge' ).text(),
 				framed: false
 			} );
 			const deleteButton = new OO.ui.ButtonWidget( {
@@ -198,6 +195,8 @@ function initCopiedTemplatePage() {
 				}
 			} );
 			const addButton = new OO.ui.ButtonWidget( {
+				flags: [ 'progressive' ],
+				icon: 'add',
 				label: mw.message( 'deputy.cte.copied.add' ).text()
 			} );
 			addButton.on( 'click', () => {
@@ -221,153 +220,9 @@ function initCopiedTemplatePage() {
 		 * @return A <div> element
 		 */
 		renderMergePanel(): JSX.Element {
-			const mergePanel = new OO.ui.FieldsetLayout( {
-				classes: [ 'cte-merge-panel' ],
-				icon: 'tableMergeCells',
-				label: mw.message( 'deputy.cte.copied.merge.title' ).text()
-			} );
-			unwrapWidget( mergePanel ).style.padding = '16px';
-			unwrapWidget( mergePanel ).style.zIndex = '20';
-			// Hide by default
-			mergePanel.toggle( false );
-
-			// <select> and button for merging templates
-			const mergeTarget = new OO.ui.DropdownInputWidget( {
-				$overlay: true,
-				label: mw.message( 'deputy.cte.copied.merge.from.select' ).text()
-			} );
-			const mergeTargetButton = new OO.ui.ButtonWidget( {
-				label: mw.message( 'deputy.cte.copied.merge.button' ).text()
-			} );
-			mergeTargetButton.on( 'click', () => {
-				const template = this.document.findCopiedNotices().find(
-					( v ) => v.name === mergeTarget.value
-				);
-				if ( template ) {
-					// If template found, merge and reset panel
-					this.copiedTemplate.merge( template, { delete: true } );
-					mergeTarget.setValue( null );
-					mergePanel.toggle( false );
-				}
-			} );
-
-			const mergeFieldLayout = new OO.ui.ActionFieldLayout(
-				mergeTarget,
-				mergeTargetButton,
-				{
-					label: mw.message( 'deputy.cte.copied.merge.from.label' ).text(),
-					align: 'left'
-				}
+			return renderMergePanel(
+				'copied', this.copiedTemplate, this.mergeButton
 			);
-			this.mergeButton.on( 'click', () => {
-				mergePanel.toggle();
-			} );
-			const mergeAllButton = new OO.ui.ButtonWidget( {
-				label: mw.message( 'deputy.cte.copied.merge.all' ).text(),
-				flags: [ 'progressive' ]
-			} );
-			mergeAllButton.on( 'click', () => {
-				const notices = this.document.findCopiedNotices();
-				// Confirm before merging.
-				OO.ui.confirm(
-					mw.message(
-						'deputy.cte.copied.merge.all.confirm',
-						`${notices.length - 1}`
-					).text()
-				).done( ( confirmed: boolean ) => {
-					if ( confirmed ) {
-						// Recursively merge all templates
-						TemplateMerger.copied(
-							notices,
-							this.copiedTemplate
-						);
-						mergeTarget.setValue( null );
-						mergePanel.toggle( false );
-					}
-				} );
-			} );
-
-			const recalculateOptions = () => {
-				const notices = this.document.findCopiedNotices();
-				const options = [];
-				for ( const notice of notices ) {
-					if ( notice === this.copiedTemplate ) {
-						continue;
-					}
-					options.push( {
-						data: notice.name,
-						label: `Copied ${notice.name}`
-					} );
-				}
-				if ( options.length === 0 ) {
-					options.push( {
-						data: null,
-						label: mw.message( 'deputy.cte.copied.merge.from.empty' ).text(),
-						disabled: true
-					} );
-					mergeTargetButton.setDisabled( true );
-					mergeAllButton.setDisabled( true );
-				} else {
-					mergeTargetButton.setDisabled( false );
-					mergeAllButton.setDisabled( false );
-				}
-				mergeTarget.setOptions( options );
-			};
-			mergePanel.on( 'toggle', recalculateOptions );
-
-			mergePanel.addItems( [ mergeFieldLayout, mergeAllButton ] );
-			return unwrapWidget( mergePanel );
-		}
-
-		/**
-		 * Updates the preview panel rendered with `renderPreviewPanel()`.
-		 */
-		private async updatePreviewPanel(): Promise<void> {
-			if ( !this.previewPanel ) {
-				// Skip if still unavailable.
-				return;
-			}
-
-			await this.copiedTemplate.generatePreview().then( ( data ) => {
-				this.previewPanel.innerHTML = data;
-
-				// Remove DiscussionTools empty talk page notice
-				const emptyStateNotice = this.previewPanel.querySelector<HTMLElement>(
-					'.ext-discussiontools-emptystate'
-				);
-				if ( emptyStateNotice ) {
-					removeElement( emptyStateNotice );
-				}
-
-				// Make all anchor links open in a new tab (prevents exit navigation)
-				this.previewPanel.querySelectorAll( 'a' )
-					.forEach( ( el: HTMLElement ) => {
-						el.setAttribute( 'target', '_blank' );
-						el.setAttribute( 'rel', 'noopener' );
-					} );
-
-				// Infuse collapsibles
-				( $( this.previewPanel ).find( '.collapsible' ) as any )
-					.makeCollapsible();
-			} );
-		}
-
-		/**
-		 * Renders the preview "panel". Not an actual panel, but rather a <div> that
-		 * shows a preview of the template to be saved.
-		 *
-		 * @return A <div> element, containing an HTML render of the template wikitext.
-		 */
-		renderPreviewPanel(): JSX.Element {
-			this.previewPanel = <div class="cte-preview" /> as HTMLElement;
-
-			// Listen for changes
-			this.copiedTemplate.addEventListener( 'save', () => {
-				this.updatePreview();
-			} );
-			this.updatePreview();
-
-			return this.previewPanel;
 		}
 
 		/**
@@ -387,11 +242,11 @@ function initCopiedTemplatePage() {
 			};
 			this.fields = {
 				collapse: new OO.ui.FieldLayout( this.inputSet.collapse, {
-					label: 'Collapse',
+					label: mw.message( 'deputy.cte.copied.collapse' ).text(),
 					align: 'inline'
 				} ),
 				small: new OO.ui.FieldLayout( this.inputSet.small, {
-					label: 'Small',
+					label: mw.message( 'deputy.cte.copied.small' ).text(),
 					align: 'inline'
 				} )
 			};

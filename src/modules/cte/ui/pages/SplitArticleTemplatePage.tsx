@@ -4,6 +4,9 @@ import SplitArticleTemplate from '../../models/templates/SplitArticleTemplate';
 import SplitArticleTemplateRowPage from './splitArticleTemplateRowPage';
 import { AttributionNoticePageLayout } from './AttributionNoticePageLayout';
 import { h } from 'tsx-dom';
+import unwrapWidget from '../../../../util/unwrapWidget';
+import CTEParsoidDocument from '../../models/CTEParsoidDocument';
+import { renderMergePanel, renderPreviewPanel } from '../RowPageShared';
 
 export interface SplitArticleTemplatePageData {
 	/**
@@ -36,6 +39,15 @@ function initSplitArticleTemplatePage() {
 		 * @inheritDoc
 		 */
 		parent: /* splitArticleTemplateEditorDialog */ any;
+		/**
+		 * The CTEParsoidDocument that this page refers to.
+		 */
+		document: CTEParsoidDocument;
+
+		/**
+		 * Label for this page.
+		 */
+		label: string;
 
 		/**
 		 * All child pages of this splitArticleTemplatePage. Garbage collected when rechecked.
@@ -88,7 +100,15 @@ function initSplitArticleTemplatePage() {
 			} );
 
 			this.$element.append(
-				this.renderHeader()
+				this.renderButtons(),
+				this.renderHeader(),
+				renderMergePanel(
+					'splitArticle',
+					this.splitArticleTemplate,
+					this.mergeButton
+				),
+				renderPreviewPanel( this.splitArticleTemplate ),
+				this.renderTemplateOptions()
 			);
 		}
 
@@ -109,7 +129,7 @@ function initSplitArticleTemplatePage() {
 			// Delete deleted rows from cache.
 			this.childPages.forEach( ( page, row ) => {
 				if ( rowPages.indexOf( page ) === -1 ) {
-					this.pageCache.delete( row );
+					this.childPages.delete( row );
 				}
 			} );
 
@@ -117,10 +137,111 @@ function initSplitArticleTemplatePage() {
 		}
 
 		/**
+		 * Renders the set of buttons that appear at the top of the page.
+		 *
+		 * @return A <div> element.
+		 */
+		renderButtons(): JSX.Element {
+			const buttonSet = <div style={{ float: 'right' }}/>;
+
+			this.mergeButton = new OO.ui.ButtonWidget( {
+				icon: 'tableMergeCells',
+				title: mw.message( 'deputy.cte.merge' ).text(),
+				framed: false
+			} );
+			const deleteButton = new OO.ui.ButtonWidget( {
+				icon: 'trash',
+				title: mw.message( 'deputy.cte.splitArticle.remove' ).text(),
+				framed: false,
+				flags: [ 'destructive' ]
+			} );
+			deleteButton.on( 'click', () => {
+				if ( this.splitArticleTemplate.rows.length > 0 ) {
+					OO.ui.confirm(
+						mw.message(
+							'deputy.cte.splitArticle.remove.confirm',
+							`${this.splitArticleTemplate.rows.length}`
+						).text()
+					).done( ( confirmed: boolean ) => {
+						if ( confirmed ) {
+							this.splitArticleTemplate.destroy();
+						}
+					} );
+				} else {
+					this.splitArticleTemplate.destroy();
+				}
+			} );
+			const addButton = new OO.ui.ButtonWidget( {
+				flags: [ 'progressive' ],
+				icon: 'add',
+				label: mw.message( 'deputy.cte.splitArticle.add' ).text()
+			} );
+			addButton.on( 'click', () => {
+				this.splitArticleTemplate.addRow( new SplitArticleTemplateRow(
+					{}, this.splitArticleTemplate
+				) );
+			} );
+
+			this.splitArticleTemplate.addEventListener( 'rowAdd', () => {
+				// TODO: Remove after template improvements.
+				addButton.setDisabled( this.splitArticleTemplate.rows.length >= 10 );
+			} );
+
+			buttonSet.appendChild( unwrapWidget( this.mergeButton ) );
+			buttonSet.appendChild( unwrapWidget( deleteButton ) );
+			buttonSet.appendChild( unwrapWidget( addButton ) );
+
+			return buttonSet;
+		}
+
+		/**
 		 * @return The rendered header of this PageLayout.
 		 */
 		renderHeader(): JSX.Element {
 			return <h3>{ this.label }</h3>;
+		}
+
+		/**
+		 * Renders the global options of this template. This includes parameters that are not
+		 * counted towards an entry and affect the template as a whole.
+		 *
+		 * @return A <div> element.
+		 */
+		renderTemplateOptions(): JSX.Element {
+			const page = new mw.Title(
+				this.splitArticleTemplate.parsoid.getPage()
+			).getSubjectPage().getPrefixedText();
+
+			const collapse = new OO.ui.CheckboxInputWidget( {
+				value: this.splitArticleTemplate.collapse
+			} );
+			const from = new mw.widgets.TitleInputWidget( {
+				$overlay: this.parent.$overlay,
+				value: this.splitArticleTemplate.from || '',
+				placeholder: page
+			} );
+
+			collapse.on( 'change', ( value: boolean ) => {
+				this.splitArticleTemplate.collapse = value;
+				this.splitArticleTemplate.save();
+			} );
+			from.on( 'change', ( value: string ) => {
+				this.splitArticleTemplate.from = value.length > 0 ? value : page;
+				this.splitArticleTemplate.save();
+			} );
+
+			return <div class="cte-templateOptions">
+				<div style="flex: 0.5">{ unwrapWidget( new OO.ui.FieldLayout( collapse, {
+					$overlay: this.parent.$overlay,
+					align: 'inline',
+					label: mw.message( 'deputy.cte.splitArticle.collapse' ).text()
+				} ) )}</div>
+				<div>{ unwrapWidget( new OO.ui.FieldLayout( from, {
+					$overlay: this.parent.$overlay,
+					label: mw.message( 'deputy.cte.splitArticle.from' ).text(),
+					help: mw.message( 'deputy.cte.splitArticle.from.help' ).text()
+				} ) ) }</div>
+			</div>;
 		}
 
 		/**
