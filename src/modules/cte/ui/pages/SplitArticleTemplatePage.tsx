@@ -1,7 +1,7 @@
 import '../../../../types';
 import SplitArticleTemplateRow from '../../models/templates/SplitArticleTemplateRow';
 import SplitArticleTemplate from '../../models/templates/SplitArticleTemplate';
-import SplitArticleTemplateRowPage from './splitArticleTemplateRowPage';
+import SplitArticleTemplateRowPage from './SplitArticleTemplateRowPage';
 import { AttributionNoticePageLayout } from './AttributionNoticePageLayout';
 import { h } from 'tsx-dom';
 import unwrapWidget from '../../../../util/unwrapWidget';
