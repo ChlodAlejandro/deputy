@@ -52,6 +52,8 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          NODE_ENV: production
 
       - name: Upload transpiled code
         uses: actions/upload-artifact@v3
