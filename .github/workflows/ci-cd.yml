@@ -49,3 +49,18 @@ jobs:
         run: npm run test
         env:
           PUPPETEER_PRODUCT: ${{ matrix.product }}
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload transpiled code
+        uses: actions/upload-artifact@v3
+        with:
+          name: builds
+          path: build/*.js
+
+      - name: Upload sourcemaps
+        uses: actions/upload-artifact@v3
+        with:
+          name: sourcemaps
+          path: build/*.js.map
