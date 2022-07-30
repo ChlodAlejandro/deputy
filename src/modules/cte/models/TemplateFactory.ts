@@ -4,6 +4,7 @@ import CTEParsoidDocument from './CTEParsoidDocument';
 import WikiAttributionNotices, { SupportedAttributionNoticeType } from './WikiAttributionNotices';
 import nsId from '../../../util/nsId';
 import SplitArticleTemplate from './templates/SplitArticleTemplate';
+import MergedFromTemplate from './templates/MergedFromTemplate';
 
 /**
  * Creates blank attribution notices. Its own class to avoid circular dependencies.
@@ -72,6 +73,24 @@ export default class TemplateFactory {
 		node.element.setAttribute( 'about', `N${TemplateFactory.noticeCount++}` );
 		node.element.classList.add( 'box-split-article' );
 		return new SplitArticleTemplate( node );
+	}
+
+	/**
+	 * Creates a new {@link MergedFromTemplate}
+	 *
+	 * @param document
+	 * @return A new MergedFromTemplate
+	 */
+	static mergedFrom( document: CTEParsoidDocument ): MergedFromTemplate {
+		const templateWikitext = TemplateFactory.getTemplateWikitext( 'mergedFrom' );
+		const node = CTEParsoidTransclusionTemplateNode.fromNew(
+			document,
+			templateWikitext,
+			{},
+		);
+		node.element.setAttribute( 'about', `N${TemplateFactory.noticeCount++}` );
+		node.element.classList.add( 'box-merged-from' );
+		return new MergedFromTemplate( node );
 	}
 
 }

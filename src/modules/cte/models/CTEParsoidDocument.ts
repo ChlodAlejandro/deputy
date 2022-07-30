@@ -128,7 +128,8 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 		// TODO: Just use a simple "if" for {{translated page}}.
 		const positionIndices: Record<SupportedAttributionNoticeType, number> = {
 			copied: 0,
-			splitArticle: 1
+			splitArticle: 1,
+			mergedFrom: 2
 		};
 		const positionIndex = positionIndices[ type ];
 		const variableSpots: [InsertPosition, HTMLElement|null][] = [
@@ -145,18 +146,17 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 					this.document.querySelector( '.box-split-article' )
 			],
 			[
-				// TODO: replace `copied` with `mergedTo` when it's available.
+				// TODO: replace `copied` with `mergedFrom` when it's available.
+				positionIndex >= positionIndices.mergedFrom ? 'afterend' : 'beforebegin',
+				positionIndex >= positionIndices.mergedFrom ?
+					last( this.document.querySelectorAll( '.box-merged-from' ) ) :
+					this.document.querySelector( '.box-merged-from' )
+			],
+			[
 				positionIndex >= positionIndices.copied ? 'afterend' : 'beforebegin',
 				positionIndex >= positionIndices.copied ?
 					last( this.document.querySelectorAll( '.box-merged-to' ) ) :
 					this.document.querySelector( '.box-merged-to' )
-			],
-			[
-				// TODO: replace `copied` with `mergedFrom` when it's available.
-				positionIndex >= positionIndices.copied ? 'afterend' : 'beforebegin',
-				positionIndex >= positionIndices.copied ?
-					last( this.document.querySelectorAll( '.box-merged-from' ) ) :
-					this.document.querySelector( '.box-merged-from' )
 			]
 		];
 
@@ -228,7 +228,8 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 			SupportedAttributionNoticeType, ( document: CTEParsoidDocument ) => AttributionNotice>
 		>{
 			copied: TemplateFactory.copied,
-			splitArticle: TemplateFactory.splitArticle
+			splitArticle: TemplateFactory.splitArticle,
+			mergedFrom: TemplateFactory.mergedFrom
 		} )[ type ]( this );
 
 		// Insert.
