@@ -31,12 +31,10 @@ function initSplitArticleTemplateRowPage() {
 		extends OO.ui.PageLayout
 		implements AttributionNoticePageLayout, SplitArticleTemplateRowPageData {
 
+		label: string;
+
 		splitArticleTemplateRow: SplitArticleTemplateRow;
 		parent: ReturnType<typeof CopiedTemplateEditorDialog>;
-
-		// Elements
-		inputs: Record<SplitArticleTemplateRowParameter, any>;
-		fieldLayouts: Record<SplitArticleTemplateRowParameter, any>;
 
 		/**
 		 * @param config Configuration to be passed to the element.
@@ -51,16 +49,13 @@ function initSplitArticleTemplateRowPage() {
 			}
 
 			const finalConfig = {
-				label: `${
-					splitArticleTemplateRow.to || '???'
-				} on ${splitArticleTemplateRow.date || '???'}`,
 				classes: [ 'cte-page-row' ]
 			};
 			super( splitArticleTemplateRow.id, finalConfig );
 
 			this.parent = parent;
 			this.splitArticleTemplateRow = splitArticleTemplateRow;
-			this.label = finalConfig.label;
+			this.refreshLabel();
 
 			this.splitArticleTemplateRow.parent.addEventListener( 'destroy', () => {
 				parent.rebuildPages();
@@ -70,6 +65,20 @@ function initSplitArticleTemplateRowPage() {
 			} );
 
 			this.$element.append( this.render().$element );
+		}
+
+		/**
+		 * Refreshes the page's label
+		 */
+		refreshLabel(): void {
+			this.label = mw.message(
+				'deputy.cte.splitArticle.entry.short',
+				this.splitArticleTemplateRow.to || '???',
+				this.splitArticleTemplateRow.date || '???'
+			).text();
+			if ( this.outlineItem ) {
+				this.outlineItem.setLabel( this.label );
+			}
 		}
 
 		/**
@@ -134,7 +143,7 @@ function initSplitArticleTemplateRowPage() {
 							)
 					);
 
-			this.inputs = {
+			const inputs = {
 				to: new mw.widgets.TitleInputWidget( {
 					$overlay: this.parent.$overlay,
 					required: true,
@@ -171,27 +180,27 @@ function initSplitArticleTemplateRowPage() {
 					}
 				} )
 			};
-			this.fieldLayouts = {
-				to: new OO.ui.FieldLayout( this.inputs.to, {
+			const fieldLayouts = {
+				to: new OO.ui.FieldLayout( inputs.to, {
 					$overlay: this.parent.$overlay,
 					align: 'top',
 					label: mw.message( 'deputy.cte.splitArticle.to.label' ).text(),
 					help: mw.message( 'deputy.cte.splitArticle.to.help' ).text()
 				} ),
 				// eslint-disable-next-line camelcase
-				from_oldid: new OO.ui.FieldLayout( this.inputs.from_oldid, {
+				from_oldid: new OO.ui.FieldLayout( inputs.from_oldid, {
 					$overlay: this.parent.$overlay,
 					align: 'left',
 					label: mw.message( 'deputy.cte.splitArticle.from_oldid.label' ).text(),
 					help: mw.message( 'deputy.cte.splitArticle.from_oldid.help' ).text()
 				} ),
-				date: new OO.ui.FieldLayout( this.inputs.date, {
+				date: new OO.ui.FieldLayout( inputs.date, {
 					$overlay: this.parent.$overlay,
 					align: 'left',
 					label: mw.message( 'deputy.cte.splitArticle.date.label' ).text(),
 					help: mw.message( 'deputy.cte.splitArticle.date.help' ).text()
 				} ),
-				diff: new OO.ui.FieldLayout( this.inputs.diff, {
+				diff: new OO.ui.FieldLayout( inputs.diff, {
 					$overlay: this.parent.$overlay,
 					align: 'left',
 					label: mw.message( 'deputy.cte.splitArticle.diff.label' ).text(),
@@ -199,9 +208,9 @@ function initSplitArticleTemplateRowPage() {
 				} )
 			};
 
-			for ( const _field in this.inputs ) {
+			for ( const _field in inputs ) {
 				const field = _field as SplitArticleTemplateRowParameter;
-				const input = this.inputs[ field ];
+				const input = inputs[ field ];
 
 				// Attach the change listener
 				input.on( 'change', ( value: string ) => {
@@ -211,7 +220,7 @@ function initSplitArticleTemplateRowPage() {
 								year: 'numeric', month: 'long', day: 'numeric'
 							} );
 						if ( value.length > 0 ) {
-							this.fieldLayouts[ field ].setWarnings( [] );
+							fieldLayouts[ field ].setWarnings( [] );
 						}
 					} else {
 						this.splitArticleTemplateRow[ field ] = value;
@@ -225,22 +234,14 @@ function initSplitArticleTemplateRowPage() {
 				}
 			}
 
-			this.inputs.to.on( 'change', () => {
-				this.outlineItem.setLabel(
-					`${
-						this.splitArticleTemplateRow.to || '???'
-					} on ${this.splitArticleTemplateRow.date || '???'}`
-				);
+			inputs.to.on( 'change', () => {
+				this.refreshLabel();
 			} );
-			this.inputs.date.on( 'change', () => {
-				this.outlineItem.setLabel(
-					`${
-						this.splitArticleTemplateRow.to || '???'
-					} on ${this.splitArticleTemplateRow.date || '???'}`
-				);
+			inputs.date.on( 'change', () => {
+				this.refreshLabel();
 			} );
 
-			return getObjectValues( this.fieldLayouts );
+			return getObjectValues( fieldLayouts );
 		}
 
 		/**

@@ -92,12 +92,13 @@
 	padding-right: 0;
 }
 
-.cte-page-template,
+.cte-page-row,
+.cte-page-template:not(:last-child),
 .cte-fieldset-date.oo-ui-actionFieldLayout.oo-ui-fieldLayout-align-top .oo-ui-fieldLayout-header {
 	padding-bottom: 0 !important;
 }
 
-.cte-page-row {
+.cte-page-template + .cte-page-row {
 	padding-top: 0 !important;
 }
 

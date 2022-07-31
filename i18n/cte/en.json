@@ -32,6 +32,8 @@
     "deputy.cte.merge.all.confirm": "You are about to merge $1 'copied' {{PLURAL:$1|notice|notices}} into this notice. Continue?",
     "deputy.cte.merge.button": "Merge",
 
+    "deputy.cte.templateOptions": "Template options",
+
     "deputy.cte.copied.label": "Copied $1",
 
     "deputy.cte.copied.remove": "Remove notice",
@@ -39,6 +41,7 @@
     "deputy.cte.copied.add": "Add entry",
 
     "deputy.cte.copied.entry.label": "Template entry",
+    "deputy.cte.copied.entry.short": "$1 to $2",
 
     "deputy.cte.copied.entry.remove": "Remove entry",
     "deputy.cte.copied.entry.copy": "Copy attribution edit summary",
@@ -66,7 +69,7 @@
     "deputy.cte.copied.diff.placeholder": "https://en.wikipedia.org/w/index.php?diff=123456",
     "deputy.cte.copied.diff.label": "Diff URL",
     "deputy.cte.copied.diff.help": "The URL of the diff. Using <code>to_diff</code> and <code>to_oldid</code> is preferred, although supplying this parameter will override both.",
-    "deputy.cte.copied.merge.label": "Merged",
+    "deputy.cte.copied.merge.label": "Merged?",
     "deputy.cte.copied.merge.help": "Whether the copying was done as a result of merging two pages.",
     "deputy.cte.copied.afd.placeholder": "AfD page (without Wikipedia:Articles for deletion/)",
     "deputy.cte.copied.afd.label": "AfD page",
@@ -86,6 +89,7 @@
 
     "deputy.cte.splitArticle.entry.label": "Template entry",
     "deputy.cte.splitArticle.entry.remove": "Remove entry",
+    "deputy.cte.splitArticle.entry.short": "$1 on $2",
 
     "deputy.cte.splitArticle.collapse": "Collapse",
     "deputy.cte.splitArticle.from": "From",
@@ -101,5 +105,22 @@
     "deputy.cte.splitArticle.date.help": "The date that the split occurred.",
     "deputy.cte.splitArticle.diff.placeholder": "https://en.wikipedia.org/w/index.php?diff=123456&oldid=123455",
     "deputy.cte.splitArticle.diff.label": "Diff URL",
-    "deputy.cte.splitArticle.diff.help": "The diff URL of the split."
+    "deputy.cte.splitArticle.diff.help": "The diff URL of the split.",
+
+    "deputy.cte.mergedFrom.label": "Merged from $1",
+    "deputy.cte.mergedFrom.remove": "Remove notice",
+
+    "deputy.cte.mergedFrom.article.placeholder": "Page A",
+    "deputy.cte.mergedFrom.article.label": "Original article",
+    "deputy.cte.mergedFrom.article.help": "This is the page where the merged content is or used to be.",
+    "deputy.cte.mergedFrom.date.label": "Date",
+    "deputy.cte.mergedFrom.date.help": "The date (in UTC) when the content was merged into this page.",
+    "deputy.cte.mergedFrom.talk.label": "Link to talk?",
+    "deputy.cte.mergedFrom.talk.help": "Whether to link to the original article's talk page or not.",
+    "deputy.cte.mergedFrom.target.placeholder": "Page B",
+    "deputy.cte.mergedFrom.target.label": "Merge target",
+    "deputy.cte.mergedFrom.target.help": "The page that the content was merged into. Used if the page that the content was merged into was the talk page.",
+    "deputy.cte.mergedFrom.afd.placeholder": "Wikipedia:Articles for deletion/Page A",
+    "deputy.cte.mergedFrom.afd.label": "AfD",
+    "deputy.cte.mergedFrom.afd.help": "The AfD discussion that led to the merge. If this merge was not the result of an AfD discussion, leave this blank."
 }

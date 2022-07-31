@@ -6,6 +6,7 @@ import { AttributionNoticePageLayout } from '../../ui/pages/AttributionNoticePag
 import CopiedTemplatePage from '../../ui/pages/CopiedTemplatePage';
 import { AttributionNoticePageGenerator } from '../../ui/AttributionNoticePageGenerator';
 import RowedAttributionNotice from '../RowedAttributionNotice';
+import yesNo from '../../../../util/yesNo';
 
 /**
  * Represents a single {{copied}} template in the Parsoid document.
@@ -41,10 +42,10 @@ export default class CopiedTemplate
 	 */
 	parse() {
 		if ( this.node.getParameter( 'collapse' ) ) {
-			this.collapsed = this.node.getParameter( 'collapse' ).trim().length > 0;
+			this.collapsed = yesNo( this.node.getParameter( 'collapse' ).trim() );
 		}
 		if ( this.node.getParameter( 'small' ) ) {
-			this.small = this.node.getParameter( 'small' ).trim().length > 0;
+			this.small = yesNo( this.node.getParameter( 'small' ).trim() );
 		}
 
 		// Extract {{copied}} rows.

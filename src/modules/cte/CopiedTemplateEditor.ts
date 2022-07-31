@@ -126,7 +126,10 @@ export default class CopiedTemplateEditor {
 						// Find all {{copied}} templates and append our special button.
 						// This runs on the actual document, not the Parsoid document.
 						document.querySelectorAll(
-							[ 'copiednotice', 'box-split-article' ].map(
+							[
+								'copiednotice', 'box-split-article', 'box-merged-from',
+								'box-merged-to', 'box-backwards-copy', 'box-translated-page'
+							].map(
 								( v ) => `.${v} > tbody > tr`
 							).join( ', ' )
 						)

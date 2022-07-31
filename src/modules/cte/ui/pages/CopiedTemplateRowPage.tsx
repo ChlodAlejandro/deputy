@@ -9,6 +9,7 @@ import copyToClipboard from '../../../../util/copyToClipboard';
 import getObjectValues from '../../../../util/getObjectValues';
 import CopiedTemplateEditorDialog from '../CopiedTemplateEditorDialog';
 import { AttributionNoticePageLayout } from './AttributionNoticePageLayout';
+import yesNo from '../../../../util/yesNo';
 
 export interface CopiedTemplateRowPageData {
 	/**
@@ -77,14 +78,13 @@ function initCopiedTemplateRowPage() {
 			}
 
 			const finalConfig = {
-				label: `${copiedTemplateRow.from || '???'} to ${copiedTemplateRow.to || '???'}`,
 				classes: [ 'cte-page-row' ]
 			};
 			super( copiedTemplateRow.id, finalConfig );
 
 			this.parent = parent;
 			this.copiedTemplateRow = copiedTemplateRow;
-			this.label = finalConfig.label;
+			this.refreshLabel();
 
 			this.copiedTemplateRow.parent.addEventListener( 'destroy', () => {
 				parent.rebuildPages();
@@ -94,6 +94,20 @@ function initCopiedTemplateRowPage() {
 			} );
 
 			this.$element.append( this.render().$element );
+		}
+
+		/**
+		 * Refreshes the page's label
+		 */
+		refreshLabel(): void {
+			this.label = mw.message(
+				'deputy.cte.copied.entry.short',
+				this.copiedTemplateRow.from || '???',
+				this.copiedTemplateRow.to || '???'
+			).text();
+			if ( this.outlineItem ) {
+				this.outlineItem.setLabel( this.label );
+			}
 		}
 
 		/**
@@ -260,7 +274,7 @@ function initCopiedTemplateRowPage() {
 					value: copiedTemplateRow.diff
 				} ),
 				merge: new OO.ui.CheckboxInputWidget( {
-					value: copiedTemplateRow.merge !== undefined
+					value: yesNo( copiedTemplateRow.merge )
 				} ),
 				afd: new OO.ui.TextInputWidget( {
 					placeholder: mw.message( 'deputy.cte.copied.afd.placeholder' ).text(),
@@ -332,9 +346,9 @@ function initCopiedTemplateRowPage() {
 				} ),
 				merge: new OO.ui.FieldLayout( this.inputs.merge, {
 					$overlay: this.parent.$overlay,
-					label: mw.message( 'deputy.cte.merge.label' ).text(),
+					label: mw.message( 'deputy.cte.copied.merge.label' ).text(),
 					align: 'inline',
-					help: mw.message( 'deputy.cte.merge.help' ).text()
+					help: mw.message( 'deputy.cte.copied.merge.help' ).text()
 				} ),
 				afd: new OO.ui.FieldLayout( this.inputs.afd, {
 					$overlay: this.parent.$overlay,
@@ -426,16 +440,10 @@ function initCopiedTemplateRowPage() {
 				);
 			} );
 			this.inputs.from.on( 'change', () => {
-				/** @member any */
-				this.outlineItem.setLabel(
-					`${this.inputs.from.value || '???'} to ${this.inputs.to.value || '???'}`
-				);
+				this.refreshLabel();
 			} );
 			this.inputs.to.on( 'change', () => {
-				/** @member any */
-				this.outlineItem.setLabel(
-					`${this.inputs.from.value || '???'} to ${this.inputs.to.value || '???'}`
-				);
+				this.refreshLabel();
 			} );
 
 			for ( const _field in this.inputs ) {
@@ -448,6 +456,7 @@ function initCopiedTemplateRowPage() {
 				// Attach the change listener
 				input.on( 'change', ( value: string ) => {
 					if ( input instanceof OO.ui.CheckboxInputWidget ) {
+						// Specific to `merge`. Watch out before adding more checkboxes.
 						this.copiedTemplateRow[ field ] = value ? 'yes' : '';
 					} else if ( input instanceof mw.widgets.datetime.DateTimeInputWidget ) {
 						this.copiedTemplateRow[ field ] =

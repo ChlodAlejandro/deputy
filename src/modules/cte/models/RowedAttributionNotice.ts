@@ -56,16 +56,16 @@ export default abstract class RowedAttributionNotice<
 			if ( this.node.hasParameter( key ) !== undefined ) {
 				row[ key ] = this.node.getParameter( key );
 			} else if (
-				suffix === '' && this.node.getParameter( `${key}1` ) !== undefined
+				suffix === '' && this.node.hasParameter( `${key}1` )
 			) {
 				// Non-numbered parameter not found but a numbered parameter with
-				// an index of 1 was. Fall back to that value.
-				row[ key ] = this.node.getParameter( `${key}1` );
+				// an index of 1 was found. Fall back to that value.
+				row[ key ] = this.node.getParameter( `${key}1` ).trim();
 			} else if (
-				suffix === 1 && this.node.getParameter( `${key}` )
+				suffix === 1 && this.node.hasParameter( `${key}` )
 			) {
 				// This is i = 1, so fall back to a non-numbered parameter (if exists)
-				const unnumberedParamValue = this.node.getParameter( `${key}` );
+				const unnumberedParamValue = this.node.getParameter( `${key}` ).trim();
 				if ( unnumberedParamValue !== undefined ) {
 					row[ key ] = unnumberedParamValue;
 				}

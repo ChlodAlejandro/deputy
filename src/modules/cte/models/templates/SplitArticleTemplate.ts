@@ -7,6 +7,7 @@ import SplitArticleTemplateRow, {
 } from './SplitArticleTemplateRow';
 import RowedAttributionNotice from '../RowedAttributionNotice';
 import SplitArticleTemplatePage from '../../ui/pages/SplitArticleTemplatePage';
+import yesNo from '../../../../util/yesNo';
 
 /**
  * Represents a single {{split article}} template.
@@ -26,7 +27,7 @@ export default class SplitArticleTemplate
 			this.from = this.node.getParameter( 'from' ).trim();
 		}
 		if ( this.node.hasParameter( 'collapse' ) ) {
-			this.collapse = this.node.getParameter( 'collapse' ).trim().length > 0;
+			this.collapse = yesNo( this.node.getParameter( 'collapse' ) );
 		}
 
 		// Extract {{copied}} rows.
@@ -94,10 +95,10 @@ export default class SplitArticleTemplate
 	 * @inheritDoc
 	 */
 	destroy(): void {
-		this.dispatchEvent( new Event( 'destroy' ) );
-		this.accessTemplateData( () => undefined );
+		this.node.destroy();
 		// Self-destruct
 		Object.keys( this ).forEach( ( k ) => delete ( this as any )[ k ] );
+		this.dispatchEvent( new Event( 'destroy' ) );
 	}
 
 	/**

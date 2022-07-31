@@ -1,21 +1,11 @@
-import CopiedTemplateRow, {
-	copiedTemplateRowParameters,
-	RawCopiedTemplateRow
-} from './CopiedTemplateRow';
+import CopiedTemplateRow from './CopiedTemplateRow';
 import { AttributionNoticePageLayout } from '../../ui/pages/AttributionNoticePageLayout';
-import CopiedTemplatePage from '../../ui/pages/CopiedTemplatePage';
 import { AttributionNoticePageGenerator } from '../../ui/AttributionNoticePageGenerator';
 import RowedAttributionNotice from '../RowedAttributionNotice';
 import MergedFromTemplatePage from '../../ui/pages/MergedFromTemplatePage';
+import yesNo from '../../../../util/yesNo';
 
-/**
- * Represents a single {{merged-from}} template in the Parsoid document.
- */
-export default class MergedFromTemplate
-	extends RowedAttributionNotice<CopiedTemplateRow>
-	implements AttributionNoticePageGenerator {
-
-	// TEMPLATE OPTIONS
+export interface RawMergedFromTemplate {
 	/**
 	 * The article that content from the target page was originally from.
 	 */
@@ -25,9 +15,7 @@ export default class MergedFromTemplate
 	 */
 	date: string;
 	/**
-	 * If the merge discussion occurred on a talk page that is not the target
-	 * page's talk page, this should be supplied with the page title of that talk
-	 * page.
+	 * Whether to link to the original article's talk page or not.
 	 */
 	talk?: string;
 	/**
@@ -40,6 +28,27 @@ export default class MergedFromTemplate
 	 *
 	 * @example "Wikipedia:Articles for deletion/Wikipedia"
 	 */
+	afd?: string;
+}
+export type MergedFromTemplateParameter = keyof RawMergedFromTemplate;
+
+/**
+ * Represents a single {{merged-from}} template in the Parsoid document.
+ */
+export default class MergedFromTemplate
+	extends RowedAttributionNotice<CopiedTemplateRow>
+	implements AttributionNoticePageGenerator, RawMergedFromTemplate {
+
+	// TEMPLATE OPTIONS
+	/** @inheritDoc */
+	article: string;
+	/** @inheritDoc */
+	date: string;
+	/** @inheritDoc */
+	talk?: string;
+	/** @inheritDoc */
+	target?: string;
+	/** @inheritDoc */
 	afd?: string;
 
 	/**
@@ -73,13 +82,13 @@ export default class MergedFromTemplate
 		this.node.setParameter( '1', this.article.trim() );
 		this.node.setParameter( '2', this.date.trim() );
 		this.node.setParameter(
-			'talk', this.talk.trim().length > 0 ? this.talk.trim() : null
+			'talk', yesNo( this.talk ) ? null : 'no'
 		);
 		this.node.setParameter(
-			'target', this.target.trim().length > 0 ? this.target.trim() : null
+			'target', ( this.target ?? '' ).trim().length > 0 ? this.target.trim() : null
 		);
 		this.node.setParameter(
-			'afd', this.afd.trim().length > 0 ? this.afd.trim() : null
+			'afd', ( this.afd ?? '' ).trim().length > 0 ? this.afd.trim() : null
 		);
 
 		this.dispatchEvent( new Event( 'save' ) );
