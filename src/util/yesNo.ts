@@ -17,12 +17,12 @@ export default function ( value: string|number|boolean, pull = true ): boolean {
 			value !== 'off' &&
 			+value !== 0;
 	} else {
-		return value !== true &&
+		return !( value !== true &&
 			value !== 'yes' &&
 			value !== 'y' &&
 			value !== 't' &&
 			value !== 'true' &&
 			value !== 'on' &&
-			value !== '1';
+			+value !== 1 );
 	}
 }

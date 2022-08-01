@@ -5,6 +5,7 @@ import CopiedTemplate from './templates/CopiedTemplate';
 import MwApi from '../../../MwApi';
 import SplitArticleTemplate from './templates/SplitArticleTemplate';
 import MergedFromTemplate from './templates/MergedFromTemplate';
+import MergedToTemplate from './templates/MergedToTemplate';
 
 /**
  * An object mapping notice types to their expected on-wiki page titles.
@@ -12,8 +13,8 @@ import MergedFromTemplate from './templates/MergedFromTemplate';
 export const attributionNoticeTemplatePages = {
 	copied: 'Copied',
 	splitArticle: 'Split article',
-	mergedFrom: 'Merged-from'
-	// mergedTo: 'Merged-to',
+	mergedFrom: 'Merged-from',
+	mergedTo: 'Merged-to'
 	// translatedPage: 'Translated page',
 	// backwardsCopy: 'Backwards copy'
 };
@@ -56,9 +57,8 @@ export default class WikiAttributionNotices {
 	static readonly attributionNoticeClasses = <const>{
 		copied: CopiedTemplate,
 		splitArticle: SplitArticleTemplate,
-		mergedFrom: MergedFromTemplate
-		// TODO: Implement
-		// mergedTo: class Null {},
+		mergedFrom: MergedFromTemplate,
+		mergedTo: MergedToTemplate
 		// TODO: Implement
 		// translatedPage: class Null {},
 		// TODO: Implement

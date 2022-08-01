@@ -1,21 +1,20 @@
 import '../../../../types';
-import MergedFromTemplate, {
-	MergedFromTemplateParameter
-} from '../../models/templates/MergedFromTemplate';
+import MergedToTemplate, {
+	MergedToTemplateParameter
+} from '../../models/templates/MergedToTemplate';
 import CTEParsoidDocument from '../../models/CTEParsoidDocument';
 import { AttributionNoticePageLayout } from './AttributionNoticePageLayout';
 import { h } from 'tsx-dom';
 import unwrapWidget from '../../../../util/unwrapWidget';
 import { renderPreviewPanel } from '../RowPageShared';
 import getObjectValues from '../../../../util/getObjectValues';
-import nsId from '../../../../util/nsId';
 import yesNo from '../../../../util/yesNo';
 
-export interface MergedFromTemplatePageData {
+export interface MergedToTemplatePageData {
 	/**
 	 * The template that this page refers to.
 	 */
-	mergedFromTemplate: MergedFromTemplate;
+	mergedToTemplate: MergedToTemplate;
 	/**
 	 * The parent of this page.
 	 *
@@ -24,20 +23,20 @@ export interface MergedFromTemplatePageData {
 	parent: /* CopiedTemplateEditorDialog */ any;
 }
 
-let InternalMergedFromTemplatePage: any;
+let InternalMergedToTemplatePage: any;
 
 /**
  * Initializes the process element.
  */
-function initMergedFromTemplatePage() {
-	InternalMergedFromTemplatePage = class MergedFromTemplatePage
+function initMergedToTemplatePage() {
+	InternalMergedToTemplatePage = class MergedToTemplatePage
 		extends OO.ui.PageLayout
-		implements AttributionNoticePageLayout, MergedFromTemplatePageData {
+		implements AttributionNoticePageLayout, MergedToTemplatePageData {
 
 		/**
 		 * @inheritDoc
 		 */
-		mergedFromTemplate: MergedFromTemplate;
+		mergedToTemplate: MergedToTemplate;
 		/**
 		 * @inheritDoc
 		 */
@@ -55,13 +54,13 @@ function initMergedFromTemplatePage() {
 		/**
 		 * @param config Configuration to be passed to the element.
 		 */
-		constructor( config: MergedFromTemplatePageData ) {
-			const { mergedFromTemplate, parent } = config;
+		constructor( config: MergedToTemplatePageData ) {
+			const { mergedToTemplate, parent } = config;
 
 			if ( parent == null ) {
 				throw new Error( 'Parent dialog (CopiedTemplateEditorDialog) is required' );
-			} else if ( mergedFromTemplate == null ) {
-				throw new Error( 'Reference template (MergedFromTemplate) is required' );
+			} else if ( mergedToTemplate == null ) {
+				throw new Error( 'Reference template (MergedToTemplate) is required' );
 			}
 
 			const finalConfig = {
@@ -69,12 +68,12 @@ function initMergedFromTemplatePage() {
 			};
 			super( finalConfig );
 
-			this.document = mergedFromTemplate.parsoid;
-			this.mergedFromTemplate = mergedFromTemplate;
+			this.document = mergedToTemplate.parsoid;
+			this.mergedToTemplate = mergedToTemplate;
 			this.parent = config.parent;
 			this.refreshLabel();
 
-			mergedFromTemplate.addEventListener( 'destroy', () => {
+			mergedToTemplate.addEventListener( 'destroy', () => {
 				parent.rebuildPages();
 			} );
 
@@ -82,7 +81,7 @@ function initMergedFromTemplatePage() {
 				this.renderButtons(),
 				this.renderHeader(),
 				renderPreviewPanel(
-					this.mergedFromTemplate
+					this.mergedToTemplate
 				),
 				this.renderTemplateOptions()
 			);
@@ -93,8 +92,8 @@ function initMergedFromTemplatePage() {
 		 */
 		refreshLabel(): void {
 			this.label = mw.message(
-				'deputy.cte.mergedFrom.label',
-				this.mergedFromTemplate.article || '???'
+				'deputy.cte.mergedTo.label',
+				this.mergedToTemplate.to || '???'
 			).text();
 			if ( this.outlineItem ) {
 				this.outlineItem.setLabel( this.label );
@@ -111,12 +110,12 @@ function initMergedFromTemplatePage() {
 
 			const deleteButton = new OO.ui.ButtonWidget( {
 				icon: 'trash',
-				title: mw.message( 'deputy.cte.mergedFrom.remove' ).text(),
+				title: mw.message( 'deputy.cte.mergedTo.remove' ).text(),
 				framed: false,
 				flags: [ 'destructive' ]
 			} );
 			deleteButton.on( 'click', () => {
-				this.mergedFromTemplate.destroy();
+				this.mergedToTemplate.destroy();
 			} );
 
 			buttonSet.appendChild( unwrapWidget( deleteButton ) );
@@ -141,7 +140,7 @@ function initMergedFromTemplatePage() {
 				classes: [ 'cte-fieldset' ]
 			} );
 
-			const rowDate = this.mergedFromTemplate.date;
+			const rowDate = this.mergedToTemplate.date;
 			const parsedDate =
 				( rowDate == null || rowDate.trim().length === 0 ) ?
 					undefined : (
@@ -153,11 +152,11 @@ function initMergedFromTemplatePage() {
 					);
 
 			const inputs = {
-				article: new mw.widgets.TitleInputWidget( {
+				to: new mw.widgets.TitleInputWidget( {
 					$overlay: this.parent.$overlay,
 					required: true,
-					value: this.mergedFromTemplate.article || '',
-					placeholder: mw.message( 'deputy.cte.mergedFrom.article.placeholder' ).text()
+					value: this.mergedToTemplate.to || '',
+					placeholder: mw.message( 'deputy.cte.mergedTo.to.placeholder' ).text()
 				} ),
 				date: new mw.widgets.datetime.DateTimeInputWidget( {
 					$overlay: this.parent.$overlay,
@@ -167,71 +166,42 @@ function initMergedFromTemplatePage() {
 					clearable: true,
 					value: parsedDate
 				} ),
-				target: new mw.widgets.TitleInputWidget( {
+				small: new OO.ui.CheckboxInputWidget( {
 					$overlay: this.parent.$overlay,
-					value: this.mergedFromTemplate.target || '',
-					placeholder: mw.message( 'deputy.cte.mergedFrom.target.placeholder' ).text()
-				} ),
-				afd: new mw.widgets.TitleInputWidget( {
-					$overlay: this.parent.$overlay,
-					value: this.mergedFromTemplate.afd || '',
-					placeholder: mw.message( 'deputy.cte.mergedFrom.afd.placeholder' ).text(),
-					validate: ( title: string ) => {
-						// TODO: l10n
-						return title.trim().length === 0 || title.startsWith(
-							new mw.Title( 'Articles for deletion/', nsId( 'wikipedia' ) )
-								.toText()
-						);
-					}
-				} ),
-				talk: new OO.ui.CheckboxInputWidget( {
-					$overlay: this.parent.$overlay,
-					selected: yesNo( this.mergedFromTemplate.target )
+					selected: yesNo( this.mergedToTemplate.small, false )
 				} )
 			};
 			const fieldLayouts = {
-				article: new OO.ui.FieldLayout( inputs.article, {
+				to: new OO.ui.FieldLayout( inputs.to, {
 					$overlay: this.parent.$overlay,
 					align: 'top',
-					label: mw.message( 'deputy.cte.mergedFrom.article.label' ).text(),
-					help: mw.message( 'deputy.cte.mergedFrom.article.help' ).text()
+					label: mw.message( 'deputy.cte.mergedTo.to.label' ).text(),
+					help: mw.message( 'deputy.cte.mergedTo.to.help' ).text()
 				} ),
 				date: new OO.ui.FieldLayout( inputs.date, {
 					$overlay: this.parent.$overlay,
 					align: 'left',
-					label: mw.message( 'deputy.cte.mergedFrom.date.label' ).text(),
-					help: mw.message( 'deputy.cte.mergedFrom.date.help' ).text()
+					label: mw.message( 'deputy.cte.mergedTo.date.label' ).text(),
+					help: mw.message( 'deputy.cte.mergedTo.date.help' ).text()
 				} ),
-				target: new OO.ui.FieldLayout( inputs.target, {
-					$overlay: this.parent.$overlay,
-					align: 'left',
-					label: mw.message( 'deputy.cte.mergedFrom.target.label' ).text(),
-					help: mw.message( 'deputy.cte.mergedFrom.target.help' ).text()
-				} ),
-				afd: new OO.ui.FieldLayout( inputs.afd, {
-					$overlay: this.parent.$overlay,
-					align: 'left',
-					label: mw.message( 'deputy.cte.mergedFrom.afd.label' ).text(),
-					help: mw.message( 'deputy.cte.mergedFrom.afd.help' ).text()
-				} ),
-				talk: new OO.ui.FieldLayout( inputs.talk, {
+				small: new OO.ui.FieldLayout( inputs.small, {
 					$overlay: this.parent.$overlay,
 					align: 'inline',
-					label: mw.message( 'deputy.cte.mergedFrom.talk.label' ).text(),
-					help: mw.message( 'deputy.cte.mergedFrom.talk.help' ).text()
+					label: mw.message( 'deputy.cte.mergedTo.small.label' ).text(),
+					help: mw.message( 'deputy.cte.mergedTo.small.help' ).text()
 				} )
 			};
 
 			for ( const _field in inputs ) {
-				const field = _field as MergedFromTemplateParameter;
+				const field = _field as MergedToTemplateParameter;
 				const input = inputs[ field ];
 
 				// Attach the change listener
 				input.on( 'change', ( value: string ) => {
 					if ( input instanceof OO.ui.CheckboxInputWidget ) {
-						this.mergedFromTemplate[ field ] = value ? 'yes' : 'no';
+						this.mergedToTemplate[ field ] = value ? 'yes' : 'no';
 					} else if ( input instanceof mw.widgets.datetime.DateTimeInputWidget ) {
-						this.mergedFromTemplate[ field ] =
+						this.mergedToTemplate[ field ] =
 							new Date( value ).toLocaleDateString( 'en-GB', {
 								year: 'numeric', month: 'long', day: 'numeric'
 							} );
@@ -239,10 +209,10 @@ function initMergedFromTemplatePage() {
 							fieldLayouts[ field ].setWarnings( [] );
 						}
 					} else {
-						this.mergedFromTemplate[ field ] = value;
+						this.mergedToTemplate[ field ] = value;
 					}
 
-					this.mergedFromTemplate.save();
+					this.mergedToTemplate.save();
 				} );
 
 				if ( input instanceof OO.ui.TextInputWidget ) {
@@ -251,7 +221,7 @@ function initMergedFromTemplatePage() {
 				}
 			}
 
-			inputs.article.on( 'change', () => {
+			inputs.to.on( 'change', () => {
 				this.refreshLabel();
 			} );
 
@@ -280,14 +250,14 @@ function initMergedFromTemplatePage() {
 }
 
 /**
- * Creates a new MergedFromTemplatePage.
+ * Creates a new MergedToTemplatePage.
  *
  * @param config Configuration to be passed to the element.
- * @return A MergedFromTemplatePage object
+ * @return A MergedToTemplatePage object
  */
-export default function ( config: MergedFromTemplatePageData ) {
-	if ( !InternalMergedFromTemplatePage ) {
-		initMergedFromTemplatePage();
+export default function ( config: MergedToTemplatePageData ) {
+	if ( !InternalMergedToTemplatePage ) {
+		initMergedToTemplatePage();
 	}
-	return new InternalMergedFromTemplatePage( config );
+	return new InternalMergedToTemplatePage( config );
 }

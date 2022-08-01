@@ -5,6 +5,7 @@ import WikiAttributionNotices, { SupportedAttributionNoticeType } from './WikiAt
 import nsId from '../../../util/nsId';
 import SplitArticleTemplate from './templates/SplitArticleTemplate';
 import MergedFromTemplate from './templates/MergedFromTemplate';
+import MergedToTemplate from './templates/MergedToTemplate';
 
 /**
  * Creates blank attribution notices. Its own class to avoid circular dependencies.
@@ -91,6 +92,24 @@ export default class TemplateFactory {
 		node.element.setAttribute( 'about', `N${TemplateFactory.noticeCount++}` );
 		node.element.classList.add( 'box-merged-from' );
 		return new MergedFromTemplate( node );
+	}
+
+	/**
+	 * Creates a new {@link MergedToTemplate}
+	 *
+	 * @param document
+	 * @return A new MergedToTemplate
+	 */
+	static mergedTo( document: CTEParsoidDocument ): MergedToTemplate {
+		const templateWikitext = TemplateFactory.getTemplateWikitext( 'mergedTo' );
+		const node = CTEParsoidTransclusionTemplateNode.fromNew(
+			document,
+			templateWikitext,
+			{},
+		);
+		node.element.setAttribute( 'about', `N${TemplateFactory.noticeCount++}` );
+		node.element.classList.add( 'box-merged-to' );
+		return new MergedToTemplate( node );
 	}
 
 }

@@ -122,5 +122,16 @@
     "deputy.cte.mergedFrom.target.help": "The page that the content was merged into. Used if the page that the content was merged into was the talk page.",
     "deputy.cte.mergedFrom.afd.placeholder": "Wikipedia:Articles for deletion/Page A",
     "deputy.cte.mergedFrom.afd.label": "AfD",
-    "deputy.cte.mergedFrom.afd.help": "The AfD discussion that led to the merge. If this merge was not the result of an AfD discussion, leave this blank."
+    "deputy.cte.mergedFrom.afd.help": "The AfD discussion that led to the merge. If this merge was not the result of an AfD discussion, leave this blank.",
+
+    "deputy.cte.mergedTo.label": "Merged to $1",
+    "deputy.cte.mergedTo.remove": "Remove notice",
+
+    "deputy.cte.mergedTo.to.placeholder": "Page A",
+    "deputy.cte.mergedTo.to.label": "Target article",
+    "deputy.cte.mergedTo.to.help": "This is the page where content was copied into.",
+    "deputy.cte.mergedTo.date.label": "Date",
+    "deputy.cte.mergedTo.date.help": "The date (in UTC) when the content was merged into this page.",
+    "deputy.cte.mergedTo.small.label": "Small",
+    "deputy.cte.mergedTo.small.help": "If enabled, makes the banner small."
 }
