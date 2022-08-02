@@ -158,6 +158,13 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 					last( this.document.querySelectorAll( '.box-merged-to' ) ) :
 					this.document.querySelector( '.box-merged-to' )
 			],
+			// TODO: replace `copied` with `backwardsCopy` when it's available.
+			[
+				positionIndex >= positionIndices.copied ? 'afterend' : 'beforebegin',
+				positionIndex >= positionIndices.copied ?
+					last( this.document.querySelectorAll( '.box-backwards-copy' ) ) :
+					this.document.querySelector( '.box-backwards-copy' )
+			],
 			// TODO: replace `copied` with `translatedPage` when it's available.
 			[
 				positionIndex >= positionIndices.copied ? 'afterend' : 'beforebegin',

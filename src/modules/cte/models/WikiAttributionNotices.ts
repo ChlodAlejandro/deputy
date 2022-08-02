@@ -15,8 +15,8 @@ export const attributionNoticeTemplatePages = {
 	splitArticle: 'Split article',
 	mergedFrom: 'Merged-from',
 	mergedTo: 'Merged-to'
-	// translatedPage: 'Translated page',
 	// backwardsCopy: 'Backwards copy'
+	// translatedPage: 'Translated page'
 };
 
 /**
@@ -60,9 +60,9 @@ export default class WikiAttributionNotices {
 		mergedFrom: MergedFromTemplate,
 		mergedTo: MergedToTemplate
 		// TODO: Implement
-		// translatedPage: class Null {},
-		// TODO: Implement
 		// backwardsCopy: class Null {}
+		// TODO: Implement
+		// translatedPage: class Null {}
 	};
 
 	/**
