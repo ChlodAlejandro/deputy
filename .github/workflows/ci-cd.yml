@@ -30,6 +30,7 @@ jobs:
   tests:
     name: Perform tests
     runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.message, '[failing]') }}
     strategy:
       max-parallel: 1
       fail-fast: false
