@@ -7,6 +7,7 @@ import { h } from 'tsx-dom';
 import unwrapWidget from '../../../../util/unwrapWidget';
 import CTEParsoidDocument from '../../models/CTEParsoidDocument';
 import { renderMergePanel, renderPreviewPanel } from '../RowPageShared';
+import yesNo from '../../../../util/yesNo';
 
 export interface SplitArticleTemplatePageData {
 	/**
@@ -213,7 +214,7 @@ function initSplitArticleTemplatePage() {
 			).getSubjectPage().getPrefixedText();
 
 			const collapse = new OO.ui.CheckboxInputWidget( {
-				value: this.splitArticleTemplate.collapse
+				selected: yesNo( this.splitArticleTemplate.collapse )
 			} );
 			const from = new mw.widgets.TitleInputWidget( {
 				$overlay: this.parent.$overlay,
@@ -222,7 +223,7 @@ function initSplitArticleTemplatePage() {
 			} );
 
 			collapse.on( 'change', ( value: boolean ) => {
-				this.splitArticleTemplate.collapse = value;
+				this.splitArticleTemplate.collapse = value ? 'yes' : null;
 				this.splitArticleTemplate.save();
 			} );
 			from.on( 'change', ( value: string ) => {

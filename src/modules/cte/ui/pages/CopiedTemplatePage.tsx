@@ -8,6 +8,7 @@ import CTEParsoidDocument from '../../models/CTEParsoidDocument';
 import CopiedTemplateEditorDialog from '../CopiedTemplateEditorDialog';
 import { AttributionNoticePageLayout } from './AttributionNoticePageLayout';
 import { renderMergePanel, renderPreviewPanel } from '../RowPageShared';
+import yesNo from '../../../../util/yesNo';
 
 export interface CopiedTemplatePageData {
 	/**
@@ -234,10 +235,10 @@ function initCopiedTemplatePage() {
 		renderTemplateOptions(): JSX.Element {
 			this.inputSet = {
 				collapse: new OO.ui.CheckboxInputWidget( {
-					selected: this.copiedTemplate.collapsed
+					selected: yesNo( this.copiedTemplate.collapsed?.trim() )
 				} ),
 				small: new OO.ui.CheckboxInputWidget( {
-					selected: this.copiedTemplate.small
+					selected: yesNo( this.copiedTemplate.small?.trim() )
 				} )
 			};
 			this.fields = {
