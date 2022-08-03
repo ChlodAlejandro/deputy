@@ -51,13 +51,6 @@ export default class SplitArticleTemplateRow
 		this.date = rowObjects.date;
 		this.diff = rowObjects.diff;
 
-		// Clean all zero-length parameters.
-		for ( const param of splitArticleTemplateRowParameters ) {
-			if ( this[ param ] && this[ param ].trim && this[ param ].trim().length === 0 ) {
-				delete this[ param ];
-			}
-		}
-
 		this._parent = parent;
 		this.id = btoa( `${Math.random() * 0.1}`.slice( 5 ) );
 	}

@@ -44,17 +44,17 @@ export default class MergedToTemplate
 	 */
 	parse() {
 		if ( this.node.hasParameter( 'to' ) ) {
-			this.to = this.node.getParameter( 'to' ).trim();
+			this.to = this.node.getParameter( 'to' );
 		} else if ( this.node.hasParameter( '1' ) ) {
-			this.to = this.node.getParameter( '1' ).trim();
+			this.to = this.node.getParameter( '1' );
 		}
 		if ( this.node.hasParameter( 'date' ) ) {
-			this.date = this.node.getParameter( 'date' ).trim();
+			this.date = this.node.getParameter( 'date' );
 		} else if ( this.node.hasParameter( '2' ) ) {
-			this.date = this.node.getParameter( '2' ).trim();
+			this.date = this.node.getParameter( '2' );
 		}
 		if ( this.node.hasParameter( 'small' ) ) {
-			this.small = this.node.getParameter( 'small' ).trim();
+			this.small = this.node.getParameter( 'small' );
 		}
 	}
 
@@ -66,8 +66,8 @@ export default class MergedToTemplate
 		this.node.setParameter( 'to', null );
 		this.node.setParameter( 'date', null );
 
-		this.node.setParameter( '1', this.to.trim() );
-		this.node.setParameter( '2', this.date.trim() );
+		this.node.setParameter( '1', this.to );
+		this.node.setParameter( '2', this.date );
 		this.node.setParameter(
 			'small', yesNo( this.small, false ) ? 'yes' : null
 		);

@@ -1,18 +1,17 @@
-import BackwardsCopyRow, {
+import BackwardsCopyTemplateRow, {
 	backwardsCopyRowParameters,
 	RawBackwardsCopyRow
-} from './BackwardsCopyRow';
+} from './BackwardsCopyTemplateRow';
 import { AttributionNoticePageLayout } from '../../ui/pages/AttributionNoticePageLayout';
 import BackwardsCopyPage from '../../ui/pages/BackwardsCopyPage';
 import { AttributionNoticePageGenerator } from '../../ui/AttributionNoticePageGenerator';
 import RowedAttributionNotice from '../RowedAttributionNotice';
-import yesNo from '../../../../util/yesNo';
 
 /**
  * Represents a single {{copied}} template in the Parsoid document.
  */
-export default class BackwardsCopy
-	extends RowedAttributionNotice<BackwardsCopyRow>
+export default class BackwardsCopyTemplate
+	extends RowedAttributionNotice<BackwardsCopyTemplateRow>
 	implements AttributionNoticePageGenerator {
 
 	// TEMPLATE OPTIONS
@@ -36,7 +35,7 @@ export default class BackwardsCopy
 	/**
 	 * @return This template's rows.
 	 */
-	get rows(): BackwardsCopyRow[] {
+	get rows(): BackwardsCopyTemplateRow[] {
 		return this._rows;
 	}
 
@@ -57,7 +56,7 @@ export default class BackwardsCopy
 		// Numberless
 		if ( this.hasRowParameters( backwardsCopyRowParameters ) ) {
 			// If `from`, `to`, ..., or `merge` is found.
-			rows.push( new BackwardsCopyRow(
+			rows.push( new BackwardsCopyTemplateRow(
 				this.extractRowParameters<RawBackwardsCopyRow>(
 					backwardsCopyRowParameters
 				),
@@ -69,7 +68,7 @@ export default class BackwardsCopy
 		let i = 1, continueExtracting = true;
 		do {
 			if ( this.hasRowParameters( backwardsCopyRowParameters, i ) ) {
-				rows.push( new BackwardsCopyRow(
+				rows.push( new BackwardsCopyTemplateRow(
 					this.extractRowParameters<RawBackwardsCopyRow>(
 						backwardsCopyRowParameters, i
 					),
@@ -85,7 +84,7 @@ export default class BackwardsCopy
 		/**
 		 * All the rows of this template.
 		 *
-		 * @type {BackwardsCopyRow[]}
+		 * @type {BackwardsCopyTemplateRow[]}
 		 */
 		this._rows = rows;
 	}
@@ -113,8 +112,9 @@ export default class BackwardsCopy
 					this.node.setParameter( param, this._rows[ 0 ][ param ] );
 				}
 			}
+
 		} else {
-			// If there are multiple rows, add number prefixes (except for i = 0).
+			// If there are multiple rows, add number suffixes (except for i = 0).
 			for ( let i = 0; i < this._rows.length; i++ ) {
 				for ( const param of backwardsCopyRowParameters ) {
 					if ( this._rows[ i ][ param ] !== undefined ) {
@@ -151,7 +151,7 @@ export default class BackwardsCopy
 	}
 
 	/**
-	 * Copies in the rows of another {@link BackwardsCopy}, and
+	 * Copies in the rows of another {@link BackwardsCopyTemplate}, and
 	 * optionally deletes that template or clears its contents.
 	 *
 	 * @param template The template to copy from.
@@ -161,7 +161,7 @@ export default class BackwardsCopy
 	 * @param options.clear
 	 *        Whether the reference template's rows will be cleared after merging.
 	 */
-	merge( template: BackwardsCopy, options: { delete?: boolean, clear?: boolean } = {} ) {
+	merge( template: BackwardsCopyTemplate, options: { delete?: boolean, clear?: boolean } = {} ) {
 		if ( template.rows === undefined || template === this ) {
 			// Deleted or self
 			return;

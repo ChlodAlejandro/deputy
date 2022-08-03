@@ -1,7 +1,7 @@
 /**
  * Copied template rows as strings.
  */
-import BackwardsCopy from './BackwardsCopy';
+import BackwardsCopyTemplate from './BackwardsCopyTemplate';
 import BackwardsCopyRowPage from '../../ui/pages/BackwardsCopyRowPage';
 import { AttributionNoticeRow } from '../AttributionNoticeRow';
 
@@ -43,16 +43,21 @@ export interface RawBackwardsCopyRow {
 	 */
 	org?: string;
 	/**
-	 * The month day of publishing for this publication.
+	 * The date of publishing for this publication.
+	 */
+	date?: string;
+	/**
+	 * The month and day of publishing for this publication.
 	 */
 	monthday?: string;
 }
 
-export type BackwardsCopyRowParameter = typeof backwardsCopyRowParameters[number];
 export const backwardsCopyRowParameters = <const>[
-	'articlename', 'title', 'year', 'author', 'authorlist',
-	'display_authors', 'url', 'org', 'monthday'
+	'title', 'year', 'author', 'authorlist',
+	'display_authors', 'url', 'org', 'monthday',
+	'articlename', 'date'
 ];
+export type BackwardsCopyRowParameter = typeof backwardsCopyRowParameters[number];
 
 /**
  * Checks if a given string key is a valid {{copied}} template row parameter.
@@ -67,28 +72,32 @@ export function isBackwardsCopyRowParameter( key: string ): key is BackwardsCopy
 /**
  * Represents a row/entry in a {{copied}} template.
  */
-export default class BackwardsCopyRow
-	extends AttributionNoticeRow<BackwardsCopy> implements RawBackwardsCopyRow {
+export default class BackwardsCopyTemplateRow
+	extends AttributionNoticeRow<BackwardsCopyTemplate>
+	implements RawBackwardsCopyRow {
 
 	id: string;
-	/** @inheritDoc */
+
+	/** @inheritdoc */
 	articlename?: string;
-	/** @inheritDoc */
+	/** @inheritdoc */
 	title?: string;
-	/** @inheritDoc */
+	/** @inheritdoc */
 	year?: string;
-	/** @inheritDoc */
+	/** @inheritdoc */
 	author?: string;
-	/** @inheritDoc */
+	/** @inheritdoc */
 	authorlist?: string;
-	/** @inheritDoc */
+	/** @inheritdoc */
 	// eslint-disable-next-line camelcase
 	display_authors?: string;
-	/** @inheritDoc */
+	/** @inheritdoc */
 	url?: string;
-	/** @inheritDoc */
+	/** @inheritdoc */
 	org?: string;
-	/** @inheritDoc */
+	/** @inheritdoc */
+	date?: string;
+	/** @inheritdoc */
 	monthday?: string;
 
 	// noinspection JSDeprecatedSymbols
@@ -98,27 +107,20 @@ export default class BackwardsCopyRow
 	 * @param rowObjects
 	 * @param parent
 	 */
-	constructor( rowObjects: RawBackwardsCopyRow, parent: BackwardsCopy ) {
+	constructor( rowObjects: RawBackwardsCopyRow, parent: BackwardsCopyTemplate ) {
 		super();
-		// this.from = rowObjects.from;
-		// // eslint-disable-next-line camelcase
-		// this.from_oldid = rowObjects.from_oldid;
-		// this.to = rowObjects.to;
-		// // eslint-disable-next-line camelcase
-		// this.to_diff = rowObjects.to_diff;
-		// // eslint-disable-next-line camelcase
-		// this.to_oldid = rowObjects.to_oldid;
-		// this.diff = rowObjects.diff;
-		// this.date = rowObjects.date;
-		// this.afd = rowObjects.afd;
-		// this.merge = rowObjects.merge;
-		//
-		// // Clean all zero-length parameters.
-		// for ( const param of backwardsCopyRowParameters ) {
-		//     if ( this[ param ] && this[ param ].trim && this[ param ].trim().length === 0 ) {
-		//         delete this[ param ];
-		//     }
-		// }
+
+		this.articlename = rowObjects.articlename;
+		this.title = rowObjects.title;
+		this.year = rowObjects.year;
+		this.author = rowObjects.author;
+		this.authorlist = rowObjects.authorlist;
+		// eslint-disable-next-line camelcase
+		this.display_authors = rowObjects.display_authors;
+		this.url = rowObjects.url;
+		this.org = rowObjects.org;
+		this.date = rowObjects.date;
+		this.monthday = rowObjects.monthday;
 
 		this._parent = parent;
 		this.id = btoa( `${Math.random() * 0.1}`.slice( 5 ) );
@@ -127,8 +129,8 @@ export default class BackwardsCopyRow
 	/**
 	 * @inheritDoc
 	 */
-	clone( parent: BackwardsCopy ): BackwardsCopyRow {
-		return super.clone( parent ) as BackwardsCopyRow;
+	clone( parent: BackwardsCopyTemplate ): BackwardsCopyTemplateRow {
+		return super.clone( parent ) as BackwardsCopyTemplateRow;
 	}
 
 	/**

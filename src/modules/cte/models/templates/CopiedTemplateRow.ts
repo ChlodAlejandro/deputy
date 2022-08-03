@@ -68,7 +68,8 @@ export interface RawCopiedTemplateRow {
  * Represents a row/entry in a {{copied}} template.
  */
 export default class CopiedTemplateRow
-	extends AttributionNoticeRow<CopiedTemplate> implements RawCopiedTemplateRow {
+	extends AttributionNoticeRow<CopiedTemplate>
+	implements RawCopiedTemplateRow {
 
 	/** @inheritDoc **/
 	from: string;
@@ -115,13 +116,6 @@ export default class CopiedTemplateRow
 		this.date = rowObjects.date;
 		this.afd = rowObjects.afd;
 		this.merge = rowObjects.merge;
-
-		// Clean all zero-length parameters.
-		for ( const param of copiedTemplateRowParameters ) {
-			if ( this[ param ] && this[ param ].trim && this[ param ].trim().length === 0 ) {
-				delete this[ param ];
-			}
-		}
 
 		this._parent = parent;
 		this.id = btoa( `${Math.random() * 0.1}`.slice( 5 ) );

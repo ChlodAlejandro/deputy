@@ -59,19 +59,19 @@ export default class MergedFromTemplate
 	 */
 	parse() {
 		if ( this.node.hasParameter( '1' ) ) {
-			this.article = this.node.getParameter( '1' ).trim();
+			this.article = this.node.getParameter( '1' );
 		}
 		if ( this.node.hasParameter( '2' ) ) {
-			this.date = this.node.getParameter( '2' ).trim();
+			this.date = this.node.getParameter( '2' );
 		}
 		if ( this.node.hasParameter( 'talk' ) ) {
-			this.talk = this.node.getParameter( 'talk' ).trim();
+			this.talk = this.node.getParameter( 'talk' );
 		}
 		if ( this.node.hasParameter( 'target' ) ) {
-			this.target = this.node.getParameter( 'target' ).trim();
+			this.target = this.node.getParameter( 'target' );
 		}
 		if ( this.node.hasParameter( 'afd' ) ) {
-			this.afd = this.node.getParameter( 'afd' ).trim();
+			this.afd = this.node.getParameter( 'afd' );
 		}
 	}
 
@@ -79,16 +79,16 @@ export default class MergedFromTemplate
 	 * Saves the current template data to the Parsoid element.
 	 */
 	save() {
-		this.node.setParameter( '1', this.article.trim() );
-		this.node.setParameter( '2', this.date.trim() );
+		this.node.setParameter( '1', this.article );
+		this.node.setParameter( '2', this.date );
 		this.node.setParameter(
 			'talk', yesNo( this.talk ) ? null : 'no'
 		);
 		this.node.setParameter(
-			'target', ( this.target ?? '' ).trim().length > 0 ? this.target.trim() : null
+			'target', ( this.target ?? '' ).length > 0 ? this.target : null
 		);
 		this.node.setParameter(
-			'afd', ( this.afd ?? '' ).trim().length > 0 ? this.afd.trim() : null
+			'afd', ( this.afd ?? '' ).length > 0 ? this.afd : null
 		);
 
 		this.dispatchEvent( new Event( 'save' ) );

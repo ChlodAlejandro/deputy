@@ -251,11 +251,11 @@ function initCopiedTemplatePage() {
 				} )
 			};
 			this.inputSet.collapse.on( 'change', ( value: boolean ) => {
-				this.copiedTemplate.collapsed = value;
+				this.copiedTemplate.collapsed = value ? 'yes' : null;
 				this.copiedTemplate.save();
 			} );
 			this.inputSet.small.on( 'change', ( value: boolean ) => {
-				this.copiedTemplate.small = value;
+				this.copiedTemplate.small = value ? 'yes' : null;
 				this.copiedTemplate.save();
 			} );
 

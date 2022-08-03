@@ -6,6 +6,7 @@ import MwApi from '../../../MwApi';
 import SplitArticleTemplate from './templates/SplitArticleTemplate';
 import MergedFromTemplate from './templates/MergedFromTemplate';
 import MergedToTemplate from './templates/MergedToTemplate';
+import BackwardsCopyTemplate from './templates/BackwardsCopyTemplate';
 
 /**
  * An object mapping notice types to their expected on-wiki page titles.
@@ -58,9 +59,8 @@ export default class WikiAttributionNotices {
 		copied: CopiedTemplate,
 		splitArticle: SplitArticleTemplate,
 		mergedFrom: MergedFromTemplate,
-		mergedTo: MergedToTemplate
-		// TODO: Implement
-		// backwardsCopy: class Null {}
+		mergedTo: MergedToTemplate,
+		backwardsCopy: BackwardsCopyTemplate
 		// TODO: Implement
 		// translatedPage: class Null {}
 	};

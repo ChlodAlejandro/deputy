@@ -21,11 +21,11 @@ export default class CopiedTemplate
 	 * Whether or not this notice is collapsed (rows hidden if
 	 * rows are two or more).
 	 */
-	collapsed: boolean;
+	collapsed: string;
 	/**
 	 * Whether or not this notice is a right-floating box.
 	 */
-	small: boolean;
+	small: string;
 
 	/**
 	 * @return This template's rows.
@@ -42,10 +42,10 @@ export default class CopiedTemplate
 	 */
 	parse() {
 		if ( this.node.getParameter( 'collapse' ) ) {
-			this.collapsed = yesNo( this.node.getParameter( 'collapse' ).trim() );
+			this.collapsed = this.node.getParameter( 'collapse' );
 		}
 		if ( this.node.getParameter( 'small' ) ) {
-			this.small = yesNo( this.node.getParameter( 'small' ).trim() );
+			this.small = this.node.getParameter( 'small' );
 		}
 
 		// Extract {{copied}} rows.
@@ -69,7 +69,7 @@ export default class CopiedTemplate
 				rows.push( new CopiedTemplateRow(
 					this.extractRowParameters<RawCopiedTemplateRow>(
 						copiedTemplateRowParameters, i
-					),
+					) as Record<string, string>,
 					this
 				) );
 			} else if ( !( i === 1 && rows.length > 0 ) ) {
@@ -91,8 +91,8 @@ export default class CopiedTemplate
 	 * Saves the current template data to the Parsoid element.
 	 */
 	save() {
-		this.node.setParameter( 'collapse', this.collapsed ? 'yes' : null );
-		this.node.setParameter( 'small', this.small ? 'yes' : null );
+		this.node.setParameter( 'collapse', yesNo( this.collapsed ) ? 'yes' : null );
+		this.node.setParameter( 'small', yesNo( this.small ) ? 'yes' : null );
 
 		const existingParameters = this.node.getParameters();
 		for ( const param in existingParameters ) {
@@ -110,7 +110,7 @@ export default class CopiedTemplate
 				}
 			}
 		} else {
-			// If there are multiple rows, add number prefixes (except for i = 0).
+			// If there are multiple rows, add number suffixes (except for i = 0).
 			for ( let i = 0; i < this._rows.length; i++ ) {
 				for ( const param of copiedTemplateRowParameters ) {
 					if ( this._rows[ i ][ param ] !== undefined ) {

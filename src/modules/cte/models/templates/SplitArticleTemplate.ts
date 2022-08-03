@@ -17,17 +17,17 @@ export default class SplitArticleTemplate
 	implements AttributionNoticePageGenerator {
 
 	from: string;
-	collapse: boolean;
+	collapse: string;
 
 	/**
 	 * @inheritDoc
 	 */
 	parse(): void {
 		if ( this.node.hasParameter( 'from' ) ) {
-			this.from = this.node.getParameter( 'from' ).trim();
+			this.from = this.node.getParameter( 'from' );
 		}
 		if ( this.node.hasParameter( 'collapse' ) ) {
-			this.collapse = yesNo( this.node.getParameter( 'collapse' ) );
+			this.collapse = this.node.getParameter( 'collapse' );
 		}
 
 		// Extract {{copied}} rows.
@@ -48,9 +48,12 @@ export default class SplitArticleTemplate
 		let i = 1, continueExtracting = true;
 		do {
 			if ( this.hasRowParameters( splitArticleTemplateRowParameters, i ) ) {
-				rows.push( new SplitArticleTemplateRow( this.extractRowParameters(
-					splitArticleTemplateRowParameters, i
-				), this ) );
+				rows.push( new SplitArticleTemplateRow(
+					this.extractRowParameters(
+						splitArticleTemplateRowParameters, i
+					),
+					this
+				) );
 			} else if ( !( i === 1 && rows.length > 0 ) ) {
 				// Row doesn't exist. Stop parsing from here.
 				continueExtracting = false;
@@ -77,7 +80,7 @@ export default class SplitArticleTemplate
 			}
 		}
 
-		this.node.setParameter( 'collapse', this.collapse ? 'yes' : null );
+		this.node.setParameter( 'collapse', yesNo( this.collapse ) ? 'yes' : null );
 		this.node.setParameter( 'from', this.from );
 
 		this._rows.forEach( ( row, i ) => {
