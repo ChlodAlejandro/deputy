@@ -15,8 +15,8 @@ export const attributionNoticeTemplatePages = {
 	copied: 'Copied',
 	splitArticle: 'Split article',
 	mergedFrom: 'Merged-from',
-	mergedTo: 'Merged-to'
-	// backwardsCopy: 'Backwards copy'
+	mergedTo: 'Merged-to',
+	backwardsCopy: 'Backwards copy'
 	// translatedPage: 'Translated page'
 };
 

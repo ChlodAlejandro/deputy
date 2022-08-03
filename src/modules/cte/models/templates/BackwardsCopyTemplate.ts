@@ -1,9 +1,9 @@
 import BackwardsCopyTemplateRow, {
-	backwardsCopyRowParameters,
-	RawBackwardsCopyRow
+	backwardsCopyTemplateRowParameters,
+	RawBackwardsCopyTemplateRow
 } from './BackwardsCopyTemplateRow';
 import { AttributionNoticePageLayout } from '../../ui/pages/AttributionNoticePageLayout';
-import BackwardsCopyPage from '../../ui/pages/BackwardsCopyPage';
+import BackwardsCopyTemplatePage from '../../ui/pages/BackwardsCopyTemplatePage';
 import { AttributionNoticePageGenerator } from '../../ui/AttributionNoticePageGenerator';
 import RowedAttributionNotice from '../RowedAttributionNotice';
 
@@ -54,11 +54,11 @@ export default class BackwardsCopyTemplate
 		const rows = [];
 
 		// Numberless
-		if ( this.hasRowParameters( backwardsCopyRowParameters ) ) {
+		if ( this.hasRowParameters( backwardsCopyTemplateRowParameters ) ) {
 			// If `from`, `to`, ..., or `merge` is found.
 			rows.push( new BackwardsCopyTemplateRow(
-				this.extractRowParameters<RawBackwardsCopyRow>(
-					backwardsCopyRowParameters
+				this.extractRowParameters<RawBackwardsCopyTemplateRow>(
+					backwardsCopyTemplateRowParameters
 				),
 				this
 			) );
@@ -67,10 +67,10 @@ export default class BackwardsCopyTemplate
 		// Numbered
 		let i = 1, continueExtracting = true;
 		do {
-			if ( this.hasRowParameters( backwardsCopyRowParameters, i ) ) {
+			if ( this.hasRowParameters( backwardsCopyTemplateRowParameters, i ) ) {
 				rows.push( new BackwardsCopyTemplateRow(
-					this.extractRowParameters<RawBackwardsCopyRow>(
-						backwardsCopyRowParameters, i
+					this.extractRowParameters<RawBackwardsCopyTemplateRow>(
+						backwardsCopyTemplateRowParameters, i
 					),
 					this
 				) );
@@ -99,7 +99,7 @@ export default class BackwardsCopyTemplate
 
 		const existingParameters = this.node.getParameters();
 		for ( const param in existingParameters ) {
-			if ( backwardsCopyRowParameters.some( ( v ) => param.startsWith( v ) ) ) {
+			if ( backwardsCopyTemplateRowParameters.some( ( v ) => param.startsWith( v ) ) ) {
 				// This is a row parameter. Remove it in preparation for rebuild (further below).
 				this.node.removeParameter( param );
 			}
@@ -107,7 +107,7 @@ export default class BackwardsCopyTemplate
 
 		if ( this._rows.length === 1 ) {
 			// If there is only one row, don't bother with numbered rows.
-			for ( const param of backwardsCopyRowParameters ) {
+			for ( const param of backwardsCopyTemplateRowParameters ) {
 				if ( this._rows[ 0 ][ param ] !== undefined ) {
 					this.node.setParameter( param, this._rows[ 0 ][ param ] );
 				}
@@ -116,7 +116,7 @@ export default class BackwardsCopyTemplate
 		} else {
 			// If there are multiple rows, add number suffixes (except for i = 0).
 			for ( let i = 0; i < this._rows.length; i++ ) {
-				for ( const param of backwardsCopyRowParameters ) {
+				for ( const param of backwardsCopyTemplateRowParameters ) {
 					if ( this._rows[ i ][ param ] !== undefined ) {
 						this.node.setParameter(
 							param + ( i === 0 ? '' : i + 1 ),
@@ -144,8 +144,8 @@ export default class BackwardsCopyTemplate
 	 * @inheritDoc
 	 */
 	generatePage( dialog: any ): AttributionNoticePageLayout {
-		return BackwardsCopyPage( {
-			backwardsCopy: this,
+		return BackwardsCopyTemplatePage( {
+			backwardsCopyTemplate: this,
 			parent: dialog
 		} );
 	}

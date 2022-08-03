@@ -133,5 +133,12 @@
     "deputy.cte.mergedTo.date.label": "Date",
     "deputy.cte.mergedTo.date.help": "The date (in UTC) when the content was merged into this page.",
     "deputy.cte.mergedTo.small.label": "Small",
-    "deputy.cte.mergedTo.small.help": "If enabled, makes the banner small."
+    "deputy.cte.mergedTo.small.help": "If enabled, makes the banner small.",
+
+    "deputy.cte.backwardsCopy.label": "Backwards copy $1",
+    "deputy.cte.backwardsCopy.remove": "Remove notice",
+
+    "deputy.cte.backwardsCopy.entry.label": "Template entry",
+    "deputy.cte.backwardsCopy.entry.short": "Copy of '$1'",
+    "deputy.cte.backwardsCopy.entry.remove": "Remove entry"
 }

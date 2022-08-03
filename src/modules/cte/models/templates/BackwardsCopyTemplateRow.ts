@@ -2,14 +2,14 @@
  * Copied template rows as strings.
  */
 import BackwardsCopyTemplate from './BackwardsCopyTemplate';
-import BackwardsCopyRowPage from '../../ui/pages/BackwardsCopyRowPage';
+import BackwardsCopyTemplateRowPage from '../../ui/pages/BackwardsCopyTemplateRowPage';
 import { AttributionNoticeRow } from '../AttributionNoticeRow';
 
 /**
  * Represents a row in the {{copied}} template. These should represent
  * their actual values instead of raw parameters from the template.
  */
-export interface RawBackwardsCopyRow {
+export interface RawBackwardsCopyTemplateRow {
 	/**
 	 * Alias of `title`.
 	 */
@@ -52,12 +52,12 @@ export interface RawBackwardsCopyRow {
 	monthday?: string;
 }
 
-export const backwardsCopyRowParameters = <const>[
+export const backwardsCopyTemplateRowParameters = <const>[
 	'title', 'year', 'author', 'authorlist',
 	'display_authors', 'url', 'org', 'monthday',
 	'articlename', 'date'
 ];
-export type BackwardsCopyRowParameter = typeof backwardsCopyRowParameters[number];
+export type BackwardsCopyTemplateRowParameter = typeof backwardsCopyTemplateRowParameters[number];
 
 /**
  * Checks if a given string key is a valid {{copied}} template row parameter.
@@ -65,8 +65,10 @@ export type BackwardsCopyRowParameter = typeof backwardsCopyRowParameters[number
  * @param key
  * @return `true` if a string is a {{copied}} template row parameter.
  */
-export function isBackwardsCopyRowParameter( key: string ): key is BackwardsCopyRowParameter {
-	return ( backwardsCopyRowParameters as readonly string[] ).indexOf( key ) !== -1;
+export function isBackwardsCopyRowParameter(
+	key: string
+): key is BackwardsCopyTemplateRowParameter {
+	return ( backwardsCopyTemplateRowParameters as readonly string[] ).indexOf( key ) !== -1;
 }
 
 /**
@@ -74,7 +76,7 @@ export function isBackwardsCopyRowParameter( key: string ): key is BackwardsCopy
  */
 export default class BackwardsCopyTemplateRow
 	extends AttributionNoticeRow<BackwardsCopyTemplate>
-	implements RawBackwardsCopyRow {
+	implements RawBackwardsCopyTemplateRow {
 
 	id: string;
 
@@ -107,7 +109,7 @@ export default class BackwardsCopyTemplateRow
 	 * @param rowObjects
 	 * @param parent
 	 */
-	constructor( rowObjects: RawBackwardsCopyRow, parent: BackwardsCopyTemplate ) {
+	constructor( rowObjects: RawBackwardsCopyTemplateRow, parent: BackwardsCopyTemplate ) {
 		super();
 
 		this.articlename = rowObjects.articlename;
@@ -136,9 +138,9 @@ export default class BackwardsCopyTemplateRow
 	/**
 	 * @inheritDoc
 	 */
-	generatePage( dialog: any ): ReturnType<typeof BackwardsCopyRowPage> {
-		return BackwardsCopyRowPage( {
-			backwardsCopyRow: this,
+	generatePage( dialog: any ): ReturnType<typeof BackwardsCopyTemplateRowPage> {
+		return BackwardsCopyTemplateRowPage( {
+			backwardsCopyTemplateRow: this,
 			parent: dialog
 		} );
 	}
