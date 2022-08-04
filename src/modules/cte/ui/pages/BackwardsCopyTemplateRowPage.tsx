@@ -7,6 +7,7 @@ import unwrapWidget from '../../../../util/unwrapWidget';
 import CopiedTemplateEditorDialog from '../CopiedTemplateEditorDialog';
 import { AttributionNoticePageLayout } from './AttributionNoticePageLayout';
 import getObjectValues from '../../../../util/getObjectValues';
+import matchAll from '../../../../util/matchAll';
 
 export interface BackwardsCopyTemplateRowPageData {
 	/**
@@ -89,6 +90,9 @@ function initBackwardsCopyTemplateRowPage() {
 			this.backwardsCopyTemplateRow.parent.addEventListener( 'rowDelete', () => {
 				parent.rebuildPages();
 			} );
+			this.backwardsCopyTemplateRow.parent.addEventListener( 'save', () => {
+				this.refreshLabel();
+			} );
 
 			this.$element.append( this.render().$element );
 		}
@@ -99,7 +103,7 @@ function initBackwardsCopyTemplateRowPage() {
 		refreshLabel(): void {
 			this.label = mw.message(
 				'deputy.cte.backwardsCopy.entry.short',
-				this.backwardsCopyTemplateRow.title
+				this.backwardsCopyTemplateRow.title || '???'
 			).text();
 			if ( this.outlineItem ) {
 				this.outlineItem.setLabel( this.label );
@@ -178,6 +182,14 @@ function initBackwardsCopyTemplateRowPage() {
 							)
 					);
 
+			// TODO: l10n
+			const authorRegex = /(.+?, (?:[A-Z]\.\s?)*)(?:(?:&amp;|[&;]|[,;] (?:&amp;|[&;])?)\s*|$)/g;
+			const authors = matchAll(
+				authorRegex,
+				this.backwardsCopyTemplateRow.authorlist ??
+				this.backwardsCopyTemplateRow.author
+			).map( ( v ) => v[ 1 ] );
+
 			const inputs = {
 				title: new OO.ui.TextInputWidget( {
 					required: true,
@@ -200,17 +212,7 @@ function initBackwardsCopyTemplateRowPage() {
 					placeholder: mw.message(
 						'deputy.cte.backwardsCopy.entry.author.placeholder'
 					).text(),
-					selected: this.backwardsCopyTemplateRow.authorlist ?
-						(
-							this.backwardsCopyTemplateRow.authorlist.indexOf( ';' ) !== -1 ?
-								this.backwardsCopyTemplateRow.authorlist.split( /;\s*/g ) :
-								this.backwardsCopyTemplateRow.authorlist.split( /,\s*/g )
-						) :
-						(
-							this.backwardsCopyTemplateRow.author ?
-								[ this.backwardsCopyTemplateRow.author ] :
-								undefined
-						)
+					selected: authors
 				} ),
 				url: new OO.ui.TextInputWidget( {
 					placeholder: mw.message(
@@ -272,34 +274,40 @@ function initBackwardsCopyTemplateRowPage() {
 				const field = _field as keyof typeof inputs;
 				const input = inputs[ field ];
 
-				// Attach the change listener
-				input.on( 'change', ( value: string ) => {
-					if ( input instanceof mw.widgets.datetime.DateTimeInputWidget ) {
-						this.backwardsCopyTemplateRow[ field ] =
-							new Date( value ).toLocaleDateString( 'en-GB', {
-								year: 'numeric', month: 'long', day: 'numeric'
-							} );
-						if ( value.length > 0 ) {
-							fields[ field ].setWarnings( [] );
-						}
-					} else if ( input instanceof OO.ui.TagMultiselectWidget ) {
-						const data: string[] = input.selected;
-
-						if ( data.length > 1 ) {
+				if ( field === 'author' ) {
+					input.on( 'change', ( value: { data: string }[] ) => {
+						if ( value.length === 0 ) {
+							this.backwardsCopyTemplateRow.author = null;
+							this.backwardsCopyTemplateRow.authorlist = null;
+						} else if ( value.length > 1 ) {
 							this.backwardsCopyTemplateRow.author = null;
 							this.backwardsCopyTemplateRow.authorlist =
 								// TODO: l10n
-								data.join( '; ' );
+								value.map( ( v ) => v.data ).join( '; ' );
 						} else {
 							this.backwardsCopyTemplateRow.authorlist = null;
 							this.backwardsCopyTemplateRow.author =
-								data[ 0 ];
+								value[ 0 ].data;
 						}
-					} else {
-						this.backwardsCopyTemplateRow[ field ] = value;
-					}
-					this.backwardsCopyTemplateRow.parent.save();
-				} );
+						this.backwardsCopyTemplateRow.parent.save();
+					} );
+				} else {
+					// Attach the change listener
+					input.on( 'change', ( value: string ) => {
+						if ( input instanceof mw.widgets.datetime.DateTimeInputWidget ) {
+							this.backwardsCopyTemplateRow[ field ] =
+								new Date( value ).toLocaleDateString( 'en-GB', {
+									year: 'numeric', month: 'long', day: 'numeric'
+								} );
+							if ( value.length > 0 ) {
+								fields[ field ].setWarnings( [] );
+							}
+						} else {
+							this.backwardsCopyTemplateRow[ field ] = value;
+						}
+						this.backwardsCopyTemplateRow.parent.save();
+					} );
+				}
 
 				if ( input instanceof OO.ui.TextInputWidget ) {
 					// Rechecks the validity of the field.

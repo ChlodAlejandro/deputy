@@ -80,7 +80,9 @@ export default class SplitArticleTemplate
 			}
 		}
 
-		this.node.setParameter( 'collapse', yesNo( this.collapse ) ? 'yes' : null );
+		if ( this.collapse ) {
+			this.node.setParameter( 'collapse', yesNo( this.collapse ) ? 'yes' : null );
+		}
 		this.node.setParameter( 'from', this.from );
 
 		this._rows.forEach( ( row, i ) => {

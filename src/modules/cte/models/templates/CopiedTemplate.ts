@@ -91,8 +91,12 @@ export default class CopiedTemplate
 	 * Saves the current template data to the Parsoid element.
 	 */
 	save() {
-		this.node.setParameter( 'collapse', yesNo( this.collapsed ) ? 'yes' : null );
-		this.node.setParameter( 'small', yesNo( this.small ) ? 'yes' : null );
+		if ( this.collapsed ) {
+			this.node.setParameter( 'collapse', yesNo( this.collapsed ) ? 'yes' : null );
+		}
+		if ( this.small ) {
+			this.node.setParameter( 'small', yesNo( this.small ) ? 'yes' : null );
+		}
 
 		const existingParameters = this.node.getParameters();
 		for ( const param in existingParameters ) {

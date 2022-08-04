@@ -257,7 +257,7 @@ function initBackwardsCopyTemplatePage() {
 					placeholder: mw.message(
 						'deputy.cte.backwardsCopy.id.placeholder'
 					).text(),
-					value: this.backwardsCopyTemplate.id?.trim()
+					value: this.backwardsCopyTemplate.revid?.trim()
 				} )
 			};
 			const fields = {
