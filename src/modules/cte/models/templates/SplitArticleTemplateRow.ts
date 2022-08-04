@@ -34,8 +34,6 @@ export default class SplitArticleTemplateRow
 	/** @inheritDoc **/
 	diff: string;
 
-	id: string;
-
 	/**
 	 * Creates a new RawCopiedTemplateRow
 	 *
@@ -43,7 +41,7 @@ export default class SplitArticleTemplateRow
 	 * @param parent
 	 */
 	constructor( rowObjects: RawSplitArticleTemplateRow, parent: SplitArticleTemplate ) {
-		super();
+		super( parent );
 
 		this.to = rowObjects.to;
 		// eslint-disable-next-line camelcase
@@ -52,7 +50,6 @@ export default class SplitArticleTemplateRow
 		this.diff = rowObjects.diff;
 
 		this._parent = parent;
-		this.id = btoa( `${Math.random() * 0.1}`.slice( 5 ) );
 	}
 
 	/**

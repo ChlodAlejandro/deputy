@@ -6,6 +6,7 @@ import BackwardsCopyTemplateRow, {
 import unwrapWidget from '../../../../util/unwrapWidget';
 import CopiedTemplateEditorDialog from '../CopiedTemplateEditorDialog';
 import { AttributionNoticePageLayout } from './AttributionNoticePageLayout';
+import getObjectValues from '../../../../util/getObjectValues';
 
 export interface BackwardsCopyTemplateRowPageData {
 	/**
@@ -131,7 +132,7 @@ function initBackwardsCopyTemplateRowPage() {
 		renderButtons(): JSX.Element {
 			const deleteButton = new OO.ui.ButtonWidget( {
 				icon: 'trash',
-				title: mw.message( 'deputy.cte.copied.entry.remove' ).text(),
+				title: mw.message( 'deputy.cte.backwardsCopy.entry.remove' ).text(),
 				framed: false,
 				flags: [ 'destructive' ]
 			} );
@@ -156,7 +157,157 @@ function initBackwardsCopyTemplateRowPage() {
 		 * @return An array of OOUI FieldLayouts
 		 */
 		renderFields(): any[] {
-			// TODO: Unimplemented function.
+			// Use order: `date`, `monthday` + `year`, `year`
+			const rowDate = this.backwardsCopyTemplateRow.date ??
+				(
+					this.backwardsCopyTemplateRow.monthday ?
+						`${
+							this.backwardsCopyTemplateRow.monthday
+						} ${
+							this.backwardsCopyTemplateRow.year
+						}` :
+						this.backwardsCopyTemplateRow.year
+				);
+			const parsedDate =
+				( rowDate == null || rowDate.trim().length === 0 ) ?
+					undefined : (
+						!isNaN( new Date( rowDate.trim() + ' UTC' ).getTime() ) ?
+							( new Date( rowDate.trim() + ' UTC' ) ) : (
+								!isNaN( new Date( rowDate.trim() ).getTime() ) ?
+									new Date( rowDate.trim() ) : null
+							)
+					);
+
+			const inputs = {
+				title: new OO.ui.TextInputWidget( {
+					required: true,
+					placeholder: mw.message(
+						'deputy.cte.backwardsCopy.entry.title.placeholder'
+					).text(),
+					value: this.backwardsCopyTemplateRow.title ??
+						this.backwardsCopyTemplateRow.articlename
+				} ),
+				date: new mw.widgets.datetime.DateTimeInputWidget( {
+					$overlay: this.parent.$overlay,
+					required: true,
+					calendar: null,
+					icon: 'calendar',
+					clearable: true,
+					value: parsedDate
+				} ),
+				author: new OO.ui.TagMultiselectWidget( {
+					allowArbitrary: true,
+					placeholder: mw.message(
+						'deputy.cte.backwardsCopy.entry.author.placeholder'
+					).text(),
+					selected: this.backwardsCopyTemplateRow.authorlist ?
+						(
+							this.backwardsCopyTemplateRow.authorlist.indexOf( ';' ) !== -1 ?
+								this.backwardsCopyTemplateRow.authorlist.split( /;\s*/g ) :
+								this.backwardsCopyTemplateRow.authorlist.split( /,\s*/g )
+						) :
+						(
+							this.backwardsCopyTemplateRow.author ?
+								[ this.backwardsCopyTemplateRow.author ] :
+								undefined
+						)
+				} ),
+				url: new OO.ui.TextInputWidget( {
+					placeholder: mw.message(
+						'deputy.cte.backwardsCopy.entry.url.placeholder'
+					).text(),
+					value: this.backwardsCopyTemplateRow.url,
+					validate: ( value: string ) => {
+						if ( value.trim().length === 0 ) {
+							return true;
+						}
+						try {
+							return typeof new URL( value ).href === 'string';
+						} catch ( e ) {
+							return false;
+						}
+					}
+				} ),
+				org: new OO.ui.TextInputWidget( {
+					placeholder: mw.message(
+						'deputy.cte.backwardsCopy.entry.org.placeholder'
+					).text(),
+					value: this.backwardsCopyTemplateRow.org
+				} )
+			};
+			const fields = {
+				title: new OO.ui.FieldLayout( inputs.title, {
+					$overlay: this.parent.$overlay,
+					label: mw.message( 'deputy.cte.backwardsCopy.entry.title.label' ).text(),
+					align: 'top',
+					help: mw.message( 'deputy.cte.backwardsCopy.entry.title.help' ).text()
+				} ),
+				date: new OO.ui.FieldLayout( inputs.date, {
+					$overlay: this.parent.$overlay,
+					label: mw.message( 'deputy.cte.backwardsCopy.entry.date.label' ).text(),
+					align: 'left',
+					help: mw.message( 'deputy.cte.backwardsCopy.entry.date.help' ).text()
+				} ),
+				author: new OO.ui.FieldLayout( inputs.author, {
+					$overlay: this.parent.$overlay,
+					label: mw.message( 'deputy.cte.backwardsCopy.entry.author.label' ).text(),
+					align: 'left',
+					help: mw.message( 'deputy.cte.backwardsCopy.entry.author.help' ).text()
+				} ),
+				url: new OO.ui.FieldLayout( inputs.url, {
+					$overlay: this.parent.$overlay,
+					label: mw.message( 'deputy.cte.backwardsCopy.entry.url.label' ).text(),
+					align: 'left',
+					help: mw.message( 'deputy.cte.backwardsCopy.entry.url.help' ).text()
+				} ),
+				org: new OO.ui.FieldLayout( inputs.org, {
+					$overlay: this.parent.$overlay,
+					label: mw.message( 'deputy.cte.backwardsCopy.entry.org.label' ).text(),
+					align: 'left',
+					help: mw.message( 'deputy.cte.backwardsCopy.entry.org.help' ).text()
+				} )
+			};
+
+			for ( const _field in inputs ) {
+				const field = _field as keyof typeof inputs;
+				const input = inputs[ field ];
+
+				// Attach the change listener
+				input.on( 'change', ( value: string ) => {
+					if ( input instanceof mw.widgets.datetime.DateTimeInputWidget ) {
+						this.backwardsCopyTemplateRow[ field ] =
+							new Date( value ).toLocaleDateString( 'en-GB', {
+								year: 'numeric', month: 'long', day: 'numeric'
+							} );
+						if ( value.length > 0 ) {
+							fields[ field ].setWarnings( [] );
+						}
+					} else if ( input instanceof OO.ui.TagMultiselectWidget ) {
+						const data: string[] = input.selected;
+
+						if ( data.length > 1 ) {
+							this.backwardsCopyTemplateRow.author = null;
+							this.backwardsCopyTemplateRow.authorlist =
+								// TODO: l10n
+								data.join( '; ' );
+						} else {
+							this.backwardsCopyTemplateRow.authorlist = null;
+							this.backwardsCopyTemplateRow.author =
+								data[ 0 ];
+						}
+					} else {
+						this.backwardsCopyTemplateRow[ field ] = value;
+					}
+					this.backwardsCopyTemplateRow.parent.save();
+				} );
+
+				if ( input instanceof OO.ui.TextInputWidget ) {
+					// Rechecks the validity of the field.
+					input.setValidityFlag();
+				}
+			}
+
+			return getObjectValues( fields );
 		}
 
 		/**

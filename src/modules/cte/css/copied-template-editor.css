@@ -92,7 +92,7 @@
 	padding-right: 0;
 }
 
-.cte-page-row,
+.cte-page-row:not(:last-child),
 .cte-page-template:not(:last-child),
 .cte-fieldset-date.oo-ui-actionFieldLayout.oo-ui-fieldLayout-align-top .oo-ui-fieldLayout-header {
 	padding-bottom: 0 !important;

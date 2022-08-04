@@ -66,7 +66,7 @@ function initMergedToTemplatePage() {
 			const finalConfig = {
 				classes: [ 'cte-page-template' ]
 			};
-			super( finalConfig );
+			super( mergedToTemplate.id, finalConfig );
 
 			this.document = mergedToTemplate.parsoid;
 			this.mergedToTemplate = mergedToTemplate;

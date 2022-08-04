@@ -97,7 +97,7 @@ function initCopiedTemplatePage() {
 				classes: [ 'cte-page-template' ]
 			};
 			super(
-				`${copiedTemplate.element.getAttribute( 'about' )}-${copiedTemplate.i}`,
+				copiedTemplate.id,
 				finalConfig
 			);
 
@@ -235,10 +235,10 @@ function initCopiedTemplatePage() {
 		renderTemplateOptions(): JSX.Element {
 			this.inputSet = {
 				collapse: new OO.ui.CheckboxInputWidget( {
-					selected: yesNo( this.copiedTemplate.collapsed?.trim() )
+					selected: yesNo( this.copiedTemplate.collapsed?.trim(), false )
 				} ),
 				small: new OO.ui.CheckboxInputWidget( {
-					selected: yesNo( this.copiedTemplate.small?.trim() )
+					selected: yesNo( this.copiedTemplate.small?.trim(), false )
 				} )
 			};
 			this.fields = {

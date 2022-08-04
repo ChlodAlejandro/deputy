@@ -103,7 +103,8 @@ export default class CopiedTemplateRow
 	 * @param parent
 	 */
 	constructor( rowObjects: RawCopiedTemplateRow, parent: CopiedTemplate ) {
-		super();
+		super( parent );
+
 		this.from = rowObjects.from;
 		// eslint-disable-next-line camelcase
 		this.from_oldid = rowObjects.from_oldid;
@@ -116,9 +117,6 @@ export default class CopiedTemplateRow
 		this.date = rowObjects.date;
 		this.afd = rowObjects.afd;
 		this.merge = rowObjects.merge;
-
-		this._parent = parent;
-		this.id = btoa( `${Math.random() * 0.1}`.slice( 5 ) );
 	}
 
 	/**

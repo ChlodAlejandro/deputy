@@ -42,6 +42,8 @@
 
     "deputy.cte.copied.entry.label": "Template entry",
     "deputy.cte.copied.entry.short": "$1 to $2",
+    "deputy.cte.copied.entry.shortTo": "To $1",
+    "deputy.cte.copied.entry.shortFrom": "From $1",
 
     "deputy.cte.copied.entry.remove": "Remove entry",
     "deputy.cte.copied.entry.copy": "Copy attribution edit summary",
@@ -137,8 +139,31 @@
 
     "deputy.cte.backwardsCopy.label": "Backwards copy $1",
     "deputy.cte.backwardsCopy.remove": "Remove notice",
+    "deputy.cte.backwardsCopy.bot": "This notice was automatically added in by [[User:$1|$1]] ([[User talk:$1|talk]]). Changing this template will remove this warning as it is assumed that you have properly vetted the bot-added parameters.",
 
     "deputy.cte.backwardsCopy.entry.label": "Template entry",
-    "deputy.cte.backwardsCopy.entry.short": "Copy of '$1'",
-    "deputy.cte.backwardsCopy.entry.remove": "Remove entry"
+    "deputy.cte.backwardsCopy.entry.short": "Copied in '$1'",
+    "deputy.cte.backwardsCopy.entry.remove": "Remove entry",
+
+    "deputy.cte.backwardsCopy.comments.placeholder": "Additional information",
+    "deputy.cte.backwardsCopy.comments.label": "Comments",
+    "deputy.cte.backwardsCopy.comments.help": "Additional comments related to the backwards copies.",
+    "deputy.cte.backwardsCopy.id.placeholder": "123456789",
+    "deputy.cte.backwardsCopy.id.label": "Revision ID",
+    "deputy.cte.backwardsCopy.id.help": "The last revision ID of this article that does not contain content that was duplicated by copying media.",
+
+    "deputy.cte.backwardsCopy.entry.title.placeholder": "Article, journal, or medium name",
+    "deputy.cte.backwardsCopy.entry.title.label": "Publication name",
+    "deputy.cte.backwardsCopy.entry.title.help": "The publication title. This is the title of the medium that copied from Wikipedia",
+    "deputy.cte.backwardsCopy.entry.date.label": "Publishing date",
+    "deputy.cte.backwardsCopy.entry.date.help": "This is the date on which the article was first published.",
+    "deputy.cte.backwardsCopy.entry.author.placeholder": "Add author",
+    "deputy.cte.backwardsCopy.entry.author.label": "Author(s)",
+    "deputy.cte.backwardsCopy.entry.author.help": "A list of the article's authors.",
+    "deputy.cte.backwardsCopy.entry.url.placeholder": "https://example.com/news/a-news-article-that-copies-from-wikipedia",
+    "deputy.cte.backwardsCopy.entry.url.label": "URL",
+    "deputy.cte.backwardsCopy.entry.url.help": "A URL to the published media, if it exists as an online resource. If this is not an online resource (newspaper media, other printed media), leave this blank.",
+    "deputy.cte.backwardsCopy.entry.org.placeholder": "Example Publishing",
+    "deputy.cte.backwardsCopy.entry.org.label": "Publisher",
+    "deputy.cte.backwardsCopy.entry.org.help": "The publisher of the media. This may be a news company or a book publishing company."
 }

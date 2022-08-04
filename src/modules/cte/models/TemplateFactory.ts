@@ -6,6 +6,7 @@ import nsId from '../../../util/nsId';
 import SplitArticleTemplate from './templates/SplitArticleTemplate';
 import MergedFromTemplate from './templates/MergedFromTemplate';
 import MergedToTemplate from './templates/MergedToTemplate';
+import BackwardsCopyTemplate from './templates/BackwardsCopyTemplate';
 
 /**
  * Creates blank attribution notices. Its own class to avoid circular dependencies.
@@ -110,6 +111,24 @@ export default class TemplateFactory {
 		node.element.setAttribute( 'about', `N${TemplateFactory.noticeCount++}` );
 		node.element.classList.add( 'box-merged-to' );
 		return new MergedToTemplate( node );
+	}
+
+	/**
+	 * Creates a new {@link BackwardsCopyTemplate}
+	 *
+	 * @param document
+	 * @return A new MergedToTemplate
+	 */
+	static backwardsCopy( document: CTEParsoidDocument ): BackwardsCopyTemplate {
+		const templateWikitext = TemplateFactory.getTemplateWikitext( 'backwardsCopy' );
+		const node = CTEParsoidTransclusionTemplateNode.fromNew(
+			document,
+			templateWikitext,
+			{},
+		);
+		node.element.setAttribute( 'about', `N${TemplateFactory.noticeCount++}` );
+		node.element.classList.add( 'box-merged-to' );
+		return new BackwardsCopyTemplate( node );
 	}
 
 }

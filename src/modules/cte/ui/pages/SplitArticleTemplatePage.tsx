@@ -77,11 +77,7 @@ function initSplitArticleTemplatePage() {
 				classes: [ 'cte-page-template' ]
 			};
 			super(
-				`${
-					splitArticleTemplate.element.getAttribute( 'about' )
-				}-${
-					splitArticleTemplate.i
-				}`,
+				splitArticleTemplate.id,
 				finalConfig
 			);
 
@@ -214,7 +210,8 @@ function initSplitArticleTemplatePage() {
 			).getSubjectPage().getPrefixedText();
 
 			const collapse = new OO.ui.CheckboxInputWidget( {
-				selected: yesNo( this.splitArticleTemplate.collapse )
+				selected: this.splitArticleTemplate.collapse ?
+					yesNo( this.splitArticleTemplate.collapse ) : false
 			} );
 			const from = new mw.widgets.TitleInputWidget( {
 				$overlay: this.parent.$overlay,
@@ -232,16 +229,21 @@ function initSplitArticleTemplatePage() {
 			} );
 
 			return <div class="cte-templateOptions">
-				<div style="flex: 0.5">{ unwrapWidget( new OO.ui.FieldLayout( collapse, {
-					$overlay: this.parent.$overlay,
-					align: 'inline',
-					label: mw.message( 'deputy.cte.splitArticle.collapse' ).text()
-				} ) )}</div>
 				<div>{ unwrapWidget( new OO.ui.FieldLayout( from, {
 					$overlay: this.parent.$overlay,
+					align: 'top',
 					label: mw.message( 'deputy.cte.splitArticle.from' ).text(),
 					help: mw.message( 'deputy.cte.splitArticle.from.help' ).text()
 				} ) ) }</div>
+				<div style={{
+					flex: '0.25',
+					alignSelf: 'center',
+					marginRight: '8px'
+				}}>{ unwrapWidget( new OO.ui.FieldLayout( collapse, {
+						$overlay: this.parent.$overlay,
+						align: 'align',
+						label: mw.message( 'deputy.cte.splitArticle.collapse' ).text()
+					} ) )}</div>
 			</div>;
 		}
 

@@ -18,9 +18,13 @@ export default abstract class AttributionNotice
 	 */
 	readonly node: CTEParsoidTransclusionTemplateNode;
 	/**
-	 * A unique name for this template.
+	 * A unique name for this template. Derived from the Parsoid `about` for its node.
 	 */
 	readonly name: string;
+	/**
+	 * A unique ID for this template. Derived from the template name and its Parsoid `about`.
+	 */
+	readonly id: string;
 
 	/**
 	 * @return The ParsoidDocument handling this notice (specifically its node).
@@ -54,6 +58,7 @@ export default abstract class AttributionNotice
 		this.node = node;
 		this.name = this.element.getAttribute( 'about' )
 			.replace( /^#mwt/, '' ) + '-' + this.i;
+		this.id = btoa( node.getTarget().wt ) + '-' + this.name;
 		this.parse();
 	}
 

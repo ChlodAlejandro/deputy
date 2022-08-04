@@ -8,7 +8,6 @@ import CTEParsoidDocument from '../../models/CTEParsoidDocument';
 import CopiedTemplateEditorDialog from '../CopiedTemplateEditorDialog';
 import { AttributionNoticePageLayout } from './AttributionNoticePageLayout';
 import { renderMergePanel, renderPreviewPanel } from '../RowPageShared';
-import yesNo from '../../../../util/yesNo';
 
 export interface BackwardsCopyTemplatePageData {
 	/**
@@ -55,14 +54,6 @@ function initBackwardsCopyTemplatePage() {
 		 */
 		mergeButton: any;
 		/**
-		 * A record of OOUI InputWidget objects.
-		 */
-		inputSet: Record<string, any>;
-		/**
-		 * Fields of input widgets in `inputSet`.
-		 */
-		fields: Record<string, any>;
-		/**
 		 * The label of this page. Used in the BookletLayout and header.
 		 */
 		label: string;
@@ -92,7 +83,7 @@ function initBackwardsCopyTemplatePage() {
 			}
 
 			const label = mw.message(
-				'deputy.cte.copied.label',
+				'deputy.cte.backwardsCopy.label',
 				config.backwardsCopyTemplate.name
 			).text();
 			const finalConfig = {
@@ -100,11 +91,7 @@ function initBackwardsCopyTemplatePage() {
 				classes: [ 'cte-page-template' ]
 			};
 			super(
-				`${
-					backwardsCopyTemplate.element.getAttribute( 'about' )
-				}-${
-					backwardsCopyTemplate.i
-				}`,
+				backwardsCopyTemplate.id,
 				finalConfig
 			);
 
@@ -131,6 +118,7 @@ function initBackwardsCopyTemplatePage() {
 					this.backwardsCopyTemplate,
 					this.mergeButton
 				),
+				this.renderBotPanel(),
 				renderPreviewPanel( this.backwardsCopyTemplate ),
 				this.renderTemplateOptions()
 			);
@@ -221,6 +209,26 @@ function initBackwardsCopyTemplatePage() {
 		}
 
 		/**
+		 * Renders a panel that shows when a bot is used.
+		 *
+		 * @return An unwrapped OOUI MessageWidget
+		 */
+		renderBotPanel(): JSX.Element {
+			if ( this.backwardsCopyTemplate.node.hasParameter( 'bot' ) ) {
+				const bot = this.backwardsCopyTemplate.node.getParameter( 'bot' );
+				return unwrapWidget( new OO.ui.MessageWidget( {
+					type: 'notice',
+					icon: 'robot',
+					label: new OO.ui.HtmlSnippet(
+						mw.message( 'deputy.cte.backwardsCopy.bot', bot ).parse()
+					)
+				} ) );
+			} else {
+				return null;
+			}
+		}
+
+		/**
 		 * Renders the panel used to merge multiple {{copied}} templates.
 		 *
 		 * @return A <div> element
@@ -238,36 +246,46 @@ function initBackwardsCopyTemplatePage() {
 		 * @return A <div> element.
 		 */
 		renderTemplateOptions(): JSX.Element {
-			this.inputSet = {
-				demo: new OO.ui.CheckboxInputWidget( {
-					selected: yesNo( this.backwardsCopyTemplate.demo?.trim() )
-				} ),
-				comments: new OO.ui.TextINputWidget( {
+			const inputSet = {
+				comments: new OO.ui.TextInputWidget( {
+					placeholder: mw.message(
+						'deputy.cte.backwardsCopy.comments.placeholder'
+					).text(),
 					value: this.backwardsCopyTemplate.comments?.trim()
-				} )
-			};
-			this.fields = {
-				demo: new OO.ui.FieldLayout( this.inputSet.collapse, {
-					label: mw.message( 'deputy.cte.copied.collapse' ).text(),
-					align: 'inline'
 				} ),
-				comments: new OO.ui.FieldLayout( this.inputSet.small, {
-					label: mw.message( 'deputy.cte.copied.small' ).text(),
-					align: 'inline'
+				id: new OO.ui.TextInputWidget( {
+					placeholder: mw.message(
+						'deputy.cte.backwardsCopy.id.placeholder'
+					).text(),
+					value: this.backwardsCopyTemplate.id?.trim()
 				} )
 			};
-			this.inputSet.demo.on( 'change', ( value: boolean ) => {
-				this.backwardsCopyTemplate.demo = value ? 'yes' : null;
+			const fields = {
+				comments: new OO.ui.FieldLayout( inputSet.comments, {
+					$overlay: this.parent.$overlay,
+					label: mw.message( 'deputy.cte.backwardsCopy.comments.label' ).text(),
+					help: mw.message( 'deputy.cte.backwardsCopy.comments.help' ).text(),
+					align: 'top'
+				} ),
+				id: new OO.ui.FieldLayout( inputSet.id, {
+					$overlay: this.parent.$overlay,
+					label: mw.message( 'deputy.cte.backwardsCopy.id.label' ).text(),
+					help: mw.message( 'deputy.cte.backwardsCopy.id.help' ).text(),
+					align: 'top'
+				} )
+			};
+			inputSet.comments.on( 'change', ( value: string ) => {
+				this.backwardsCopyTemplate.comments = value.trim();
 				this.backwardsCopyTemplate.save();
 			} );
-			this.inputSet.comments.on( 'change', ( value: string ) => {
-				this.backwardsCopyTemplate.comments = value.trim();
+			inputSet.id.on( 'change', ( value: string ) => {
+				this.backwardsCopyTemplate.revid = value.trim();
 				this.backwardsCopyTemplate.save();
 			} );
 
 			return <div class="cte-templateOptions">
-				<div>{ unwrapWidget( this.fields.demo ) }</div>
-				<div>{ unwrapWidget( this.fields.comments ) }</div>
+				<div style={{ marginRight: '8px' }}>{ unwrapWidget( fields.comments ) }</div>
+				<div style={{ flex: '0.5' }}>{ unwrapWidget( fields.id ) }</div>
 			</div>;
 		}
 

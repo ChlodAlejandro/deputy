@@ -1,7 +1,11 @@
 import { AttributionNoticePageGenerator } from '../ui/AttributionNoticePageGenerator';
 import { AttributionNoticePageLayout } from '../ui/pages/AttributionNoticePageLayout';
+import { CTEParsoidTransclusionTemplateNode } from './CTEParsoidTransclusionTemplateNode';
 
 export interface AttributionNoticeRowParent {
+	id: string;
+	name: string;
+	node: CTEParsoidTransclusionTemplateNode;
 	addRow( row: any ): void;
 	deleteRow( row: any ): void;
 }
@@ -13,6 +17,16 @@ export abstract class AttributionNoticeRow<T extends AttributionNoticeRowParent>
 implements AttributionNoticePageGenerator {
 
 	protected _parent: T;
+	/**
+	 * A unique name for this row.
+	 * Derived from the Parsoid `about` for its node and a unique identifier.
+	 */
+	readonly name: string;
+	/**
+	 * A unique ID for this template.
+	 * Derived from the template name, its Parsoid `about`, and a unique identifier.
+	 */
+	readonly id: string;
 	/**
 	 * @return The parent of this attribution notice row.
 	 */
@@ -30,6 +44,18 @@ implements AttributionNoticePageGenerator {
 		this._parent.deleteRow( this );
 		newParent.addRow( this );
 		this._parent = newParent;
+	}
+
+	/**
+	 *
+	 * @param parent
+	 */
+	constructor( parent: T ) {
+		this._parent = parent;
+
+		const r = btoa( ( Math.random() * 10000 ).toString() ).slice( 0, 6 );
+		this.name = this.parent.name + '#' + r;
+		this.id = btoa( parent.node.getTarget().wt ) + '-' + this.name;
 	}
 
 	abstract generatePage( dialog: any ): AttributionNoticePageLayout;

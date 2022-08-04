@@ -156,7 +156,8 @@ function initCopiedTemplateEditorDialog() {
 			const removed = getObjectValues( this.layout.pages )
 				.filter( ( item ) => pages.indexOf( item ) === -1 );
 			this.layout.removePages( removed );
-			// Existing pages will be moved.
+			// This causes jank, but is the best option besides manually determining which
+			// order to put pages in (since OOUI doesn't provide an easy way to do that yet)
 			this.layout.addPages( pages );
 
 			// Delete deleted pages from cache.

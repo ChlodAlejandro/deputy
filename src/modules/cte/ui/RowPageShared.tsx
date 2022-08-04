@@ -165,7 +165,7 @@ export function renderPreviewPanel( template: AttributionNotice ): JSX.Element {
 				} );
 
 			// Infuse collapsibles
-			( $( previewPanel ).find( '.collapsible' ) as any )
+			( $( previewPanel ).find( '.mw-collapsible' ) as any )
 				.makeCollapsible();
 		} );
 	}, 1000 );

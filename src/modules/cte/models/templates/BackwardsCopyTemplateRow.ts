@@ -110,7 +110,7 @@ export default class BackwardsCopyTemplateRow
 	 * @param parent
 	 */
 	constructor( rowObjects: RawBackwardsCopyTemplateRow, parent: BackwardsCopyTemplate ) {
-		super();
+		super( parent );
 
 		this.articlename = rowObjects.articlename;
 		this.title = rowObjects.title;
@@ -123,9 +123,6 @@ export default class BackwardsCopyTemplateRow
 		this.org = rowObjects.org;
 		this.date = rowObjects.date;
 		this.monthday = rowObjects.monthday;
-
-		this._parent = parent;
-		this.id = btoa( `${Math.random() * 0.1}`.slice( 5 ) );
 	}
 
 	/**

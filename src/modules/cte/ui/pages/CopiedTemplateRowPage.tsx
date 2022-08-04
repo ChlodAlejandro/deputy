@@ -10,6 +10,8 @@ import getObjectValues from '../../../../util/getObjectValues';
 import CopiedTemplateEditorDialog from '../CopiedTemplateEditorDialog';
 import { AttributionNoticePageLayout } from './AttributionNoticePageLayout';
 import yesNo from '../../../../util/yesNo';
+import normalizeTitle from '../../../../util/normalizeTitle';
+import equalTitle from '../../../../util/equalTitle';
 
 export interface CopiedTemplateRowPageData {
 	/**
@@ -100,11 +102,31 @@ function initCopiedTemplateRowPage() {
 		 * Refreshes the page's label
 		 */
 		refreshLabel(): void {
-			this.label = mw.message(
-				'deputy.cte.copied.entry.short',
-				this.copiedTemplateRow.from || '???',
-				this.copiedTemplateRow.to || '???'
-			).text();
+			if ( equalTitle(
+				this.copiedTemplateRow.from,
+				normalizeTitle( this.copiedTemplateRow.parent.parsoid.getPage() )
+					.getSubjectPage()
+			) ) {
+				this.label = mw.message(
+					'deputy.cte.copied.entry.shortTo',
+					this.copiedTemplateRow.to || '???'
+				).text();
+			} else if ( equalTitle(
+				this.copiedTemplateRow.to,
+				normalizeTitle( this.copiedTemplateRow.parent.parsoid.getPage() )
+					.getSubjectPage()
+			) ) {
+				this.label = mw.message(
+					'deputy.cte.copied.entry.shortFrom',
+					this.copiedTemplateRow.from || '???'
+				).text();
+			} else {
+				this.label = mw.message(
+					'deputy.cte.copied.entry.short',
+					this.copiedTemplateRow.from || '???',
+					this.copiedTemplateRow.to || '???'
+				).text();
+			}
 			if ( this.outlineItem ) {
 				this.outlineItem.setLabel( this.label );
 			}
@@ -470,6 +492,7 @@ function initCopiedTemplateRowPage() {
 						this.copiedTemplateRow[ field ] = value;
 					}
 					copiedTemplateRow.parent.save();
+					this.refreshLabel();
 				} );
 
 				if ( input instanceof OO.ui.TextInputWidget ) {

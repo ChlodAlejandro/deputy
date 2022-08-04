@@ -53,8 +53,8 @@ export default abstract class RowedAttributionNotice<
 		const row: Record<string, string> = {};
 
 		parameters.forEach( ( key: string ) => {
-			if ( this.node.hasParameter( key ) !== undefined ) {
-				row[ key ] = this.node.getParameter( key );
+			if ( this.node.hasParameter( key + suffix ) !== undefined ) {
+				row[ key ] = this.node.getParameter( key + suffix );
 			} else if (
 				suffix === '' && this.node.hasParameter( `${key}1` )
 			) {

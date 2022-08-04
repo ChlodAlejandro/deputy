@@ -51,7 +51,10 @@ function initSplitArticleTemplateRowPage() {
 			const finalConfig = {
 				classes: [ 'cte-page-row' ]
 			};
-			super( splitArticleTemplateRow.id, finalConfig );
+			super(
+				splitArticleTemplateRow.id,
+				finalConfig
+			);
 
 			this.parent = parent;
 			this.splitArticleTemplateRow = splitArticleTemplateRow;
