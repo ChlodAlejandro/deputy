@@ -149,14 +149,6 @@ export function renderPreviewPanel( template: AttributionNotice ): JSX.Element {
 		await template.generatePreview().then( ( data: string ) => {
 			previewPanel.innerHTML = data;
 
-			// Remove DiscussionTools empty talk page notice
-			const emptyStateNotice = previewPanel.querySelector<HTMLElement>(
-				'.ext-discussiontools-emptystate'
-			);
-			if ( emptyStateNotice ) {
-				removeElement( emptyStateNotice );
-			}
-
 			// Make all anchor links open in a new tab (prevents exit navigation)
 			previewPanel.querySelectorAll( 'a' )
 				.forEach( ( el: HTMLElement ) => {

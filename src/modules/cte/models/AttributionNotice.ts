@@ -169,7 +169,8 @@ export default abstract class AttributionNotice
 			formatversion: '2',
 			utf8: 1,
 			title: this.parsoid.getPage(),
-			text: this.toWikitext()
+			text: this.toWikitext(),
+			disableeditsection: true
 		} ).then( ( data ) => data.parse.text );
 	}
 
