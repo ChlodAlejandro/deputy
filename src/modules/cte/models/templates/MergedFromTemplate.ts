@@ -81,7 +81,7 @@ export default class MergedFromTemplate
 	save() {
 		this.node.setParameter( '1', this.article );
 		this.node.setParameter( '2', this.date );
-		if ( this.talk ) {
+		if ( this.talk !== undefined ) {
 			this.node.setParameter(
 				'talk', yesNo( this.talk ) ? null : 'no'
 			);

@@ -68,7 +68,7 @@ export default class MergedToTemplate
 
 		this.node.setParameter( '1', this.to );
 		this.node.setParameter( '2', this.date );
-		if ( this.small ) {
+		if ( this.small !== undefined ) {
 			this.node.setParameter(
 				'small', yesNo( this.small ) ? 'yes' : null
 			);

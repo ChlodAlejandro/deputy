@@ -1,6 +1,5 @@
 import { AttributionNoticePageGenerator } from '../../ui/AttributionNoticePageGenerator';
 import { AttributionNoticePageLayout } from '../../ui/pages/AttributionNoticePageLayout';
-import { copiedTemplateRowParameters } from './CopiedTemplateRow';
 import SplitArticleTemplateRow, {
 	RawSplitArticleTemplateRow,
 	splitArticleTemplateRowParameters
@@ -72,18 +71,18 @@ export default class SplitArticleTemplate
 	 * @inheritDoc
 	 */
 	save(): void {
+		if ( this.collapse !== undefined ) {
+			this.node.setParameter( 'collapse', yesNo( this.collapse ) ? 'yes' : null );
+		}
+		this.node.setParameter( 'from', this.from );
+
 		const existingParameters = this.node.getParameters();
 		for ( const param in existingParameters ) {
-			if ( copiedTemplateRowParameters.some( ( v ) => param.startsWith( v ) ) ) {
+			if ( splitArticleTemplateRowParameters.some( ( v ) => param.startsWith( v ) ) ) {
 				// This is a row parameter. Remove it in preparation for rebuild (further below).
 				this.node.removeParameter( param );
 			}
 		}
-
-		if ( this.collapse ) {
-			this.node.setParameter( 'collapse', yesNo( this.collapse ) ? 'yes' : null );
-		}
-		this.node.setParameter( 'from', this.from );
 
 		this._rows.forEach( ( row, i ) => {
 			this.node.setParameter( `to${i > 0 ? i + 1 : ''}`, row.to );

@@ -124,7 +124,10 @@ export default class TemplateFactory {
 		const node = CTEParsoidTransclusionTemplateNode.fromNew(
 			document,
 			templateWikitext,
-			{},
+			{
+				// Blank string to trigger row creation
+				title: ''
+			},
 		);
 		node.element.setAttribute( 'about', `N${TemplateFactory.noticeCount++}` );
 		node.element.classList.add( 'box-merged-to' );

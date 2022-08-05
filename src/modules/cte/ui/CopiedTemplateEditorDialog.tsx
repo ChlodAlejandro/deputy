@@ -153,12 +153,23 @@ function initCopiedTemplateEditorDialog() {
 				}
 			}
 
-			const removed = getObjectValues( this.layout.pages )
+			const layoutPages = getObjectValues( this.layout.pages );
+			const removed = layoutPages
 				.filter( ( item ) => pages.indexOf( item ) === -1 );
+
+			// Remove all removed pages
 			this.layout.removePages( removed );
-			// This causes jank, but is the best option besides manually determining which
-			// order to put pages in (since OOUI doesn't provide an easy way to do that yet)
-			this.layout.addPages( pages );
+
+			// TODO: Support page rearranging (upstream)
+			/** Index of the last page that could be found. */
+			let lastPage = null;
+			for ( const page of pages ) {
+				if ( layoutPages.indexOf( page ) === -1 ) {
+					this.layout.addPages( [ page ], lastPage || 0 );
+				}
+				// Set the last index
+				lastPage = getObjectValues( this.layout.pages ).indexOf( page ) + 1;
+			}
 
 			// Delete deleted pages from cache.
 			this.pageCache.forEach( ( page, notice ) => {

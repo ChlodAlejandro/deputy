@@ -4,7 +4,6 @@ import {
 	AttributionNoticeTypeClass,
 	SupportedAttributionNoticeType
 } from '../models/WikiAttributionNotices';
-import removeElement from '../../../util/removeElement';
 import { h } from 'tsx-dom';
 import AttributionNotice from '../models/AttributionNotice';
 
@@ -157,8 +156,14 @@ export function renderPreviewPanel( template: AttributionNotice ): JSX.Element {
 				} );
 
 			// Infuse collapsibles
-			( $( previewPanel ).find( '.collapsible, .mw-collapsible' ) as any )
+			( $( previewPanel ).find( '.mw-collapsible' ) as any )
 				.makeCollapsible();
+			$( previewPanel ).find( '.collapsible' )
+				.each( ( i, e ) => {
+					( $( e ) as any ).makeCollapsible( {
+						collapsed: e.classList.contains( 'collapsed' )
+					} );
+				} );
 		} );
 	}, 1000 );
 

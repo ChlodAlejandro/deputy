@@ -236,12 +236,12 @@ function initSplitArticleTemplatePage() {
 					help: mw.message( 'deputy.cte.splitArticle.from.help' ).text()
 				} ) ) }</div>
 				<div style={{
-					flex: '0.25',
+					flex: '0',
 					alignSelf: 'center',
-					marginRight: '8px'
+					marginLeft: '8px'
 				}}>{ unwrapWidget( new OO.ui.FieldLayout( collapse, {
 						$overlay: this.parent.$overlay,
-						align: 'align',
+						align: 'top',
 						label: mw.message( 'deputy.cte.splitArticle.collapse' ).text()
 					} ) )}</div>
 			</div>;

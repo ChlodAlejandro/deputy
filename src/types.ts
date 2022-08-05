@@ -58,6 +58,13 @@ export declare class OOUIBookletLayout {
 	removePages( pages: any[] ): OOUIBookletLayout;
 	getPage( name: string ): any;
 	clearPages(): void;
+	getCurrentPage(): any /* PageLayout */;
+	/**
+	 * Set the current page by symbolic name
+	 *
+	 * @param name Symbolic name of page
+	 */
+	setPage( name: string ): void;
 }
 
 declare global {
