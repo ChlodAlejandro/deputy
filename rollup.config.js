@@ -131,7 +131,7 @@ export default [
 		input: 'src/Deputy.ts',
 		output: {
 			sourcemap: true,
-			dir: 'build',
+			file: 'build/deputy.js',
 			format: 'iife',
 			banner: loadBanner( 'BANNER.txt' ) +
 				'\n// <nowiki>',
@@ -139,12 +139,12 @@ export default [
 		},
 		plugins: getPlugins()
 	} ),
-	// Standalone Copied Template Editor
+	// Standalone Attribution Notice Template Editor
 	auto( 'cte', {
 		input: 'src/modules/cte/CopiedTemplateEditorStandalone.ts',
 		output: {
 			sourcemap: true,
-			dir: 'build',
+			file: 'build/deputy-ante.js',
 			format: 'iife',
 			banner: loadBanner( 'src', 'modules', 'cte', 'BANNER.txt' ) +
 				'\n// <nowiki>',
