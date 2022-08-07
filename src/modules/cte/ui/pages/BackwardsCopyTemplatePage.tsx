@@ -71,7 +71,7 @@ function initBackwardsCopyTemplatePage() {
 		childPages: Map<
 			BackwardsCopyTemplateRow,
 			ReturnType<typeof BackwardsCopyTemplateRowPage>
-			> = new Map();
+		> = new Map();
 
 		/**
 		 * @param config Configuration to be passed to the element.
