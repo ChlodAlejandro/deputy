@@ -4,7 +4,7 @@
     "version": "0.0.4",
     "main": "src/deputy.js",
     "scripts": {
-        "test": "jest",
+        "test": "npm run build && jest",
         "version": "node scripts/sync-version.js && git add src/DeputyVersion.ts",
         "clean": "shx rm -rf build .rollup.cache",
         "prebuild": "shx mkdir -p build/i18n/ && shx cp -Rf i18n/* build/i18n/",
@@ -52,6 +52,7 @@
         "eslint-plugin-jsdoc": "^39.3.3",
         "expect-puppeteer": "^6.1.0",
         "jest": "^28.1.1",
+        "jest-environment-puppeteer": "^6.1.1",
         "jest-puppeteer": "^6.1.0",
         "oojs-ui": "^0.43.2",
         "puppeteer": "^15.3.2",

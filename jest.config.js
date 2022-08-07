@@ -11,7 +11,6 @@ module.exports = {
 		'ts-jest': {
 			tsconfig: '<rootDir>/tsconfig.tests.json'
 		}
-	},
-	setupFiles: [ './tests/setup.ts' ]
+	}
 
 };
