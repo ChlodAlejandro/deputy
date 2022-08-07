@@ -5,7 +5,7 @@ import * as path from 'path';
  */
 export default async function () {
 	return page.addScriptTag( {
-		path: path.resolve( __dirname, '..', '..', 'build', 'Deputy.js' )
+		path: path.resolve( __dirname, '..', '..', 'build', 'deputy.js' )
 	} ).then( async () => {
 		// Begin waiting for script initialization.
 		const success = await page.evaluate( () => {
