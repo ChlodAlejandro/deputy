@@ -6,7 +6,7 @@ import CopiedTemplateEditor from './CopiedTemplateEditor';
  * (1) Instantiate an OOUI WindowManager
  * (2) Load language strings
  *
- * This function accomplishes exactly those.
+ * `preInit` handles all of those. This function simply calls it on run.
  *
  * @param window
  */
