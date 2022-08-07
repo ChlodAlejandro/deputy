@@ -59,6 +59,7 @@ export declare class OOUIBookletLayout {
 	getPage( name: string ): any;
 	clearPages(): void;
 	getCurrentPage(): any /* PageLayout */;
+	getCurrentPageName(): string;
 	/**
 	 * Set the current page by symbolic name
 	 *

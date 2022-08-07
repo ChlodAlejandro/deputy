@@ -14,6 +14,7 @@ import { AttributionNoticePageLayout } from './pages/AttributionNoticePageLayout
 import TemplateMerger from '../models/TemplateMerger';
 import TemplateInsertEvent from '../events/TemplateInsertEvent';
 import AttributionNoticeAddMenu from './AttributionNoticeAddMenu';
+import last from '../../../util/last';
 
 interface CopiedTemplateEditorDialogData {
 	main: CopiedTemplateEditor;
@@ -153,22 +154,48 @@ function initCopiedTemplateEditorDialog() {
 				}
 			}
 
+			const lastFocusedPage = this.layout.getCurrentPage();
+			let nextFocusedPageName: string;
+
 			const layoutPages = getObjectValues( this.layout.pages );
 			const removed = layoutPages
 				.filter( ( item ) => pages.indexOf( item ) === -1 );
 
+			if ( removed.indexOf( lastFocusedPage ) === -1 ) {
+				// Focus on an existing (and currently focused) page.
+				nextFocusedPageName = this.layout.getCurrentPageName();
+			} else if ( lastFocusedPage != null ) {
+				const layoutNames = Object.keys( this.layout.pages );
+
+				// Find the next page AFTER the one previously focused on (which is
+				// about to get removed).
+				for (
+					let i = layoutNames.indexOf( lastFocusedPage.getName() );
+					i < layoutNames.length;
+					i++
+				) {
+					const layoutName = layoutNames[ i ];
+					if ( removed.some( ( p ) => p.getName() !== layoutName ) ) {
+						// This element will not get removed later on. Use it.
+						nextFocusedPageName = layoutName;
+						break;
+					}
+				}
+
+				if ( nextFocusedPageName == null ) {
+					// Fall back to last element in the set (most likely position)
+					nextFocusedPageName = ( last( pages ) as any ).getName();
+				}
+			}
+
 			// Remove all removed pages
 			this.layout.removePages( removed );
 
-			// TODO: Support page rearranging (upstream)
-			/** Index of the last page that could be found. */
-			let lastPage = null;
-			for ( const page of pages ) {
-				if ( layoutPages.indexOf( page ) === -1 ) {
-					this.layout.addPages( [ page ], lastPage || 0 );
-				}
-				// Set the last index
-				lastPage = getObjectValues( this.layout.pages ).indexOf( page ) + 1;
+			// Jank, but no other options while page rearranging isn't a thing.
+			this.layout.addPages( pages );
+
+			if ( nextFocusedPageName ) {
+				this.layout.setPage( nextFocusedPageName );
 			}
 
 			// Delete deleted pages from cache.

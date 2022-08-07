@@ -185,10 +185,10 @@ function initTranslatedPageTemplatePage() {
 					).text()
 				} ),
 				small: new OO.ui.CheckboxInputWidget( {
-					value: yesNo( this.translatedPageTemplate.small )
+					selected: yesNo( this.translatedPageTemplate.small ?? 'yes' )
 				} ),
 				partial: new OO.ui.CheckboxInputWidget( {
-					value: !!this.translatedPageTemplate.partial
+					selected: !!this.translatedPageTemplate.partial
 				} )
 			};
 			const fieldLayouts = {
