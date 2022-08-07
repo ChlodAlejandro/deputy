@@ -111,6 +111,8 @@ export default abstract class AttributionNotice
 
 	/**
 	 * Extracts the parameters from this notice and stores them in the object.
+	 * This must NEVER destroy unknown parameters. This function does not always
+	 * pull all parameters from the template, only those that are known.
 	 *
 	 * This should be implemented by subclasses.
 	 */

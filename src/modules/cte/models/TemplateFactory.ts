@@ -7,6 +7,7 @@ import SplitArticleTemplate from './templates/SplitArticleTemplate';
 import MergedFromTemplate from './templates/MergedFromTemplate';
 import MergedToTemplate from './templates/MergedToTemplate';
 import BackwardsCopyTemplate from './templates/BackwardsCopyTemplate';
+import TranslatedPageTemplate from './templates/TranslatedPageTemplate';
 
 /**
  * Creates blank attribution notices. Its own class to avoid circular dependencies.
@@ -132,6 +133,23 @@ export default class TemplateFactory {
 		node.element.setAttribute( 'about', `N${TemplateFactory.noticeCount++}` );
 		node.element.classList.add( 'box-merged-to' );
 		return new BackwardsCopyTemplate( node );
+	}
+
+	/**
+	 * Creates a new {@link TranslatedPageTemplate}
+	 *
+	 * @param document
+	 * @return A new MergedToTemplate
+	 */
+	static translatedPage( document: CTEParsoidDocument ): TranslatedPageTemplate {
+		const templateWikitext = TemplateFactory.getTemplateWikitext( 'translatedPage' );
+		const node = CTEParsoidTransclusionTemplateNode.fromNew(
+			document,
+			templateWikitext
+		);
+		node.element.setAttribute( 'about', `N${TemplateFactory.noticeCount++}` );
+		node.element.classList.add( 'box-translated-page' );
+		return new TranslatedPageTemplate( node );
 	}
 
 }

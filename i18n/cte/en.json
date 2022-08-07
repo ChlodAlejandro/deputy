@@ -12,6 +12,13 @@
     "deputy.cte.delete": "Delete all notices",
     "deputy.cte.delete.confirm": "You are about to delete $1 {{PLURAL:$1|notice|notices}}. Continue?",
 
+    "deputy.cte.nocat.head": "<code>nocat</code> is enabled",
+    "deputy.cte.nocat.help": "This notice has the <code>nocat</code> parameter enabled and, as an effect, is not being tracked in categories. This usually means that the template is for demonstration purposes only.",
+    "deputy.cte.nocat.clear": "Restore tracking",
+    "deputy.cte.demo.head": "<code>demo</code> is enabled",
+    "deputy.cte.demo.help": "This notice has the <code>demo</code> parameter enabled. This usually means that the template is for demonstration purposes only.",
+    "deputy.cte.demo.clear": "Clear demo mode",
+
     "deputy.cte.invalid": "Some fields are still invalid.",
     "deputy.cte.adding": "Adding content attribution notices",
     "deputy.cte.modifying": "Modifying content attribution notices",
@@ -165,5 +172,31 @@
     "deputy.cte.backwardsCopy.entry.url.help": "A URL to the published media, if it exists as an online resource. If this is not an online resource (newspaper media, other printed media), leave this blank.",
     "deputy.cte.backwardsCopy.entry.org.placeholder": "Example Publishing",
     "deputy.cte.backwardsCopy.entry.org.label": "Publisher",
-    "deputy.cte.backwardsCopy.entry.org.help": "The publisher of the media. This may be a news company or a book publishing company."
+    "deputy.cte.backwardsCopy.entry.org.help": "The publisher of the media. This may be a news company or a book publishing company.",
+
+    "deputy.cte.translatedPage.label": "Translated from $1:$2",
+    "deputy.cte.translatedPage.remove": "Remove notice",
+
+    "deputy.cte.translatedPage.lang.placeholder": "en, de, fr, es, etc.",
+    "deputy.cte.translatedPage.lang.label": "Language code",
+    "deputy.cte.translatedPage.lang.help": "The language code of the wiki that the page was translated from. This is the \"en\" of the English Wikipedia, or the \"fr\" of the French Wikipedia.",
+    "deputy.cte.translatedPage.page.placeholder": "Page on other wiki",
+    "deputy.cte.translatedPage.page.label": "Source page",
+    "deputy.cte.translatedPage.page.help": "The page on the other wiki that the content was copied from. Do not translate the page title.",
+    "deputy.cte.translatedPage.comments.placeholder": "Additional comments",
+    "deputy.cte.translatedPage.comments.label": "Comments",
+    "deputy.cte.translatedPage.comments.help": "Additional comments that are pertinent to translation.",
+    "deputy.cte.translatedPage.version.placeholder": "123456789",
+    "deputy.cte.translatedPage.version.label": "Source revision ID",
+    "deputy.cte.translatedPage.version.help": "The revision ID of the source page at the time of translation.",
+    "deputy.cte.translatedPage.insertversion.placeholder": "987654321",
+    "deputy.cte.translatedPage.insertversion.label": "Insertion revision ID",
+    "deputy.cte.translatedPage.insertversion.help": "The revision ID of the revision where the translated content was inserted into the page bearing this notice.",
+    "deputy.cte.translatedPage.section.placeholder": "Section name",
+    "deputy.cte.translatedPage.section.label": "Section",
+    "deputy.cte.translatedPage.section.help": "The section of the page that was translated, if a specific section was translated. Leave blank if this does not apply, or if translation was performed on the entire page or more than one section.",
+    "deputy.cte.translatedPage.small.label": "Small?",
+    "deputy.cte.translatedPage.small.help": "Whether to render the template as a small message box or not. By default, a small box is used. If you have a good reason to use a full-sized banner, disable this option.",
+    "deputy.cte.translatedPage.partial.label": "Partial?",
+    "deputy.cte.translatedPage.partial.help": "Whether this translation is a partial translation or not."
 }

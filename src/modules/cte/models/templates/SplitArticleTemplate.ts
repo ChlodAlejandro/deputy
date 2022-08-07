@@ -67,7 +67,6 @@ export default class SplitArticleTemplate
 	}
 
 	/**
-	 *
 	 * @inheritDoc
 	 */
 	save(): void {

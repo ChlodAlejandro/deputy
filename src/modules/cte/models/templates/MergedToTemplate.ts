@@ -1,9 +1,8 @@
-import CopiedTemplateRow from './CopiedTemplateRow';
 import { AttributionNoticePageLayout } from '../../ui/pages/AttributionNoticePageLayout';
 import { AttributionNoticePageGenerator } from '../../ui/AttributionNoticePageGenerator';
-import RowedAttributionNotice from '../RowedAttributionNotice';
 import MergedToTemplatePage from '../../ui/pages/MergedToTemplatePage';
 import yesNo from '../../../../util/yesNo';
+import AttributionNotice from '../AttributionNotice';
 
 export interface RawMergedToTemplate {
 	/**
@@ -22,10 +21,10 @@ export interface RawMergedToTemplate {
 export type MergedToTemplateParameter = keyof RawMergedToTemplate;
 
 /**
- * Represents a single {{merged-from}} template in the Parsoid document.
+ * Represents a single {{merged-to}} template in the Parsoid document.
  */
 export default class MergedToTemplate
-	extends RowedAttributionNotice<CopiedTemplateRow>
+	extends AttributionNotice
 	implements AttributionNoticePageGenerator, RawMergedToTemplate {
 
 	// TEMPLATE OPTIONS
@@ -37,10 +36,7 @@ export default class MergedToTemplate
 	small?: string;
 
 	/**
-	 * Parses parameters into class properties. This WILL destroy unknown
-	 * parameters and parameters in the incorrect order!
-	 *
-	 * This function does not modify the template data.
+	 * inheritDoc
 	 */
 	parse() {
 		if ( this.node.hasParameter( 'to' ) ) {
@@ -59,7 +55,7 @@ export default class MergedToTemplate
 	}
 
 	/**
-	 * Saves the current template data to the Parsoid element.
+	 * @inheritDoc
 	 */
 	save() {
 		// Reset named parameters
@@ -78,7 +74,7 @@ export default class MergedToTemplate
 	}
 
 	/**
-	 * Destroys this template completely.
+	 * @inheritDoc
 	 */
 	destroy() {
 		this.node.destroy();

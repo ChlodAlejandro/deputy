@@ -6,6 +6,7 @@ import {
 } from '../models/WikiAttributionNotices';
 import { h } from 'tsx-dom';
 import AttributionNotice from '../models/AttributionNotice';
+import RowedAttributionNotice from '../models/RowedAttributionNotice';
 
 /**
  * Renders the panel used to merge multiple {{split article}} templates.
@@ -17,7 +18,7 @@ import AttributionNotice from '../models/AttributionNotice';
  */
 export function renderMergePanel<T extends SupportedAttributionNoticeType>(
 	type: T,
-	parentTemplate: AttributionNoticeTypeClass<T>,
+	parentTemplate: AttributionNoticeTypeClass<T> & RowedAttributionNotice<any>,
 	mergeButton: any
 ): JSX.Element {
 	const mergePanel = new OO.ui.FieldsetLayout( {

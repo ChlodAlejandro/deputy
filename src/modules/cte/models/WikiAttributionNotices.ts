@@ -7,6 +7,7 @@ import SplitArticleTemplate from './templates/SplitArticleTemplate';
 import MergedFromTemplate from './templates/MergedFromTemplate';
 import MergedToTemplate from './templates/MergedToTemplate';
 import BackwardsCopyTemplate from './templates/BackwardsCopyTemplate';
+import TranslatedPageTemplate from './templates/TranslatedPageTemplate';
 
 /**
  * An object mapping notice types to their expected on-wiki page titles.
@@ -16,8 +17,8 @@ export const attributionNoticeTemplatePages = {
 	splitArticle: 'Split article',
 	mergedFrom: 'Merged-from',
 	mergedTo: 'Merged-to',
-	backwardsCopy: 'Backwards copy'
-	// translatedPage: 'Translated page'
+	backwardsCopy: 'Backwards copy',
+	translatedPage: 'Translated page'
 };
 
 /**
@@ -60,9 +61,8 @@ export default class WikiAttributionNotices {
 		splitArticle: SplitArticleTemplate,
 		mergedFrom: MergedFromTemplate,
 		mergedTo: MergedToTemplate,
-		backwardsCopy: BackwardsCopyTemplate
-		// TODO: Implement
-		// translatedPage: class Null {}
+		backwardsCopy: BackwardsCopyTemplate,
+		translatedPage: TranslatedPageTemplate
 	};
 
 	/**

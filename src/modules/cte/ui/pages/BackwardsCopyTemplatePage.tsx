@@ -8,6 +8,9 @@ import CTEParsoidDocument from '../../models/CTEParsoidDocument';
 import CopiedTemplateEditorDialog from '../CopiedTemplateEditorDialog';
 import { AttributionNoticePageLayout } from './AttributionNoticePageLayout';
 import { renderMergePanel, renderPreviewPanel } from '../RowPageShared';
+import swapElements from '../../../../util/swapElements';
+import DemoTemplateMessage from './messages/DemoTemplateMessage';
+import removeElement from '../../../../util/removeElement';
 
 export interface BackwardsCopyTemplatePageData {
 	/**
@@ -119,6 +122,7 @@ function initBackwardsCopyTemplatePage() {
 					this.mergeButton
 				),
 				this.renderBotPanel(),
+				this.renderDemoPanel(),
 				renderPreviewPanel( this.backwardsCopyTemplate ),
 				this.renderTemplateOptions()
 			);
@@ -223,6 +227,44 @@ function initBackwardsCopyTemplatePage() {
 						mw.message( 'deputy.cte.backwardsCopy.bot', bot ).parse()
 					)
 				} ) );
+			} else {
+				return null;
+			}
+		}
+
+		/**
+		 * Renders a panel that shows when demo mode is enabled.
+		 *
+		 * @return An unwrapped OOUI MessageWidget
+		 */
+		renderDemoPanel(): JSX.Element {
+			if ( this.backwardsCopyTemplate.node.hasParameter( 'bot' ) ) {
+				// Insert element directly into widget (not as text, or else event
+				// handlers will be destroyed).
+				const messageBox = new OO.ui.MessageWidget( {
+					type: 'notice',
+					icon: 'alert',
+					label: new OO.ui.HtmlSnippet(
+						DemoTemplateMessage().innerHTML
+					)
+				} );
+
+				const clearButton = new OO.ui.ButtonWidget( {
+					flags: [ 'progressive', 'primary' ],
+					label: mw.message( 'deputy.cte.demo.clear' ).text()
+				} );
+				clearButton.on( 'click', () => {
+					this.backwardsCopyTemplate.node.removeParameter( 'demo' );
+					removeElement( unwrapWidget( messageBox ) );
+				} );
+
+				swapElements(
+					unwrapWidget( messageBox )
+						.querySelector( '.cte-message-button' ),
+					unwrapWidget( clearButton )
+				);
+
+				return unwrapWidget( messageBox );
 			} else {
 				return null;
 			}

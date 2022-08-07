@@ -131,7 +131,8 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 			splitArticle: 1,
 			mergedFrom: 2,
 			mergedTo: 3,
-			backwardsCopy: 4
+			backwardsCopy: 4,
+			translatedPage: 5
 		};
 		const positionIndex = positionIndices[ type ];
 		const variableSpots: [InsertPosition, HTMLElement|null][] = [
@@ -165,12 +166,11 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 					last( this.document.querySelectorAll( '.box-backwards-copy' ) ) :
 					this.document.querySelector( '.box-backwards-copy' )
 			],
-			// TODO: replace `copied` with `translatedPage` when it's available.
 			[
-				positionIndex >= positionIndices.copied ? 'afterend' : 'beforebegin',
-				positionIndex >= positionIndices.copied ?
-					last( this.document.querySelectorAll( '.box-merged-to' ) ) :
-					this.document.querySelector( '.box-merged-to' )
+				positionIndex >= positionIndices.translatedPage ? 'afterend' : 'beforebegin',
+				positionIndex >= positionIndices.translatedPage ?
+					last( this.document.querySelectorAll( '.box-translated-page' ) ) :
+					this.document.querySelector( '.box-translated-page' )
 			]
 		];
 
@@ -245,7 +245,8 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 			splitArticle: TemplateFactory.splitArticle,
 			mergedFrom: TemplateFactory.mergedFrom,
 			mergedTo: TemplateFactory.mergedTo,
-			backwardsCopy: TemplateFactory.backwardsCopy
+			backwardsCopy: TemplateFactory.backwardsCopy,
+			translatedPage: TemplateFactory.translatedPage
 		} )[ type ]( this );
 
 		// Insert.

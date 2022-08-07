@@ -17,6 +17,7 @@ The following paradigms are used for the development of template and template ro
 - Template models should embody global parameters for row-based templates, or all parameters for simple templates.
   - By embody, this means the parameter should be a field in the class.
   - The field on the class must be a string.
+  - If the parameter is positional (`1`, `2`, etc.), fall back to a fitting variable name.
 - Template row models should embody each row parameter without its numbered suffix.
   - By embody, this means the parameter should be a field in the class and a key in the raw row interface.
   - The field on the class must be a string.

@@ -35,10 +35,7 @@ export default class CopiedTemplate
 	}
 
 	/**
-	 * Parses parameters into class properties. This WILL destroy unknown
-	 * parameters and parameters in the incorrect order!
-	 *
-	 * This function does not modify the template data.
+	 * @inheritDoc
 	 */
 	parse() {
 		if ( this.node.getParameter( 'collapse' ) ) {
@@ -88,7 +85,7 @@ export default class CopiedTemplate
 	}
 
 	/**
-	 * Saves the current template data to the Parsoid element.
+	 * @inheritDoc
 	 */
 	save() {
 		if ( this.collapsed !== undefined ) {
@@ -131,7 +128,7 @@ export default class CopiedTemplate
 	}
 
 	/**
-	 * Destroys this template completely.
+	 * @inheritDoc
 	 */
 	destroy() {
 		this.node.destroy();
