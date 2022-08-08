@@ -141,12 +141,12 @@ export default [
 	} ),
 	// Standalone Attribution Notice Template Editor
 	auto( 'cte', {
-		input: 'src/modules/cte/CopiedTemplateEditorStandalone.ts',
+		input: 'src/modules/ante/CopiedTemplateEditorStandalone.ts',
 		output: {
 			sourcemap: true,
 			file: 'build/deputy-ante.js',
 			format: 'iife',
-			banner: loadBanner( 'src', 'modules', 'cte', 'BANNER.txt' ) +
+			banner: loadBanner( 'src', 'modules', 'ante', 'BANNER.txt' ) +
 				'\n// <nowiki>',
 			footer: '// </nowiki>\n// <3'
 		},

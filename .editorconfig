@@ -14,5 +14,10 @@ indent_style = tab
 indent_style = space
 indent_size = 4
 
+[i18n/**.json]
+end_of_line = lf
+indent_style = space
+indent_size = 4
+
 [/*.{json,js}]
 end_of_line = lf

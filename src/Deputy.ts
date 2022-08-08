@@ -13,7 +13,7 @@ import { DeputyPreferences } from './DeputyPreferences';
 import performHacks from './util/performHacks';
 import DeputyCase from './wiki/DeputyCase';
 import unwrapWidget from './util/unwrapWidget';
-import CopiedTemplateEditor from './modules/cte/CopiedTemplateEditor';
+import CopiedTemplateEditor from './modules/ante/CopiedTemplateEditor';
 import DeputyLanguage from './DeputyLanguage';
 import deputyVersion from './DeputyVersion';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

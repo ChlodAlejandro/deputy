@@ -1,13 +1,11 @@
 import CopiedTemplateEditorDialog from './ui/CopiedTemplateEditorDialog';
-import type { Deputy } from '../../Deputy';
-import unwrapWidget from '../../util/unwrapWidget';
 import CopiedTemplate from './models/templates/CopiedTemplate';
+import deputyAnteEnglish from '../../../i18n/ante/en.json';
+import WikiAttributionNotices from './models/WikiAttributionNotices';
+import DeputyModule from '../DeputyModule';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import cteStyles from './css/copied-template-editor.css';
-import deputyCteEnglish from '../../../i18n/cte/en.json';
-import DeputyLanguage from '../../DeputyLanguage';
-import WikiAttributionNotices from './models/WikiAttributionNotices';
 
 declare global {
 	interface Window {
@@ -18,26 +16,9 @@ declare global {
 /**
  * Main class for CopiedTemplateEditor.
  */
-export default class CopiedTemplateEditor {
+export default class CopiedTemplateEditor extends DeputyModule {
 
 	readonly CopiedTemplate = CopiedTemplate;
-
-	/**
-	 * An instance of Deputy. This is commonly `window.deputy`. Instantiating this class
-	 * with a Deputy instances enables connection with the Deputy core, which shares the
-	 * OOUI window manager and API manager for Deputy.
-	 */
-	readonly deputy?: Deputy;
-	/**
-	 * An OOUI WindowManager. If this class is instantiated standalone (without Deputy),
-	 * this will be a set value.
-	 */
-	_windowManager: any;
-	/**
-	 * A MediaWiki API object. If this class is instantiated standalone (without Deputy),
-	 * this will be a set value.
-	 */
-	_wiki: mw.Api;
 
 	/**
 	 * The `loader` variable is set (in JavaScript) by a CTE loader. This prevents UI
@@ -65,26 +46,10 @@ export default class CopiedTemplateEditor {
 	dialog: any;
 
 	/**
-	 * @return The responsible window manager for this class.
+	 * @inheritDoc
 	 */
-	get windowManager(): any {
-		if ( !this.deputy ) {
-			if ( !this._windowManager ) {
-				this._windowManager = new OO.ui.WindowManager();
-				document.body.appendChild( unwrapWidget( this._windowManager ) );
-			}
-			return this._windowManager;
-		} else {
-			return this.deputy.windowManager;
-		}
-	}
-
-	/**
-	 *
-	 * @param deputy
-	 */
-	constructor( deputy?: Deputy ) {
-		this.deputy = deputy;
+	getName(): string {
+		return 'ante';
 	}
 
 	/**
@@ -92,7 +57,7 @@ export default class CopiedTemplateEditor {
 	 * adding in necessary UI elements that serve as an entry point to CTE.
 	 */
 	async preInit(): Promise<void> {
-		await DeputyLanguage.load( 'cte', deputyCteEnglish );
+		await super.preInit( deputyAnteEnglish );
 
 		if (
 			// Button not yet appended
@@ -103,7 +68,7 @@ export default class CopiedTemplateEditor {
 			mw.util.addPortletLink(
 				'p-tb',
 				'#',
-				mw.message( 'deputy.cte' ).text(),
+				mw.message( 'deputy.ante' ).text(),
 				'pt-cte'
 			).addEventListener( 'click', ( event ) => {
 				event.preventDefault();
@@ -141,8 +106,8 @@ export default class CopiedTemplateEditor {
 
 								const startButton = new OO.ui.ButtonWidget( {
 									icon: 'edit',
-									title: mw.message( 'deputy.cte.edit' ).text(),
-									label: mw.message( 'deputy.cte.edit' ).text()
+									title: mw.message( 'deputy.ante.edit' ).text(),
+									label: mw.message( 'deputy.ante.edit' ).text()
 								} ).setInvisibleLabel( true );
 								this.startButtons.push( startButton );
 								const td = document.createElement( 'td' );

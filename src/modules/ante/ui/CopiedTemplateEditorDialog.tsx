@@ -35,20 +35,20 @@ function initCopiedTemplateEditorDialog() {
 
 		static static = {
 			name: 'copiedTemplateEditorDialog',
-			title: mw.message( 'deputy.cte' ).text(),
+			title: mw.message( 'deputy.ante' ).text(),
 			size: 'huge',
 			actions: [
 				{
 					flags: [ 'primary', 'progressive' ],
-					label: mw.message( 'deputy.cte.save' ).text(),
-					title: mw.message( 'deputy.cte.save' ).text(),
+					label: mw.message( 'deputy.ante.save' ).text(),
+					title: mw.message( 'deputy.ante.save' ).text(),
 					action: 'save'
 				},
 				{
 					flags: [ 'safe', 'close' ],
 					icon: 'close',
-					label: mw.message( 'deputy.cte.close' ).text(),
-					title: mw.message( 'deputy.cte.close' ).text(),
+					label: mw.message( 'deputy.ante.close' ).text(),
+					title: mw.message( 'deputy.ante.close' ).text(),
 					invisibleLabel: true,
 					action: 'close'
 				}
@@ -215,8 +215,8 @@ function initCopiedTemplateEditorDialog() {
 				icon: 'add',
 				framed: false,
 				invisibleLabel: true,
-				label: mw.message( 'deputy.cte.add' ).text(),
-				title: mw.message( 'deputy.cte.add' ).text(),
+				label: mw.message( 'deputy.ante.add' ).text(),
+				title: mw.message( 'deputy.ante.add' ).text(),
 				flags: [ 'progressive' ]
 			} );
 
@@ -224,8 +224,8 @@ function initCopiedTemplateEditorDialog() {
 				icon: 'tableMergeCells',
 				framed: false,
 				invisibleLabel: true,
-				label: mw.message( 'deputy.cte.mergeAll' ).text(),
-				title: mw.message( 'deputy.cte.mergeAll' ).text(),
+				label: mw.message( 'deputy.ante.mergeAll' ).text(),
+				title: mw.message( 'deputy.ante.mergeAll' ).text(),
 				disabled: true
 			} );
 			// TODO: Repair mergeButton
@@ -234,7 +234,7 @@ function initCopiedTemplateEditorDialog() {
 				if ( notices.length > 1 ) {
 					return OO.ui.confirm(
 						mw.message(
-							'deputy.cte.mergeAll.confirm',
+							'deputy.ante.mergeAll.confirm',
 							`${notices.length}`
 						).text()
 					).done( ( confirmed: boolean ) => {
@@ -253,12 +253,12 @@ function initCopiedTemplateEditorDialog() {
 				icon: 'reload',
 				framed: false,
 				invisibleLabel: true,
-				label: mw.message( 'deputy.cte.reset' ).text(),
-				title: mw.message( 'deputy.cte.reset' ).text()
+				label: mw.message( 'deputy.ante.reset' ).text(),
+				title: mw.message( 'deputy.ante.reset' ).text()
 			} );
 			resetButton.on( 'click', () => {
 				return OO.ui.confirm(
-					mw.message( 'deputy.cte.reset.confirm' ).text()
+					mw.message( 'deputy.ante.reset.confirm' ).text()
 				).done( ( confirmed: boolean ) => {
 					if ( confirmed ) {
 						this.parsoid.reload().then( () => {
@@ -273,8 +273,8 @@ function initCopiedTemplateEditorDialog() {
 				icon: 'trash',
 				framed: false,
 				invisibleLabel: true,
-				label: mw.message( 'deputy.cte.delete' ).text(),
-				title: mw.message( 'deputy.cte.delete' ).text(),
+				label: mw.message( 'deputy.ante.delete' ).text(),
+				title: mw.message( 'deputy.ante.delete' ).text(),
 				flags: [ 'destructive' ]
 			} );
 			deleteButton.on( 'click', () => {
@@ -282,7 +282,7 @@ function initCopiedTemplateEditorDialog() {
 				const notices = this.parsoid.findNotices();
 				return OO.ui.confirm(
 					mw.message(
-						'deputy.cte.delete.confirm',
+						'deputy.ante.delete.confirm',
 						`${notices.length}`
 					).text()
 				).done( ( confirmed: boolean ) => {
@@ -401,7 +401,7 @@ function initCopiedTemplateEditorDialog() {
 						.querySelector( '.oo-ui-flaggedElement-invalid' ) != null
 				) {
 					return new OO.ui.Process( () => {
-						OO.ui.alert( mw.message( 'deputy.cte.invalid' ).text() );
+						OO.ui.alert( mw.message( 'deputy.ante.invalid' ).text() );
 					} );
 				}
 

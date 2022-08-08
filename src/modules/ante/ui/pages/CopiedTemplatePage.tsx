@@ -89,7 +89,7 @@ function initCopiedTemplatePage() {
 			}
 
 			const label = mw.message(
-				'deputy.cte.copied.label',
+				'deputy.ante.copied.label',
 				config.copiedTemplate.name
 			).text();
 			const finalConfig = {
@@ -170,12 +170,12 @@ function initCopiedTemplatePage() {
 
 			this.mergeButton = new OO.ui.ButtonWidget( {
 				icon: 'tableMergeCells',
-				title: mw.message( 'deputy.cte.merge' ).text(),
+				title: mw.message( 'deputy.ante.merge' ).text(),
 				framed: false
 			} );
 			const deleteButton = new OO.ui.ButtonWidget( {
 				icon: 'trash',
-				title: mw.message( 'deputy.cte.copied.remove' ).text(),
+				title: mw.message( 'deputy.ante.copied.remove' ).text(),
 				framed: false,
 				flags: [ 'destructive' ]
 			} );
@@ -183,7 +183,7 @@ function initCopiedTemplatePage() {
 				if ( this.copiedTemplate.rows.length > 0 ) {
 					OO.ui.confirm(
 						mw.message(
-							'deputy.cte.copied.remove.confirm',
+							'deputy.ante.copied.remove.confirm',
 							`${this.copiedTemplate.rows.length}`
 						).text()
 					).done( ( confirmed: boolean ) => {
@@ -198,7 +198,7 @@ function initCopiedTemplatePage() {
 			const addButton = new OO.ui.ButtonWidget( {
 				flags: [ 'progressive' ],
 				icon: 'add',
-				label: mw.message( 'deputy.cte.copied.add' ).text()
+				label: mw.message( 'deputy.ante.copied.add' ).text()
 			} );
 			addButton.on( 'click', () => {
 				this.copiedTemplate.addRow( new CopiedTemplateRow( {
@@ -243,11 +243,11 @@ function initCopiedTemplatePage() {
 			};
 			this.fields = {
 				collapse: new OO.ui.FieldLayout( this.inputSet.collapse, {
-					label: mw.message( 'deputy.cte.copied.collapse' ).text(),
+					label: mw.message( 'deputy.ante.copied.collapse' ).text(),
 					align: 'inline'
 				} ),
 				small: new OO.ui.FieldLayout( this.inputSet.small, {
-					label: mw.message( 'deputy.cte.copied.small' ).text(),
+					label: mw.message( 'deputy.ante.copied.small' ).text(),
 					align: 'inline'
 				} )
 			};

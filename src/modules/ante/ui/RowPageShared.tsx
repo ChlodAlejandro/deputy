@@ -24,7 +24,7 @@ export function renderMergePanel<T extends SupportedAttributionNoticeType>(
 	const mergePanel = new OO.ui.FieldsetLayout( {
 		classes: [ 'cte-merge-panel' ],
 		icon: 'tableMergeCells',
-		label: mw.message( 'deputy.cte.merge.title' ).text()
+		label: mw.message( 'deputy.ante.merge.title' ).text()
 	} );
 	unwrapWidget( mergePanel ).style.padding = '16px';
 	unwrapWidget( mergePanel ).style.zIndex = '20';
@@ -34,10 +34,10 @@ export function renderMergePanel<T extends SupportedAttributionNoticeType>(
 	// <select> and button for merging templates
 	const mergeTarget = new OO.ui.DropdownInputWidget( {
 		$overlay: true,
-		label: mw.message( 'deputy.cte.merge.from.select' ).text()
+		label: mw.message( 'deputy.ante.merge.from.select' ).text()
 	} );
 	const mergeTargetButton = new OO.ui.ButtonWidget( {
-		label: mw.message( 'deputy.cte.merge.button' ).text()
+		label: mw.message( 'deputy.ante.merge.button' ).text()
 	} );
 	mergeTargetButton.on( 'click', () => {
 		const template = parentTemplate.parsoid.findNoticeType( type ).find(
@@ -55,7 +55,7 @@ export function renderMergePanel<T extends SupportedAttributionNoticeType>(
 		mergeTarget,
 		mergeTargetButton,
 		{
-			label: mw.message( 'deputy.cte.merge.from.label' ).text(),
+			label: mw.message( 'deputy.ante.merge.from.label' ).text(),
 			align: 'left'
 		}
 	);
@@ -63,7 +63,7 @@ export function renderMergePanel<T extends SupportedAttributionNoticeType>(
 		mergePanel.toggle();
 	} );
 	const mergeAllButton = new OO.ui.ButtonWidget( {
-		label: mw.message( 'deputy.cte.merge.all' ).text(),
+		label: mw.message( 'deputy.ante.merge.all' ).text(),
 		flags: [ 'progressive' ]
 	} );
 	mergeAllButton.on( 'click', () => {
@@ -71,7 +71,7 @@ export function renderMergePanel<T extends SupportedAttributionNoticeType>(
 		// Confirm before merging.
 		OO.ui.confirm(
 			mw.message(
-				'deputy.cte.merge.all.confirm',
+				'deputy.ante.merge.all.confirm',
 				`${notices.length - 1}`
 			).text()
 		).done( ( confirmed: boolean ) => {
@@ -97,14 +97,14 @@ export function renderMergePanel<T extends SupportedAttributionNoticeType>(
 			options.push( {
 				data: notice.name,
 				// Messages used here:
-				// * deputy.cte.copied.label
-				// * deputy.cte.splitArticle.label
-				// * deputy.cte.mergedFrom.label
-				// * deputy.cte.mergedTo.label
-				// * deputy.cte.backwardsCopy.label
-				// * deputy.cte.translatedPage.label
+				// * deputy.ante.copied.label
+				// * deputy.ante.splitArticle.label
+				// * deputy.ante.mergedFrom.label
+				// * deputy.ante.mergedTo.label
+				// * deputy.ante.backwardsCopy.label
+				// * deputy.ante.translatedPage.label
 				label: mw.message(
-					`deputy.cte.${type}.label`,
+					`deputy.ante.${type}.label`,
 					notice.name
 				).text()
 			} );
@@ -112,7 +112,7 @@ export function renderMergePanel<T extends SupportedAttributionNoticeType>(
 		if ( options.length === 0 ) {
 			options.push( {
 				data: null,
-				label: mw.message( 'deputy.cte.merge.from.empty' ).text(),
+				label: mw.message( 'deputy.ante.merge.from.empty' ).text(),
 				disabled: true
 			} );
 			mergeTargetButton.setDisabled( true );

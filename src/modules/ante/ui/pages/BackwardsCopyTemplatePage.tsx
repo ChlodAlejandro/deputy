@@ -86,7 +86,7 @@ function initBackwardsCopyTemplatePage() {
 			}
 
 			const label = mw.message(
-				'deputy.cte.backwardsCopy.label',
+				'deputy.ante.backwardsCopy.label',
 				config.backwardsCopyTemplate.name
 			).text();
 			const finalConfig = {
@@ -169,12 +169,12 @@ function initBackwardsCopyTemplatePage() {
 
 			this.mergeButton = new OO.ui.ButtonWidget( {
 				icon: 'tableMergeCells',
-				title: mw.message( 'deputy.cte.merge' ).text(),
+				title: mw.message( 'deputy.ante.merge' ).text(),
 				framed: false
 			} );
 			const deleteButton = new OO.ui.ButtonWidget( {
 				icon: 'trash',
-				title: mw.message( 'deputy.cte.copied.remove' ).text(),
+				title: mw.message( 'deputy.ante.copied.remove' ).text(),
 				framed: false,
 				flags: [ 'destructive' ]
 			} );
@@ -182,7 +182,7 @@ function initBackwardsCopyTemplatePage() {
 				if ( this.backwardsCopyTemplate.rows.length > 0 ) {
 					OO.ui.confirm(
 						mw.message(
-							'deputy.cte.copied.remove.confirm',
+							'deputy.ante.copied.remove.confirm',
 							`${this.backwardsCopyTemplate.rows.length}`
 						).text()
 					).done( ( confirmed: boolean ) => {
@@ -197,7 +197,7 @@ function initBackwardsCopyTemplatePage() {
 			const addButton = new OO.ui.ButtonWidget( {
 				flags: [ 'progressive' ],
 				icon: 'add',
-				label: mw.message( 'deputy.cte.copied.add' ).text()
+				label: mw.message( 'deputy.ante.copied.add' ).text()
 			} );
 			addButton.on( 'click', () => {
 				this.backwardsCopyTemplate.addRow(
@@ -224,7 +224,7 @@ function initBackwardsCopyTemplatePage() {
 					type: 'notice',
 					icon: 'robot',
 					label: new OO.ui.HtmlSnippet(
-						mw.message( 'deputy.cte.backwardsCopy.bot', bot ).parse()
+						mw.message( 'deputy.ante.backwardsCopy.bot', bot ).parse()
 					)
 				} ) );
 			} else {
@@ -251,7 +251,7 @@ function initBackwardsCopyTemplatePage() {
 
 				const clearButton = new OO.ui.ButtonWidget( {
 					flags: [ 'progressive', 'primary' ],
-					label: mw.message( 'deputy.cte.demo.clear' ).text()
+					label: mw.message( 'deputy.ante.demo.clear' ).text()
 				} );
 				clearButton.on( 'click', () => {
 					this.backwardsCopyTemplate.node.removeParameter( 'demo' );
@@ -291,13 +291,13 @@ function initBackwardsCopyTemplatePage() {
 			const inputSet = {
 				comments: new OO.ui.TextInputWidget( {
 					placeholder: mw.message(
-						'deputy.cte.backwardsCopy.comments.placeholder'
+						'deputy.ante.backwardsCopy.comments.placeholder'
 					).text(),
 					value: this.backwardsCopyTemplate.comments?.trim()
 				} ),
 				id: new OO.ui.TextInputWidget( {
 					placeholder: mw.message(
-						'deputy.cte.backwardsCopy.id.placeholder'
+						'deputy.ante.backwardsCopy.id.placeholder'
 					).text(),
 					value: this.backwardsCopyTemplate.revid?.trim()
 				} )
@@ -305,14 +305,14 @@ function initBackwardsCopyTemplatePage() {
 			const fields = {
 				comments: new OO.ui.FieldLayout( inputSet.comments, {
 					$overlay: this.parent.$overlay,
-					label: mw.message( 'deputy.cte.backwardsCopy.comments.label' ).text(),
-					help: mw.message( 'deputy.cte.backwardsCopy.comments.help' ).text(),
+					label: mw.message( 'deputy.ante.backwardsCopy.comments.label' ).text(),
+					help: mw.message( 'deputy.ante.backwardsCopy.comments.help' ).text(),
 					align: 'top'
 				} ),
 				id: new OO.ui.FieldLayout( inputSet.id, {
 					$overlay: this.parent.$overlay,
-					label: mw.message( 'deputy.cte.backwardsCopy.id.label' ).text(),
-					help: mw.message( 'deputy.cte.backwardsCopy.id.help' ).text(),
+					label: mw.message( 'deputy.ante.backwardsCopy.id.label' ).text(),
+					help: mw.message( 'deputy.ante.backwardsCopy.id.help' ).text(),
 					align: 'top'
 				} )
 			};
