@@ -1,7 +1,7 @@
 
-   COPIED TEMPLATE EDITOR
+   ATTRIBUTION NOTICE TEMPLATE EDITOR
 
-   Graphically edit {{copied}} templates on a page's talk page.
+   Graphically edit attribution notice templates on a page's talk page.
 
    ------------------------------------------------------------------------
 
