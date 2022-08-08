@@ -174,7 +174,19 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 			]
 		];
 
-		moveToStart( variableSpots, positionIndex );
+		// Move everything after the template type we're looking for to the start of the array.
+		// Also place the exact type we're looking for at the top of the array.
+		// This prioritizes the highest (by position) template in the page.
+		const afterSpots = variableSpots.splice(
+			positionIndex + 1,
+			variableSpots.length - positionIndex + 1
+		);
+		const beforeSpots = variableSpots.splice(
+			0,
+			positionIndex
+		).reverse();
+		moveToStart( variableSpots, 0 );
+		variableSpots.push( ...beforeSpots, ...afterSpots );
 
 		const possibleSpots: [InsertPosition, HTMLElement|null][] = [
 			...variableSpots,

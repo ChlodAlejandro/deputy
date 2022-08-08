@@ -157,7 +157,9 @@ function initSplitArticleTemplateRowPage() {
 				from_oldid: new OO.ui.TextInputWidget( {
 					$overlay: this.parent.$overlay,
 					value: this.splitArticleTemplateRow.from_oldid || '',
-					placeholder: mw.message( 'deputy.cte.splitArticle.to.placeholder' ).text()
+					placeholder: mw.message(
+						'deputy.cte.splitArticle.from_oldid.placeholder'
+					).text()
 				} ),
 				date: new mw.widgets.datetime.DateTimeInputWidget( {
 					$overlay: this.parent.$overlay,

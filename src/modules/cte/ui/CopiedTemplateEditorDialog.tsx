@@ -164,7 +164,7 @@ function initCopiedTemplateEditorDialog() {
 			if ( removed.indexOf( lastFocusedPage ) === -1 ) {
 				// Focus on an existing (and currently focused) page.
 				nextFocusedPageName = this.layout.getCurrentPageName();
-			} else if ( lastFocusedPage != null ) {
+			} else if ( lastFocusedPage != null && pages.length > 0 ) {
 				const layoutNames = Object.keys( this.layout.pages );
 
 				// Find the next page AFTER the one previously focused on (which is

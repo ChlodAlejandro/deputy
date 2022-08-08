@@ -78,7 +78,7 @@
         "cover 95% and supports fetch, not IE 11"
     ],
     "dependencies": {
-        "@chlodalejandro/parsoid": "^2.0.0-9ffc1cc",
+        "@chlodalejandro/parsoid": "^2.0.0-f15ca00",
         "broadcastchannel-polyfill": "^1.0.1",
         "idb": "^7.0.1",
         "tsx-dom": "^1.4.0"
