@@ -82,6 +82,7 @@ function cssString( options = { minify: true } ) {
 function getPlugins() {
 	return [
 		// Appends license information
+		// Place at top to absorb all imports.
 		license(),
 		// Inserts sourcemaps
 		!production && sourcemaps(),

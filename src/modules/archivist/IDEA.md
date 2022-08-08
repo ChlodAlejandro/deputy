@@ -1,0 +1,10 @@
+Archivist came up as a side thought when developing Deputy. Occasionally, the [InternetArchiveBot](https://en.wikipedia.org/wiki/User:InternetArchiveBot)'s web interface goes down and users are unable to add archives to dead reference URLs. This is a problem when trying to look for internet-based copyright violations, since dead links won't match Earwig's Copyvio Tool. Because of this, an alternative needs to exist (that isn't manually adding archives to dead links).
+
+Archivist aims to allow users to add archives to dead reference URLs entirely from the client side. Since the Internet Archive sends `Access-Control-Allow-Origin: *` with requests to its [Wayback Machine Availability API](https://archive.org/help/wayback_api.php), we can leverage this to make cross-origin requests which checks if a reference has an available archive or not. This will also (hopefully) solve a limitation with the InternetArchiveBot: the strict adherence to Internet Archive URLs. The user can choose a different archiver (by default or as a fallback) such as `archive.today` or sources from the Memento Project to find possible archives.
+
+Once archives are found, the user can choose to add them to the template for saving. By default, sources with existing archive URLs should not be checked for archives, but should have a "recheck" button for manual rechecking. Archivist should also use `access-date` as a reference to get an archive closest to that given date. Since we're only checking the Wayback Machine API, this *will* also grab URLs from *living* URLs. Perhaps something in Zoomiebot can be used to ping websites and see if they are dead or not. Perhaps the entire "grab archives" thing can be done in Zoomiebot (server-side) to improve speed and bandwidth. Y'know what, it's 1:51 AM and that's a good idea, so I'm going with that.
+
+Other things to add:
+* Big button that adds archives to all non-dead links
+* Another big button that gets archives of all sources
+* A button that links to an Earwig Copyvio Tool comparison of the living/archived source and the article
