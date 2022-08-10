@@ -112,9 +112,9 @@
     "deputy.ante.splitArticle.from_oldid.help": "The revision ID of the original page prior to the split. This is the revision that still contains content that will eventually become part of the split, with the following revision (or succeeding revisions) progressively transferring content to the other pages.",
     "deputy.ante.splitArticle.date.label": "Date of split",
     "deputy.ante.splitArticle.date.help": "The date that the split occurred.",
-    "deputy.ante.splitArticle.diff.placeholder": "https://en.wikipedia.org/w/index.php?diff=123456&oldid=123455",
-    "deputy.ante.splitArticle.diff.label": "Diff URL",
-    "deputy.ante.splitArticle.diff.help": "The diff URL of the split.",
+    "deputy.ante.splitArticle.diff.placeholder": "123456789",
+    "deputy.ante.splitArticle.diff.label": "Diff",
+    "deputy.ante.splitArticle.diff.help": "The diff URL or revision ID of the split.",
 
     "deputy.ante.mergedFrom.label": "Merged from $1",
     "deputy.ante.mergedFrom.remove": "Remove notice",

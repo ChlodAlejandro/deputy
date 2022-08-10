@@ -174,7 +174,12 @@ function initSplitArticleTemplateRowPage() {
 					value: this.splitArticleTemplateRow.from_oldid || '',
 					placeholder: mw.message( 'deputy.ante.splitArticle.diff.placeholder' ).text(),
 					validate: ( value: string ) => {
-						if ( value.trim().length === 0 ) {
+						if (
+							// Blank
+							value.trim().length === 0 ||
+							// Diff number
+							!isNaN( +value )
+						) {
 							return true;
 						}
 						try {
