@@ -162,6 +162,7 @@
     "deputy.ante.backwardsCopy.entry.title.placeholder": "Article, journal, or medium name",
     "deputy.ante.backwardsCopy.entry.title.label": "Publication name",
     "deputy.ante.backwardsCopy.entry.title.help": "The publication title. This is the title of the medium that copied from Wikipedia",
+    "deputy.ante.backwardsCopy.entry.date.placeholder": "12 Feburary 2022",
     "deputy.ante.backwardsCopy.entry.date.label": "Publishing date",
     "deputy.ante.backwardsCopy.entry.date.help": "This is the date on which the article was first published.",
     "deputy.ante.backwardsCopy.entry.author.placeholder": "Add author",

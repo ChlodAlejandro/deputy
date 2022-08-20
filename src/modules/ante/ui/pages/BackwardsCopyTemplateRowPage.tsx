@@ -172,15 +172,6 @@ function initBackwardsCopyTemplateRowPage() {
 						}` :
 						this.backwardsCopyTemplateRow.year
 				);
-			const parsedDate =
-				( rowDate == null || rowDate.trim().length === 0 ) ?
-					undefined : (
-						!isNaN( new Date( rowDate.trim() + ' UTC' ).getTime() ) ?
-							( new Date( rowDate.trim() + ' UTC' ) ) : (
-								!isNaN( new Date( rowDate.trim() ).getTime() ) ?
-									new Date( rowDate.trim() ) : null
-							)
-					);
 
 			// TODO: l10n
 			const authorRegex = /(.+?, (?:[A-Z]\.\s?)*)(?:(?:&amp;|[&;]|[,;] (?:&amp;|[&;])?)\s*|$)/g;
@@ -199,13 +190,11 @@ function initBackwardsCopyTemplateRowPage() {
 					value: this.backwardsCopyTemplateRow.title ??
 						this.backwardsCopyTemplateRow.articlename
 				} ),
-				date: new mw.widgets.datetime.DateTimeInputWidget( {
-					$overlay: this.parent.$overlay,
-					required: true,
-					calendar: null,
-					icon: 'calendar',
-					clearable: true,
-					value: parsedDate
+				date: new OO.ui.TextInputWidget( {
+					placeholder: mw.message(
+						'deputy.ante.backwardsCopy.entry.date.placeholder'
+					).text(),
+					value: rowDate
 				} ),
 				author: new OO.ui.TagMultiselectWidget( {
 					allowArbitrary: true,
@@ -294,17 +283,7 @@ function initBackwardsCopyTemplateRowPage() {
 				} else {
 					// Attach the change listener
 					input.on( 'change', ( value: string ) => {
-						if ( input instanceof mw.widgets.datetime.DateTimeInputWidget ) {
-							this.backwardsCopyTemplateRow[ field ] =
-								new Date( value ).toLocaleDateString( 'en-GB', {
-									year: 'numeric', month: 'long', day: 'numeric'
-								} );
-							if ( value.length > 0 ) {
-								fields[ field ].setWarnings( [] );
-							}
-						} else {
-							this.backwardsCopyTemplateRow[ field ] = value;
-						}
+						this.backwardsCopyTemplateRow[ field ] = value;
 						this.backwardsCopyTemplateRow.parent.save();
 					} );
 				}
