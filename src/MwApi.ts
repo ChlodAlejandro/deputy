@@ -14,7 +14,7 @@ export default class MwApi {
 			parameters: {
 				format: 'json',
 				formatversion: 2,
-				utf8: 1,
+				utf8: true,
 				errorformat: 'html',
 				errorlang: mw.config.get( 'wgUserLanguage' ),
 				errorsuselocal: true
