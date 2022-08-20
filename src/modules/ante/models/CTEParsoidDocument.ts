@@ -213,7 +213,11 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 
 		for ( const spot of possibleSpots ) {
 			if ( spot[ 1 ] != null ) {
-				if ( spot[ 1 ].hasAttribute( 'data-mw' ) ) {
+				if (
+					spot[ 1 ].hasAttribute( 'data-mw' ) ||
+					// Special condition for sections (which don't have `about` attributes).
+					spot[ 1 ].nodeName === 'SECTION'
+				) {
 					return spot;
 				} else {
 					const identifier = (
