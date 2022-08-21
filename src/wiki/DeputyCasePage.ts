@@ -1,4 +1,3 @@
-import normalizeTitle from '../util/normalizeTitle';
 import DeputyCasePageWikitext from './DeputyCasePageWikitext';
 import sectionHeadingName from '../util/sectionHeadingName';
 import getPageTitle from '../util/getPageTitle';

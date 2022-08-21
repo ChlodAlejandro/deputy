@@ -3,7 +3,7 @@ import normalizeTitle from '../util/normalizeTitle';
 
 /**
  * Base class for Deputy cases. Extended into {@link DeputyCasePage} to refer to an
- * active case page.
+ * active case page. Used to represent case pages in a more serializable way.
  */
 export default class DeputyCase {
 
