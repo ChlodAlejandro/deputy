@@ -151,5 +151,18 @@ export default [
 			footer: '// </nowiki>\n// <3'
 		},
 		plugins: getPlugins()
+	} ),
+	// Standalone Infringement Assistant
+	auto( 'ia', {
+		input: 'src/modules/ia/InfringementAssistant.ts',
+		output: {
+			sourcemap: true,
+			file: 'build/deputy-ia.js',
+			format: 'iife',
+			banner: loadBanner( 'src', 'modules', 'ia', 'BANNER.txt' ) +
+				'\n// <nowiki>',
+			footer: '// </nowiki>\n// <3'
+		},
+		plugins: getPlugins()
 	} )
 ].filter( ( v ) => !!v );

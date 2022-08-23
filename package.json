@@ -11,9 +11,11 @@
         "build": "npm run prebuild && rollup -c",
         "build:deputy": "npm run prebuild && cross-env DEPUTY_ONLY=deputy rollup -c",
         "build:cte": "npm run prebuild && cross-env DEPUTY_ONLY=cte rollup -c",
+        "build:ia": "npm run prebuild && cross-env DEPUTY_ONLY=ia rollup -c",
         "dev": "node scripts/dev.js",
         "dev:deputy": "cross-env DEPUTY_ONLY=deputy npm run dev",
-        "dev:cte": "cross-env DEPUTY_ONLY=cte npm run dev"
+        "dev:cte": "cross-env DEPUTY_ONLY=cte npm run dev",
+        "dev:ia": "cross-env DEPUTY_ONLY=ia npm run dev"
     },
     "repository": {
         "type": "git",

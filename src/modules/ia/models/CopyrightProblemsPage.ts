@@ -6,6 +6,7 @@
  *
  * This page runs on:
  * - The main `Wikipedia:Copyright problems` page
+ * - `Wikipedia:Copyright problems` subpages (which may/may not be date-specific entries)
  */
 import normalizeTitle from '../../../util/normalizeTitle';
 import CopyrightProblemsListing from './CopyrightProblemsListing';
