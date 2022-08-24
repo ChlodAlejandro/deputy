@@ -140,7 +140,7 @@ export default [
 		plugins: getPlugins()
 	} ),
 	// Standalone Attribution Notice Template Editor
-	auto( 'cte', {
+	auto( 'ante', {
 		input: 'src/modules/ante/CopiedTemplateEditorStandalone.ts',
 		output: {
 			sourcemap: true,
@@ -154,7 +154,7 @@ export default [
 	} ),
 	// Standalone Infringement Assistant
 	auto( 'ia', {
-		input: 'src/modules/ia/InfringementAssistant.ts',
+		input: 'src/modules/ia/InfringementAssistantStandalone.ts',
 		output: {
 			sourcemap: true,
 			file: 'build/deputy-ia.js',

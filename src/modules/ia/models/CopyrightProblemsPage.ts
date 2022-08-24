@@ -1,23 +1,19 @@
+import normalizeTitle from '../../../util/normalizeTitle';
+import getPageContent from '../../../util/getPageContent';
+
 /**
  * A class that represents a `Wikipedia:Copyright problems` page, a page that lists
  * a collection of accumulated copyright problems found on Wikipedia. Users who are
  * not well-versed in copyright can submit listings there to be reviewed by more-
  * knowledgeable editors.
  *
- * This page runs on:
- * - The main `Wikipedia:Copyright problems` page
- * - `Wikipedia:Copyright problems` subpages (which may/may not be date-specific entries)
- */
-import normalizeTitle from '../../../util/normalizeTitle';
-import CopyrightProblemsListing from './CopyrightProblemsListing';
-
-/**
- *
+ * This page can refer to any Copyright problems page, and not necessarily one that
+ * is running on the current tab. For that, CopyrightProblemsSession is used.
  */
 export default class CopyrightProblemsPage {
 
 	static rootPage = new mw.Title(
-		'Wikipedia:Copyright problems/'
+		'Wikipedia:Copyright problems'
 	);
 
 	/**
@@ -73,45 +69,29 @@ export default class CopyrightProblemsPage {
 
 	/** The title of the listing page */
 	title: mw.Title;
+	/** The current revision ID of the listing page. Helps in avoiding edit conflicts. */
+	revid: number;
 	/** Whether this is the main page or not */
 	main: boolean;
-	/** The document to use for reading operations */
-	document: Document;
-
-	listingMap: Map<HTMLElement, CopyrightProblemsListing>;
 
 	/**
 	 *
 	 * @param listingPage
-	 * @param document
+	 * @param revid
 	 */
-	constructor( listingPage: mw.Title, document = window.document ) {
+	constructor( listingPage: mw.Title, revid?: number ) {
 		this.title = listingPage;
-		this.document = document;
+		this.main = CopyrightProblemsPage.rootPage.getPrefixedText() ===
+			listingPage.getPrefixedText();
+		this.revid = revid;
+
 	}
 
 	/**
-	 * @return all copyright problem listings on the page.
+	 * @return the current wikitext of the page
 	 */
-	getListings(): CopyrightProblemsListing[] {
-		const links: HTMLElement[] = [];
-		this.document.querySelectorAll(
-			'.mw-content-text .mw-parser-output a:not(.external)'
-		).forEach( ( link: HTMLElement ) => {
-			if ( this.listingMap.has( link ) ) {
-				links.push( link );
-				return;
-			}
-
-			const listingData = CopyrightProblemsListing.getListing( link ) ||
-				CopyrightProblemsListing.getBasicListing( link );
-			if ( listingData ) {
-				this.listingMap.set( link, new CopyrightProblemsListing( this, listingData ) );
-				links.push( link );
-			}
-		} );
-
-		return links.map( ( link: HTMLElement ) => this.listingMap.get( link ) );
+	async getWikitext(): Promise<string> {
+		return getPageContent( this.title );
 	}
 
 }

@@ -126,6 +126,12 @@ export default class CopiedTemplateEditor extends DeputyModule {
 		);
 
 		this.startState = true;
+
+		// Query parameter-based autostart
+		if ( /[?&]cte-autostart(=(1|yes|true|on)?(&|$)|$)/.test( window.location.search ) ) {
+			this.toggleButtons( false );
+			this.openEditDialog();
+		}
 	}
 
 	/**

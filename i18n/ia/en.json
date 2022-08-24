@@ -1,3 +1,7 @@
 {
-    "deputy.ia": "Infringement Assistant"
+    "deputy.ia": "Infringement Assistant",
+
+    "deputy.ia.listing.respondPre": "[",
+    "deputy.ia.listing.respond": "respond",
+    "deputy.ia.listing.respondPost": "]"
 }

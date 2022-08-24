@@ -1,0 +1,21 @@
+.ia-listing-action {
+	display: inline-block;
+}
+
+body.ltr .ia-listing-action {
+	margin-left: 0.5em;
+}
+
+body.ltr .ia-listing-action--bracket:first-child,
+body.rtl .ia-listing-action--bracket:first-child {
+	margin-right: 0.2em;
+}
+
+body.rtl .ia-listing-action {
+	margin-right: 0.5em;
+}
+
+body.ltr .ia-listing-action--bracket:last-child,
+body.rtl .ia-listing-action--bracket:last-child {
+	margin-left: 0.2em;
+}

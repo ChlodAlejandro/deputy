@@ -20,6 +20,7 @@ import deputyVersion from './DeputyVersion';
 // @ts-ignore
 import deputyStyles from './css/deputy.css';
 import deputyCoreEnglish from '../i18n/core/en.json';
+import InfringementAssistant from './modules/ia/InfringementAssistant';
 
 /**
  * The main class for Deputy. Entry point for execution.
@@ -51,6 +52,10 @@ class Deputy {
 		normalizeTitle: normalizeTitle,
 		sectionHeadingName: sectionHeadingName
 	};
+	readonly modules = {
+		CopiedTemplateEditor: CopiedTemplateEditor,
+		InfringementAssistant: InfringementAssistant
+	};
 
 	/**
 	 * This version of Deputy.
@@ -80,6 +85,7 @@ class Deputy {
 	 * CopiedTemplateEditor instance.
 	 */
 	cte: CopiedTemplateEditor = new CopiedTemplateEditor( this );
+	ia: InfringementAssistant = new InfringementAssistant( this );
 
 	/**
 	 * An OOUI WindowManager. Automatically instantiated when needed. See the
@@ -133,7 +139,8 @@ class Deputy {
 		await this.session.init();
 
 		// Load CTE entry buttons
-		this.cte.preInit();
+		await this.cte.preInit();
+		await this.ia.preInit();
 
 		console.log( 'Loaded!' );
 

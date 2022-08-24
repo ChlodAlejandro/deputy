@@ -15,6 +15,7 @@ interface BasicCopyrightProblemsListingData {
 	 */
 	basic: true;
 	title: mw.Title;
+	element: HTMLAnchorElement;
 }
 
 type CopyrightProblemsListingData =
@@ -47,7 +48,7 @@ export default class CopyrightProblemsListing {
 
 		// Check for {{anchor}} before the link.
 		const anchor = el.previousElementSibling;
-		if ( anchor.tagName !== 'SPAN' ) {
+		if ( anchor == null || anchor.tagName !== 'SPAN' ) {
 			return false;
 		}
 
@@ -57,7 +58,10 @@ export default class CopyrightProblemsListing {
 		let title: mw.Title;
 		const prefixedDb = anchor.getAttribute( 'id' );
 		const href = el.getAttribute( 'href' );
-		if ( href === mw.util.getUrl( prefixedDb ) ) {
+		if ( prefixedDb == null ) {
+			// Not an anchor.
+			return false;
+		} else if ( href === mw.util.getUrl( prefixedDb ) ) {
 			// The page exists and links to the correct page.
 			title = new mw.Title( prefixedDb );
 		} else if ( new RegExp(
@@ -74,7 +78,10 @@ export default class CopyrightProblemsListing {
 		// This ensures that the listing came from {{article-cv}} and isn't just a
 		// link with an anchor.
 		const plainlinks = el.nextElementSibling;
-		if ( plainlinks.tagName !== 'SPAN' && !plainlinks.classList.contains( 'plainlinks' ) ) {
+		if (
+			plainlinks == null ||
+			( plainlinks.tagName !== 'SPAN' && !plainlinks.classList.contains( 'plainlinks' ) )
+		) {
 			return false;
 		}
 
@@ -96,13 +103,13 @@ export default class CopyrightProblemsListing {
 	 * @return Data related to the listing, for use in instantiation; `false` if not a listing.
 	 */
 	static getBasicListing( el: HTMLElement ): CopyrightProblemsListingData | false {
-		if ( el.tagName !== 'A' || el.getAttribute( 'href' ) === null ) {
+		if ( el.tagName !== 'A' || el.getAttribute( 'href' ) == null ) {
 			// Not a valid anchor element.
 			return false;
 		}
 
-		// Check if this is the first link the container element.
-		if ( el.previousElementSibling !== null ) {
+		// Check if this is the first node in the container element.
+		if ( el.previousSibling != null ) {
 			return false;
 		}
 
@@ -110,8 +117,8 @@ export default class CopyrightProblemsListing {
 		if (
 			el.parentElement.tagName !== 'P' &&
 			( el.parentElement.tagName !== 'LI' && (
-				el.parentElement.parentElement.tagName === 'UL' ||
-				el.parentElement.parentElement.tagName === 'OL'
+				el.parentElement.parentElement.tagName !== 'UL' &&
+				el.parentElement.parentElement.tagName !== 'OL'
 			) )
 		) {
 			return false;
@@ -141,7 +148,8 @@ export default class CopyrightProblemsListing {
 
 		return {
 			basic: true,
-			title
+			title,
+			element: el as HTMLAnchorElement
 		};
 	}
 
@@ -165,11 +173,14 @@ export default class CopyrightProblemsListing {
 	 * @param listingPage
 	 * @param data
 	 */
-	constructor( listingPage: CopyrightProblemsPage, data: CopyrightProblemsListingData ) {
+	constructor(
+		listingPage: CopyrightProblemsPage,
+		data: CopyrightProblemsListingData
+	) {
 		this.basic = data.basic;
 		this.title = data.title;
+		this.element = data.element;
 		if ( data.basic === false ) {
-			this.element = data.element;
 			this.anchor = data.anchor;
 			this.plainlinks = data.plainlinks;
 		}

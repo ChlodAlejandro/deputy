@@ -10,11 +10,11 @@
         "prebuild": "shx mkdir -p build/i18n/ && shx cp -Rf i18n/* build/i18n/",
         "build": "npm run prebuild && rollup -c",
         "build:deputy": "npm run prebuild && cross-env DEPUTY_ONLY=deputy rollup -c",
-        "build:cte": "npm run prebuild && cross-env DEPUTY_ONLY=cte rollup -c",
+        "build:ante": "npm run prebuild && cross-env DEPUTY_ONLY=ante rollup -c",
         "build:ia": "npm run prebuild && cross-env DEPUTY_ONLY=ia rollup -c",
         "dev": "node scripts/dev.js",
         "dev:deputy": "cross-env DEPUTY_ONLY=deputy npm run dev",
-        "dev:cte": "cross-env DEPUTY_ONLY=cte npm run dev",
+        "dev:ante": "cross-env DEPUTY_ONLY=ante npm run dev",
         "dev:ia": "cross-env DEPUTY_ONLY=ia npm run dev"
     },
     "repository": {
