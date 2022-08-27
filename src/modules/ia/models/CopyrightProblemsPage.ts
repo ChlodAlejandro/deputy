@@ -15,6 +15,8 @@ export default class CopyrightProblemsPage {
 	static rootPage = new mw.Title(
 		'Wikipedia:Copyright problems'
 	);
+	// TODO: l10n
+	static articleCvRegex = /^(\*\s*)?(?:\{\{anchor\|(.+)}}\[\[\2]]|\[\[([^|]*?)]])/g;
 
 	/**
 	 * Gets the date to use for the current listing.
@@ -84,7 +86,6 @@ export default class CopyrightProblemsPage {
 		this.main = CopyrightProblemsPage.rootPage.getPrefixedText() ===
 			listingPage.getPrefixedText();
 		this.revid = revid;
-
 	}
 
 	/**

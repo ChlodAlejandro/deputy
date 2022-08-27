@@ -1,7 +1,7 @@
 import DeputyModule from '../DeputyModule';
 import deputyIaEnglish from '../../../i18n/ia/en.json';
 import CopyrightProblemsPage from './models/CopyrightProblemsPage';
-import { CopyrightProblemsSession } from './models/CopyrightProblemsSession';
+import CopyrightProblemsSession from './models/CopyrightProblemsSession';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import iaStyles from './css/infringement-assistant.css';
