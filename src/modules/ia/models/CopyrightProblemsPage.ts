@@ -15,8 +15,6 @@ export default class CopyrightProblemsPage {
 	static rootPage = new mw.Title(
 		'Wikipedia:Copyright problems'
 	);
-	// TODO: l10n
-	static articleCvRegex = /^(\*\s*)?(?:\{\{anchor\|(.+)}}\[\[\2]]|\[\[([^|]*?)]])/g;
 
 	/**
 	 * Gets the date to use for the current listing.
@@ -69,6 +67,8 @@ export default class CopyrightProblemsPage {
 		return new CopyrightProblemsPage( listingPage );
 	}
 
+	static readonly pageCache = new Map<string, CopyrightProblemsPage>();
+
 	/** The title of the listing page */
 	title: mw.Title;
 	/** The current revision ID of the listing page. Helps in avoiding edit conflicts. */
@@ -77,11 +77,32 @@ export default class CopyrightProblemsPage {
 	main: boolean;
 
 	/**
+	 * Gets a listing page from the cache, if available. If a cached page is not available,
+	 * it will be created for you.
+	 *
+	 * @param listingPage
+	 * @param revid
+	 * @return The page requested
+	 */
+	static get( listingPage: mw.Title, revid?: number ): CopyrightProblemsPage {
+		const key = listingPage.getPrefixedDb() + '##' + ( revid ?? 0 );
+
+		if ( CopyrightProblemsPage.pageCache.has( key ) ) {
+			return CopyrightProblemsPage.pageCache.get( key );
+		} else {
+			const page = new CopyrightProblemsPage( listingPage, revid );
+			CopyrightProblemsPage.pageCache.set( key, page );
+			return page;
+		}
+	}
+
+	/**
+	 * Private constructor. Use `get` instead to avoid cache misses.
 	 *
 	 * @param listingPage
 	 * @param revid
 	 */
-	constructor( listingPage: mw.Title, revid?: number ) {
+	protected constructor( listingPage: mw.Title, revid?: number ) {
 		this.title = listingPage;
 		this.main = CopyrightProblemsPage.rootPage.getPrefixedText() ===
 			listingPage.getPrefixedText();
@@ -92,7 +113,9 @@ export default class CopyrightProblemsPage {
 	 * @return the current wikitext of the page
 	 */
 	async getWikitext(): Promise<string> {
-		return getPageContent( this.title );
+		const content = await getPageContent( this.title );
+		this.revid = content.revid;
+		return content;
 	}
 
 }

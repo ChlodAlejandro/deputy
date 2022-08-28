@@ -1,8 +1,6 @@
 import CopyrightProblemsPage from './CopyrightProblemsPage';
 import CopyrightProblemsListing from './CopyrightProblemsListing';
 import ListingActionLink from '../ui/ListingActionLink';
-import cloneRegex from '../../../util/cloneRegex';
-import normalizeTitle from '../../../util/normalizeTitle';
 
 /**
  * A CopyrightProblemsPage that represents a page that currently exists on a document.
@@ -75,79 +73,15 @@ export default class CopyrightProblemsSession extends CopyrightProblemsPage {
 				}
 
 				this.listingMap.set( link, new CopyrightProblemsListing(
-					this, listingData, pageSet[ prefixedDb ]
+					listingData,
+					this.main ? null : this,
+					pageSet[ prefixedDb ]
 				) );
 				links.push( link );
 			}
 		} );
 
 		return links.map( ( link: HTMLElement ) => this.listingMap.get( link ) );
-	}
-
-	/**
-	 * Gets the line number of a listing based on the page's wikitext.
-	 * This is further used when attempting to insert comments to listings.
-	 *
-	 * This provides an object with `start` and `end` keys. The `start` denotes
-	 * the line on which the listing appears, the `end` denotes the last line
-	 * where there is a comment on that specific listing.
-	 *
-	 * @param listing A CopyrightProblemsListing
-	 * @return See documentation body.
-	 */
-	async getListingWikitextLine(
-		listing: CopyrightProblemsListing
-	): Promise<{ start: number, end: number }> {
-		const lines = ( await this.getWikitext() ).split( '\n' );
-
-		let skipCounter = 1;
-		let startLine = null;
-		let endLine = null;
-		let bulletList: boolean;
-		for ( let line = 0; line < lines.length; line++ ) {
-			const lineText = lines[ line ];
-
-			// Check if this denotes the end of a listing.
-			// Matches: `*:`, `**`
-			// Does not match: `*`, ``, ` `
-			if ( startLine != null ) {
-				if ( bulletList ?
-					!/^(\*[*:]+)/g.test( lineText ) :
-					/^[^:*]/.test( lineText )
-				) {
-					return { start: startLine, end: endLine };
-				} else {
-					endLine = line;
-				}
-			} else {
-				const match = cloneRegex( CopyrightProblemsSession.articleCvRegex )
-					.exec( lineText );
-
-				if ( match != null ) {
-					// Check if this is the page we're looking for.
-					if (
-						normalizeTitle( match[ 2 ] || match[ 3 ] ).getPrefixedText() !==
-						listing.title.getPrefixedText()
-					) {
-						continue;
-					}
-
-					// Check if this should be skipped.
-					if ( skipCounter < listing.i ) {
-						// Skip if we haven't skipped enough.
-						skipCounter++;
-						continue;
-					}
-
-					bulletList = /[*:]/.test( ( match[ 1 ] || '' ).trim() );
-					startLine = line;
-				}
-			}
-		}
-
-		// Couldn't find an ending. Malformed listing?
-		// Gracefully handle this.
-		throw new Error( 'Listing is missing from wikitext or malformed listing' );
 	}
 
 	/**

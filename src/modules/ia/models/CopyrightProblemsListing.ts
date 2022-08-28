@@ -1,9 +1,12 @@
-import type CopyrightProblemsPage from './CopyrightProblemsPage';
+import CopyrightProblemsPage from './CopyrightProblemsPage';
+import cloneRegex from '../../../util/cloneRegex';
+import normalizeTitle from '../../../util/normalizeTitle';
 
 interface FullCopyrightProblemsListingData {
 	basic: false;
 	i?: number;
 	title: mw.Title;
+	listingPage: mw.Title;
 	element: HTMLAnchorElement;
 	anchor: HTMLSpanElement;
 	plainlinks: HTMLSpanElement;
@@ -21,6 +24,7 @@ interface BasicCopyrightProblemsListingData {
 	 */
 	i?: number;
 	title: mw.Title;
+	listingPage: mw.Title;
 	element: HTMLAnchorElement;
 }
 
@@ -33,6 +37,80 @@ type CopyrightProblemsListingData =
  * listings, use the associated functions in {@link CopyrightProblemsPage}.
  */
 export default class CopyrightProblemsListing {
+
+	// TODO: l10n
+	static articleCvRegex = /^(\*\s*)?(?:\{\{anchor\|(.+)}}\[\[\2]]|\[\[([^|]*?)]])/g;
+
+	/**
+	 * Gets the page title of the listing page. This is used in `getListing` and
+	 * `getBasicListing` to identify which page the listings are on.
+	 *
+	 * This makes the assumption that all listings have a prior H4 header that
+	 * links to the proper listing page. If that assumption is not met, this
+	 * returns `null`.
+	 *
+	 * @param el
+	 * @return The page title, or `false` if none was found.
+	 * @private
+	 */
+	private static getListingHeader( el: HTMLElement ): mw.Title | false {
+		let listingPage: mw.Title = null;
+		let previousPivot = (
+			// Target the ol/ul element itself if a list, target the <p> if not a list.
+			el.parentElement.tagName === 'LI' ? el.parentElement.parentElement : el.parentElement
+		).previousElementSibling;
+
+		while ( previousPivot != null && previousPivot.tagName !== 'H4' ) {
+			previousPivot = previousPivot.previousElementSibling;
+		}
+
+		if ( previousPivot == null ) {
+			return false;
+		}
+
+		if ( previousPivot.querySelector( '.mw-headline' ) != null ) {
+			// At this point, previousPivot is likely a MediaWiki level 4 heading.
+			const h4Anchor = previousPivot.querySelector( '.mw-headline a' );
+			if ( h4Anchor.classList.contains( 'mw-selflink' ) ) {
+				// We're on the correct page.
+				listingPage = new mw.Title(
+					el.ownerDocument.defaultView.mw.config.get( 'wgPageName' )
+				);
+			} else {
+				// We *might be* on a parent page.
+				const h4Href = new URL(
+					h4Anchor.getAttribute( 'href' ),
+					window.location.href
+				);
+
+				if ( /[?&]title=(?!&|$)/.test( h4Href.search ) ) {
+					// This link uses the index.php notation.
+					listingPage = new mw.Title( h4Href.searchParams.get( 'title' ) );
+				} else if (
+					// Give up on external links
+					!h4Anchor.classList.contains( 'external' ) &&
+					// Give up on red links (should be in `index.php` notation).
+					!h4Anchor.classList.contains( 'new' )
+				) {
+					// Trust the title.
+					listingPage = new mw.Title( h4Anchor.getAttribute( 'title' ) );
+				} else {
+					// Can't find the proper listing page.
+					return false;
+				}
+
+				// Identify if the page is a proper listing page (within the root page's
+				// pagespace)
+				if (
+					!listingPage.getPrefixedText()
+						.startsWith( CopyrightProblemsPage.rootPage.getPrefixedText() )
+				) {
+					return false;
+				}
+			}
+		}
+		return listingPage ?? false;
+	}
 
 	/**
 	 * Determines if a given element is a valid anchor element (`<a>`) which
@@ -92,9 +170,20 @@ export default class CopyrightProblemsListing {
 				return false;
 			}
 
+			// Attempts to look for a prior <h4> tag. Used for determining the listing, if on a
+			// root page.
+			const listingPage = this.getListingHeader( el );
+			if ( !listingPage ) {
+				// Can't find a proper listing page for this. In some cases, this
+				// should be fine, however we don't want the [respond] button to
+				// appear if we don't know where a page is actually listed.
+				return false;
+			}
+
 			return {
 				basic: false,
 				title,
+				listingPage,
 				element: el as HTMLAnchorElement,
 				anchor: anchor as HTMLSpanElement,
 				plainlinks: plainlinks as HTMLSpanElement
@@ -142,9 +231,9 @@ export default class CopyrightProblemsListing {
 			const articlePathRegex = new RegExp( mw.util.getUrl( '(.*)' ) );
 			if ( articlePathRegex.test( href ) ) {
 				// The page exists and matches the article path (`/wiki/$1`) RegExp.
-				title = new mw.Title( articlePathRegex.exec( href )[ 1 ] );
+				title = new mw.Title( decodeURIComponent( articlePathRegex.exec( href )[ 1 ] ) );
 			} else if ( href.startsWith( mw.util.wikiScript( 'index' ) ) ) {
-				// The page does not exist but it matches the script path (`/w/index.php`).
+				// The page does not exist, but it matches the script path (`/w/index.php`).
 				// Attempt to extract page title from `title` parameter.
 				const titleRegex = /[?&]title=(.*?)(?:&|$)/;
 				if ( titleRegex.test( href ) ) {
@@ -158,9 +247,20 @@ export default class CopyrightProblemsListing {
 				return false;
 			}
 
+			// Attempts to look for a prior <h4> tag. Used for determining the listing, if on a
+			// root page.
+			const listingPage = this.getListingHeader( el );
+			if ( !listingPage ) {
+				// Can't find a proper listing page for this. In some cases, this
+				// should be fine, however we don't want the [respond] button to
+				// appear if we don't know where a page is actually listed.
+				return false;
+			}
+
 			return {
 				basic: true,
 				title,
+				listingPage,
 				element: el as HTMLAnchorElement
 			};
 		} catch ( e ) {
@@ -192,17 +292,17 @@ export default class CopyrightProblemsListing {
 	/**
 	 * Creates a new listing object.
 	 *
+	 * @param data Additional data about the page
 	 * @param listingPage The page that this listing is on. This is not necessarily the page that
 	 *                    the listing's wikitext is on, nor is it necessarily the root page.
-	 * @param data Additional data about the page
 	 * @param i A discriminator used to avoid collisions when a page is listed multiple times.
 	 */
 	constructor(
-		listingPage: CopyrightProblemsPage,
 		data: CopyrightProblemsListingData,
+		listingPage?: CopyrightProblemsPage,
 		i = 1
 	) {
-		this.listingPage = listingPage;
+		this.listingPage = listingPage ?? CopyrightProblemsPage.get( data.listingPage );
 		this.i = Math.max( 1, i ); // Ensures no value below 1.
 
 		this.basic = data.basic;
@@ -212,6 +312,68 @@ export default class CopyrightProblemsListing {
 			this.anchor = data.anchor;
 			this.plainlinks = data.plainlinks;
 		}
+	}
+	/**
+	 * Gets the line number of a listing based on the page's wikitext.
+	 * This is further used when attempting to insert comments to listings.
+	 *
+	 * This provides an object with `start` and `end` keys. The `start` denotes
+	 * the line on which the listing appears, the `end` denotes the last line
+	 * where there is a comment on that specific listing.
+	 *
+	 * @return See documentation body.
+	 */
+	async getListingWikitextLines(): Promise<{ start: number, end: number }> {
+		const lines = ( await this.listingPage.getWikitext() ).split( '\n' );
+
+		let skipCounter = 1;
+		let startLine = null;
+		let endLine = null;
+		let bulletList: boolean;
+		for ( let line = 0; line < lines.length; line++ ) {
+			const lineText = lines[ line ];
+
+			// Check if this denotes the end of a listing.
+			// Matches: `*:`, `**`
+			// Does not match: `*`, ``, ` `
+			if ( startLine != null ) {
+				if ( bulletList ?
+					!/^(\*[*:]+)/g.test( lineText ) :
+					/^[^:*]/.test( lineText )
+				) {
+					return { start: startLine, end: endLine ?? startLine };
+				} else {
+					endLine = line;
+				}
+			} else {
+				const match = cloneRegex( CopyrightProblemsListing.articleCvRegex )
+					.exec( lineText );
+
+				if ( match != null ) {
+					// Check if this is the page we're looking for.
+					if (
+						normalizeTitle( match[ 2 ] || match[ 3 ] ).getPrefixedText() !==
+						this.title.getPrefixedText()
+					) {
+						continue;
+					}
+
+					// Check if this should be skipped.
+					if ( skipCounter < this.i ) {
+						// Skip if we haven't skipped enough.
+						skipCounter++;
+						continue;
+					}
+
+					bulletList = /[*:]/.test( ( match[ 1 ] || '' ).trim() );
+					startLine = line;
+				}
+			}
+		}
+
+		// Couldn't find an ending. Malformed listing?
+		// Gracefully handle this.
+		throw new Error( 'Listing is missing from wikitext or malformed listing' );
 	}
 
 }

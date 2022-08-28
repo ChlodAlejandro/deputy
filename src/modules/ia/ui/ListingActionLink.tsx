@@ -21,10 +21,10 @@ export default function ListingActionLink(
 			role="button"
 			href=""
 			onClick={async () => {
-				const range = await session.getListingWikitextLine( listing );
+				const range = await listing.getListingWikitextLines();
 				const lines: string[] = [];
 
-				( await session.getWikitext() )
+				( await listing.listingPage.getWikitext() )
 					.split( '\n' )
 					.forEach( ( line, index ) => {
 						if ( index >= range.start && index <= range.end ) {

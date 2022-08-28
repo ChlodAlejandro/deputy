@@ -13,7 +13,7 @@ export default function (
 	page: mw.Title|string|number,
 	extraOptions: Record<string, any> = {},
 	api: mw.Api = MwApi.action
-): PromiseLike<string & { contentFormat: string }> {
+): PromiseLike<string & { contentFormat: string, revid: number }> {
 	return api.get( {
 		action: 'query',
 		prop: 'revisions',
@@ -22,14 +22,17 @@ export default function (
 		} : {
 			titles: normalizeTitle( page ).getPrefixedText()
 		} ),
-		rvprop: 'content',
+		rvprop: 'ids|content',
 		rvslots: 'main',
 		rvlimit: '1',
 		...extraOptions
 	} ).then( ( data ) => {
 		return Object.assign(
 			data.query.pages[ 0 ].revisions[ 0 ].slots.main.content,
-			{ contentFormat: data.query.pages[ 0 ].revisions[ 0 ].slots.main.contentformat }
+			{
+				contentFormat: data.query.pages[ 0 ].revisions[ 0 ].slots.main.contentformat,
+				revid: data.query.pages[ 0 ].revisions[ 0 ].revid
+			}
 		);
 	} );
 }
