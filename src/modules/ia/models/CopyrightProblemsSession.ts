@@ -18,8 +18,6 @@ export default class CopyrightProblemsSession extends CopyrightProblemsPage {
 
 	/** The document to use for reading operations */
 	document: Document;
-	/** Cached wikitext. Based off of the revision ID. */
-	wikitext: string;
 
 	listingMap: Map<HTMLElement, CopyrightProblemsListing> = new Map();
 
@@ -34,13 +32,6 @@ export default class CopyrightProblemsSession extends CopyrightProblemsPage {
 		super( title, revid );
 
 		this.document = document;
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	async getWikitext(): Promise<string> {
-		return this.wikitext ?? ( this.wikitext = await super.getWikitext() );
 	}
 
 	/**

@@ -1,6 +1,7 @@
 import CopyrightProblemsPage from './CopyrightProblemsPage';
 import cloneRegex from '../../../util/cloneRegex';
 import normalizeTitle from '../../../wiki/util/normalizeTitle';
+import anchorToTitle from '../../../wiki/util/anchorToTitle';
 
 interface FullCopyrightProblemsListingData {
 	basic: false;
@@ -54,7 +55,7 @@ export default class CopyrightProblemsListing {
 	 * @private
 	 */
 	private static getListingHeader( el: HTMLElement ): mw.Title | false {
-		let listingPage: mw.Title = null;
+		let listingPage: mw.Title | false = null;
 		let previousPivot = (
 			// Target the ol/ul element itself if a list, target the <p> if not a list.
 			el.parentElement.tagName === 'LI' ? el.parentElement.parentElement : el.parentElement
@@ -71,42 +72,16 @@ export default class CopyrightProblemsListing {
 		if ( previousPivot.querySelector( '.mw-headline' ) != null ) {
 			// At this point, previousPivot is likely a MediaWiki level 4 heading.
 			const h4Anchor = previousPivot.querySelector( '.mw-headline a' );
-			if ( h4Anchor.classList.contains( 'mw-selflink' ) ) {
-				// We're on the correct page.
-				listingPage = new mw.Title(
-					el.ownerDocument.defaultView.mw.config.get( 'wgPageName' )
-				);
-			} else {
-				// We *might be* on a parent page.
-				const h4Href = new URL(
-					h4Anchor.getAttribute( 'href' ),
-					window.location.href
-				);
+			listingPage = anchorToTitle( h4Anchor as HTMLAnchorElement );
 
-				if ( /[?&]title=(?!&|$)/.test( h4Href.search ) ) {
-					// This link uses the index.php notation.
-					listingPage = new mw.Title( h4Href.searchParams.get( 'title' ) );
-				} else if (
-					// Give up on external links
-					!h4Anchor.classList.contains( 'external' ) &&
-					// Give up on red links (should be in `index.php` notation).
-					!h4Anchor.classList.contains( 'new' )
-				) {
-					// Trust the title.
-					listingPage = new mw.Title( h4Anchor.getAttribute( 'title' ) );
-				} else {
-					// Can't find the proper listing page.
-					return false;
-				}
-
-				// Identify if the page is a proper listing page (within the root page's
-				// pagespace)
-				if (
-					!listingPage.getPrefixedText()
-						.startsWith( CopyrightProblemsPage.rootPage.getPrefixedText() )
-				) {
-					return false;
-				}
+			// Identify if the page is a proper listing page (within the root page's
+			// pagespace)
+			if (
+				!listingPage ||
+				!listingPage.getPrefixedText()
+					.startsWith( CopyrightProblemsPage.rootPage.getPrefixedText() )
+			) {
+				return false;
 			}
 		}
 		return listingPage ?? false;
@@ -226,24 +201,8 @@ export default class CopyrightProblemsListing {
 			}
 
 			// Attempt to extract page title.
-			let title: mw.Title;
-			const href = el.getAttribute( 'href' );
-			const articlePathRegex = new RegExp( mw.util.getUrl( '(.*)' ) );
-			if ( articlePathRegex.test( href ) ) {
-				// The page exists and matches the article path (`/wiki/$1`) RegExp.
-				title = new mw.Title( decodeURIComponent( articlePathRegex.exec( href )[ 1 ] ) );
-			} else if ( href.startsWith( mw.util.wikiScript( 'index' ) ) ) {
-				// The page does not exist, but it matches the script path (`/w/index.php`).
-				// Attempt to extract page title from `title` parameter.
-				const titleRegex = /[?&]title=(.*?)(?:&|$)/;
-				if ( titleRegex.test( href ) ) {
-					title = new mw.Title( titleRegex.exec( href )[ 1 ] );
-				} else {
-					// Not a valid link.
-					return false;
-				}
-			} else {
-				// Not a valid link.
+			const title = anchorToTitle( el as HTMLAnchorElement );
+			if ( !title ) {
 				return false;
 			}
 
@@ -369,6 +328,11 @@ export default class CopyrightProblemsListing {
 					startLine = line;
 				}
 			}
+		}
+
+		if ( startLine === lines.length - 1 ) {
+			// Last line only.
+			return { start: startLine, end: startLine };
 		}
 
 		// Couldn't find an ending. Malformed listing?

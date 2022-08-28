@@ -76,6 +76,9 @@ export default class CopyrightProblemsPage {
 	/** Whether this is the main page or not */
 	main: boolean;
 
+	/** Cached wikitext. Based off of the revision ID. */
+	wikitext: string;
+
 	/**
 	 * Gets a listing page from the cache, if available. If a cached page is not available,
 	 * it will be created for you.
@@ -113,8 +116,13 @@ export default class CopyrightProblemsPage {
 	 * @return the current wikitext of the page
 	 */
 	async getWikitext(): Promise<string> {
+		if ( this.wikitext ) {
+			return this.wikitext;
+		}
+
 		const content = await getPageContent( this.title );
 		this.revid = content.revid;
+		this.wikitext = content;
 		return content;
 	}
 
