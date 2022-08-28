@@ -3,7 +3,7 @@ import { MediaWikiData, TemplateData, TemplateDataModifier } from './MediaWikiDa
 import { AttributionNoticePageLayout } from '../ui/pages/AttributionNoticePageLayout';
 import { AttributionNoticePageGenerator } from '../ui/AttributionNoticePageGenerator';
 import { CTEParsoidTransclusionTemplateNode } from './CTEParsoidTransclusionTemplateNode';
-import MwApi from '../../../MwApi';
+import renderWikitext from '../../../wiki/util/renderWikitext';
 
 /**
  * The AttributionNotice abstract class serves as the blueprint for other
@@ -166,13 +166,7 @@ export default abstract class AttributionNotice
 	 * @return {Promise<string>}
 	 */
 	async generatePreview() {
-		return MwApi.action.post( {
-			action: 'parse',
-			title: this.parsoid.getPage(),
-			text: this.toWikitext(),
-			preview: true,
-			disableeditsection: true
-		} ).then( ( data ) => data.parse.text );
+		return renderWikitext( this.toWikitext(), this.parsoid.getPage() );
 	}
 
 }

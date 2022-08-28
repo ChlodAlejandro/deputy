@@ -1,6 +1,7 @@
 import { h } from 'tsx-dom';
 import type CopyrightProblemsListing from '../models/CopyrightProblemsListing';
 import type CopyrightProblemsSession from '../models/CopyrightProblemsSession';
+import ListingResponsePanel from './ListingResponsePanel';
 
 /**
  *
@@ -12,7 +13,7 @@ export default function ListingActionLink(
 	session: CopyrightProblemsSession,
 	listing: CopyrightProblemsListing,
 ): JSX.Element {
-	return <div class="ia-listing-action">
+	const element = <div class="ia-listing-action">
 		<span class="ia-listing-action--bracket">{
 			mw.message( 'deputy.ia.listing.respondPre' ).text()
 		}</span>
@@ -20,23 +21,29 @@ export default function ListingActionLink(
 			class="ia-listing-action--link"
 			role="button"
 			href=""
-			onClick={async () => {
-				const range = await listing.getListingWikitextLines();
-				const lines: string[] = [];
+			onClick={async ( event: MouseEvent ) => {
+				const target = ( event.currentTarget as HTMLElement );
+				target.toggleAttribute(
+					'disabled', true
+				);
 
-				( await listing.listingPage.getWikitext() )
-					.split( '\n' )
-					.forEach( ( line, index ) => {
-						if ( index >= range.start && index <= range.end ) {
-							lines.push( line );
-						}
+				mw.loader.using( window.InfringementAssistant.static.dependencies, () => {
+					const panel = new ListingResponsePanel( element, listing );
+					listing.element.parentElement.appendChild( panel.render() );
+					element.style.display = 'none';
+					panel.addEventListener( 'close', () => {
+						element.style.display = '';
 					} );
-
-				console.log( lines.join( '\n' ) );
+					target.toggleAttribute(
+						'disabled', false
+					);
+				} );
 			}}
 		>{mw.message( 'deputy.ia.listing.respond' ).text()}</a>
 		<span class="ia-listing-action--bracket">{
 			mw.message( 'deputy.ia.listing.respondPost' ).text()
 		}</span>
-	</div>;
+	</div> as HTMLElement;
+
+	return element;
 }

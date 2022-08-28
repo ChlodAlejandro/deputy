@@ -20,6 +20,24 @@ declare global {
  */
 export default class CopiedTemplateEditor extends DeputyModule {
 
+	static readonly dependencies = [
+		'oojs-ui-core',
+		'oojs-ui-windows',
+		'oojs-ui-widgets',
+		'oojs-ui.styles.icons-accessibility',
+		'oojs-ui.styles.icons-editing-core',
+		'oojs-ui.styles.icons-editing-advanced',
+		'oojs-ui.styles.icons-interactions',
+		'ext.visualEditor.moduleIcons',
+		'mediawiki.util',
+		'mediawiki.api',
+		'mediawiki.Title',
+		'mediawiki.widgets',
+		'mediawiki.widgets.datetime',
+		'jquery.makeCollapsible'
+	];
+
+	readonly static = CopiedTemplateEditor;
 	readonly CopiedTemplate = CopiedTemplate;
 
 	/**
@@ -141,22 +159,7 @@ export default class CopiedTemplateEditor extends DeputyModule {
 	 * Opens the Copied Template Editor dialog.
 	 */
 	openEditDialog() {
-		mw.loader.using( [
-			'oojs-ui-core',
-			'oojs-ui-windows',
-			'oojs-ui-widgets',
-			'oojs-ui.styles.icons-accessibility',
-			'oojs-ui.styles.icons-editing-core',
-			'oojs-ui.styles.icons-editing-advanced',
-			'oojs-ui.styles.icons-interactions',
-			'ext.visualEditor.moduleIcons',
-			'mediawiki.util',
-			'mediawiki.api',
-			'mediawiki.Title',
-			'mediawiki.widgets',
-			'mediawiki.widgets.datetime',
-			'jquery.makeCollapsible'
-		], async () => {
+		mw.loader.using( CopiedTemplateEditor.dependencies, async () => {
 			OO.ui.WindowManager.static.sizes.huge = {
 				width: 1100
 			};

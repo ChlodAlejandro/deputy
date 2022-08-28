@@ -2,6 +2,7 @@ import CopyrightProblemsPage from './CopyrightProblemsPage';
 import cloneRegex from '../../../util/cloneRegex';
 import normalizeTitle from '../../../wiki/util/normalizeTitle';
 import anchorToTitle from '../../../wiki/util/anchorToTitle';
+import decorateEditSummary from '../../../wiki/util/decorateEditSummary';
 
 interface FullCopyrightProblemsListingData {
 	basic: false;
@@ -338,6 +339,60 @@ export default class CopyrightProblemsListing {
 		// Couldn't find an ending. Malformed listing?
 		// Gracefully handle this.
 		throw new Error( 'Listing is missing from wikitext or malformed listing' );
+	}
+
+	/**
+	 * Adds a comment to an existing listing.
+	 *
+	 * @param message
+	 * @param indent
+	 * @return the modified page wikitext.
+	 */
+	async addComment( message: string, indent = false ): Promise<string> {
+		const lines = ( await this.listingPage.getWikitext() ).split( '\n' );
+		const range = await this.getListingWikitextLines();
+
+		if ( indent ) {
+			message = (
+				this.element.parentElement.tagName === 'LI' ?
+					'*:' :
+					':'
+			) + message;
+		}
+
+		lines.splice( range.end + 1, 0, message );
+
+		return lines.join( '\n' );
+	}
+
+	/**
+	 * Adds a comment to an existing listing AND saves the page. To avoid saving the page,
+	 * use `addComment` instead.
+	 *
+	 * @param message
+	 * @param indent
+	 */
+	async respond( message: string, indent = false ): Promise<void> {
+		const newWikitext = await this.addComment( message, indent );
+
+		await new mw.Api().postWithEditToken( {
+			action: 'edit',
+			format: 'json',
+			formatversion: '2',
+			utf8: 'true',
+			title: this.listingPage.title.getPrefixedText(),
+			text: newWikitext,
+			// TODO: l10n
+			summary: decorateEditSummary(
+				`Responding to [[${
+					this.listingPage.title.getPrefixedText()
+				}#${
+					this.title.getPrefixedText()
+				}|${
+					this.title.getPrefixedText()
+				}]]`
+			)
+		} );
 	}
 
 }

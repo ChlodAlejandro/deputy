@@ -8,11 +8,26 @@ import iaStyles from './css/infringement-assistant.css';
 import DeputyLanguage from '../../DeputyLanguage';
 import deputySharedEnglish from '../../../i18n/shared/en.json';
 
+declare global {
+	interface Window {
+		InfringementAssistant?: InfringementAssistant;
+	}
+}
+
 /**
  *
  */
 export default class InfringementAssistant extends DeputyModule {
 
+	static readonly dependencies = [
+		'oojs-ui-core',
+		'oojs-ui-widgets',
+		'mediawiki.util',
+		'mediawiki.api',
+		'mediawiki.Title'
+	];
+
+	readonly static = InfringementAssistant;
 	readonly CopyrightProblemsPage = CopyrightProblemsPage;
 
 	/**

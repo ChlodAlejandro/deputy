@@ -3,5 +3,37 @@
 
     "deputy.ia.listing.respondPre": "[",
     "deputy.ia.listing.respond": "respond",
-    "deputy.ia.listing.respondPost": "]"
+    "deputy.ia.listing.respondPost": "]",
+
+    "deputy.ia.listing.re.label": "Select a response...",
+    "deputy.ia.listing.re.title": "Prefilled listing comment",
+    "deputy.ia.listing.re.extras": "Additional comments",
+    "deputy.ia.listing.re.preview": "Preview",
+    "deputy.ia.listing.re.close": "Cancel",
+    "deputy.ia.listing.re.submit": "Respond",
+    "deputy.ia.listing.re.error": "An error occurred while attempting to respond to a listing: $1",
+    "deputy.ia.listing.re.published": "Your response has been published.",
+
+    "deputy.ia.listing.re.cleaned": "Article cleaned by investigator or others. No remaining infringement.",
+    "deputy.ia.listing.re.deletedcv": "Article deleted due to copyright concerns.",
+    "deputy.ia.listing.re.user": "User was not notified, relisting under today's entry.",
+    "deputy.ia.listing.re.where": "No vio found, claim cannot be validated. Tag removed from article.",
+    "deputy.ia.listing.re.unsure": "No source found; copy-paste tag removed and cv-unsure tag placed at article talk.",
+    "deputy.ia.listing.re.deletedcup": "Copyright concerns remain. Article deleted, left {{Cup}} notice.",
+    "deputy.ia.listing.re.relist": "Permission plausible. Article relisted under today.",
+    "deputy.ia.listing.re.resolved": "Issue resolved.",
+    "deputy.ia.listing.re.redirect": "Article redirected to a non-infringing target.",
+    "deputy.ia.listing.re.deletedother": "Article deleted for a reason other than copyright concerns.",
+    "deputy.ia.listing.re.merge": "Rewrite moved into place.",
+    "deputy.ia.listing.re.backwardsattributed": "Backwardscopy. Attributes Wikipedia.",
+    "deputy.ia.listing.re.blanked": "Blanked and relisted under today.",
+    "deputy.ia.listing.re.deferred": "Deferred to old issues.",
+    "deputy.ia.listing.re.ticket": "VRT Ticket received, article now licensed and compatible with CC BY-SA 3.0.",
+    "deputy.ia.listing.re.backwards": "Backwardscopy. Tag placed at talk page.",
+    "deputy.ia.listing.re.no": "No copyright concern. Material is PD, license compatible, or ineligible for copyright protection.",
+    "deputy.ia.listing.re.histpurge": "Article cleaned, revision deletion requested.",
+    "deputy.ia.listing.re.OTRS": "VRT pending but not yet verified, relisting under today's entry.",
+    "deputy.ia.listing.re.purged": "Revision deletion completed. Copyright problem removed from history.",
+    "deputy.ia.listing.re.unverified": "Permission unverified as of this tagging; article will need to be deleted if that does not change.",
+    "deputy.ia.listing.re.viable": "Viable rewrite proposed; rewrite on temp page can be merged into the article."
 }

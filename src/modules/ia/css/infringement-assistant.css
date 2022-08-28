@@ -19,3 +19,56 @@ body.ltr .ia-listing-action--bracket:last-child,
 body.rtl .ia-listing-action--bracket:last-child {
 	margin-left: 0.2em;
 }
+
+.ia-listing-action--link[disabled] {
+	color: gray;
+	pointer-events: none;
+}
+
+@keyframes ia-newResponse {
+	from { background-color: #ffe29e }
+	to { background-color: rgba( 0, 0, 0, 0 ); }
+}
+
+.ia-newResponse {
+	animation: ia-newResponse 2s ease-out;
+}
+
+.ia-listing-response {
+	max-width: 50em;
+	margin-top: 0.4em;
+	margin-bottom: 0.4em;
+}
+
+.mw-content-ltr .ia-listing-response, .mw-content-rtl .mw-content-ltr .ia-listing-response {
+	margin-left: 1.6em;
+	margin-right: 0;
+}
+
+.mw-content-rtl .ia-listing-response, .mw-content-ltr .mw-content-rtl .ia-listing-response {
+	margin-left: 0;
+	margin-right: 1.6em;
+}
+
+.ia-listing-response > div {
+	margin-bottom: 8px;
+}
+
+.ia-listing-response--preview {
+	box-sizing: border-box;
+	background: #f6f6f6;
+	padding: 0.5em 1em;
+	overflow: hidden;
+}
+
+/** "Preview" */
+.ia-listing-response--preview::before {
+	content: attr(data-label);
+	color: #808080;
+	display: block;
+	margin-bottom: 0.2em;
+}
+
+.ia-listing-response--submit {
+	text-align: right;
+}
