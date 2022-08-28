@@ -1,5 +1,5 @@
 import normalizeTitle from './normalizeTitle';
-import MwApi from '../MwApi';
+import MwApi from '../../MwApi';
 
 /**
  * Gets the page title of a given page ID.

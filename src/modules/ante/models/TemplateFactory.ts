@@ -2,7 +2,7 @@ import CopiedTemplate from './templates/CopiedTemplate';
 import { CTEParsoidTransclusionTemplateNode } from './CTEParsoidTransclusionTemplateNode';
 import CTEParsoidDocument from './CTEParsoidDocument';
 import WikiAttributionNotices, { SupportedAttributionNoticeType } from './WikiAttributionNotices';
-import nsId from '../../../util/nsId';
+import nsId from '../../../wiki/util/nsId';
 import SplitArticleTemplate from './templates/SplitArticleTemplate';
 import MergedFromTemplate from './templates/MergedFromTemplate';
 import MergedToTemplate from './templates/MergedToTemplate';

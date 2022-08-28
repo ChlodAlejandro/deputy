@@ -1,4 +1,4 @@
-import getRevisionDiffURL from '../util/getRevisionDiffURL';
+import getRevisionDiffURL from './util/getRevisionDiffURL';
 import FakeDocument from '../models/FakeDocument';
 import swapElements from '../util/swapElements';
 

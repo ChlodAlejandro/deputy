@@ -1,5 +1,5 @@
-import normalizeTitle from '../../../util/normalizeTitle';
-import getPageContent from '../../../util/getPageContent';
+import normalizeTitle from '../../../wiki/util/normalizeTitle';
+import getPageContent from '../../../wiki/util/getPageContent';
 
 /**
  * A class that represents a `Wikipedia:Copyright problems` page, a page that lists

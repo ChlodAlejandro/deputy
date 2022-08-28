@@ -8,7 +8,7 @@ import { h } from 'tsx-dom';
 import unwrapWidget from '../../../../util/unwrapWidget';
 import { renderPreviewPanel } from '../RowPageShared';
 import getObjectValues from '../../../../util/getObjectValues';
-import nsId from '../../../../util/nsId';
+import nsId from '../../../../wiki/util/nsId';
 import yesNo from '../../../../util/yesNo';
 
 export interface MergedFromTemplatePageData {

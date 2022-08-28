@@ -1,5 +1,5 @@
 import DeputyCasePage from './DeputyCasePage';
-import getPageContent from '../util/getPageContent';
+import getPageContent from './util/getPageContent';
 
 /**
  * Used by DeputyCasePage to access the page's raw wikitext, make changes,

@@ -1,6 +1,6 @@
 import DeputyCasePageWikitext from './DeputyCasePageWikitext';
-import sectionHeadingName from '../util/sectionHeadingName';
-import getPageTitle from '../util/getPageTitle';
+import sectionHeadingName from './util/sectionHeadingName';
+import getPageTitle from './util/getPageTitle';
 import DeputyCase from './DeputyCase';
 
 export type ContributionSurveyHeading = HTMLHeadingElement;

@@ -1,4 +1,4 @@
-import deputyVersion from '../DeputyVersion';
+import deputyVersion from '../../DeputyVersion';
 
 /**
  * Appends extra information to an edit summary (also known as the "advert").

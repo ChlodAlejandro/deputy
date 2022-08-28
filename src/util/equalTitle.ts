@@ -1,4 +1,4 @@
-import normalizeTitle from './normalizeTitle';
+import normalizeTitle from '../wiki/util/normalizeTitle';
 
 /**
  * Checks if two MediaWiki page titles are equal.

@@ -1,5 +1,5 @@
 import normalizeTitle from './normalizeTitle';
-import MwApi from '../MwApi';
+import MwApi from '../../MwApi';
 
 /**
  * Get the ID of a section from its heading.

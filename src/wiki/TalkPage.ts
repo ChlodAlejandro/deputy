@@ -1,6 +1,6 @@
-import normalizeTitle from '../util/normalizeTitle';
-import decorateEditSummary from '../util/decorateEditSummary';
-import nsId from '../util/nsId';
+import normalizeTitle from './util/normalizeTitle';
+import decorateEditSummary from './util/decorateEditSummary';
+import nsId from './util/nsId';
 import MwApi from '../MwApi';
 
 /**

@@ -1,10 +1,10 @@
 import '../../../types';
 import CopiedTemplatesEmptyPage from './pages/AttributionNoticesEmptyPage';
 import CTEParsoidDocument from '../models/CTEParsoidDocument';
-import errorToOO from '../../../util/errorToOO';
+import errorToOO from '../../../wiki/util/errorToOO';
 import { blockExit, unblockExit } from '../../../util/blockExit';
 import unwrapWidget from '../../../util/unwrapWidget';
-import decorateEditSummary from '../../../util/decorateEditSummary';
+import decorateEditSummary from '../../../wiki/util/decorateEditSummary';
 import { OOUIBookletLayout } from '../../../types';
 import type CopiedTemplateEditor from '../CopiedTemplateEditor';
 import getObjectValues from '../../../util/getObjectValues';

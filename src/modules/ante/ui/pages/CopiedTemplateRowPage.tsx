@@ -10,7 +10,7 @@ import getObjectValues from '../../../../util/getObjectValues';
 import CopiedTemplateEditorDialog from '../CopiedTemplateEditorDialog';
 import { AttributionNoticePageLayout } from './AttributionNoticePageLayout';
 import yesNo from '../../../../util/yesNo';
-import normalizeTitle from '../../../../util/normalizeTitle';
+import normalizeTitle from '../../../../wiki/util/normalizeTitle';
 import equalTitle from '../../../../util/equalTitle';
 
 export interface CopiedTemplateRowPageData {

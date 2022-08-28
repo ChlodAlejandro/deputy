@@ -5,7 +5,7 @@ import removeElement from '../util/removeElement';
 import unwrapWidget from '../util/unwrapWidget';
 import swapElements from '../util/swapElements';
 import DeputyCCISessionTabActiveMessage from '../ui/root/DeputyCCISessionTabActiveMessage';
-import sectionHeadingName from '../util/sectionHeadingName';
+import sectionHeadingName from '../wiki/util/sectionHeadingName';
 import {
 	DeputyMessageEvent,
 	DeputySessionRequestMessage,

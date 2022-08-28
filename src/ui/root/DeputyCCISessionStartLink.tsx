@@ -1,6 +1,6 @@
 import { h } from 'tsx-dom';
 import DeputyCasePage, { ContributionSurveyHeading } from '../../wiki/DeputyCasePage';
-import sectionHeadingName from '../../util/sectionHeadingName';
+import sectionHeadingName from '../../wiki/util/sectionHeadingName';
 
 /**
  * The CCI session start link. Starts a CCI session when pressed.

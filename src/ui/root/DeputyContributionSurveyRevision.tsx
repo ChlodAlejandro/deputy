@@ -1,11 +1,11 @@
 import { DeputyUIElement } from '../DeputyUIElement';
 import { ContributionSurveyRevision } from '../../models/ContributionSurveyRevision';
 import { h } from 'tsx-dom';
-import getRevisionDiffURL from '../../util/getRevisionDiffURL';
+import getRevisionDiffURL from '../../wiki/util/getRevisionDiffURL';
 import unwrapWidget from '../../util/unwrapWidget';
 import { DeputyMessageEvent, DeputyRevisionStatusUpdateMessage } from '../../DeputyCommunications';
 import type DeputyContributionSurveyRow from './DeputyContributionSurveyRow';
-import nsId from '../../util/nsId';
+import nsId from '../../wiki/util/nsId';
 
 /**
  * A specific revision for a section row.

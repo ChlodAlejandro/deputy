@@ -7,11 +7,11 @@ import ContributionSurveyRow from '../../models/ContributionSurveyRow';
 import ContributionSurveySection from '../../models/ContributionSurveySection';
 import DeputyReviewDialog from './DeputyReviewDialog';
 import swapElements from '../../util/swapElements';
-import sectionHeadingName from '../../util/sectionHeadingName';
-import getSectionId from '../../util/getSectionId';
-import getSectionHTML from '../../util/getSectionHTML';
+import sectionHeadingName from '../../wiki/util/sectionHeadingName';
+import getSectionId from '../../wiki/util/getSectionId';
+import getSectionHTML from '../../wiki/util/getSectionHTML';
 import removeElement from '../../util/removeElement';
-import decorateEditSummary from '../../util/decorateEditSummary';
+import decorateEditSummary from '../../wiki/util/decorateEditSummary';
 import MwApi from '../../MwApi';
 
 /**

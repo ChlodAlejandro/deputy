@@ -1,6 +1,6 @@
 import normalizeTitle from './normalizeTitle';
 import getSectionId from './getSectionId';
-import MwApi from '../MwApi';
+import MwApi from '../../MwApi';
 
 /**
  * Get the parser output HTML of a specific page section.

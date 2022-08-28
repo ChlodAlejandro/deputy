@@ -1,4 +1,4 @@
-import MwApi from '../MwApi';
+import MwApi from '../../MwApi';
 
 /**
  * Get the content of a revision on-wiki.

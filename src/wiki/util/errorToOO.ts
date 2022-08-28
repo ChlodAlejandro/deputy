@@ -1,4 +1,4 @@
-import '../types';
+import '../../types';
 
 /**
  * Converts a normal error into an OO.ui.Error for ProcessDialogs.

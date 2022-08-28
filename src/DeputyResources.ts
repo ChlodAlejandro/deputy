@@ -1,4 +1,4 @@
-import getPageContent from './util/getPageContent';
+import getPageContent from './wiki/util/getPageContent';
 
 interface WikiResourceRoot {
 	type: 'wiki';

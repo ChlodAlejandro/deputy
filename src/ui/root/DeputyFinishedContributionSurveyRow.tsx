@@ -1,8 +1,8 @@
 import { h } from 'tsx-dom';
 import '../../types';
 import ContributionSurveyRow from '../../models/ContributionSurveyRow';
-import guessAuthor from '../../util/guessAuthor';
-import nsId from '../../util/nsId';
+import guessAuthor from '../../wiki/util/guessAuthor';
+import nsId from '../../wiki/util/nsId';
 
 /**
  * Displayed when a ContributionSurveyRow has no remaining diffs. Deputy is not able

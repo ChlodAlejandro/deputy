@@ -1,6 +1,6 @@
 import CopyrightProblemsPage from './CopyrightProblemsPage';
 import cloneRegex from '../../../util/cloneRegex';
-import normalizeTitle from '../../../util/normalizeTitle';
+import normalizeTitle from '../../../wiki/util/normalizeTitle';
 
 interface FullCopyrightProblemsListingData {
 	basic: false;

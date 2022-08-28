@@ -1,5 +1,5 @@
-import getPageTitle from '../util/getPageTitle';
-import normalizeTitle from '../util/normalizeTitle';
+import getPageTitle from './util/getPageTitle';
+import normalizeTitle from './util/normalizeTitle';
 
 /**
  * Base class for Deputy cases. Extended into {@link DeputyCasePage} to refer to an

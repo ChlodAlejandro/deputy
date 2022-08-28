@@ -12,7 +12,7 @@ import {
 import generateId from '../../util/generateId';
 import DiffPage from '../../wiki/DiffPage';
 import swapElements from '../../util/swapElements';
-import normalizeTitle from '../../util/normalizeTitle';
+import normalizeTitle from '../../wiki/util/normalizeTitle';
 import EarwigCopyvioDetector from '../../wiki/EarwigCopyvioDetector';
 import DeputyPageMenu, { DeputyPageMenuOption } from './DeputyPageMenu';
 import deputyPageAnalysisOptions from './DeputyPageAnalysisOptions';
