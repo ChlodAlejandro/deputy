@@ -23,6 +23,6 @@
 
    NOTE TO USERS AND DEBUGGERS: This userscript is originally written in
    TypeScript. The original TypeScript code is converted to raw JavaScript
-   the build process. To view the original source code, visit
+   during the build process. To view the original source code, visit
 
        https://github.com/ChlodAlejandro/deputy
