@@ -56,6 +56,16 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 
 			const notices = this.findNoticeType( 'copied' );
 			this.originalCount = notices.length;
+
+			if ( this.redirect ) {
+				// Move the redirect line out of the way to avoid breaking redirects.
+				const p = document.createElement( 'p' );
+				const redirect = this.iframe.contentWindow.document
+					.querySelector( '[rel="mw:PageProp/Redirect"]' );
+
+				redirect.insertAdjacentElement( 'afterend', p );
+				p.appendChild( redirect );
+			}
 		} );
 	}
 
@@ -207,6 +217,14 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 			) ) ],
 			// After the talk page header
 			[ 'afterend', this.document.querySelector( '.talkheader' ) ],
+			// After the rcat shell
+			[ 'afterend', this.document.querySelector( '.box-Redirect_category_shell' ) ],
+			// After rcats
+			[ 'afterend', last( this.document.querySelectorAll( '.rcat' ) ) ],
+			// After the #REDIRECT line
+			[ 'afterend', this.document.querySelector(
+				'[rel="mw:PageProp/redirect"]'
+			)?.parentElement ],
 			// At the start of the talk page
 			[ 'afterbegin', this.document.querySelector( 'section[data-mw-section-id="0"]' ) ]
 		];
@@ -215,8 +233,8 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 			if ( spot[ 1 ] != null ) {
 				if (
 					spot[ 1 ].hasAttribute( 'data-mw' ) ||
-					// Special condition for sections (which don't have `about` attributes).
-					spot[ 1 ].nodeName === 'SECTION'
+					( !spot[ 1 ].getAttribute( 'about' ) &&
+					!spot[ 1 ].getAttribute( 'id' ) )
 				) {
 					return spot;
 				} else {

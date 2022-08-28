@@ -15,6 +15,10 @@ import TemplateMerger from '../models/TemplateMerger';
 import TemplateInsertEvent from '../events/TemplateInsertEvent';
 import AttributionNoticeAddMenu from './AttributionNoticeAddMenu';
 import last from '../../../util/last';
+import DeputyReviewDialog from '../../../ui/root/DeputyReviewDialog';
+import normalizeTitle from '../../../wiki/util/normalizeTitle';
+import getPageContent from '../../../wiki/util/getPageContent';
+import openWindow from '../../../wiki/util/openWindow';
 
 interface CopiedTemplateEditorDialogData {
 	main: CopiedTemplateEditor;
@@ -261,7 +265,7 @@ function initCopiedTemplateEditorDialog() {
 					mw.message( 'deputy.ante.reset.confirm' ).text()
 				).done( ( confirmed: boolean ) => {
 					if ( confirmed ) {
-						this.parsoid.reload().then( () => {
+						this.loadTalkPage().then( () => {
 							this.layout.clearPages();
 							this.rebuildPages();
 						} );
@@ -294,6 +298,24 @@ function initCopiedTemplateEditorDialog() {
 				} );
 			} );
 
+			const previewButton = new OO.ui.ButtonWidget( {
+				icon: 'eye',
+				framed: false,
+				invisibleLabel: true,
+				label: mw.message( 'deputy.ante.preview' ).text(),
+				title: mw.message( 'deputy.ante.preview' ).text(),
+				flags: [ 'destructive' ]
+			} );
+			previewButton.on( 'click', async () => {
+				previewButton.setDisabled( true );
+				openWindow( DeputyReviewDialog( {
+					title: normalizeTitle( this.parsoid.getPage() ),
+					from: await getPageContent( this.parsoid.getPage() ),
+					to: await this.parsoid.toWikitext()
+				} ) );
+				previewButton.setDisabled( false );
+			} );
+
 			this.layout.on( 'remove', () => {
 				const notices = this.parsoid.findNotices();
 				// TODO: Repair mergeButton
@@ -318,12 +340,61 @@ function initCopiedTemplateEditorDialog() {
 				{ unwrapWidget( this.mergeButton ) }
 				{ unwrapWidget( resetButton ) }
 				{ unwrapWidget( deleteButton ) }
+				{ unwrapWidget( previewButton ) }
 			</div>;
 
 			const targetPanel = unwrapWidget( this.layout ).querySelector(
 				'.oo-ui-menuLayout .oo-ui-menuLayout-menu'
 			);
 			targetPanel.insertAdjacentElement( 'afterbegin', actionPanel );
+		}
+
+		/**
+		 * Loads the talk page.
+		 */
+		async loadTalkPage(): Promise<void> {
+			const talkPage = new mw.Title( mw.config.get( 'wgPageName' ) )
+				.getTalkPage()
+				.getPrefixedText();
+
+			// Load the talk page
+			await this.parsoid.loadPage( talkPage, { reload: true } )
+				.catch( errorToOO as any )
+				.then( () => true );
+
+			if ( this.parsoid.getPage() !== talkPage ) {
+				// Ask for user confirmation.
+				await OO.ui.confirm(
+					mw.message(
+						'deputy.ante.loadRedirect.message',
+						talkPage, this.parsoid.getPage()
+					).text(),
+					{
+						title: mw.message( 'deputy.ante.loadRedirect.title' ).text(),
+						actions: [
+							{
+								action: 'accept',
+								label: mw.message(
+									'deputy.ante.loadRedirect.source'
+								).text()
+							},
+							{
+								action: 'deny',
+								label: mw.message(
+									'deputy.ante.loadRedirect.target'
+								).text()
+							}
+						]
+					}
+				).then( ( loadSource: boolean ) => {
+					if ( loadSource ) {
+						// Load redirect page.
+						return this.parsoid.loadPage(
+							talkPage, { followRedirects: false, reload: true }
+						).catch( errorToOO as any ).then( () => true );
+					}
+				} );
+			}
 		}
 
 		/**
@@ -336,13 +407,9 @@ function initCopiedTemplateEditorDialog() {
 		getSetupProcess( data: any ) {
 			const process = super.getSetupProcess( data );
 
+			// Load the talk page
 			if ( this.parsoid.getDocument() == null ) {
-				// Load the talk page
-				process.next( this.parsoid.loadPage(
-					new mw.Title( mw.config.get( 'wgPageName' ) )
-						.getTalkPage()
-						.getPrefixedText()
-				).catch( errorToOO as any ).then( () => true ) );
+				process.next( this.loadTalkPage() );
 			}
 
 			// Rebuild the list of pages

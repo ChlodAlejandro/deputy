@@ -11,6 +11,12 @@
     "deputy.ante.reset.confirm": "This will reset all changes. Proceed?",
     "deputy.ante.delete": "Delete all notices",
     "deputy.ante.delete.confirm": "You are about to delete $1 {{PLURAL:$1|notice|notices}}. Continue?",
+    "deputy.ante.preview": "Preview changes",
+
+    "deputy.ante.loadRedirect.title": "Redirected talk page",
+    "deputy.ante.loadRedirect.message": "The talk page for \"$1\" currently redirects to \"$2\". Which page should be used for modifying attribution notices?",
+    "deputy.ante.loadRedirect.source": "Source (redirect) page",
+    "deputy.ante.loadRedirect.target": "Target page",
 
     "deputy.ante.nocat.head": "<code>nocat</code> is enabled",
     "deputy.ante.nocat.help": "This notice has the <code>nocat</code> parameter enabled and, as an effect, is not being tracked in categories. This usually means that the template is for demonstration purposes only.",

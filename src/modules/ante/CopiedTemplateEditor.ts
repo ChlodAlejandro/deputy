@@ -6,6 +6,8 @@ import DeputyModule from '../DeputyModule';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import cteStyles from './css/copied-template-editor.css';
+import DeputyLanguage from '../../DeputyLanguage';
+import deputySharedEnglish from '../../../i18n/shared/en.json';
 
 declare global {
 	interface Window {
@@ -58,6 +60,7 @@ export default class CopiedTemplateEditor extends DeputyModule {
 	 */
 	async preInit(): Promise<void> {
 		await super.preInit( deputyAnteEnglish );
+		await DeputyLanguage.load( 'shared', deputySharedEnglish );
 
 		if (
 			// Button not yet appended
@@ -142,6 +145,7 @@ export default class CopiedTemplateEditor extends DeputyModule {
 			'oojs-ui-core',
 			'oojs-ui-windows',
 			'oojs-ui-widgets',
+			'oojs-ui.styles.icons-accessibility',
 			'oojs-ui.styles.icons-editing-core',
 			'oojs-ui.styles.icons-editing-advanced',
 			'oojs-ui.styles.icons-interactions',

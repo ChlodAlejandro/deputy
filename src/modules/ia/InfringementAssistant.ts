@@ -5,6 +5,8 @@ import CopyrightProblemsSession from './models/CopyrightProblemsSession';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import iaStyles from './css/infringement-assistant.css';
+import DeputyLanguage from '../../DeputyLanguage';
+import deputySharedEnglish from '../../../i18n/shared/en.json';
 
 /**
  *
@@ -26,6 +28,8 @@ export default class InfringementAssistant extends DeputyModule {
 	 */
 	async preInit(): Promise<void> {
 		await super.preInit( deputyIaEnglish );
+		await DeputyLanguage.load( 'shared', deputySharedEnglish );
+
 		mw.hook( 'infringementAssistant.preload' ).fire();
 
 		// Autostart

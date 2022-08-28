@@ -1,0 +1,14 @@
+{
+    "deputy.cancel": "Cancel",
+    "deputy.review": "Review",
+    "deputy.save": "Save",
+    "deputy.close": "Close",
+    "deputy.positiveDiff": "+{{FORMATNUM:$1}}",
+    "deputy.negativeDiff": "-{{FORMATNUM:$1}}",
+    "deputy.moreInfo": "More information",
+
+    "deputy.diff": "Review your changes",
+    "deputy.diff.load": "Loading changes...",
+    "deputy.diff.no-changes": "No difference",
+    "deputy.diff.error": "An error occurred while trying to get the comparison."
+}

@@ -20,6 +20,7 @@ import deputyVersion from './DeputyVersion';
 // @ts-ignore
 import deputyStyles from './css/deputy.css';
 import deputyCoreEnglish from '../i18n/core/en.json';
+import deputySharedEnglish from '../i18n/shared/en.json';
 import InfringementAssistant from './modules/ia/InfringementAssistant';
 
 /**
@@ -123,6 +124,7 @@ class Deputy {
 		mw.util.addCSS( deputyStyles );
 		// Load strings
 		await DeputyLanguage.load( 'core', deputyCoreEnglish );
+		await DeputyLanguage.load( 'shared', deputySharedEnglish );
 
 		// Initialize the storage.
 		this.storage = new DeputyStorage();
