@@ -6,6 +6,7 @@
  * @param rangeLike.startOffset
  * @param rangeLike.endContainer
  * @param rangeLike.endOffset
+ * @return A {@link Range} object.
  */
 export default function ( rangeLike: {
 	startContainer: Element,
