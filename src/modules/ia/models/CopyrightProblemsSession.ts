@@ -42,7 +42,7 @@ export default class CopyrightProblemsSession extends CopyrightProblemsPage {
 		/**
 		 * Avoids collisions by assigning an `i` number when a page appears as a listing twice.
 		 */
-		const pageSet: Record<string, number> = {};
+		const headingSets: Record<string, Record<string, number>> = {};
 
 		this.document.querySelectorAll(
 			'#mw-content-text .mw-parser-output a:not(.external)'
@@ -56,7 +56,13 @@ export default class CopyrightProblemsSession extends CopyrightProblemsPage {
 				CopyrightProblemsListing.getBasicListing( link );
 
 			if ( listingData ) {
+				const listingPageTitle = listingData.listingPage.getPrefixedDb();
+				if ( headingSets[ listingPageTitle ] == null ) {
+					headingSets[ listingPageTitle ] = {};
+				}
+
 				const prefixedDb = listingData.title.getPrefixedDb();
+				const pageSet = headingSets[ listingPageTitle ];
 				if ( pageSet[ prefixedDb ] != null ) {
 					pageSet[ prefixedDb ]++;
 				} else {

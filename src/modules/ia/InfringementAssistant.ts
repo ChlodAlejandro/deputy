@@ -65,8 +65,10 @@ export default class InfringementAssistant extends DeputyModule {
 		) {
 			mw.util.addCSS( iaStyles );
 			const session = new CopyrightProblemsSession();
-			session.getListings().forEach( ( listing ) => {
-				session.addListingActionLink( listing );
+			mw.hook( 'wikipage.content' ).add( () => {
+				session.getListings().forEach( ( listing ) => {
+					session.addListingActionLink( listing );
+				} );
 			} );
 		}
 	}

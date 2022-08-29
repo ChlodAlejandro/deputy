@@ -14,7 +14,7 @@ export default class ListingResponsePanel extends EventTarget {
 	// Sorted by frequency.
 	static readonly responses = [
 		'cleaned', 'deletedcv', 'user', 'where', 'unsure', 'deletedcup', 'relist', 'resolved',
-		'redirect', 'deletedother', 'merge', 'backwardsattributed', 'blanked', 'deferred',
+		'redirect', 'deletedother', 'move', 'backwardsattributed', 'blanked', 'deferred',
 		'ticket', 'backwards', 'no', 'histpurge', 'OTRS', 'purged', 'unverified', 'viable'
 	];
 
