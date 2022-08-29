@@ -34,11 +34,14 @@ export default class CopyrightProblemsPage {
 		const now = new Date();
 		const locale = mw.config.get( 'wgContentLanguage' );
 		return `${now.toLocaleString( locale, {
-			[ style === 'ymd' ? 'year' : 'day' ]: 'numeric'
+			[ style === 'ymd' ? 'year' : 'day' ]: 'numeric',
+			timeZone: 'UTC'
 		} )} ${now.toLocaleString( locale, {
-			month: 'long'
+			month: 'long',
+			timeZone: 'UTC'
 		} )} ${now.toLocaleString( locale, {
-			[ style === 'ymd' ? 'day' : 'year' ]: 'numeric'
+			[ style === 'ymd' ? 'day' : 'year' ]: 'numeric',
+			timeZone: 'UTC'
 		} )}`;
 	}
 
@@ -46,7 +49,9 @@ export default class CopyrightProblemsPage {
 	 * @return The title of the current copyright problems subpage.
 	 */
 	static getCurrentListingPage(): mw.Title {
-		return new mw.Title( this.rootPage.getPrefixedText() + this.getCurrentListingDate() );
+		return new mw.Title(
+			`${this.rootPage.getPrefixedText()}/${this.getCurrentListingDate()}`
+		);
 	}
 
 	/**
@@ -170,7 +175,7 @@ export default class CopyrightProblemsPage {
 			appendtext: content,
 			nocreate: true
 		} : {
-			text: `{{subst:Wikipedia:Copyright problems/preload}}${content}`,
+			text: `{{subst:${CopyrightProblemsPage.rootPage.getPrefixedText()}/preload}}${content}`,
 			createonly: true
 		};
 

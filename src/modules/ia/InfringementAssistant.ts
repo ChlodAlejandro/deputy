@@ -30,6 +30,8 @@ export default class InfringementAssistant extends DeputyModule {
 	readonly static = InfringementAssistant;
 	readonly CopyrightProblemsPage = CopyrightProblemsPage;
 
+	session: CopyrightProblemsSession;
+
 	/**
 	 * @inheritDoc
 	 */
@@ -64,10 +66,10 @@ export default class InfringementAssistant extends DeputyModule {
 			[ 'view', 'diff' ].indexOf( mw.config.get( 'wgAction' ) ) !== -1
 		) {
 			mw.util.addCSS( iaStyles );
-			const session = new CopyrightProblemsSession();
+			this.session = new CopyrightProblemsSession();
 			mw.hook( 'wikipage.content' ).add( () => {
-				session.getListings().forEach( ( listing ) => {
-					session.addListingActionLink( listing );
+				this.session.getListings().forEach( ( listing ) => {
+					this.session.addListingActionLink( listing );
 				} );
 			} );
 		}
