@@ -24,7 +24,7 @@
     "deputy.ia.listing.re.resolved": "Issue resolved.",
     "deputy.ia.listing.re.redirect": "Article redirected to a non-infringing target.",
     "deputy.ia.listing.re.deletedother": "Article deleted for a reason other than copyright concerns.",
-    "deputy.ia.listing.re.merge": "Rewrite moved into place.",
+    "deputy.ia.listing.re.move": "Rewrite moved into place.",
     "deputy.ia.listing.re.backwardsattributed": "Backwardscopy. Attributes Wikipedia.",
     "deputy.ia.listing.re.blanked": "Blanked and relisted under today.",
     "deputy.ia.listing.re.deferred": "Deferred to old issues.",
