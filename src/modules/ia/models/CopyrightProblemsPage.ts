@@ -1,5 +1,7 @@
 import normalizeTitle from '../../../wiki/util/normalizeTitle';
 import getPageContent from '../../../wiki/util/getPageContent';
+import decorateEditSummary from '../../../wiki/util/decorateEditSummary';
+import MwApi from '../../../MwApi';
 
 /**
  * A class that represents a `Wikipedia:Copyright problems` page, a page that lists
@@ -124,6 +126,83 @@ export default class CopyrightProblemsPage {
 		this.revid = content.revid;
 		this.wikitext = content;
 		return content;
+	}
+
+	/**
+	 * Posts a single page listing to this page, or (if on the root page), the page for
+	 * the current date. Listings are posted in the following format:
+	 * ```
+	 * * {{subst:article-cv|Example}} <comment> ~~~~
+	 * ```
+	 *
+	 * For posting multiple pages, use `postListings`.
+	 *
+	 * @param page
+	 * @param comments
+	 */
+	async postListing( page: mw.Title, comments?: string ): Promise<void> {
+		const listingPage = this.main ? CopyrightProblemsPage.getCurrentListingPage() : this.title;
+		await MwApi.action.postWithEditToken( {
+			action: 'edit',
+			title: listingPage.getPrefixedText(),
+			appendtext: `\n* {{subst:article-cv|1=${
+				page.getPrefixedText()
+			}}}${
+				comments ? ' ' + comments : ''
+			} ~~~~`,
+			// TODO: l10n
+			summary: decorateEditSummary(
+				`Adding listing for [[${
+					listingPage.getPrefixedText()
+				}#${
+					page.getPrefixedText()
+				}|${
+					page.getPrefixedText()
+				}]]`
+			)
+		} );
+	}
+
+	/**
+	 * Posts multiple pages under a collective listing. Used for cases where the same
+	 * comment can be applied to a set of pages. Listings are posted in the following
+	 * format:
+	 * ```
+	 * ;{{anchor|1=<title>}}<title>
+	 * * {{subst:article-cv|1=Page 1}}
+	 * * {{subst:article-cv|1=Page 2}}
+	 * <comment> ~~~~
+	 * ```
+	 *
+	 * @param page
+	 * @param title
+	 * @param comments
+	 */
+	async postListings( page: mw.Title[], title: string, comments?: string ): Promise<void> {
+		const listingPage = this.main ? CopyrightProblemsPage.getCurrentListingPage() : this.title;
+		await MwApi.action.postWithEditToken( {
+			action: 'edit',
+			title: listingPage.getPrefixedText(),
+			appendtext: `\n;{{anchor|1=${
+				title
+			}}}${
+				title
+			}\n${
+				page.map( ( p ) => `* {{subst:article-cv|1=${p.getPrefixedText()}}}` ).join( '\n' )
+			}\n${
+				comments ?? ''
+			} ~~~~`,
+			// TODO: l10n
+			summary: decorateEditSummary(
+				`Adding a batch listing for "[[${
+					listingPage.getPrefixedText()
+				}#${
+					title
+				}|${
+					title
+				}]]"`
+			)
+		} );
 	}
 
 }

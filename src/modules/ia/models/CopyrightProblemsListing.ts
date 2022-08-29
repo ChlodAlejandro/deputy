@@ -3,6 +3,7 @@ import cloneRegex from '../../../util/cloneRegex';
 import normalizeTitle from '../../../wiki/util/normalizeTitle';
 import anchorToTitle from '../../../wiki/util/anchorToTitle';
 import decorateEditSummary from '../../../wiki/util/decorateEditSummary';
+import MwApi from '../../../MwApi';
 
 interface FullCopyrightProblemsListingData {
 	basic: false;
@@ -375,7 +376,7 @@ export default class CopyrightProblemsListing {
 	async respond( message: string, indent = false ): Promise<void> {
 		const newWikitext = await this.addComment( message, indent );
 
-		await new mw.Api().postWithEditToken( {
+		await MwApi.action.postWithEditToken( {
 			action: 'edit',
 			format: 'json',
 			formatversion: '2',
