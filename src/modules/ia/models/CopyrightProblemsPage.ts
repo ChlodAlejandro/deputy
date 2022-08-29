@@ -129,6 +129,73 @@ export default class CopyrightProblemsPage {
 	}
 
 	/**
+	 * Handles appends to new listings. Also handles cases where the listing
+	 * page is missing. If the listing is today's listing page, but the page is missing,
+	 * the page will automatically be created with the proper header. If the listing is
+	 * NOT today's page and is missing, this will throw an error.
+	 *
+	 * If the page was not edited since the page was missing, and the page was created
+	 * in the time it took for us to find out that the page was missing (i.e., race
+	 * condition), it will attempt to proceed with the original appending. If the edit
+	 * still fails, an error is thrown.
+	 *
+	 * @param content The content to append
+	 * @param summary The edit summary to use when appending
+	 * @param appendMode
+	 */
+	private async tryListingAppend(
+		content: string,
+		summary: string,
+		appendMode = true
+	): Promise<void> {
+		const listingPage = this.main ? CopyrightProblemsPage.getCurrentListingPage() : this.title;
+
+		if (
+			// Current listing page is automatically used for this.main, so this can be
+			// an exception.
+			!this.main &&
+			// If the listing page is today's listing page.
+			CopyrightProblemsPage.getCurrentListingPage().getPrefixedText() !==
+				listingPage.getPrefixedText() &&
+			// Not on append mode (will create page)
+			!appendMode
+		) {
+			// It's impossible to guess the header for the page at this given moment in time,
+			// so simply throw an error. In any case, this likely isn't the right place to
+			// post the listing in the first place.
+			throw new Error( 'Attempted to post listing on non-current page' );
+		}
+
+		const textParameters = appendMode ? {
+			appendtext: content,
+			nocreate: true
+		} : {
+			text: `{{subst:Wikipedia:Copyright problems/preload}}${content}`,
+			createonly: true
+		};
+
+		// The `catch` statement here can theoretically create an infinite loop given
+		// enough race conditions. Don't worry about it too much, though.
+		await MwApi.action.postWithEditToken( {
+			action: 'edit',
+			title: listingPage.getPrefixedText(),
+			...textParameters,
+			summary
+		} ).catch( ( code ) => {
+			if ( code === 'articleexists' ) {
+				// Article exists on non-append mode. Attempt a normal append.
+				this.tryListingAppend( content, summary, true );
+			} else if ( code === 'missingtitle' ) {
+				// Article doesn't exist on append mode. Attempt a page creation.
+				this.tryListingAppend( content, summary, false );
+			} else {
+				// wat.
+				throw code;
+			}
+		} );
+	}
+
+	/**
 	 * Posts a single page listing to this page, or (if on the root page), the page for
 	 * the current date. Listings are posted in the following format:
 	 * ```
@@ -142,16 +209,14 @@ export default class CopyrightProblemsPage {
 	 */
 	async postListing( page: mw.Title, comments?: string ): Promise<void> {
 		const listingPage = this.main ? CopyrightProblemsPage.getCurrentListingPage() : this.title;
-		await MwApi.action.postWithEditToken( {
-			action: 'edit',
-			title: listingPage.getPrefixedText(),
-			appendtext: `\n* {{subst:article-cv|1=${
+
+		await this.tryListingAppend(
+			`\n* {{subst:article-cv|1=${
 				page.getPrefixedText()
 			}}}${
 				comments ? ' ' + comments : ''
 			} ~~~~`,
-			// TODO: l10n
-			summary: decorateEditSummary(
+			decorateEditSummary(
 				`Adding listing for [[${
 					listingPage.getPrefixedText()
 				}#${
@@ -160,7 +225,7 @@ export default class CopyrightProblemsPage {
 					page.getPrefixedText()
 				}]]`
 			)
-		} );
+		);
 	}
 
 	/**
@@ -180,10 +245,8 @@ export default class CopyrightProblemsPage {
 	 */
 	async postListings( page: mw.Title[], title: string, comments?: string ): Promise<void> {
 		const listingPage = this.main ? CopyrightProblemsPage.getCurrentListingPage() : this.title;
-		await MwApi.action.postWithEditToken( {
-			action: 'edit',
-			title: listingPage.getPrefixedText(),
-			appendtext: `\n;{{anchor|1=${
+		await this.tryListingAppend(
+			`\n;{{anchor|1=${
 				title
 			}}}${
 				title
@@ -192,8 +255,7 @@ export default class CopyrightProblemsPage {
 			}\n${
 				comments ?? ''
 			} ~~~~`,
-			// TODO: l10n
-			summary: decorateEditSummary(
+			decorateEditSummary(
 				`Adding a batch listing for "[[${
 					listingPage.getPrefixedText()
 				}#${
@@ -202,7 +264,7 @@ export default class CopyrightProblemsPage {
 					title
 				}]]"`
 			)
-		} );
+		);
 	}
 
 }
