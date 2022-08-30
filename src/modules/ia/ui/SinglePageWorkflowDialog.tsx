@@ -480,9 +480,9 @@ function initSinglePageWorkflowDialog() {
 				this.data.fromUrls ?
 					this.data.sourceUrls.map(
 						( v, i ) => `${
-							i === this.data.sourceUrls.length - 1 ? 'and ' : ''
+							i === this.data.sourceUrls.length - 1 && i > 0 ? 'and ' : ''
 						}[${v}]`
-					).join( ', ' ) :
+					).join( this.data.sourceUrls.length > 2 ? ', ' : ' ' ) :
 					this.data.sourceText;
 			const comments = `${
 				( from || '' ).trim().length !== 0 ? 'from ' + from + '. ' : ''
