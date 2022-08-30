@@ -1,7 +1,7 @@
 import InfringementAssistant from './InfringementAssistant';
 
 /**
- * This function handles CTE loading when Deputy isn't present. When Deputy is not
+ * This function handles IA loading when Deputy isn't present. When Deputy is not
  * present, the following must be done on our own:
  * (1) Instantiate an OOUI WindowManager
  * (2) Load language strings
