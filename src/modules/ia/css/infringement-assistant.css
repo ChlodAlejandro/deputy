@@ -72,3 +72,24 @@ body.rtl .ia-listing-action--bracket:last-child {
 .ia-listing-response--submit {
 	text-align: right;
 }
+
+/**
+ * REPORTING DIALOG
+ */
+
+.ia-report-intro {
+	font-size: 0.8rem;
+	padding-bottom: 12px;
+	border-bottom: 1px solid gray;
+	margin-bottom: 12px;
+}
+.ia-report-intro b {
+	display: block;
+	font-size: 1rem;
+}
+
+.ia-report-submit {
+	padding-top: 12px;
+	display: flex;
+	justify-content: flex-end;
+}

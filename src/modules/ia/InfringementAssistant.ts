@@ -7,6 +7,7 @@ import CopyrightProblemsSession from './models/CopyrightProblemsSession';
 import iaStyles from './css/infringement-assistant.css';
 import DeputyLanguage from '../../DeputyLanguage';
 import deputySharedEnglish from '../../../i18n/shared/en.json';
+import SinglePageWorkflowDialog from './ui/SinglePageWorkflowDialog';
 
 declare global {
 	interface Window {
@@ -22,6 +23,7 @@ export default class InfringementAssistant extends DeputyModule {
 	static readonly dependencies = [
 		'oojs-ui-core',
 		'oojs-ui-widgets',
+		'oojs-ui-windows',
 		'mediawiki.util',
 		'mediawiki.api',
 		'mediawiki.Title'
@@ -29,8 +31,10 @@ export default class InfringementAssistant extends DeputyModule {
 
 	readonly static = InfringementAssistant;
 	readonly CopyrightProblemsPage = CopyrightProblemsPage;
+	readonly SinglePageWorkflowDialog = SinglePageWorkflowDialog;
 
 	session: CopyrightProblemsSession;
+	dialog: any;
 
 	/**
 	 * @inheritDoc
@@ -48,6 +52,29 @@ export default class InfringementAssistant extends DeputyModule {
 		await DeputyLanguage.load( 'shared', deputySharedEnglish );
 
 		mw.hook( 'infringementAssistant.preload' ).fire();
+		mw.util.addCSS( iaStyles );
+
+		if (
+			// Button not yet appended
+			document.getElementById( 'pt-ia' ) == null &&
+			// Not virtual namespace
+			mw.config.get( 'wgNamespaceNumber' ) >= 0
+		) {
+			mw.util.addPortletLink(
+				'p-tb',
+				'#',
+				mw.message( 'deputy.ia' ).text(),
+				'pt-ia'
+			).addEventListener( 'click', ( event ) => {
+				event.preventDefault();
+				if (
+					!( event.currentTarget as HTMLElement )
+						.hasAttribute( 'disabled' )
+				) {
+					this.openWorkflowDialog();
+				}
+			} );
+		}
 
 		// Autostart
 
@@ -65,7 +92,6 @@ export default class InfringementAssistant extends DeputyModule {
 			CopyrightProblemsPage.isListingPage() &&
 			[ 'view', 'diff' ].indexOf( mw.config.get( 'wgAction' ) ) !== -1
 		) {
-			mw.util.addCSS( iaStyles );
 			this.session = new CopyrightProblemsSession();
 			mw.hook( 'wikipage.content' ).add( () => {
 				this.session.getListings().forEach( ( listing ) => {
@@ -73,6 +99,22 @@ export default class InfringementAssistant extends DeputyModule {
 				} );
 			} );
 		}
+	}
+
+	/**
+	 *
+	 */
+	async openWorkflowDialog(): Promise<void> {
+		return mw.loader.using( InfringementAssistant.dependencies, async () => {
+			if ( !this.dialog ) {
+				this.dialog = SinglePageWorkflowDialog( {
+					page: new mw.Title( mw.config.get( 'wgPageName' ) ),
+					revid: mw.config.get( 'wgCurRevisionId' )
+				} );
+				this.windowManager.addWindows( [ this.dialog ] );
+			}
+			this.windowManager.openWindow( this.dialog );
+		} );
 	}
 
 }
