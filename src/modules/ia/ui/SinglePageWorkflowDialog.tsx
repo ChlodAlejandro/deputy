@@ -76,7 +76,10 @@ function initSinglePageWorkflowDialog() {
 			]
 		};
 
-		data: Partial<SinglePageWorkflowDialogResponseData> = {};
+		data: Partial<SinglePageWorkflowDialogResponseData> = {
+			entirePage: true,
+			fromUrls: true
+		};
 
 		page: mw.Title;
 		revid: number;
@@ -172,7 +175,7 @@ function initSinglePageWorkflowDialog() {
 		 * @return An array of OOUI `FieldsetLayout`s
 		 */
 		renderFields(): any[] {
-			const entirePageByDefault = true;
+			const entirePageByDefault = this.data.entirePage;
 
 			this.inputs = {
 				entirePage: new OO.ui.CheckboxInputWidget( {
@@ -193,7 +196,7 @@ function initSinglePageWorkflowDialog() {
 					).text()
 				} ),
 				fromUrls: new OO.ui.CheckboxInputWidget( {
-					selected: true
+					selected: this.data.fromUrls
 				} ),
 				sourceUrls: new OO.ui.MenuTagMultiselectWidget( {
 					$overlay: this.$overlay,
@@ -255,6 +258,10 @@ function initSinglePageWorkflowDialog() {
 			};
 
 			this.inputs.entirePage.on( 'change', ( selected: boolean ) => {
+				if ( selected === undefined ) {
+					// Bad firing.
+					return;
+				}
 				this.data.entirePage = selected;
 
 				this.inputs.startSection.setDisabled( selected );
@@ -319,7 +326,12 @@ function initSinglePageWorkflowDialog() {
 				entirePageHiddenCheck();
 			} );
 
-			this.inputs.fromUrls.on( 'change', ( selected: boolean ) => {
+			this.inputs.fromUrls.on( 'change', ( selected: boolean = this.data.fromUrls ) => {
+				if ( selected === undefined ) {
+					// Bad firing.
+					return;
+				}
+
 				fields.sourceUrls.toggle( selected );
 				fields.sourceText.toggle( !selected );
 			} );
@@ -496,7 +508,18 @@ function initSinglePageWorkflowDialog() {
 				process.next( this.hideContent() );
 			}
 			process.next( function () {
+				mw.notify(
+					action === 'hide' ?
+						mw.message( 'deputy.ia.report.success.hide' ).text() :
+						mw.message( 'deputy.ia.report.success' ).text(),
+					{ type: 'success' }
+				);
+				unblockExit( 'ia-spwd' );
 				this.close( { action: action } );
+
+				// Reload the page
+				// TODO: Preferences
+				window.location.reload();
 			}, this );
 
 			return process;
@@ -507,7 +530,6 @@ function initSinglePageWorkflowDialog() {
 		 * @return An OOUI Process
 		 */
 		getTeardownProcess( data: any ): any {
-			unblockExit( 'ia-spwd' );
 			/** @member any */
 			return super.getTeardownProcess.call( this, data );
 		}

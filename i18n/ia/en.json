@@ -59,6 +59,8 @@
     "deputy.ia.report.submit": "Submit",
     "deputy.ia.report.hide": "Hide content only",
     "deputy.ia.report.hide.confirm": "This will insert the {{copyvio}} template and hide page content as set, but will not post a listing for this page on the noticeboard. Are you sure you don't want to list this page on the noticeboard?",
+    "deputy.ia.report.success": "Page content hidden and reported",
+    "deputy.ia.report.success.hide": "Page content hidden",
     "deputy.ia.report.error.report": "An error occurred while trying to save the entry to today's noticeboard listings. Please visit the noticeboard page and select \"Add listing\" or file the listing manually.",
     "deputy.ia.report.error.shadow": "An error occurred while trying to append the {{copyvio}} template on the page. Please manually insert the template."
 }
