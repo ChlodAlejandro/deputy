@@ -417,7 +417,7 @@ function initSinglePageWorkflowDialog() {
 			let finalPageContent;
 
 			// TODO: l10n
-			const copyvioWikitext = `{{subst:Tlsc|copyvio|url=${
+			const copyvioWikitext = `{{subst:copyvio|url=${
 				this.data.fromUrls ? this.data.sourceUrls[ 0 ] : this.data.sourceText
 			}|fullpage=${
 				this.data.entirePage ? 'true' : 'false'
@@ -430,7 +430,7 @@ function initSinglePageWorkflowDialog() {
 					this.wikitext.slice( 0, this.data.startOffset ) +
 					copyvioWikitext + '\n' +
 					this.wikitext.slice( this.data.startOffset, this.data.endOffset ) +
-					'{{subst:Tlsc|copyvio/bottom}}\n' +
+					'{{subst:copyvio/bottom}}\n' +
 					this.wikitext.slice( this.data.endOffset );
 			}
 
