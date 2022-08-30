@@ -13,4 +13,4 @@
  * This file is automatically modified by npm when running `npm version ...`. Avoid
  * modifying it manually.
  */
-export default /* v */'0.0.4'/* v */;
+export default /* v */'0.0.5'/* v */;
