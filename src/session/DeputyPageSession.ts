@@ -49,6 +49,7 @@ export default class DeputyPageSession {
 			'oojs-ui-windows',
 			'oojs-ui.styles.icons-interactions',
 			'oojs-ui.styles.icons-movement',
+			'oojs-ui.styles.icons-moderation',
 			'oojs-ui.styles.icons-media'
 		], () => {
 			mw.hook( 'wikipage.diff' ).add( async () => {

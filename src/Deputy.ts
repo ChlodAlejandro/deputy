@@ -85,7 +85,7 @@ class Deputy {
 	/**
 	 * CopiedTemplateEditor instance.
 	 */
-	cte: CopiedTemplateEditor = new CopiedTemplateEditor( this );
+	ante: CopiedTemplateEditor = new CopiedTemplateEditor( this );
 	ia: InfringementAssistant = new InfringementAssistant( this );
 
 	/**
@@ -141,7 +141,7 @@ class Deputy {
 		await this.session.init();
 
 		// Load CTE entry buttons
-		await this.cte.preInit();
+		await this.ante.preInit();
 		await this.ia.preInit();
 
 		console.log( 'Loaded!' );
