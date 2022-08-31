@@ -506,14 +506,16 @@ function initSinglePageWorkflowDialog() {
 			}
 			if ( action === 'submit' || action === 'hide' ) {
 				process.next( this.hideContent() );
+				process.next( () => {
+					mw.notify(
+						action === 'hide' ?
+							mw.message( 'deputy.ia.report.success.hide' ).text() :
+							mw.message( 'deputy.ia.report.success' ).text(),
+						{ type: 'success' }
+					);
+				} );
 			}
 			process.next( function () {
-				mw.notify(
-					action === 'hide' ?
-						mw.message( 'deputy.ia.report.success.hide' ).text() :
-						mw.message( 'deputy.ia.report.success' ).text(),
-					{ type: 'success' }
-				);
 				unblockExit( 'ia-spwd' );
 				this.close( { action: action } );
 
