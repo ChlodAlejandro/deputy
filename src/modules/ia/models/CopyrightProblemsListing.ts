@@ -394,6 +394,7 @@ export default class CopyrightProblemsListing {
 				}]]`
 			)
 		} );
+		await this.listingPage.getWikitext( true );
 	}
 
 }

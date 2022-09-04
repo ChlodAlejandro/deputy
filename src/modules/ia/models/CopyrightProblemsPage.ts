@@ -120,10 +120,11 @@ export default class CopyrightProblemsPage {
 	}
 
 	/**
+	 * @param force
 	 * @return the current wikitext of the page
 	 */
-	async getWikitext(): Promise<string> {
-		if ( this.wikitext ) {
+	async getWikitext( force = false ): Promise<string> {
+		if ( this.wikitext && !force ) {
 			return this.wikitext;
 		}
 
@@ -198,6 +199,7 @@ export default class CopyrightProblemsPage {
 				throw code;
 			}
 		} );
+		await this.getWikitext( true );
 	}
 
 	/**
