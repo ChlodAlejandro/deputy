@@ -143,7 +143,7 @@ function initTranslatedPageTemplatePage() {
 				) {
 					attributionString += ` with [[Special:Diff/${
 						this.translatedPageTemplate.insertversion
-					}|this edit]]`;
+					}|this edit]] et seq.`;
 				}
 				if (
 					this.translatedPageTemplate.page != null &&
