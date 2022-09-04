@@ -199,11 +199,15 @@
     "deputy.ante.translatedPage.insertversion.placeholder": "987654321",
     "deputy.ante.translatedPage.insertversion.label": "Insertion revision ID",
     "deputy.ante.translatedPage.insertversion.help": "The revision ID of the revision where the translated content was inserted into the page bearing this notice.",
-    "deputy.ante.translatedPage.section.placeholder": "Section name",
+    "deputy.ante.translatedPage.section.placeholder": "Section name (leave blank if N/A)",
     "deputy.ante.translatedPage.section.label": "Section",
     "deputy.ante.translatedPage.section.help": "The section of the page that was translated, if a specific section was translated. Leave blank if this does not apply, or if translation was performed on the entire page or more than one section.",
     "deputy.ante.translatedPage.small.label": "Small?",
     "deputy.ante.translatedPage.small.help": "Whether to render the template as a small message box or not. By default, a small box is used. If you have a good reason to use a full-sized banner, disable this option.",
     "deputy.ante.translatedPage.partial.label": "Partial?",
-    "deputy.ante.translatedPage.partial.help": "Whether this translation is a partial translation or not."
+    "deputy.ante.translatedPage.partial.help": "Whether this translation is a partial translation or not.",
+
+    "deputy.ante.translatedPage.copy": "Copy attribution edit summary",
+    "deputy.ante.translatedPage.copy.lacking": "Attribution edit summary copied to clipboard with lacking properties. Ensure that `from` is supplied.",
+    "deputy.ante.translatedPage.copy.success": "Attribution edit summary copied to clipboard."
 }

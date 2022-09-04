@@ -171,7 +171,7 @@ function initCopiedTemplateRowPage() {
 				framed: false
 			} );
 			copyButton.on( 'click', () => {
-				// TODO: Find out a way to i18n-ize this.
+				// TODO: Find out a way to l10n-ize this.
 				let attributionString = `[[WP:PATT|Attribution]]: Content ${
 					this.copiedTemplateRow.merge ? 'merged' : 'partially copied'
 				}`;

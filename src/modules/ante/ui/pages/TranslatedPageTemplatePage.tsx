@@ -7,6 +7,7 @@ import unwrapWidget from '../../../../util/unwrapWidget';
 import { renderPreviewPanel } from '../RowPageShared';
 import getObjectValues from '../../../../util/getObjectValues';
 import yesNo from '../../../../util/yesNo';
+import copyToClipboard from '../../../../util/copyToClipboard';
 
 export interface TranslatedPageTemplatePageData {
 	/**
@@ -105,7 +106,71 @@ function initTranslatedPageTemplatePage() {
 		 * @return A <div> element.
 		 */
 		renderButtons(): JSX.Element {
-			const buttonSet = <div style={{ float: 'right' }}/>;
+			const copyButton = new OO.ui.ButtonWidget( {
+				icon: 'quotes',
+				title: mw.message( 'deputy.ante.translatedPage.copy' ).text(),
+				framed: false
+			} );
+			copyButton.on( 'click', () => {
+				// TODO: Find out a way to l10n-ize this.
+				let attributionString = `[[WP:PATT|Attribution]]: Content translated from [[:${
+					this.translatedPageTemplate.lang
+				}:`;
+				let lacking = false;
+				if (
+					this.translatedPageTemplate.page != null &&
+					this.translatedPageTemplate.page.length !== 0
+				) {
+					attributionString += `${this.translatedPageTemplate.page}]]`;
+				} else {
+					lacking = true;
+					if ( this.translatedPageTemplate.version != null ) {
+						attributionString += `|from a page on ${
+							this.translatedPageTemplate.lang
+						}.wikipedia]]`;
+					}
+				}
+				if ( this.translatedPageTemplate.version != null ) {
+					attributionString += ` as of revision [[:ru:Special:Diff/${
+						this.translatedPageTemplate.version
+					}|${
+						this.translatedPageTemplate.version
+					}]]`;
+				}
+				if (
+					this.translatedPageTemplate.insertversion != null &&
+					this.translatedPageTemplate.insertversion.length !== 0
+				) {
+					attributionString += ` with [[Special:Diff/${
+						this.translatedPageTemplate.insertversion
+					}|this edit]]`;
+				}
+				if (
+					this.translatedPageTemplate.page != null &&
+					this.translatedPageTemplate.page.length !== 0
+				) {
+					attributionString += `; refer to that page's [[:${
+						this.translatedPageTemplate.lang
+					}:Special:PageHistory/${
+						this.translatedPageTemplate.page
+					}|edit history]] for additional attribution`;
+				}
+				attributionString += '.';
+
+				copyToClipboard( attributionString );
+
+				if ( lacking ) {
+					mw.notify(
+						mw.message( 'deputy.ante.translatedPage.copy.lacking' ).text(),
+						{ title: mw.message( 'deputy.ante' ).text(), type: 'warn' }
+					);
+				} else {
+					mw.notify(
+						mw.message( 'deputy.ante.translatedPage.copy.success' ).text(),
+						{ title: mw.message( 'deputy.ante' ).text() }
+					);
+				}
+			} );
 
 			const deleteButton = new OO.ui.ButtonWidget( {
 				icon: 'trash',
@@ -117,9 +182,10 @@ function initTranslatedPageTemplatePage() {
 				this.translatedPageTemplate.destroy();
 			} );
 
-			buttonSet.appendChild( unwrapWidget( deleteButton ) );
-
-			return buttonSet;
+			return <div style={{ float: 'right' }}>
+				{ unwrapWidget( copyButton ) }
+				{ unwrapWidget( deleteButton ) }
+			</div>;
 		}
 
 		/**
@@ -166,17 +232,19 @@ function initTranslatedPageTemplatePage() {
 						'deputy.ante.translatedPage.comments.placeholder'
 					).text()
 				} ),
-				version: new OO.ui.NumberInputWidget( {
-					value: this.translatedPageTemplate.comments,
+				version: new OO.ui.TextInputWidget( {
+					value: this.translatedPageTemplate.version,
 					placeholder: mw.message(
 						'deputy.ante.translatedPage.version.placeholder'
-					).text()
+					).text(),
+					validate: /^\d+$/gi
 				} ),
-				insertversion: new OO.ui.NumberInputWidget( {
-					value: this.translatedPageTemplate.comments,
+				insertversion: new OO.ui.TextInputWidget( {
+					value: this.translatedPageTemplate.insertversion,
 					placeholder: mw.message(
 						'deputy.ante.translatedPage.insertversion.placeholder'
-					).text()
+					).text(),
+					validate: /^[\d/]+$/gi
 				} ),
 				section: new OO.ui.TextInputWidget( {
 					value: this.translatedPageTemplate.section,
@@ -251,7 +319,8 @@ function initTranslatedPageTemplatePage() {
 					if ( input instanceof OO.ui.CheckboxInputWidget ) {
 						this.translatedPageTemplate[ field ] = value ? 'yes' : 'no';
 					} else {
-						this.translatedPageTemplate[ field ] = value;
+						this.translatedPageTemplate[ field ] =
+							typeof value === 'string' ? value.trim() : value;
 					}
 
 					this.translatedPageTemplate.save();
