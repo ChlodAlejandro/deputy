@@ -19,6 +19,9 @@ export default class ListingResponsePanel extends EventTarget {
 		'blanked', 'move', 'deferred', 'ticket', 'backwards', 'purged', 'OTRS', 'unverified',
 		'viable'
 	];
+	static readonly nonClosingResponses = [
+		'deferred', 'OTRS', 'unverified', 'viable'
+	];
 
 	originLink: HTMLElement;
 	listing: CopyrightProblemsListing;
@@ -134,7 +137,7 @@ export default class ListingResponsePanel extends EventTarget {
 			this.submitButton.setDisabled( true );
 
 			try {
-				await this.listing.respond( this.toWikitext(), false );
+				await this.listing.respond( this.toWikitext(), null, false );
 				const dd = <dd dangerouslySetInnerHTML={this.previewPanel.innerHTML} />;
 
 				// Try to insert at an existing list for better spacing.

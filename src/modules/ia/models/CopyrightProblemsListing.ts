@@ -117,24 +117,18 @@ export default class CopyrightProblemsListing {
 			// Get the page title based on the anchor, verified by the link.
 			// This ensures we're always using the prefixedDb version of the title (as
 			// provided by the anchor) for stability.
-			let title: mw.Title;
 			const prefixedDb = anchor.getAttribute( 'id' );
 			const href = el.getAttribute( 'href' );
-			if ( prefixedDb == null ) {
-				// Not an anchor.
-				return false;
-			} else if ( href === mw.util.getUrl( prefixedDb ) ) {
-				// The page exists and links to the correct page.
-				title = new mw.Title( prefixedDb );
-			} else if ( new RegExp(
-				`[?&]title=${mw.util.escapeRegExp( prefixedDb )}(?:&|$)`
-			).test( prefixedDb ) ) {
-				// The page does not exist but it links to the correct page.
-				title = new mw.Title( prefixedDb );
-			} else {
-				// The page does not link to the correct page.
-				return false;
-			}
+			const title = anchorToTitle( el as HTMLAnchorElement );
+            
+            if ( title === false ) {
+                // Not a valid link.
+                return false;
+            } else if ( title.getPrefixedText() !== new mw.Title( prefixedDb ).getPrefixedText() ) {
+                // Anchor and link mismatch. Someone tampered with the template?
+                // In this case, rely on the link instead, as the anchor is merely invisible.
+                console.warn( `Anchor and link mismatch for "${title.getPrefixedText()}".`, title, prefixedDb );
+            }
 
 			// Checks for the <span class="plainlinks"> element.
 			// This ensures that the listing came from {{article-cv}} and isn't just a
@@ -371,9 +365,10 @@ export default class CopyrightProblemsListing {
 	 * use `addComment` instead.
 	 *
 	 * @param message
+	 * @param summary
 	 * @param indent
 	 */
-	async respond( message: string, indent = false ): Promise<void> {
+	async respond( message: string, summary?: string, indent = false ): Promise<void> {
 		const newWikitext = await this.addComment( message, indent );
 
 		await MwApi.action.postWithEditToken( {
@@ -385,7 +380,7 @@ export default class CopyrightProblemsListing {
 			text: newWikitext,
 			// TODO: l10n
 			summary: decorateEditSummary(
-				`Responding to [[${
+				summary ?? `Responding to [[${
 					this.listingPage.title.getPrefixedText()
 				}#${
 					this.title.getPrefixedText()
