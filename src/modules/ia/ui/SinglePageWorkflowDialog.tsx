@@ -332,6 +332,7 @@ function initSinglePageWorkflowDialog() {
 					return;
 				}
 
+                this.data.fromUrls = selected;
 				fields.sourceUrls.toggle( selected );
 				fields.sourceText.toggle( !selected );
 			} );
@@ -340,7 +341,7 @@ function initSinglePageWorkflowDialog() {
 				this.data.sourceUrls = items.map( ( item ) => item.data );
 			} );
 			this.inputs.sourceText.on( 'change', ( text: string ) => {
-				this.data.sourceText = text;
+				this.data.sourceText = text.replace(/\.\s*$/, "");
 			} );
 			fields.sourceText.toggle( false );
 
