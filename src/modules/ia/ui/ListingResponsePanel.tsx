@@ -15,9 +15,8 @@ export default class ListingResponsePanel extends EventTarget {
 	// https://gist.github.com/ChlodAlejandro/33d2e98be1f69b90d9bbd43e22e694d3
 	static readonly responses = [
 		'cleaned', 'no', 'deletedcv', 'histpurge', 'user', 'where', 'unsure', 'deletedcup',
-		'relist', 'resolved', 'redirect', 'deletedother', 'merge', 'rewrite', 'backwardsattributed',
-		'blanked', 'move', 'deferred', 'ticket', 'backwards', 'purged', 'OTRS', 'unverified',
-		'viable'
+        'relist', 'resolved', 'redirect', 'deletedother', 'move', 'viable', 'backwardsattributed',
+        'blanked', 'deferred', 'ticket', 'backwards', 'purged', 'OTRS', 'unverified'
 	];
 	static readonly nonClosingResponses = [
 		'deferred', 'OTRS', 'unverified', 'viable'
