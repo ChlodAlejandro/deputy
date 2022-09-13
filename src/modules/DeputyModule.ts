@@ -14,7 +14,7 @@ export default abstract class DeputyModule {
 	 * with a Deputy instances enables connection with the Deputy core, which shares the
 	 * OOUI window manager and API manager for Deputy.
 	 */
-	private readonly deputy?: Deputy;
+	protected readonly deputy?: Deputy;
 	/**
 	 * An OOUI WindowManager. If this class is instantiated standalone (without Deputy),
 	 * this will be a set value.
