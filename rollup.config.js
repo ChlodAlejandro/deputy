@@ -1,4 +1,5 @@
 import typescript from 'rollup-plugin-typescript2';
+import visualizer from 'rollup-plugin-visualizer';
 import sourcemaps from 'rollup-plugin-sourcemaps';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
@@ -94,7 +95,13 @@ function getPlugins() {
 		// Allows JSON imports (i18n files)
 		json(),
 		// Transform CSS to standard JS strings
-		cssString()
+		cssString(),
+		// Bundle analysis
+		process.env.DEPUTY_ANALYZE && visualizer( {
+			sourcemaps: true,
+			emitFile: true,
+			open: true
+		} )
 	].filter( ( v ) => !!v );
 }
 
