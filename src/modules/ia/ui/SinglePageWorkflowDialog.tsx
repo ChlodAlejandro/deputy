@@ -7,6 +7,7 @@ import { h } from 'tsx-dom';
 import CopyrightProblemsPage from '../models/CopyrightProblemsPage';
 import unwrapWidget from '../../../util/unwrapWidget';
 import decorateEditSummary from '../../../wiki/util/decorateEditSummary';
+import { IACompletionAction } from '../models/IACompletionAction';
 
 export interface SinglePageWorkflowDialogData {
 	page: string | mw.Title;
@@ -76,10 +77,7 @@ function initSinglePageWorkflowDialog() {
 			]
 		};
 
-		data: Partial<SinglePageWorkflowDialogResponseData> = {
-			entirePage: true,
-			fromUrls: true
-		};
+		data: Partial<SinglePageWorkflowDialogResponseData>;
 
 		page: mw.Title;
 		revid: number;
@@ -99,6 +97,12 @@ function initSinglePageWorkflowDialog() {
 
 			this.page = normalizeTitle( config.page );
 			this.revid = config.revid;
+
+			const userConfig = window.InfringementAssistant.config;
+			this.data = {
+				entirePage: userConfig.ia.defaultEntirePage.get(),
+				fromUrls: userConfig.ia.defaultFromUrls.get()
+			};
 		}
 
 		/**
@@ -123,6 +127,7 @@ function initSinglePageWorkflowDialog() {
 					).parse()
 				}
 			/>;
+			intro.querySelector( 'a' ).setAttribute( 'target', '_blank' );
 			this.fieldsetLayout = new OO.ui.FieldsetLayout( {
 				items: this.renderFields()
 			} );
@@ -303,22 +308,25 @@ function initSinglePageWorkflowDialog() {
 			this.inputs.endSection.on( 'change', ( value: string ) => {
 				const section = value === '-1' ? null : this.sections[ +value ];
 
-				this.data.endSection = section;
-				// Find the section directly after this one, or if null (or last section), use the
-				// end of the page for it.
-				this.data.endOffset = section == null ?
-					this.sections[ 0 ].byteoffset :
-					( this.sections[ section.i + 1 ]?.byteoffset ?? this.wikitext.length );
+				// Ensure sections exist first.
+				if ( this.sections.length > 0 ) {
+					this.data.endSection = section;
+					// Find the section directly after this one, or if null (or last section), use
+					// the end of the page for it.
+					this.data.endOffset = section == null ?
+						this.sections[ 0 ].byteoffset :
+						( this.sections[ section.i + 1 ]?.byteoffset ?? this.wikitext.length );
 
-				// Automatically lock out sections before the end in the start dropdown
-				for ( const item of this.inputs.startSection.dropdownWidget.menu.items ) {
-					if ( item.data === '-1' ) {
-						item.setDisabled( value === '-1' );
-					} else if ( this.sections[ item.data ].fromtitle === thisTitle ) {
-						if ( this.sections[ item.data ].i > +value ) {
-							item.setDisabled( true );
-						} else {
-							item.setDisabled( false );
+					// Automatically lock out sections before the end in the start dropdown
+					for ( const item of this.inputs.startSection.dropdownWidget.menu.items ) {
+						if ( item.data === '-1' ) {
+							item.setDisabled( value === '-1' );
+						} else if ( this.sections[ item.data ].fromtitle === thisTitle ) {
+							if ( this.sections[ item.data ].i > +value ) {
+								item.setDisabled( true );
+							} else {
+								item.setDisabled( false );
+							}
 						}
 					}
 				}
@@ -332,7 +340,7 @@ function initSinglePageWorkflowDialog() {
 					return;
 				}
 
-                this.data.fromUrls = selected;
+				this.data.fromUrls = selected;
 				fields.sourceUrls.toggle( selected );
 				fields.sourceText.toggle( !selected );
 			} );
@@ -341,7 +349,7 @@ function initSinglePageWorkflowDialog() {
 				this.data.sourceUrls = items.map( ( item ) => item.data );
 			} );
 			this.inputs.sourceText.on( 'change', ( text: string ) => {
-				this.data.sourceText = text.replace(/\.\s*$/, "");
+				this.data.sourceText = text.replace( /\.\s*$/, '' );
 			} );
 			fields.sourceText.toggle( false );
 
@@ -361,23 +369,27 @@ function initSinglePageWorkflowDialog() {
 			const thisTitle = this.page.getPrefixedDb();
 
 			const options: any[] = [];
-			this.sections.forEach( ( section ) => {
-				options.push( {
-					data: section.i,
-					label: mw.message(
-						'deputy.ia.report.section',
-						section.number,
-						section.line
-					).text(),
-					...( section.fromtitle !== thisTitle ? {
-						disabled: true,
-						title: mw.message(
-							'deputy.ia.report.transcludedSection',
-							section.fromtitle
-						).text()
-					} : {} )
+			if ( this.sections.length > 0 ) {
+				this.sections.forEach( ( section ) => {
+					options.push( {
+						data: section.i,
+						label: mw.message(
+							'deputy.ia.report.section',
+							section.number,
+							section.line
+						).text(),
+						...( section.fromtitle !== thisTitle ? {
+							disabled: true,
+							title: mw.message(
+								'deputy.ia.report.transcludedSection',
+								section.fromtitle
+							).text()
+						} : {} )
+					} );
 				} );
-			} );
+			} else {
+				this.inputs.entirePage.setDisabled( true );
+			}
 			return options;
 		}
 
@@ -515,14 +527,23 @@ function initSinglePageWorkflowDialog() {
 						{ type: 'success' }
 					);
 				} );
+
+				switch ( window.InfringementAssistant.config.ia[ 'on' + (
+					action === 'hide' ? 'Hide' : 'Submit'
+				) as 'onHide' | 'onSubmit' ].get() ) {
+					case IACompletionAction.Reload:
+						window.location.reload();
+						break;
+					case IACompletionAction.Redirect:
+						window.location.href = mw.util.getUrl(
+							CopyrightProblemsPage.getCurrent().title.getPrefixedText()
+						);
+						break;
+				}
 			}
 			process.next( function () {
 				unblockExit( 'ia-spwd' );
 				this.close( { action: action } );
-
-				// Reload the page
-				// TODO: Preferences
-				window.location.reload();
 			}, this );
 
 			return process;
