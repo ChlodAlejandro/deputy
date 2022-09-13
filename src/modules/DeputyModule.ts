@@ -1,6 +1,7 @@
 import { Deputy } from '../Deputy';
 import unwrapWidget from '../util/unwrapWidget';
 import DeputyLanguage from '../DeputyLanguage';
+import Configuration from '../config/Configuration';
 
 /**
  * A Deputy module. Modules are parts of Deputy that can usually be removed
@@ -13,17 +14,16 @@ export default abstract class DeputyModule {
 	 * with a Deputy instances enables connection with the Deputy core, which shares the
 	 * OOUI window manager and API manager for Deputy.
 	 */
-	readonly deputy?: Deputy;
+	private readonly deputy?: Deputy;
 	/**
 	 * An OOUI WindowManager. If this class is instantiated standalone (without Deputy),
 	 * this will be a set value.
 	 */
-	_windowManager: any;
+	private _windowManager: any;
 	/**
-	 * A MediaWiki API object. If this class is instantiated standalone (without Deputy),
-	 * this will be a set value.
+	 * The configuration object handling this module.
 	 */
-	_wiki: mw.Api;
+	private _config: Configuration;
 
 	/**
 	 * @return The responsible window manager for this class.
@@ -37,6 +37,18 @@ export default abstract class DeputyModule {
 			return this._windowManager;
 		} else {
 			return this.deputy.windowManager;
+		}
+	}
+
+	/**
+	 * @return the configuration handler for this module. If Deputy is loaded, this reuses
+	 * the configuration handler of Deputy.
+	 */
+	get config(): Configuration {
+		if ( !this.deputy ) {
+			return this._config ?? ( this._config = Configuration.load() );
+		} else {
+			return this.deputy.config;
 		}
 	}
 

@@ -22,6 +22,7 @@ import deputyStyles from './css/deputy.css';
 import deputyCoreEnglish from '../i18n/core/en.json';
 import deputySharedEnglish from '../i18n/shared/en.json';
 import InfringementAssistant from './modules/ia/InfringementAssistant';
+import Configuration from './config/Configuration';
 
 /**
  * The main class for Deputy. Entry point for execution.
@@ -80,6 +81,7 @@ class Deputy {
 	prefs: DeputyPreferences;
 	comms: DeputyCommunications;
 	session: DeputySession;
+	config: Configuration;
 
 	// Modules
 	/**
@@ -126,6 +128,8 @@ class Deputy {
 		await DeputyLanguage.load( 'core', deputyCoreEnglish );
 		await DeputyLanguage.load( 'shared', deputySharedEnglish );
 
+		// Initialize the configuration
+		this.config = await Configuration.load();
 		// Initialize the storage.
 		this.storage = new DeputyStorage();
 		await this.storage.init();
