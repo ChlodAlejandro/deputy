@@ -1,15 +1,27 @@
 {
+    "deputy.setting.dialog.title": "Deputy Preferences",
+
+    "deputy.setting.core": "Deputy",
+
     "deputy.setting.core.language.name": "Language",
     "deputy.setting.core.language.description": "Deputy's interface language. English (US) is used by default, and is used as a fallback if no translations are available. If the content of the wiki you work on is in a different language from the interface language, Deputy will need to load additional data to ensure edit summaries, text, etc., saved on-wiki match the wiki's content language. For this reason, we suggest keeping the interface language the same as the wiki's content language.",
     "deputy.setting.core.modules.name": "Modules",
     "deputy.setting.core.modules.description": "Choose the enabled Deputy modules. By default, all modules are enabled.\nDisabling specific modules won't make Deputy load faster, but it can remove\nUI features added by Deputy which may act as clutter when unused.",
+    "deputy.setting.core.portletNames.name": "Portlet names",
+    "deputy.setting.core.portletNames.description": "Choose which names appear in the Deputy portlet (toolbox) links.",
+
+    "deputy.setting.cci": "CCI",
 
     "deputy.setting.cci.enablePageToolbar.name": "Disable page toolbar",
     "deputy.setting.cci.enablePageToolbar.description": "Disables the page toolbar, which is used to quickly show tools, analysis options, and related case information on a page that is the subject of a CCI investigation. If you have a computer running at the speed of a snail and you wish to\npreserve those precious CPU cycles, you can choose to disable this. The IA page toolbar works slightly differently from the CCI page toolbar. Namely, it shows a button for responding instead of a status dropdown.",
     "deputy.setting.cci.enablePageToolbar.unimplemented": "This feature has not yet been implemented.",
 
+    "deputy.setting.ante": "ANTE",
+
     "deputy.setting.ante.enableAutoMerge.name": "Merge automatically on run",
     "deputy.setting.ante.enableAutoMerge.description": "If enabled, templates that can be merged will automatically be merged when the dialog opens.",
+
+    "deputy.setting.ia": "IA",
 
     "deputy.setting.ia.responses.name": "Custom responses",
     "deputy.setting.ia.responses.description": "A custom set of responses, or overrides for existing responses. If an entry\nwith the same key on both the wiki-wide configuration and the user configuration\nexists, the user configuration will override the wiki-wide configuration. Wiki-wide configuration responses can also be disabled locally. If this setting is empty, no overrides are made.",

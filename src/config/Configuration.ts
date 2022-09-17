@@ -2,13 +2,12 @@ import Setting from './Setting';
 import DeputyVersion from '../DeputyVersion';
 import MwApi from '../MwApi';
 import { CopyrightProblemsResponseSet } from '../modules/ia/models/CopyrightProblemsResponse';
-import {
-	IACompletionAction,
-	IACompletionActionSettingProperties
-} from '../modules/ia/models/IACompletionAction';
+import { generateEnumConfigurationProperties, PortletNameView } from './types';
+import { CompletionAction } from '../modules/shared/CompletionAction';
+import { EnumValue } from '../types';
 
 /**
- * A configuration. Defines settings or setting groups.
+ * A configuration. Defines settings and setting groups.
  */
 export default class Configuration {
 
@@ -47,7 +46,13 @@ export default class Configuration {
 		} ),
 		modules: new Setting<string[], string[]>( {
 			defaultValue: [ 'cci', 'ante', 'ia' ]
-		} )
+		} ),
+		portletNames: new Setting<
+			EnumValue<typeof PortletNameView>,
+			PortletNameView
+		>(
+			generateEnumConfigurationProperties( PortletNameView, PortletNameView.Full )
+		)
 	};
 	public readonly cci = <const>{
 		enablePageToolbar: new Setting<boolean, boolean>( {
@@ -60,7 +65,13 @@ export default class Configuration {
 	public readonly ante = <const>{
 		enableAutoMerge: new Setting<boolean, boolean>( {
 			defaultValue: false
-		} )
+		} ),
+		onSubmit: new Setting<
+			EnumValue<typeof CompletionAction>,
+			CompletionAction
+		>(
+			generateEnumConfigurationProperties( CompletionAction, CompletionAction.Reload )
+		)
 	};
 	public readonly ia = <const>{
 		responses: new Setting<
@@ -82,16 +93,16 @@ export default class Configuration {
 			defaultValue: true
 		} ),
 		onHide: new Setting<
-			'nothing' | 'reload' | 'redirect',
-			IACompletionAction
-		>( IACompletionActionSettingProperties ),
+			EnumValue<typeof CompletionAction>,
+			CompletionAction
+		>( generateEnumConfigurationProperties( CompletionAction, CompletionAction.Reload ) ),
 		onSubmit: new Setting<
-			'nothing' | 'reload' | 'redirect',
-			IACompletionAction
-		>( IACompletionActionSettingProperties )
+			EnumValue<typeof CompletionAction>,
+			CompletionAction
+		>( generateEnumConfigurationProperties( CompletionAction, CompletionAction.Reload ) )
 	};
 
-	public readonly all = { core: this.core, cci: this.cci, ia: this.ia };
+	public readonly all = { core: this.core, cci: this.cci, ante: this.ante, ia: this.ia };
 
 	/**
 	 * Creates a new Configuration.

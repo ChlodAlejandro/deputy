@@ -4,6 +4,7 @@ import { Deputy } from './Deputy';
 export type PromiseOrNot<T> = Promise<T> | T;
 export type JQueryPromiseOrPromise<T> = JQuery.Promise<T> | Promise<T>;
 export type ArrayOrNot<T> = T[] | T;
+export type EnumValue<T> = T[keyof T];
 
 interface OOEventEmitter {
 	connect(

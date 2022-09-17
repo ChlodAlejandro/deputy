@@ -60,7 +60,9 @@ type TransformerParameter<Key extends string, TargetType, SourceType> =
 
 /**
  * Refers to a specific setting on the configuration. Should be initialized with
- * a raw (serialized) type and an actual (deserialized) type
+ * a raw (serialized) type and an actual (deserialized) type.
+ *
+ * This is used for both client and wiki-wide configuration.
  */
 export default class Setting<SerializedType, DeserializedType> {
 
