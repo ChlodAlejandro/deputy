@@ -5,7 +5,7 @@ import Configuration from './Configuration';
 import { ArrayOrNot } from '../types';
 import getObjectValues from '../util/getObjectValues';
 
-interface DisplayOptions {
+interface DisplayOptionsBase {
 
 	/**
 	 * Overridden name. DO NOT USE unless there is good reason to.
@@ -22,20 +22,34 @@ interface DisplayOptions {
 	 */
 	description?: string;
 	/**
-	 * The type of UI element to display.
-	 */
-	type?: 'text' | 'number' | 'checkbox' | 'select' | 'radio' | 'checkboxes';
-	/**
 	 * Whether an option should be disabled or not.
 	 */
 	disabled?: boolean | string | ( ( config: Configuration ) => boolean | string );
+
+}
+
+interface VisibleDisplayOptions extends DisplayOptionsBase {
+	/**
+	 * The type of UI element to display.
+	 */
+	type: 'text' | 'number' | 'checkbox' | 'select' | 'radio' | 'checkboxes' | 'unimplemented';
 	/**
 	 * Whether an option should be hidden or not. If an option is hidden, it will not
 	 * show up in the settings interface at all.
 	 */
-	hidden?: boolean | ( ( config: Configuration ) => boolean | string );
-
+	hidden?: false | ( ( config: Configuration ) => boolean | string );
 }
+
+interface HiddenDisplayOptions extends DisplayOptionsBase {
+	/**
+	 * Whether an option should be hidden or not. If an option is hidden, it will not
+	 * show up in the settings interface at all.
+	 */
+	hidden?: true;
+	type?: never;
+}
+
+export type DisplayOptions = HiddenDisplayOptions | VisibleDisplayOptions;
 
 /**
  * Types that can be handled by the in-built JSON serializer normally.
@@ -119,7 +133,7 @@ export default class Setting<SerializedType, DeserializedType> {
 	 */
 	public constructor(
 		options: {
-			displayOptions?: DisplayOptions,
+			displayOptions: DisplayOptions,
 			defaultValue?: DeserializedType,
 			allowedValues?: Setting<SerializedType, DeserializedType>['allowedValues']
 		} &

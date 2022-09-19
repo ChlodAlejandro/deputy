@@ -1,4 +1,5 @@
 import fromObjectEntries from '../util/fromObjectEntries';
+import { DisplayOptions } from './Setting';
 
 /**
  * Generates configuration properties for serialized <b>string</b> enums.
@@ -19,6 +20,9 @@ export function generateEnumConfigurationProperties<T>(
 			value === defaultValue ? undefined : value,
 		deserialize: ( value: any ) =>
 			value as typeof _enum[keyof typeof _enum],
+		displayOptions: <DisplayOptions>{
+			type: 'radio'
+		},
 		allowedValues: fromObjectEntries(
 			Array.from( new Set( Object.keys( _enum ) ).values() )
 				.map( ( v ) => [ v, ( _enum as any )[ v ] ] )

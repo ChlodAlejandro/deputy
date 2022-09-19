@@ -42,10 +42,12 @@ export default class Configuration {
 			displayOptions: { hidden: true }
 		} ),
 		language: new Setting<string, string>( {
-			defaultValue: 'en'
+			defaultValue: 'en',
+			displayOptions: { type: 'select' }
 		} ),
 		modules: new Setting<string[], string[]>( {
-			defaultValue: [ 'cci', 'ante', 'ia' ]
+			defaultValue: [ 'cci', 'ante', 'ia' ],
+			displayOptions: { type: 'checkboxes' }
 		} ),
 		portletNames: new Setting<
 			EnumValue<typeof PortletNameView>,
@@ -64,7 +66,10 @@ export default class Configuration {
 	};
 	public readonly ante = <const>{
 		enableAutoMerge: new Setting<boolean, boolean>( {
-			defaultValue: false
+			defaultValue: false,
+			displayOptions: {
+				type: 'checkbox'
+			}
 		} ),
 		onSubmit: new Setting<
 			EnumValue<typeof CompletionAction>,
@@ -78,19 +83,30 @@ export default class Configuration {
 			CopyrightProblemsResponseSet, CopyrightProblemsResponseSet
 		>( {
 			...Setting.basicSerializers,
-			defaultValue: null
+			defaultValue: null,
+			displayOptions: {
+				disabled: 'unimplemented',
+				type: 'unimplemented'
+			}
 		} ),
 		enablePageToolbar: new Setting<boolean, boolean>( {
 			defaultValue: true,
 			displayOptions: {
+				type: 'checkbox',
 				disabled: 'unimplemented'
 			}
 		} ),
 		defaultEntirePage: new Setting<boolean, boolean>( {
-			defaultValue: true
+			defaultValue: true,
+			displayOptions: {
+				type: 'checkbox'
+			}
 		} ),
 		defaultFromUrls: new Setting<boolean, boolean>( {
-			defaultValue: true
+			defaultValue: true,
+			displayOptions: {
+				type: 'checkbox'
+			}
 		} ),
 		onHide: new Setting<
 			EnumValue<typeof CompletionAction>,

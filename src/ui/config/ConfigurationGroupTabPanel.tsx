@@ -1,5 +1,7 @@
 import '../../types';
 import type Configuration from '../../config/Configuration';
+import Setting from '../../config/Setting';
+import { h } from 'tsx-dom';
 
 export interface ConfigurationGroupTabPanelData {
 	config: Configuration;
@@ -18,12 +20,29 @@ function initConfigurationGroupTabPanel() {
 		data: any;
 
 		/**
+		 *
+		 */
+		get settings() {
+			return this.config.config.all[ this.config.group ];
+		}
+
+		/**
 		 * @param config Configuration to be passed to the element.
 		 */
 		constructor( private readonly config: ConfigurationGroupTabPanelData ) {
 			super( `configurationGroupPage_${config.group}` );
 
-			this.$element.append( 'Hello World' );
+			for ( const settingKey of Object.keys( this.settings ) ) {
+				const setting = this.settings[ settingKey as keyof typeof this.settings ] as
+					Setting<any, any>;
+				switch ( setting.displayOptions.type ) {
+					default:
+						this.$element.append( this.newUnimplementedField( settingKey ) );
+						break;
+				}
+			}
+
+			// this.$element.append();
 		}
 
 		/**
@@ -36,8 +55,28 @@ function initConfigurationGroupTabPanel() {
 				// * deputy.setting.cci
 				// * deputy.setting.ante
 				// * deputy.setting.ia
-				mw.message( 'deputy.setting.' + this.config.group ).text()
+				mw.msg( 'deputy.setting.' + this.config.group )
 			);
+		}
+
+		/**
+		 *
+		 * @param settingKey
+		 */
+		newUnimplementedField( settingKey: string ): Element {
+			return <div>
+				{ mw.msg( 'deputy.setting.dialog.unimplemented' ) }
+			</div>;
+		}
+
+		/**
+		 *
+		 * @param settingKey
+		 */
+		newCheckboxField( settingKey: string ): Element {
+			return <div>
+				{ mw.msg( 'deputy.setting.dialog.unimplemented' ) }
+			</div>;
 		}
 
 	};
