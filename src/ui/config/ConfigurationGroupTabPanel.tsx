@@ -70,12 +70,23 @@ function initConfigurationGroupTabPanel() {
 		setupTabItem() {
 			this.tabItem.setLabel(
 				// Messages used here:
-				// * deputy.setting.core
-				// * deputy.setting.cci
-				// * deputy.setting.ante
-				// * deputy.setting.ia
-				mw.msg( 'deputy.setting.' + this.config.group )
+				// * deputy.setting.user.core
+				// * deputy.setting.user.cci
+				// * deputy.setting.user.ante
+				// * deputy.setting.user.ia
+				mw.msg( 'deputy.setting.user.' + this.config.group )
 			);
+		}
+
+		/**
+		 * Gets the i18n message for a given setting.
+		 *
+		 * @param settingKey
+		 * @param key
+		 * @return A localized string
+		 */
+		getSettingMsg( settingKey: string, key: string ) {
+			return mw.msg( `deputy.setting.user.${this.config.group}.${settingKey}.${key}` );
 		}
 
 		/**
@@ -91,7 +102,7 @@ function initConfigurationGroupTabPanel() {
 			if ( Array.isArray( allowedValues ) ) {
 				for ( const key of allowedValues ) {
 					const message = mw.message(
-						`deputy.setting.${this.config.group}.${settingKey}.${key}`
+						`deputy.setting.user.${this.config.group}.${settingKey}.${key}`
 					);
 
 					items.push( [ key, message.exists() ? message.text() : key ] );
@@ -99,7 +110,7 @@ function initConfigurationGroupTabPanel() {
 			} else {
 				for ( const key of Object.keys( allowedValues ) ) {
 					const message = mw.message(
-						`deputy.setting.${this.config.group}.${settingKey}.${key}`
+						`deputy.setting.user.${this.config.group}.${settingKey}.${key}`
 					);
 
 					items.push( [ key, message.exists() ? message.text() : key ] );
@@ -116,11 +127,11 @@ function initConfigurationGroupTabPanel() {
 		 */
 		newUnimplementedField( settingKey: string ): Element {
 			const desc = mw.message(
-				`deputy.setting.${this.config.group}.${settingKey}.description`
+				`deputy.setting.user.${this.config.group}.${settingKey}.description`
 			);
 
 			return <div class="deputy-setting">
-				<b>{ mw.msg( `deputy.setting.${this.config.group}.${settingKey}.name` ) }</b>
+				<b>{ mw.msg( `deputy.setting.user.${this.config.group}.${settingKey}.name` ) }</b>
 				{ desc.exists() ? <p style={{ fontSize: '0.925em', color: '#54595d' }}>
 					{ desc.text() }
 				</p> : '' }
@@ -138,7 +149,7 @@ function initConfigurationGroupTabPanel() {
 		newCheckboxField( settingKey: string, setting: Setting<any, any> ): Element {
 			const isDisabled = setting.disabled;
 			const desc = mw.message(
-				`deputy.setting.${this.config.group}.${settingKey}.description`
+				`deputy.setting.user.${this.config.group}.${settingKey}.description`
 			);
 
 			const field = new OO.ui.CheckboxInputWidget( {
@@ -147,9 +158,9 @@ function initConfigurationGroupTabPanel() {
 			} );
 			const layout = new OO.ui.FieldLayout( field, {
 				align: 'inline',
-				label: mw.msg( `deputy.setting.${this.config.group}.${settingKey}.name` ),
+				label: mw.msg( `deputy.setting.user.${this.config.group}.${settingKey}.name` ),
 				help: typeof isDisabled === 'string' ?
-					mw.msg( `deputy.setting.${this.config.group}.${settingKey}.${isDisabled}` ) :
+					this.getSettingMsg( settingKey, isDisabled ) :
 					desc.exists() ? desc.text() : undefined,
 				helpInline: true
 			} );
@@ -176,7 +187,7 @@ function initConfigurationGroupTabPanel() {
 		newCheckboxesField( settingKey: string, setting: Setting<any, any> ): Element {
 			const isDisabled = setting.disabled;
 			const desc = mw.message(
-				`deputy.setting.${this.config.group}.${settingKey}.description`
+				`deputy.setting.user.${this.config.group}.${settingKey}.description`
 			);
 
 			const field = new OO.ui.CheckboxMultiselectInputWidget( {
@@ -187,9 +198,9 @@ function initConfigurationGroupTabPanel() {
 			} );
 			const layout = new OO.ui.FieldLayout( field, {
 				align: 'top',
-				label: mw.msg( `deputy.setting.${this.config.group}.${settingKey}.name` ),
+				label: mw.msg( `deputy.setting.user.${this.config.group}.${settingKey}.name` ),
 				help: typeof isDisabled === 'string' ?
-					mw.msg( `deputy.setting.${this.config.group}.${settingKey}.${isDisabled}` ) :
+					this.getSettingMsg( settingKey, isDisabled ) :
 					desc.exists() ? desc.text() : undefined,
 				helpInline: true
 			} );
@@ -221,7 +232,7 @@ function initConfigurationGroupTabPanel() {
 		newRadioField( settingKey: string, setting: Setting<any, any> ): Element {
 			const isDisabled = setting.disabled;
 			const desc = mw.message(
-				`deputy.setting.${this.config.group}.${settingKey}.description`
+				`deputy.setting.user.${this.config.group}.${settingKey}.description`
 			);
 
 			const field = new OO.ui.RadioSelectWidget( {
@@ -238,9 +249,9 @@ function initConfigurationGroupTabPanel() {
 			} );
 			const layout = new OO.ui.FieldLayout( field, {
 				align: 'top',
-				label: mw.msg( `deputy.setting.${this.config.group}.${settingKey}.name` ),
+				label: mw.msg( `deputy.setting.user.${this.config.group}.${settingKey}.name` ),
 				help: typeof isDisabled === 'string' ?
-					mw.msg( `deputy.setting.${this.config.group}.${settingKey}.${isDisabled}` ) :
+					this.getSettingMsg( settingKey, isDisabled ) :
 					desc.exists() ? desc.text() : undefined,
 				helpInline: true
 			} );

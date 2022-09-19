@@ -11,14 +11,14 @@ interface DisplayOptionsBase {
 	 * Overridden name. DO NOT USE unless there is good reason to.
 	 *
 	 * By default, the name will be taken from internationalization strings. Its key follows
-	 * the format "deputy.setting.<group>.<settingName>.name".
+	 * the format "deputy.setting.user.<group>.<settingName>.name".
 	 */
 	name?: string;
 	/**
 	 * Overridden description. DO NOT USE unless there is good reason to.
 	 *
 	 * By default, the description will be taken from internationalization strings. Its key follows
-	 * the format "deputy.setting.<group>.<settingName>.description".
+	 * the format "deputy.setting.user.<group>.<settingName>.description".
 	 */
 	description?: string;
 	/**
@@ -32,7 +32,8 @@ interface VisibleDisplayOptions extends DisplayOptionsBase {
 	/**
 	 * The type of UI element to display.
 	 */
-	type: 'text' | 'number' | 'checkbox' | 'select' | 'radio' | 'checkboxes' | 'unimplemented';
+	type: 'text' | 'number' | 'checkbox' | 'select' | 'radio' | 'checkboxes'
+		| 'page' | 'code' | 'unimplemented';
 	/**
 	 * Whether an option should be hidden or not. If an option is hidden, it will not
 	 * show up in the settings interface at all.
@@ -92,7 +93,7 @@ export default class Setting<SerializedType, DeserializedType> {
 	/**
 	 * Allowed values for this setting. Specific values may be provided, or an object of
 	 * "choice objects": value mapped by the choice label (to be used to get the choice
-	 * text from i18n, e.g. `deputy.setting.<group>.<name>.choice.<choice>`). When an array is
+	 * text from i18n, e.g. `deputy.setting.user.<group>.<name>.choice.<choice>`). When an array is
 	 * passed, the key to be used for i18n is equal to the result of the allowed value's `toString`
 	 * function.
 	 *
