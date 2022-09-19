@@ -1,6 +1,10 @@
 {
-    "deputy.setting.dialog.title": "Deputy Preferences",
-    "deputy.setting.dialog.unimplemented": "A way to modify this setting has not yet been implemented. Check back later!",
+    "deputy.settings.portlet": "Deputy preferences",
+    "deputy.settings.portlet.tooltip": "Opens a dialog to modify Deputy preferences",
+
+    "deputy.settings.dialog.title": "Deputy Preferences",
+    "deputy.settings.dialog.unimplemented": "A way to modify this setting has not yet been implemented. Check back later!",
+    "deputy.settings.saved": "Preferences saved. Please refresh the page to see changes.",
 
     "deputy.setting.core": "Deputy",
 
@@ -13,14 +17,18 @@
 
     "deputy.setting.cci": "CCI",
 
-    "deputy.setting.cci.enablePageToolbar.name": "Disable page toolbar",
-    "deputy.setting.cci.enablePageToolbar.description": "Disables the page toolbar, which is used to quickly show tools, analysis options, and related case information on a page that is the subject of a CCI investigation. If you have a computer running at the speed of a snail and you wish to\npreserve those precious CPU cycles, you can choose to disable this. The IA page toolbar works slightly differently from the CCI page toolbar. Namely, it shows a button for responding instead of a status dropdown.",
+    "deputy.setting.cci.enablePageToolbar.name": "Enable page toolbar",
+    "deputy.setting.cci.enablePageToolbar.description": "Enables the page toolbar, which is used to quickly show tools, analysis options, and related case information on a page that is the subject of a CCI investigation. If you have a computer running at the speed of a snail and you wish to\npreserve those precious CPU cycles, you can choose to disable this. The IA page toolbar works slightly differently from the CCI page toolbar. Namely, it shows a button for responding instead of a status dropdown.",
     "deputy.setting.cci.enablePageToolbar.unimplemented": "This feature has not yet been implemented.",
 
     "deputy.setting.ante": "ANTE",
 
     "deputy.setting.ante.enableAutoMerge.name": "Merge automatically on run",
     "deputy.setting.ante.enableAutoMerge.description": "If enabled, templates that can be merged will automatically be merged when the dialog opens.",
+    "deputy.setting.ante.onSubmit.name": "Action on submit",
+    "deputy.setting.ante.onSubmit.description": "Choose what to do after editing attribution notice templates.",
+    "deputy.setting.ante.onSubmit.nothing": "Do nothing",
+    "deputy.setting.ante.onSubmit.reload": "Reload the page",
 
     "deputy.setting.ia": "IA",
 
@@ -32,5 +40,15 @@
     "deputy.setting.ia.defaultEntirePage.name": "Hide entire page by default",
     "deputy.setting.ia.defaultEntirePage.description": "If enabled, the Infringement Assistant reporting window will hide the entire page by default.",
     "deputy.setting.ia.defaultFromUrls.name": "Use URLs by default",
-    "deputy.setting.ia.defaultFromUrls.description": "If enabled, the Infringement Assistant reporting window will use URL inputs by default."
+    "deputy.setting.ia.defaultFromUrls.description": "If enabled, the Infringement Assistant reporting window will use URL inputs by default.",
+    "deputy.setting.ia.onHide.name": "Action on hide",
+    "deputy.setting.ia.onHide.description": "Choose what to do after the \"Hide content only\" button is selected and the relevant content is hidden from the page.",
+    "deputy.setting.ia.onHide.nothing": "Do nothing",
+    "deputy.setting.ia.onHide.reload": "Reload the page",
+    "deputy.setting.ia.onHide.redirect": "Redirect to the noticeboard page",
+    "deputy.setting.ia.onSubmit.name": "Action on submit",
+    "deputy.setting.ia.onSubmit.description": "Choose what to do after the \"Submit\" button is selected, the relevant content is hidden from the page, and the page is reported.",
+    "deputy.setting.ia.onSubmit.nothing": "Do nothing",
+    "deputy.setting.ia.onSubmit.reload": "Reload the page",
+    "deputy.setting.ia.onSubmit.redirect": "Redirect to the noticeboard page"
 }

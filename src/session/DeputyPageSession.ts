@@ -44,42 +44,45 @@ export default class DeputyPageSession {
 	init( data: DeputyPageStatusResponseMessage ) {
 		window.deputy.comms.addEventListener( 'sessionClosed', this.sessionCloseHandler );
 
-		mw.loader.using( [
-			'oojs-ui-core',
-			'oojs-ui-windows',
-			'oojs-ui.styles.icons-interactions',
-			'oojs-ui.styles.icons-movement',
-			'oojs-ui.styles.icons-moderation',
-			'oojs-ui.styles.icons-media'
-		], () => {
-			mw.hook( 'wikipage.diff' ).add( async () => {
-				// Attempt to get new revision data *with revision ID*.
-				data = await DeputyPageSession.getPageDetails(
-					mw.config.get( 'wgDiffNewId' ) ||
-					mw.config.get( 'wgRevisionId' )
-				);
+		// Spawn toolbar
+		if ( window.deputy.config.cci.enablePageToolbar.get() ) {
+			mw.loader.using( [
+				'oojs-ui-core',
+				'oojs-ui-windows',
+				'oojs-ui.styles.icons-interactions',
+				'oojs-ui.styles.icons-movement',
+				'oojs-ui.styles.icons-moderation',
+				'oojs-ui.styles.icons-media'
+			], () => {
+				mw.hook( 'wikipage.diff' ).add( async () => {
+					// Attempt to get new revision data *with revision ID*.
+					data = await DeputyPageSession.getPageDetails(
+						mw.config.get( 'wgDiffNewId' ) ||
+						mw.config.get( 'wgRevisionId' )
+					);
 
-				const openPromise = this.appendToolbar( {
-					...data,
-					forceRevision: this.toolbar != null ||
-						// Is a diff page.
-						mw.config.get( 'wgDiffNewId' ) != null
-				} );
-
-				if (
-					this.toolbar &&
-					this.toolbar.revision !== mw.config.get( 'wgRevisionId' )
-				) {
-					const oldToolbar = this.toolbar;
-					openPromise.then( () => {
-						oldToolbar.close();
+					const openPromise = this.appendToolbar( {
+						...data,
+						forceRevision: this.toolbar != null ||
+							// Is a diff page.
+							mw.config.get( 'wgDiffNewId' ) != null
 					} );
 
-				}
+					if (
+						this.toolbar &&
+						this.toolbar.revision !== mw.config.get( 'wgRevisionId' )
+					) {
+						const oldToolbar = this.toolbar;
+						openPromise.then( () => {
+							oldToolbar.close();
+						} );
 
-				this.toolbar = await openPromise;
+					}
+
+					this.toolbar = await openPromise;
+				} );
 			} );
-		} );
+		}
 	}
 
 	/**

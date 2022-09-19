@@ -3,7 +3,7 @@ import DeputyVersion from '../DeputyVersion';
 import MwApi from '../MwApi';
 import { CopyrightProblemsResponseSet } from '../modules/ia/models/CopyrightProblemsResponse';
 import { generateEnumConfigurationProperties, PortletNameView } from './types';
-import { CompletionAction } from '../modules/shared/CompletionAction';
+import { CompletionAction, TripleCompletionAction } from '../modules/shared/CompletionAction';
 import { EnumValue } from '../types';
 
 /**
@@ -60,7 +60,7 @@ export default class Configuration {
 		enablePageToolbar: new Setting<boolean, boolean>( {
 			defaultValue: true,
 			displayOptions: {
-				disabled: 'unimplemented'
+				type: 'checkbox'
 			}
 		} )
 	};
@@ -109,13 +109,19 @@ export default class Configuration {
 			}
 		} ),
 		onHide: new Setting<
-			EnumValue<typeof CompletionAction>,
-			CompletionAction
-		>( generateEnumConfigurationProperties( CompletionAction, CompletionAction.Reload ) ),
+			EnumValue<typeof TripleCompletionAction>,
+			TripleCompletionAction
+		>( generateEnumConfigurationProperties(
+			TripleCompletionAction,
+			TripleCompletionAction.Reload
+		) ),
 		onSubmit: new Setting<
-			EnumValue<typeof CompletionAction>,
-			CompletionAction
-		>( generateEnumConfigurationProperties( CompletionAction, CompletionAction.Reload ) )
+			EnumValue<typeof TripleCompletionAction>,
+			TripleCompletionAction
+		>( generateEnumConfigurationProperties(
+			TripleCompletionAction,
+			TripleCompletionAction.Reload
+		) )
 	};
 
 	public readonly all = { core: this.core, cci: this.cci, ante: this.ante, ia: this.ia };

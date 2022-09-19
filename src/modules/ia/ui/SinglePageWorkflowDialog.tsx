@@ -7,7 +7,7 @@ import { h } from 'tsx-dom';
 import CopyrightProblemsPage from '../models/CopyrightProblemsPage';
 import unwrapWidget from '../../../util/unwrapWidget';
 import decorateEditSummary from '../../../wiki/util/decorateEditSummary';
-import { CompletionAction } from '../../shared/CompletionAction';
+import { TripleCompletionAction } from '../../shared/CompletionAction';
 
 export interface SinglePageWorkflowDialogData {
 	page: string | mw.Title;
@@ -521,10 +521,10 @@ function initSinglePageWorkflowDialog() {
 				switch ( window.InfringementAssistant.config.ia[ 'on' + (
 					action === 'hide' ? 'Hide' : 'Submit'
 				) as 'onHide' | 'onSubmit' ].get() ) {
-					case CompletionAction.Reload:
+					case TripleCompletionAction.Reload:
 						window.location.reload();
 						break;
-					case CompletionAction.Redirect:
+					case TripleCompletionAction.Redirect:
 						window.location.href = mw.util.getUrl(
 							CopyrightProblemsPage.getCurrent().title.getPrefixedText()
 						);

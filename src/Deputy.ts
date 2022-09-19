@@ -23,6 +23,7 @@ import deputyCoreEnglish from '../i18n/core/en.json';
 import deputySharedEnglish from '../i18n/shared/en.json';
 import InfringementAssistant from './modules/ia/InfringementAssistant';
 import Configuration from './config/Configuration';
+import { attachConfigurationDialogPortletLink } from './ui/config/ConfigurationDialog';
 
 /**
  * The main class for Deputy. Entry point for execution.
@@ -120,6 +121,8 @@ class Deputy {
 	 * sub-components as well.
 	 */
 	async init() {
+		window.CopiedTemplateEditor = this.ante;
+		window.InfringementAssistant = this.ia;
 		mw.hook( 'deputy.preload' ).fire( this );
 
 		// Inject CSS
@@ -127,6 +130,7 @@ class Deputy {
 		// Load strings
 		await DeputyLanguage.load( 'core', deputyCoreEnglish );
 		await DeputyLanguage.load( 'shared', deputySharedEnglish );
+		await attachConfigurationDialogPortletLink();
 
 		// Initialize the configuration
 		this.config = await Configuration.load();
@@ -144,7 +148,7 @@ class Deputy {
 		this.session = new DeputySession();
 		await this.session.init();
 
-		// Load CTE entry buttons
+		// Load modules
 		await this.ante.preInit();
 		await this.ia.preInit();
 

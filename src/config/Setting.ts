@@ -146,6 +146,24 @@ export default class Setting<SerializedType, DeserializedType> {
 	}
 
 	/**
+	 * @return if this option is disabled or not.
+	 */
+	get disabled(): boolean | string {
+		return typeof this.displayOptions.disabled !== 'function' ?
+			this.displayOptions.disabled :
+			this.displayOptions.disabled.call( this );
+	}
+
+	/**
+	 * @return if this option is hidden or not.
+	 */
+	get hidden(): boolean | string {
+		return typeof this.displayOptions.hidden !== 'function' ?
+			this.displayOptions.hidden :
+			this.displayOptions.hidden.call( this );
+	}
+
+	/**
 	 * @return The current value of this setting.
 	 */
 	get(): DeserializedType {

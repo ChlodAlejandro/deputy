@@ -2,6 +2,7 @@ import { Deputy } from '../Deputy';
 import unwrapWidget from '../util/unwrapWidget';
 import DeputyLanguage from '../DeputyLanguage';
 import Configuration from '../config/Configuration';
+import { attachConfigurationDialogPortletLink } from '../ui/config/ConfigurationDialog';
 
 /**
  * A Deputy module. Modules are parts of Deputy that can usually be removed
@@ -84,6 +85,7 @@ export default abstract class DeputyModule {
 	 */
 	async preInit( languageFallback: Record<string, string> ): Promise<void> {
 		await this.loadLanguages( languageFallback );
+		await attachConfigurationDialogPortletLink();
 	}
 
 }
