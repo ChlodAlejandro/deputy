@@ -570,14 +570,6 @@ export default class DeputyRootSession {
 				this.addSectionOverlay( casePage, heading );
 			}
 		}
-
-		if ( this.session == null ) {
-			// Re-append Deputy session entry interface elements.
-			// Put in a self-executing function to run asynchronously from closeSection.
-			( () => {
-				window.deputy.session.init();
-			} )();
-		}
 	}
 
 }

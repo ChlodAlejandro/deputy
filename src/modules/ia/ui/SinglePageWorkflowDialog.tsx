@@ -341,7 +341,12 @@ function initSinglePageWorkflowDialog() {
 			this.inputs.sourceText.on( 'change', ( text: string ) => {
 				this.data.sourceText = text.replace( /\.\s*$/, '' );
 			} );
-			fields.sourceText.toggle( false );
+
+			if ( window.InfringementAssistant.config.ia.defaultFromUrls.get() ) {
+				fields.sourceText.toggle( false );
+			} else {
+				fields.sourceUrls.toggle( false );
+			}
 
 			this.inputs.additionalNotes.on( 'change', ( text: string ) => {
 				this.data.notes = text;

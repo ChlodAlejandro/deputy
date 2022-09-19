@@ -89,7 +89,15 @@ export default class CopiedTemplateEditor extends DeputyModule {
 			mw.util.addPortletLink(
 				'p-tb',
 				'#',
-				mw.msg( 'deputy.ante' ),
+				// Messages used here:
+				// * deputy.ante
+				// * deputy.ante.short
+				// * deputy.ante.acronym
+				mw.msg( {
+					full: 'deputy.ante',
+					short: 'deputy.ante.short',
+					acronym: 'deputy.ante.acronym'
+				}[ this.config.core.portletNames.get() ] ),
 				'pt-cte'
 			).addEventListener( 'click', ( event ) => {
 				event.preventDefault();

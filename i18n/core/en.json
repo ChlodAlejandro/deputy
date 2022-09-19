@@ -9,7 +9,7 @@
     "deputy.session.tabActive.head": "You are working on this case page from another tab.",
     "deputy.session.tabActive.help": "Deputy can only run on one case page and tab at a time. Navigate to the other tab to continue working.",
     "deputy.session.otherActive.head": "Deputy is currently working on a different case page.",
-    "deputy.session.otherActive.help": "Deputy can only run on one case page and tab at a time. You can force-stop the earlier session, but progress or data on the previously-open case may be lost.",
+    "deputy.session.otherActive.help": "Deputy can only run on one case page and tab at a time. You may have also forgotten to close a prior Deputy session. You can force-stop the earlier session, but progress or data on the previously-open case may be lost.",
     "deputy.session.otherActive.button": "Stop session",
     "deputy.session.add": "Start working on this section",
 

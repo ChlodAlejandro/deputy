@@ -60,6 +60,7 @@ function initConfigurationGroupTabPanel() {
 
 			this.on( 'change', () => {
 				console.log( this.config.config );
+				console.log( this.config.config.serialize() );
 			} );
 		}
 

@@ -63,7 +63,15 @@ export default class InfringementAssistant extends DeputyModule {
 			mw.util.addPortletLink(
 				'p-tb',
 				'#',
-				mw.msg( 'deputy.ia' ),
+				// Messages used here:
+				// * deputy.ia
+				// * deputy.ia.short
+				// * deputy.ia.acronym
+				mw.msg( {
+					full: 'deputy.ia',
+					short: 'deputy.ia.short',
+					acronym: 'deputy.ia.acronym'
+				}[ this.config.core.portletNames.get() ] ),
 				'pt-ia'
 			).addEventListener( 'click', ( event ) => {
 				event.preventDefault();

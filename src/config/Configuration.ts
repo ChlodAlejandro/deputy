@@ -19,10 +19,17 @@ export default class Configuration {
 	 */
 	static load(): Configuration {
 		const config = new Configuration();
-		if ( mw.user.options.get( Configuration.optionKey ) ) {
-			config.deserialize(
-				mw.user.options.get( Configuration.optionKey )
-			);
+		try {
+			if ( mw.user.options.get( Configuration.optionKey ) ) {
+				const decodedOptions = JSON.parse( mw.user.options.get( Configuration.optionKey ) );
+				config.deserialize( decodedOptions );
+			}
+		} catch ( e ) {
+			console.error( e, mw.user.options.get( Configuration.optionKey ) );
+			mw.notify( 'Due to an error, your Deputy configuration has been reset.', {
+				type: 'error'
+			} );
+			config.save();
 		}
 		return config;
 	}
@@ -145,7 +152,9 @@ export default class Configuration {
 	 * Saves the configuration.
 	 */
 	async save(): Promise<void> {
-		await MwApi.action.saveOption( Configuration.optionKey, this.serialize() );
+		await MwApi.action.saveOption(
+			Configuration.optionKey, JSON.stringify( this.serialize() )
+		);
 	}
 
 	/**
