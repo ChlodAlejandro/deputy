@@ -24,7 +24,7 @@ export function renderMergePanel<T extends SupportedAttributionNoticeType>(
 	const mergePanel = new OO.ui.FieldsetLayout( {
 		classes: [ 'cte-merge-panel' ],
 		icon: 'tableMergeCells',
-		label: mw.message( 'deputy.ante.merge.title' ).text()
+		label: mw.msg( 'deputy.ante.merge.title' )
 	} );
 	unwrapWidget( mergePanel ).style.padding = '16px';
 	unwrapWidget( mergePanel ).style.zIndex = '20';
@@ -34,10 +34,10 @@ export function renderMergePanel<T extends SupportedAttributionNoticeType>(
 	// <select> and button for merging templates
 	const mergeTarget = new OO.ui.DropdownInputWidget( {
 		$overlay: true,
-		label: mw.message( 'deputy.ante.merge.from.select' ).text()
+		label: mw.msg( 'deputy.ante.merge.from.select' )
 	} );
 	const mergeTargetButton = new OO.ui.ButtonWidget( {
-		label: mw.message( 'deputy.ante.merge.button' ).text()
+		label: mw.msg( 'deputy.ante.merge.button' )
 	} );
 	mergeTargetButton.on( 'click', () => {
 		const template = parentTemplate.parsoid.findNoticeType( type ).find(
@@ -55,7 +55,7 @@ export function renderMergePanel<T extends SupportedAttributionNoticeType>(
 		mergeTarget,
 		mergeTargetButton,
 		{
-			label: mw.message( 'deputy.ante.merge.from.label' ).text(),
+			label: mw.msg( 'deputy.ante.merge.from.label' ),
 			align: 'left'
 		}
 	);
@@ -63,7 +63,7 @@ export function renderMergePanel<T extends SupportedAttributionNoticeType>(
 		mergePanel.toggle();
 	} );
 	const mergeAllButton = new OO.ui.ButtonWidget( {
-		label: mw.message( 'deputy.ante.merge.all' ).text(),
+		label: mw.msg( 'deputy.ante.merge.all' ),
 		flags: [ 'progressive' ]
 	} );
 	mergeAllButton.on( 'click', () => {
@@ -112,7 +112,7 @@ export function renderMergePanel<T extends SupportedAttributionNoticeType>(
 		if ( options.length === 0 ) {
 			options.push( {
 				data: null,
-				label: mw.message( 'deputy.ante.merge.from.empty' ).text(),
+				label: mw.msg( 'deputy.ante.merge.from.empty' ),
 				disabled: true
 			} );
 			mergeTargetButton.setDisabled( true );

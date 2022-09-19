@@ -111,7 +111,7 @@ function initMergedFromTemplatePage() {
 
 			const deleteButton = new OO.ui.ButtonWidget( {
 				icon: 'trash',
-				title: mw.message( 'deputy.ante.mergedFrom.remove' ).text(),
+				title: mw.msg( 'deputy.ante.mergedFrom.remove' ),
 				framed: false,
 				flags: [ 'destructive' ]
 			} );
@@ -137,7 +137,7 @@ function initMergedFromTemplatePage() {
 		renderTemplateOptions(): JSX.Element {
 			const layout = new OO.ui.FieldsetLayout( {
 				icon: 'parameter',
-				label: mw.message( 'deputy.ante.templateOptions' ).text(),
+				label: mw.msg( 'deputy.ante.templateOptions' ),
 				classes: [ 'cte-fieldset' ]
 			} );
 
@@ -157,7 +157,7 @@ function initMergedFromTemplatePage() {
 					$overlay: this.parent.$overlay,
 					required: true,
 					value: this.mergedFromTemplate.article || '',
-					placeholder: mw.message( 'deputy.ante.mergedFrom.article.placeholder' ).text()
+					placeholder: mw.msg( 'deputy.ante.mergedFrom.article.placeholder' )
 				} ),
 				date: new mw.widgets.datetime.DateTimeInputWidget( {
 					$overlay: this.parent.$overlay,
@@ -170,12 +170,12 @@ function initMergedFromTemplatePage() {
 				target: new mw.widgets.TitleInputWidget( {
 					$overlay: this.parent.$overlay,
 					value: this.mergedFromTemplate.target || '',
-					placeholder: mw.message( 'deputy.ante.mergedFrom.target.placeholder' ).text()
+					placeholder: mw.msg( 'deputy.ante.mergedFrom.target.placeholder' )
 				} ),
 				afd: new mw.widgets.TitleInputWidget( {
 					$overlay: this.parent.$overlay,
 					value: this.mergedFromTemplate.afd || '',
-					placeholder: mw.message( 'deputy.ante.mergedFrom.afd.placeholder' ).text(),
+					placeholder: mw.msg( 'deputy.ante.mergedFrom.afd.placeholder' ),
 					validate: ( title: string ) => {
 						// TODO: l10n
 						return title.trim().length === 0 || title.startsWith(
@@ -193,32 +193,32 @@ function initMergedFromTemplatePage() {
 				article: new OO.ui.FieldLayout( inputs.article, {
 					$overlay: this.parent.$overlay,
 					align: 'top',
-					label: mw.message( 'deputy.ante.mergedFrom.article.label' ).text(),
-					help: mw.message( 'deputy.ante.mergedFrom.article.help' ).text()
+					label: mw.msg( 'deputy.ante.mergedFrom.article.label' ),
+					help: mw.msg( 'deputy.ante.mergedFrom.article.help' )
 				} ),
 				date: new OO.ui.FieldLayout( inputs.date, {
 					$overlay: this.parent.$overlay,
 					align: 'left',
-					label: mw.message( 'deputy.ante.mergedFrom.date.label' ).text(),
-					help: mw.message( 'deputy.ante.mergedFrom.date.help' ).text()
+					label: mw.msg( 'deputy.ante.mergedFrom.date.label' ),
+					help: mw.msg( 'deputy.ante.mergedFrom.date.help' )
 				} ),
 				target: new OO.ui.FieldLayout( inputs.target, {
 					$overlay: this.parent.$overlay,
 					align: 'left',
-					label: mw.message( 'deputy.ante.mergedFrom.target.label' ).text(),
-					help: mw.message( 'deputy.ante.mergedFrom.target.help' ).text()
+					label: mw.msg( 'deputy.ante.mergedFrom.target.label' ),
+					help: mw.msg( 'deputy.ante.mergedFrom.target.help' )
 				} ),
 				afd: new OO.ui.FieldLayout( inputs.afd, {
 					$overlay: this.parent.$overlay,
 					align: 'left',
-					label: mw.message( 'deputy.ante.mergedFrom.afd.label' ).text(),
-					help: mw.message( 'deputy.ante.mergedFrom.afd.help' ).text()
+					label: mw.msg( 'deputy.ante.mergedFrom.afd.label' ),
+					help: mw.msg( 'deputy.ante.mergedFrom.afd.help' )
 				} ),
 				talk: new OO.ui.FieldLayout( inputs.talk, {
 					$overlay: this.parent.$overlay,
 					align: 'inline',
-					label: mw.message( 'deputy.ante.mergedFrom.talk.label' ).text(),
-					help: mw.message( 'deputy.ante.mergedFrom.talk.help' ).text()
+					label: mw.msg( 'deputy.ante.mergedFrom.talk.label' ),
+					help: mw.msg( 'deputy.ante.mergedFrom.talk.help' )
 				} )
 			};
 

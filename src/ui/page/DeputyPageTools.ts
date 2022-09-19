@@ -3,7 +3,7 @@ import { DeputyPageMenuOption } from './DeputyPageMenu';
 export default () => <DeputyPageMenuOption[]>[
 	{
 		icon: 'copy',
-		label: mw.message( 'deputy.ante' ).text(),
+		label: mw.msg( 'deputy.ante' ),
 		condition: () => window.deputy.ante.startState,
 		action: async () => {
 			window.deputy.ante.openEditDialog();
@@ -11,7 +11,7 @@ export default () => <DeputyPageMenuOption[]>[
 	},
 	{
 		icon: 'flag',
-		label: mw.message( 'deputy.ia' ).text(),
+		label: mw.msg( 'deputy.ia' ),
 		condition: () => true,
 		action: async () => {
 			await window.deputy.ia.openWorkflowDialog();

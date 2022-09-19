@@ -21,7 +21,7 @@ export default function ( props: {
 	const startButton = new OO.ui.ButtonWidget( {
 		classes: [ 'dp-cs-section-addButton' ],
 		icon: 'play',
-		label: mw.message( 'deputy.session.add' ).text(),
+		label: mw.msg( 'deputy.session.add' ),
 		flags: [ 'primary', 'progressive' ]
 	} );
 

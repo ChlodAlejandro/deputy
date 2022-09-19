@@ -92,7 +92,7 @@ function initSplitArticleTemplateRowPage() {
 		render() {
 			this.layout = new OO.ui.FieldsetLayout( {
 				icon: 'parameter',
-				label: mw.message( 'deputy.ante.splitArticle.entry.label' ).text(),
+				label: mw.msg( 'deputy.ante.splitArticle.entry.label' ),
 				classes: [ 'cte-fieldset' ]
 			} );
 
@@ -110,7 +110,7 @@ function initSplitArticleTemplateRowPage() {
 		renderButtons(): JSX.Element {
 			const deleteButton = new OO.ui.ButtonWidget( {
 				icon: 'trash',
-				title: mw.message( 'deputy.ante.splitArticle.entry.remove' ).text(),
+				title: mw.msg( 'deputy.ante.splitArticle.entry.remove' ),
 				framed: false,
 				flags: [ 'destructive' ]
 			} );
@@ -151,15 +151,13 @@ function initSplitArticleTemplateRowPage() {
 					$overlay: this.parent.$overlay,
 					required: true,
 					value: this.splitArticleTemplateRow.to || '',
-					placeholder: mw.message( 'deputy.ante.splitArticle.to.placeholder' ).text()
+					placeholder: mw.msg( 'deputy.ante.splitArticle.to.placeholder' )
 				} ),
 				// eslint-disable-next-line camelcase
 				from_oldid: new OO.ui.TextInputWidget( {
 					$overlay: this.parent.$overlay,
 					value: this.splitArticleTemplateRow.from_oldid || '',
-					placeholder: mw.message(
-						'deputy.ante.splitArticle.from_oldid.placeholder'
-					).text()
+					placeholder: mw.msg( 'deputy.ante.splitArticle.from_oldid.placeholder' )
 				} ),
 				date: new mw.widgets.datetime.DateTimeInputWidget( {
 					$overlay: this.parent.$overlay,
@@ -172,7 +170,7 @@ function initSplitArticleTemplateRowPage() {
 				diff: new OO.ui.TextInputWidget( {
 					$overlay: this.parent.$overlay,
 					value: this.splitArticleTemplateRow.from_oldid || '',
-					placeholder: mw.message( 'deputy.ante.splitArticle.diff.placeholder' ).text(),
+					placeholder: mw.msg( 'deputy.ante.splitArticle.diff.placeholder' ),
 					validate: ( value: string ) => {
 						if (
 							// Blank
@@ -194,27 +192,27 @@ function initSplitArticleTemplateRowPage() {
 				to: new OO.ui.FieldLayout( inputs.to, {
 					$overlay: this.parent.$overlay,
 					align: 'top',
-					label: mw.message( 'deputy.ante.splitArticle.to.label' ).text(),
-					help: mw.message( 'deputy.ante.splitArticle.to.help' ).text()
+					label: mw.msg( 'deputy.ante.splitArticle.to.label' ),
+					help: mw.msg( 'deputy.ante.splitArticle.to.help' )
 				} ),
 				// eslint-disable-next-line camelcase
 				from_oldid: new OO.ui.FieldLayout( inputs.from_oldid, {
 					$overlay: this.parent.$overlay,
 					align: 'left',
-					label: mw.message( 'deputy.ante.splitArticle.from_oldid.label' ).text(),
-					help: mw.message( 'deputy.ante.splitArticle.from_oldid.help' ).text()
+					label: mw.msg( 'deputy.ante.splitArticle.from_oldid.label' ),
+					help: mw.msg( 'deputy.ante.splitArticle.from_oldid.help' )
 				} ),
 				date: new OO.ui.FieldLayout( inputs.date, {
 					$overlay: this.parent.$overlay,
 					align: 'left',
-					label: mw.message( 'deputy.ante.splitArticle.date.label' ).text(),
-					help: mw.message( 'deputy.ante.splitArticle.date.help' ).text()
+					label: mw.msg( 'deputy.ante.splitArticle.date.label' ),
+					help: mw.msg( 'deputy.ante.splitArticle.date.help' )
 				} ),
 				diff: new OO.ui.FieldLayout( inputs.diff, {
 					$overlay: this.parent.$overlay,
 					align: 'left',
-					label: mw.message( 'deputy.ante.splitArticle.diff.label' ).text(),
-					help: mw.message( 'deputy.ante.splitArticle.diff.help' ).text()
+					label: mw.msg( 'deputy.ante.splitArticle.diff.label' ),
+					help: mw.msg( 'deputy.ante.splitArticle.diff.help' )
 				} )
 			};
 

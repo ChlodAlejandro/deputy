@@ -36,7 +36,7 @@ export default class DiffPage {
 				mw.loader.using( [
 					'oojs-ui-core', 'oojs-ui-windows'
 				], () => {
-					OO.ui.alert( mw.message( 'deputy.session.page.diff.loadFail' ).text() );
+					OO.ui.alert( mw.msg( 'deputy.session.page.diff.loadFail' ) );
 				} );
 				return null;
 			} )

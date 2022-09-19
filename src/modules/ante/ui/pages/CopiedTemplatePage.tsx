@@ -170,12 +170,12 @@ function initCopiedTemplatePage() {
 
 			this.mergeButton = new OO.ui.ButtonWidget( {
 				icon: 'tableMergeCells',
-				title: mw.message( 'deputy.ante.merge' ).text(),
+				title: mw.msg( 'deputy.ante.merge' ),
 				framed: false
 			} );
 			const deleteButton = new OO.ui.ButtonWidget( {
 				icon: 'trash',
-				title: mw.message( 'deputy.ante.copied.remove' ).text(),
+				title: mw.msg( 'deputy.ante.copied.remove' ),
 				framed: false,
 				flags: [ 'destructive' ]
 			} );
@@ -198,7 +198,7 @@ function initCopiedTemplatePage() {
 			const addButton = new OO.ui.ButtonWidget( {
 				flags: [ 'progressive' ],
 				icon: 'add',
-				label: mw.message( 'deputy.ante.copied.add' ).text()
+				label: mw.msg( 'deputy.ante.copied.add' )
 			} );
 			addButton.on( 'click', () => {
 				this.copiedTemplate.addRow( new CopiedTemplateRow( {
@@ -243,11 +243,11 @@ function initCopiedTemplatePage() {
 			};
 			this.fields = {
 				collapse: new OO.ui.FieldLayout( this.inputSet.collapse, {
-					label: mw.message( 'deputy.ante.copied.collapse' ).text(),
+					label: mw.msg( 'deputy.ante.copied.collapse' ),
 					align: 'inline'
 				} ),
 				small: new OO.ui.FieldLayout( this.inputSet.small, {
-					label: mw.message( 'deputy.ante.copied.small' ).text(),
+					label: mw.msg( 'deputy.ante.copied.small' ),
 					align: 'inline'
 				} )
 			};

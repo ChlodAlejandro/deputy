@@ -39,20 +39,20 @@ function initCopiedTemplateEditorDialog() {
 
 		static static = {
 			name: 'copiedTemplateEditorDialog',
-			title: mw.message( 'deputy.ante' ).text(),
+			title: mw.msg( 'deputy.ante' ),
 			size: 'huge',
 			actions: [
 				{
 					flags: [ 'primary', 'progressive' ],
-					label: mw.message( 'deputy.ante.save' ).text(),
-					title: mw.message( 'deputy.ante.save' ).text(),
+					label: mw.msg( 'deputy.ante.save' ),
+					title: mw.msg( 'deputy.ante.save' ),
 					action: 'save'
 				},
 				{
 					flags: [ 'safe', 'close' ],
 					icon: 'close',
-					label: mw.message( 'deputy.ante.close' ).text(),
-					title: mw.message( 'deputy.ante.close' ).text(),
+					label: mw.msg( 'deputy.ante.close' ),
+					title: mw.msg( 'deputy.ante.close' ),
 					invisibleLabel: true,
 					action: 'close'
 				}
@@ -219,8 +219,8 @@ function initCopiedTemplateEditorDialog() {
 				icon: 'add',
 				framed: false,
 				invisibleLabel: true,
-				label: mw.message( 'deputy.ante.add' ).text(),
-				title: mw.message( 'deputy.ante.add' ).text(),
+				label: mw.msg( 'deputy.ante.add' ),
+				title: mw.msg( 'deputy.ante.add' ),
 				flags: [ 'progressive' ]
 			} );
 
@@ -228,8 +228,8 @@ function initCopiedTemplateEditorDialog() {
 				icon: 'tableMergeCells',
 				framed: false,
 				invisibleLabel: true,
-				label: mw.message( 'deputy.ante.mergeAll' ).text(),
-				title: mw.message( 'deputy.ante.mergeAll' ).text(),
+				label: mw.msg( 'deputy.ante.mergeAll' ),
+				title: mw.msg( 'deputy.ante.mergeAll' ),
 				disabled: true
 			} );
 			// TODO: Repair mergeButton
@@ -257,12 +257,12 @@ function initCopiedTemplateEditorDialog() {
 				icon: 'reload',
 				framed: false,
 				invisibleLabel: true,
-				label: mw.message( 'deputy.ante.reset' ).text(),
-				title: mw.message( 'deputy.ante.reset' ).text()
+				label: mw.msg( 'deputy.ante.reset' ),
+				title: mw.msg( 'deputy.ante.reset' )
 			} );
 			resetButton.on( 'click', () => {
 				return OO.ui.confirm(
-					mw.message( 'deputy.ante.reset.confirm' ).text()
+					mw.msg( 'deputy.ante.reset.confirm' )
 				).done( ( confirmed: boolean ) => {
 					if ( confirmed ) {
 						this.loadTalkPage().then( () => {
@@ -277,8 +277,8 @@ function initCopiedTemplateEditorDialog() {
 				icon: 'trash',
 				framed: false,
 				invisibleLabel: true,
-				label: mw.message( 'deputy.ante.delete' ).text(),
-				title: mw.message( 'deputy.ante.delete' ).text(),
+				label: mw.msg( 'deputy.ante.delete' ),
+				title: mw.msg( 'deputy.ante.delete' ),
 				flags: [ 'destructive' ]
 			} );
 			deleteButton.on( 'click', () => {
@@ -302,8 +302,8 @@ function initCopiedTemplateEditorDialog() {
 				icon: 'eye',
 				framed: false,
 				invisibleLabel: true,
-				label: mw.message( 'deputy.ante.preview' ).text(),
-				title: mw.message( 'deputy.ante.preview' ).text(),
+				label: mw.msg( 'deputy.ante.preview' ),
+				title: mw.msg( 'deputy.ante.preview' ),
 				flags: [ 'destructive' ]
 			} );
 			previewButton.on( 'click', async () => {
@@ -370,19 +370,15 @@ function initCopiedTemplateEditorDialog() {
 						talkPage, this.parsoid.getPage()
 					).text(),
 					{
-						title: mw.message( 'deputy.ante.loadRedirect.title' ).text(),
+						title: mw.msg( 'deputy.ante.loadRedirect.title' ),
 						actions: [
 							{
 								action: 'accept',
-								label: mw.message(
-									'deputy.ante.loadRedirect.source'
-								).text()
+								label: mw.msg( 'deputy.ante.loadRedirect.source' )
 							},
 							{
 								action: 'deny',
-								label: mw.message(
-									'deputy.ante.loadRedirect.target'
-								).text()
+								label: mw.msg( 'deputy.ante.loadRedirect.target' )
 							}
 						]
 					}
@@ -468,7 +464,7 @@ function initCopiedTemplateEditorDialog() {
 						.querySelector( '.oo-ui-flaggedElement-invalid' ) != null
 				) {
 					return new OO.ui.Process( () => {
-						OO.ui.alert( mw.message( 'deputy.ante.invalid' ).text() );
+						OO.ui.alert( mw.msg( 'deputy.ante.invalid' ) );
 					} );
 				}
 

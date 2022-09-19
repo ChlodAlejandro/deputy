@@ -140,7 +140,7 @@ function initCopiedTemplateRowPage() {
 		render(): any {
 			this.layout = new OO.ui.FieldsetLayout( {
 				icon: 'parameter',
-				label: mw.message( 'deputy.ante.copied.entry.label' ).text(),
+				label: mw.msg( 'deputy.ante.copied.entry.label' ),
 				classes: [ 'cte-fieldset' ]
 			} );
 
@@ -158,7 +158,7 @@ function initCopiedTemplateRowPage() {
 		renderButtons(): JSX.Element {
 			const deleteButton = new OO.ui.ButtonWidget( {
 				icon: 'trash',
-				title: mw.message( 'deputy.ante.copied.entry.remove' ).text(),
+				title: mw.msg( 'deputy.ante.copied.entry.remove' ),
 				framed: false,
 				flags: [ 'destructive' ]
 			} );
@@ -167,7 +167,7 @@ function initCopiedTemplateRowPage() {
 			} );
 			const copyButton = new OO.ui.ButtonWidget( {
 				icon: 'quotes',
-				title: mw.message( 'deputy.ante.copied.entry.copy' ).text(),
+				title: mw.msg( 'deputy.ante.copied.entry.copy' ),
 				framed: false
 			} );
 			copyButton.on( 'click', () => {
@@ -222,13 +222,13 @@ function initCopiedTemplateRowPage() {
 
 				if ( lacking ) {
 					mw.notify(
-						mw.message( 'deputy.ante.copied.entry.copy.lacking' ).text(),
-						{ title: mw.message( 'deputy.ante' ).text(), type: 'warn' }
+						mw.msg( 'deputy.ante.copied.entry.copy.lacking' ),
+						{ title: mw.msg( 'deputy.ante' ), type: 'warn' }
 					);
 				} else {
 					mw.notify(
-						mw.message( 'deputy.ante.copied.entry.copy.success' ).text(),
-						{ title: mw.message( 'deputy.ante' ).text() }
+						mw.msg( 'deputy.ante.copied.entry.copy.success' ),
+						{ title: mw.msg( 'deputy.ante' ) }
 					);
 				}
 			} );
@@ -265,41 +265,41 @@ function initCopiedTemplateRowPage() {
 			this.inputs = {
 				from: new mw.widgets.TitleInputWidget( {
 					$overlay: this.parent.$overlay,
-					placeholder: mw.message( 'deputy.ante.copied.from.placeholder' ).text(),
+					placeholder: mw.msg( 'deputy.ante.copied.from.placeholder' ),
 					value: copiedTemplateRow.from,
 					validate: /^.+$/g
 				} ),
 				from_oldid: new OO.ui.TextInputWidget( {
-					placeholder: mw.message( 'deputy.ante.copied.from_oldid.placeholder' ).text(),
+					placeholder: mw.msg( 'deputy.ante.copied.from_oldid.placeholder' ),
 					value: copiedTemplateRow.from_oldid,
 					validate: /^\d*$/
 				} ),
 				to: new mw.widgets.TitleInputWidget( {
 					$overlay: this.parent.$overlay,
-					placeholder: mw.message( 'deputy.ante.copied.to.placeholder' ).text(),
+					placeholder: mw.msg( 'deputy.ante.copied.to.placeholder' ),
 					value: copiedTemplateRow.to
 				} ),
 				to_diff: new OO.ui.TextInputWidget( {
-					placeholder: mw.message( 'deputy.ante.copied.to_diff.placeholder' ).text(),
+					placeholder: mw.msg( 'deputy.ante.copied.to_diff.placeholder' ),
 					value: copiedTemplateRow.to_diff,
 					validate: /^\d*$/
 				} ),
 
 				// Advanced options
 				to_oldid: new OO.ui.TextInputWidget( {
-					placeholder: mw.message( 'deputy.ante.copied.to_oldid.placeholder' ).text(),
+					placeholder: mw.msg( 'deputy.ante.copied.to_oldid.placeholder' ),
 					value: copiedTemplateRow.to_oldid,
 					validate: /^\d*$/
 				} ),
 				diff: new OO.ui.TextInputWidget( {
-					placeholder: mw.message( 'deputy.ante.copied.diff.placeholder' ).text(),
+					placeholder: mw.msg( 'deputy.ante.copied.diff.placeholder' ),
 					value: copiedTemplateRow.diff
 				} ),
 				merge: new OO.ui.CheckboxInputWidget( {
 					value: yesNo( copiedTemplateRow.merge )
 				} ),
 				afd: new OO.ui.TextInputWidget( {
-					placeholder: mw.message( 'deputy.ante.copied.afd.placeholder' ).text(),
+					placeholder: mw.msg( 'deputy.ante.copied.afd.placeholder' ),
 					value: copiedTemplateRow.afd,
 					disabled: copiedTemplateRow.merge === undefined,
 					// Prevent people from adding the WP:AFD prefix.
@@ -328,39 +328,39 @@ function initCopiedTemplateRowPage() {
 			this.fieldLayouts = {
 				from: new OO.ui.FieldLayout( this.inputs.from, {
 					$overlay: this.parent.$overlay,
-					label: mw.message( 'deputy.ante.copied.from.label' ).text(),
+					label: mw.msg( 'deputy.ante.copied.from.label' ),
 					align: 'top',
-					help: mw.message( 'deputy.ante.copied.from.help' ).text()
+					help: mw.msg( 'deputy.ante.copied.from.help' )
 				} ),
 				from_oldid: new OO.ui.FieldLayout( this.inputs.from_oldid, {
 					$overlay: this.parent.$overlay,
-					label: mw.message( 'deputy.ante.copied.from_oldid.label' ).text(),
+					label: mw.msg( 'deputy.ante.copied.from_oldid.label' ),
 					align: 'left',
-					help: mw.message( 'deputy.ante.copied.from_oldid.help' ).text()
+					help: mw.msg( 'deputy.ante.copied.from_oldid.help' )
 				} ),
 				to: new OO.ui.FieldLayout( this.inputs.to, {
 					$overlay: this.parent.$overlay,
-					label: mw.message( 'deputy.ante.copied.to.label' ).text(),
+					label: mw.msg( 'deputy.ante.copied.to.label' ),
 					align: 'top',
-					help: mw.message( 'deputy.ante.copied.to.help' ).text()
+					help: mw.msg( 'deputy.ante.copied.to.help' )
 				} ),
 				to_diff: new OO.ui.FieldLayout( this.inputs.to_diff, {
 					$overlay: this.parent.$overlay,
-					label: mw.message( 'deputy.ante.copied.to_diff.label' ).text(),
+					label: mw.msg( 'deputy.ante.copied.to_diff.label' ),
 					align: 'left',
-					help: mw.message( 'deputy.ante.copied.to_diff.help' ).text()
+					help: mw.msg( 'deputy.ante.copied.to_diff.help' )
 				} ),
 
 				// Advanced options
 				to_oldid: new OO.ui.FieldLayout( this.inputs.to_oldid, {
 					$overlay: this.parent.$overlay,
-					label: mw.message( 'deputy.ante.copied.to_oldid.label' ).text(),
+					label: mw.msg( 'deputy.ante.copied.to_oldid.label' ),
 					align: 'left',
-					help: mw.message( 'deputy.ante.copied.to_oldid.help' ).text()
+					help: mw.msg( 'deputy.ante.copied.to_oldid.help' )
 				} ),
 				diff: new OO.ui.ActionFieldLayout( this.inputs.diff, diffConvert, {
 					$overlay: this.parent.$overlay,
-					label: mw.message( 'deputy.ante.copied.diff.label' ).text(),
+					label: mw.msg( 'deputy.ante.copied.diff.label' ),
 					align: 'inline',
 					help: new OO.ui.HtmlSnippet(
 						mw.message( 'deputy.ante.copied.diff.help' ).plain()
@@ -368,22 +368,22 @@ function initCopiedTemplateRowPage() {
 				} ),
 				merge: new OO.ui.FieldLayout( this.inputs.merge, {
 					$overlay: this.parent.$overlay,
-					label: mw.message( 'deputy.ante.copied.merge.label' ).text(),
+					label: mw.msg( 'deputy.ante.copied.merge.label' ),
 					align: 'inline',
-					help: mw.message( 'deputy.ante.copied.merge.help' ).text()
+					help: mw.msg( 'deputy.ante.copied.merge.help' )
 				} ),
 				afd: new OO.ui.FieldLayout( this.inputs.afd, {
 					$overlay: this.parent.$overlay,
-					label: mw.message( 'deputy.ante.copied.afd.label' ).text(),
+					label: mw.msg( 'deputy.ante.copied.afd.label' ),
 					align: 'left',
-					help: mw.message( 'deputy.ante.copied.afd.help' ).text()
+					help: mw.msg( 'deputy.ante.copied.afd.help' )
 				} ),
 				date: new OO.ui.FieldLayout( this.inputs.date, {
 					align: 'inline',
 					classes: [ 'cte-fieldset-date' ]
 				} ),
 				toggle: new OO.ui.FieldLayout( this.inputs.toggle, {
-					label: mw.message( 'deputy.ante.copied.advanced' ).text(),
+					label: mw.msg( 'deputy.ante.copied.advanced' ),
 					align: 'inline',
 					classes: [ 'cte-fieldset-advswitch' ]
 				} )
@@ -391,7 +391,7 @@ function initCopiedTemplateRowPage() {
 
 			if ( parsedDate === null ) {
 				this.fieldLayouts.date.setWarnings( [
-					mw.message( 'deputy.ante.copied.dateInvalid', copiedTemplateRow.date ).text()
+					mw.msg( 'deputy.ante.copied.dateInvalid', copiedTemplateRow.date )
 				] );
 			}
 
@@ -593,7 +593,7 @@ function initCopiedTemplateRowPage() {
 				confirmProcess.execute();
 			} catch ( e ) {
 				console.error( 'Cannot convert `diff` parameter to URL.', e );
-				OO.ui.alert( mw.message( 'deputy.ante.copied.diffDeprecate.failed' ).text() );
+				OO.ui.alert( mw.msg( 'deputy.ante.copied.diffDeprecate.failed' ) );
 			}
 		}
 

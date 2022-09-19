@@ -142,7 +142,7 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 		this.dropdown = new OO.ui.DropdownWidget( Object.assign(
 			{
 				classes: [ 'dp-cs-row-status' ],
-				label: mw.message( 'deputy.session.row.status' ).text()
+				label: mw.msg( 'deputy.session.row.status' )
 			},
 			options.widgetOptions ?? {},
 			{

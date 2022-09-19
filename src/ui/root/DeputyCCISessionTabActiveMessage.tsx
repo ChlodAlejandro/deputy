@@ -9,9 +9,9 @@ import { h } from 'tsx-dom';
 export default function () {
 	return <span>
 		<b>{
-			mw.message( 'deputy.session.tabActive.head' ).text()
+			mw.msg( 'deputy.session.tabActive.head' )
 		}</b><br/>{
-			mw.message( 'deputy.session.tabActive.help' ).text()
+			mw.msg( 'deputy.session.tabActive.help' )
 		}
 	</span>;
 }

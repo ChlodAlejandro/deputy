@@ -110,7 +110,7 @@ function initMergedToTemplatePage() {
 
 			const deleteButton = new OO.ui.ButtonWidget( {
 				icon: 'trash',
-				title: mw.message( 'deputy.ante.mergedTo.remove' ).text(),
+				title: mw.msg( 'deputy.ante.mergedTo.remove' ),
 				framed: false,
 				flags: [ 'destructive' ]
 			} );
@@ -136,7 +136,7 @@ function initMergedToTemplatePage() {
 		renderTemplateOptions(): JSX.Element {
 			const layout = new OO.ui.FieldsetLayout( {
 				icon: 'parameter',
-				label: mw.message( 'deputy.ante.templateOptions' ).text(),
+				label: mw.msg( 'deputy.ante.templateOptions' ),
 				classes: [ 'cte-fieldset' ]
 			} );
 
@@ -156,7 +156,7 @@ function initMergedToTemplatePage() {
 					$overlay: this.parent.$overlay,
 					required: true,
 					value: this.mergedToTemplate.to || '',
-					placeholder: mw.message( 'deputy.ante.mergedTo.to.placeholder' ).text()
+					placeholder: mw.msg( 'deputy.ante.mergedTo.to.placeholder' )
 				} ),
 				date: new mw.widgets.datetime.DateTimeInputWidget( {
 					$overlay: this.parent.$overlay,
@@ -175,20 +175,20 @@ function initMergedToTemplatePage() {
 				to: new OO.ui.FieldLayout( inputs.to, {
 					$overlay: this.parent.$overlay,
 					align: 'top',
-					label: mw.message( 'deputy.ante.mergedTo.to.label' ).text(),
-					help: mw.message( 'deputy.ante.mergedTo.to.help' ).text()
+					label: mw.msg( 'deputy.ante.mergedTo.to.label' ),
+					help: mw.msg( 'deputy.ante.mergedTo.to.help' )
 				} ),
 				date: new OO.ui.FieldLayout( inputs.date, {
 					$overlay: this.parent.$overlay,
 					align: 'left',
-					label: mw.message( 'deputy.ante.mergedTo.date.label' ).text(),
-					help: mw.message( 'deputy.ante.mergedTo.date.help' ).text()
+					label: mw.msg( 'deputy.ante.mergedTo.date.label' ),
+					help: mw.msg( 'deputy.ante.mergedTo.date.help' )
 				} ),
 				small: new OO.ui.FieldLayout( inputs.small, {
 					$overlay: this.parent.$overlay,
 					align: 'inline',
-					label: mw.message( 'deputy.ante.mergedTo.small.label' ).text(),
-					help: mw.message( 'deputy.ante.mergedTo.small.help' ).text()
+					label: mw.msg( 'deputy.ante.mergedTo.small.label' ),
+					help: mw.msg( 'deputy.ante.mergedTo.small.help' )
 				} )
 			};
 

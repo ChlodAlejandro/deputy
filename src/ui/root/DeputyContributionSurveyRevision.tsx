@@ -142,7 +142,7 @@ export default class DeputyContributionSurveyRevision
 	 */
 	async prepare(): Promise<void> {
 		this.completedCheckbox = new OO.ui.CheckboxInputWidget( {
-			label: mw.message( 'deputy.session.revision.assessed' ).text(),
+			label: mw.msg( 'deputy.session.revision.assessed' ),
 			selected: await this.getSavedStatus()
 		} );
 
@@ -209,7 +209,7 @@ export default class DeputyContributionSurveyRevision
 			this.revisionStatusUpdateListener
 		);
 
-		const comma = mw.message( 'comma-separator' ).text();
+		const comma = mw.msg( 'comma-separator' );
 
 		return <div
 			class={ ( this.revision.tags ?? [] ).map( ( v ) => 'mw-tag-' + v ).join( ' ' ) }
@@ -219,17 +219,17 @@ export default class DeputyContributionSurveyRevision
 				<span><a rel="noopener" href={
 					getRevisionDiffURL( this.revision.revid, 0 )
 				} title="Difference with latest revision" target="_blank">
-					{ mw.message( 'deputy.session.revision.cur' ).text() }
+					{ mw.msg( 'deputy.session.revision.cur' ) }
 				</a></span>
 				<span>{
 					!this.revision.parentid ?
-						mw.message( 'deputy.session.revision.prev' ).text() :
+						mw.msg( 'deputy.session.revision.prev' ) :
 						<a rel="noopener" href={
 							!this.revision.parentid ?
 								null :
 								getRevisionDiffURL( this.revision.parentid, this.revision.revid )
 						} title="Difference with preceding revision" target="_blank">
-							{ mw.message( 'deputy.session.revision.prev' ).text() }
+							{ mw.msg( 'deputy.session.revision.prev' ) }
 						</a>
 				}</span>
 			</span>
@@ -253,7 +253,7 @@ export default class DeputyContributionSurveyRevision
 								userTalkPage.getPrefixedDb()
 							)
 						} title={ userTalkPage.getPrefixedText() }>
-							{ mw.message( 'deputy.session.revision.talk' ).text() }
+							{ mw.msg( 'deputy.session.revision.talk' ) }
 						</a>
 					</span>
 					<span>
@@ -263,7 +263,7 @@ export default class DeputyContributionSurveyRevision
 								userContribsPage.getPrefixedDb()
 							)
 						} title={ userContribsPage.getPrefixedText() }>
-							{ mw.message( 'deputy.session.revision.contribs' ).text() }
+							{ mw.msg( 'deputy.session.revision.contribs' ) }
 						</a>
 					</span>
 				</span>

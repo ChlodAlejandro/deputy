@@ -143,12 +143,12 @@ function initSplitArticleTemplatePage() {
 
 			this.mergeButton = new OO.ui.ButtonWidget( {
 				icon: 'tableMergeCells',
-				title: mw.message( 'deputy.ante.merge' ).text(),
+				title: mw.msg( 'deputy.ante.merge' ),
 				framed: false
 			} );
 			const deleteButton = new OO.ui.ButtonWidget( {
 				icon: 'trash',
-				title: mw.message( 'deputy.ante.splitArticle.remove' ).text(),
+				title: mw.msg( 'deputy.ante.splitArticle.remove' ),
 				framed: false,
 				flags: [ 'destructive' ]
 			} );
@@ -171,7 +171,7 @@ function initSplitArticleTemplatePage() {
 			const addButton = new OO.ui.ButtonWidget( {
 				flags: [ 'progressive' ],
 				icon: 'add',
-				label: mw.message( 'deputy.ante.splitArticle.add' ).text()
+				label: mw.msg( 'deputy.ante.splitArticle.add' )
 			} );
 			addButton.on( 'click', () => {
 				this.splitArticleTemplate.addRow( new SplitArticleTemplateRow(
@@ -232,8 +232,8 @@ function initSplitArticleTemplatePage() {
 				<div>{ unwrapWidget( new OO.ui.FieldLayout( from, {
 					$overlay: this.parent.$overlay,
 					align: 'top',
-					label: mw.message( 'deputy.ante.splitArticle.from' ).text(),
-					help: mw.message( 'deputy.ante.splitArticle.from.help' ).text()
+					label: mw.msg( 'deputy.ante.splitArticle.from' ),
+					help: mw.msg( 'deputy.ante.splitArticle.from.help' )
 				} ) ) }</div>
 				<div style={{
 					flex: '0',
@@ -242,7 +242,7 @@ function initSplitArticleTemplatePage() {
 				}}>{ unwrapWidget( new OO.ui.FieldLayout( collapse, {
 						$overlay: this.parent.$overlay,
 						align: 'top',
-						label: mw.message( 'deputy.ante.splitArticle.collapse' ).text()
+						label: mw.msg( 'deputy.ante.splitArticle.collapse' )
 					} ) )}</div>
 			</div>;
 		}

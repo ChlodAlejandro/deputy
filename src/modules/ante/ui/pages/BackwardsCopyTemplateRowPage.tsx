@@ -118,7 +118,7 @@ function initBackwardsCopyTemplateRowPage() {
 		render(): any {
 			this.layout = new OO.ui.FieldsetLayout( {
 				icon: 'parameter',
-				label: mw.message( 'deputy.ante.copied.entry.label' ).text(),
+				label: mw.msg( 'deputy.ante.copied.entry.label' ),
 				classes: [ 'cte-fieldset' ]
 			} );
 
@@ -136,7 +136,7 @@ function initBackwardsCopyTemplateRowPage() {
 		renderButtons(): JSX.Element {
 			const deleteButton = new OO.ui.ButtonWidget( {
 				icon: 'trash',
-				title: mw.message( 'deputy.ante.backwardsCopy.entry.remove' ).text(),
+				title: mw.msg( 'deputy.ante.backwardsCopy.entry.remove' ),
 				framed: false,
 				flags: [ 'destructive' ]
 			} );
@@ -184,29 +184,21 @@ function initBackwardsCopyTemplateRowPage() {
 			const inputs = {
 				title: new OO.ui.TextInputWidget( {
 					required: true,
-					placeholder: mw.message(
-						'deputy.ante.backwardsCopy.entry.title.placeholder'
-					).text(),
+					placeholder: mw.msg( 'deputy.ante.backwardsCopy.entry.title.placeholder' ),
 					value: this.backwardsCopyTemplateRow.title ??
 						this.backwardsCopyTemplateRow.articlename
 				} ),
 				date: new OO.ui.TextInputWidget( {
-					placeholder: mw.message(
-						'deputy.ante.backwardsCopy.entry.date.placeholder'
-					).text(),
+					placeholder: mw.msg( 'deputy.ante.backwardsCopy.entry.date.placeholder' ),
 					value: rowDate
 				} ),
 				author: new OO.ui.TagMultiselectWidget( {
 					allowArbitrary: true,
-					placeholder: mw.message(
-						'deputy.ante.backwardsCopy.entry.author.placeholder'
-					).text(),
+					placeholder: mw.msg( 'deputy.ante.backwardsCopy.entry.author.placeholder' ),
 					selected: authors
 				} ),
 				url: new OO.ui.TextInputWidget( {
-					placeholder: mw.message(
-						'deputy.ante.backwardsCopy.entry.url.placeholder'
-					).text(),
+					placeholder: mw.msg( 'deputy.ante.backwardsCopy.entry.url.placeholder' ),
 					value: this.backwardsCopyTemplateRow.url,
 					validate: ( value: string ) => {
 						if ( value.trim().length === 0 ) {
@@ -220,42 +212,40 @@ function initBackwardsCopyTemplateRowPage() {
 					}
 				} ),
 				org: new OO.ui.TextInputWidget( {
-					placeholder: mw.message(
-						'deputy.ante.backwardsCopy.entry.org.placeholder'
-					).text(),
+					placeholder: mw.msg( 'deputy.ante.backwardsCopy.entry.org.placeholder' ),
 					value: this.backwardsCopyTemplateRow.org
 				} )
 			};
 			const fields = {
 				title: new OO.ui.FieldLayout( inputs.title, {
 					$overlay: this.parent.$overlay,
-					label: mw.message( 'deputy.ante.backwardsCopy.entry.title.label' ).text(),
+					label: mw.msg( 'deputy.ante.backwardsCopy.entry.title.label' ),
 					align: 'top',
-					help: mw.message( 'deputy.ante.backwardsCopy.entry.title.help' ).text()
+					help: mw.msg( 'deputy.ante.backwardsCopy.entry.title.help' )
 				} ),
 				date: new OO.ui.FieldLayout( inputs.date, {
 					$overlay: this.parent.$overlay,
-					label: mw.message( 'deputy.ante.backwardsCopy.entry.date.label' ).text(),
+					label: mw.msg( 'deputy.ante.backwardsCopy.entry.date.label' ),
 					align: 'left',
-					help: mw.message( 'deputy.ante.backwardsCopy.entry.date.help' ).text()
+					help: mw.msg( 'deputy.ante.backwardsCopy.entry.date.help' )
 				} ),
 				author: new OO.ui.FieldLayout( inputs.author, {
 					$overlay: this.parent.$overlay,
-					label: mw.message( 'deputy.ante.backwardsCopy.entry.author.label' ).text(),
+					label: mw.msg( 'deputy.ante.backwardsCopy.entry.author.label' ),
 					align: 'left',
-					help: mw.message( 'deputy.ante.backwardsCopy.entry.author.help' ).text()
+					help: mw.msg( 'deputy.ante.backwardsCopy.entry.author.help' )
 				} ),
 				url: new OO.ui.FieldLayout( inputs.url, {
 					$overlay: this.parent.$overlay,
-					label: mw.message( 'deputy.ante.backwardsCopy.entry.url.label' ).text(),
+					label: mw.msg( 'deputy.ante.backwardsCopy.entry.url.label' ),
 					align: 'left',
-					help: mw.message( 'deputy.ante.backwardsCopy.entry.url.help' ).text()
+					help: mw.msg( 'deputy.ante.backwardsCopy.entry.url.help' )
 				} ),
 				org: new OO.ui.FieldLayout( inputs.org, {
 					$overlay: this.parent.$overlay,
-					label: mw.message( 'deputy.ante.backwardsCopy.entry.org.label' ).text(),
+					label: mw.msg( 'deputy.ante.backwardsCopy.entry.org.label' ),
 					align: 'left',
-					help: mw.message( 'deputy.ante.backwardsCopy.entry.org.help' ).text()
+					help: mw.msg( 'deputy.ante.backwardsCopy.entry.org.help' )
 				} )
 			};
 

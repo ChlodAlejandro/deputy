@@ -67,11 +67,11 @@ function initSinglePageWorkflowDialog() {
 		// For dialogs. Remove if not a dialog.
 		static static = {
 			name: 'iaSinglePageWorkflowDialog',
-			title: mw.message( 'deputy.ia' ).text(),
+			title: mw.msg( 'deputy.ia' ),
 			actions: [
 				{
 					action: 'close',
-					label: mw.message( 'deputy.close' ).text(),
+					label: mw.msg( 'deputy.close' ),
 					flags: 'safe'
 				}
 			]
@@ -149,8 +149,8 @@ function initSinglePageWorkflowDialog() {
 		 */
 		renderSubmitButton(): JSX.Element {
 			const hideButton = new OO.ui.ButtonWidget( {
-				label: mw.message( 'deputy.ia.report.hide' ).text(),
-				title: mw.message( 'deputy.ia.report.hide' ).text(),
+				label: mw.msg( 'deputy.ia.report.hide' ),
+				title: mw.msg( 'deputy.ia.report.hide' ),
 				flags: [ 'progressive' ]
 			} );
 
@@ -159,8 +159,8 @@ function initSinglePageWorkflowDialog() {
 			} );
 
 			const submitButton = new OO.ui.ButtonWidget( {
-				label: mw.message( 'deputy.ia.report.submit' ).text(),
-				title: mw.message( 'deputy.ia.report.submit' ).text(),
+				label: mw.msg( 'deputy.ia.report.submit' ),
+				title: mw.msg( 'deputy.ia.report.submit' ),
 				flags: [ 'primary', 'progressive' ]
 			} );
 
@@ -189,16 +189,12 @@ function initSinglePageWorkflowDialog() {
 				startSection: new OO.ui.DropdownInputWidget( {
 					$overlay: this.$overlay,
 					disabled: entirePageByDefault,
-					placeholder: mw.message(
-						'deputy.ia.report.startSection.placeholder'
-					).text()
+					placeholder: mw.msg( 'deputy.ia.report.startSection.placeholder' )
 				} ),
 				endSection: new OO.ui.DropdownInputWidget( {
 					$overlay: this.$overlay,
 					disabled: entirePageByDefault,
-					placeholder: mw.message(
-						'deputy.ia.report.endSection.placeholder'
-					).text()
+					placeholder: mw.msg( 'deputy.ia.report.endSection.placeholder' )
 				} ),
 				fromUrls: new OO.ui.CheckboxInputWidget( {
 					selected: this.data.fromUrls
@@ -208,57 +204,51 @@ function initSinglePageWorkflowDialog() {
 					allowArbitrary: true,
 					inputPosition: 'outline',
 					indicators: [ 'required' ],
-					placeholder: mw.message(
-						'deputy.ia.report.sourceUrls.placeholder'
-					).text()
+					placeholder: mw.msg( 'deputy.ia.report.sourceUrls.placeholder' )
 				} ),
 				sourceText: new OO.ui.MultilineTextInputWidget( {
 					autosize: true,
 					maxRows: 2,
-					placeholder: mw.message(
-						'deputy.ia.report.sourceText.placeholder'
-					).text()
+					placeholder: mw.msg( 'deputy.ia.report.sourceText.placeholder' )
 				} ),
 				additionalNotes: new OO.ui.MultilineTextInputWidget( {
 					autosize: true,
 					maxRows: 2,
-					placeholder: mw.message(
-						'deputy.ia.report.additionalNotes.placeholder'
-					).text()
+					placeholder: mw.msg( 'deputy.ia.report.additionalNotes.placeholder' )
 				} )
 			};
 
 			const fields = {
 				entirePage: new OO.ui.FieldLayout( this.inputs.entirePage, {
 					align: 'inline',
-					label: mw.message( 'deputy.ia.report.entirePage.label' ).text()
+					label: mw.msg( 'deputy.ia.report.entirePage.label' )
 				} ),
 				startSection: new OO.ui.FieldLayout( this.inputs.startSection, {
 					align: 'top',
-					label: mw.message( 'deputy.ia.report.startSection.label' ).text()
+					label: mw.msg( 'deputy.ia.report.startSection.label' )
 				} ),
 				// Create FieldLayouts for all fields in this.inputs
 				endSection: new OO.ui.FieldLayout( this.inputs.endSection, {
 					align: 'top',
-					label: mw.message( 'deputy.ia.report.endSection.label' ).text(),
-					help: mw.message( 'deputy.ia.report.endSection.help' ).text()
+					label: mw.msg( 'deputy.ia.report.endSection.label' ),
+					help: mw.msg( 'deputy.ia.report.endSection.help' )
 				} ),
 				fromUrls: new OO.ui.FieldLayout( this.inputs.fromUrls, {
 					align: 'inline',
-					label: mw.message( 'deputy.ia.report.fromUrls.label' ).text(),
-					help: mw.message( 'deputy.ia.report.fromUrls.help' ).text()
+					label: mw.msg( 'deputy.ia.report.fromUrls.label' ),
+					help: mw.msg( 'deputy.ia.report.fromUrls.help' )
 				} ),
 				sourceUrls: new OO.ui.FieldLayout( this.inputs.sourceUrls, {
 					align: 'top',
-					label: mw.message( 'deputy.ia.report.source.label' ).text()
+					label: mw.msg( 'deputy.ia.report.source.label' )
 				} ),
 				sourceText: new OO.ui.FieldLayout( this.inputs.sourceText, {
 					align: 'top',
-					label: mw.message( 'deputy.ia.report.source.label' ).text()
+					label: mw.msg( 'deputy.ia.report.source.label' )
 				} ),
 				additionalNotes: new OO.ui.FieldLayout( this.inputs.additionalNotes, {
 					align: 'top',
-					label: mw.message( 'deputy.ia.report.additionalNotes.label' ).text()
+					label: mw.msg( 'deputy.ia.report.additionalNotes.label' )
 				} )
 			};
 
@@ -414,7 +404,7 @@ function initSinglePageWorkflowDialog() {
 				const options = [
 					{
 						data: '-1',
-						label: mw.message( 'deputy.ia.report.lead' ).text(),
+						label: mw.msg( 'deputy.ia.report.lead' ),
 						selected: true
 					},
 					...this.generateSectionOptions()
@@ -522,8 +512,8 @@ function initSinglePageWorkflowDialog() {
 				process.next( () => {
 					mw.notify(
 						action === 'hide' ?
-							mw.message( 'deputy.ia.report.success.hide' ).text() :
-							mw.message( 'deputy.ia.report.success' ).text(),
+							mw.msg( 'deputy.ia.report.success.hide' ) :
+							mw.msg( 'deputy.ia.report.success' ),
 						{ type: 'success' }
 					);
 				} );

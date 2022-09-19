@@ -63,7 +63,7 @@ export default class InfringementAssistant extends DeputyModule {
 			mw.util.addPortletLink(
 				'p-tb',
 				'#',
-				mw.message( 'deputy.ia' ).text(),
+				mw.msg( 'deputy.ia' ),
 				'pt-ia'
 			).addEventListener( 'click', ( event ) => {
 				event.preventDefault();

@@ -288,12 +288,10 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	async save( sectionId: number ): Promise<any | false> {
 		if ( sectionId == null ) {
 			mw.notify(
-				mw.message( 'deputy.session.section.missingSection' ).text(),
+				mw.msg( 'deputy.session.section.missingSection' ),
 				{
 					autoHide: false,
-					title: mw.message(
-						'deputy.session.section.failed'
-					).text(),
+					title: mw.msg( 'deputy.session.section.failed' ),
 					type: 'error'
 				}
 			);
@@ -314,9 +312,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 				} /> as HTMLElement,
 				{
 					autoHide: false,
-					title: mw.message(
-						'deputy.session.section.failed'
-					).text(),
+					title: mw.msg( 'deputy.session.section.failed' ),
 					type: 'error'
 				}
 			);
@@ -330,17 +326,17 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	render(): HTMLElement {
 		this.closingCheckbox = new OO.ui.CheckboxInputWidget();
 		this.closingComments = new OO.ui.TextInputWidget( {
-			placeholder: mw.message( 'deputy.session.section.closeComments' ).text(),
+			placeholder: mw.msg( 'deputy.session.section.closeComments' ),
 			disabled: true
 		} );
 		this.closeButton = new OO.ui.ButtonWidget( {
-			label: mw.message( 'deputy.close' ).text()
+			label: mw.msg( 'deputy.close' )
 		} );
 		this.reviewButton = new OO.ui.ButtonWidget( {
-			label: mw.message( 'deputy.review' ).text()
+			label: mw.msg( 'deputy.review' )
 		} );
 		this.saveButton = new OO.ui.ButtonWidget( {
-			label: mw.message( 'deputy.save' ).text(),
+			label: mw.msg( 'deputy.save' ),
 			flags: [ 'primary', 'progressive' ]
 		} );
 
@@ -353,7 +349,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		this.closeButton.on( 'click', async () => {
 			if ( this.wikitext !== ( await this.getSection() ).originalWikitext ) {
 				OO.ui.confirm(
-					mw.message( 'deputy.session.section.closeWarn' ).text()
+					mw.msg( 'deputy.session.section.closeWarn' )
 				).done( ( confirmed: boolean ) => {
 					if ( confirmed ) {
 						this.close();
@@ -384,7 +380,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			await this.save( sectionId ).then( async ( result ) => {
 				if ( result ) {
 					mw.notify(
-						mw.message( 'deputy.session.section.saved' ).text()
+						mw.msg( 'deputy.session.section.saved' )
 					);
 
 					// Rebuild the entire section to HTML, and then reopen.
@@ -430,7 +426,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			align: 'top',
 			label: 'Closing comments',
 			invisibleLabel: true,
-			help: mw.message( 'deputy.session.section.closeHelp' ).text(),
+			help: mw.msg( 'deputy.session.section.closeHelp' ),
 			helpInline: true,
 			classes: [ 'dp-cs-section-closingCommentsField' ]
 		} );
@@ -463,7 +459,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 					}}>
 						{ unwrapWidget( new OO.ui.FieldLayout( this.closingCheckbox, {
 							align: 'inline',
-							label: mw.message( 'deputy.session.section.close' ).text()
+							label: mw.msg( 'deputy.session.section.close' )
 						} ) ) }
 						{ unwrapWidget( closingCommentsField ) }
 					</div>

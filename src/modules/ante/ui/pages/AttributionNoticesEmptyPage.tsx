@@ -57,7 +57,7 @@ function initAttributionNoticesEmptyPage() {
 			// Render the page.
 			const add = new OO.ui.ButtonWidget( {
 				icon: 'add',
-				label: mw.message( 'deputy.ante.empty.add' ).text(),
+				label: mw.msg( 'deputy.ante.empty.add' ),
 				flags: [ 'progressive' ]
 			} );
 
@@ -68,7 +68,7 @@ function initAttributionNoticesEmptyPage() {
 			);
 			this.$element.append(
 				<h3>{
-					mw.message( 'deputy.ante.empty.header' ).text()
+					mw.msg( 'deputy.ante.empty.header' )
 				}</h3>,
 				<p>{
 					mw.message(

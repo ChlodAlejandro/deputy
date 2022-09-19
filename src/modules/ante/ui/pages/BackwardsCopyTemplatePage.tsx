@@ -169,12 +169,12 @@ function initBackwardsCopyTemplatePage() {
 
 			this.mergeButton = new OO.ui.ButtonWidget( {
 				icon: 'tableMergeCells',
-				title: mw.message( 'deputy.ante.merge' ).text(),
+				title: mw.msg( 'deputy.ante.merge' ),
 				framed: false
 			} );
 			const deleteButton = new OO.ui.ButtonWidget( {
 				icon: 'trash',
-				title: mw.message( 'deputy.ante.copied.remove' ).text(),
+				title: mw.msg( 'deputy.ante.copied.remove' ),
 				framed: false,
 				flags: [ 'destructive' ]
 			} );
@@ -197,7 +197,7 @@ function initBackwardsCopyTemplatePage() {
 			const addButton = new OO.ui.ButtonWidget( {
 				flags: [ 'progressive' ],
 				icon: 'add',
-				label: mw.message( 'deputy.ante.copied.add' ).text()
+				label: mw.msg( 'deputy.ante.copied.add' )
 			} );
 			addButton.on( 'click', () => {
 				this.backwardsCopyTemplate.addRow(
@@ -251,7 +251,7 @@ function initBackwardsCopyTemplatePage() {
 
 				const clearButton = new OO.ui.ButtonWidget( {
 					flags: [ 'progressive', 'primary' ],
-					label: mw.message( 'deputy.ante.demo.clear' ).text()
+					label: mw.msg( 'deputy.ante.demo.clear' )
 				} );
 				clearButton.on( 'click', () => {
 					this.backwardsCopyTemplate.node.removeParameter( 'demo' );
@@ -290,29 +290,25 @@ function initBackwardsCopyTemplatePage() {
 		renderTemplateOptions(): JSX.Element {
 			const inputSet = {
 				comments: new OO.ui.TextInputWidget( {
-					placeholder: mw.message(
-						'deputy.ante.backwardsCopy.comments.placeholder'
-					).text(),
+					placeholder: mw.msg( 'deputy.ante.backwardsCopy.comments.placeholder' ),
 					value: this.backwardsCopyTemplate.comments?.trim()
 				} ),
 				id: new OO.ui.TextInputWidget( {
-					placeholder: mw.message(
-						'deputy.ante.backwardsCopy.id.placeholder'
-					).text(),
+					placeholder: mw.msg( 'deputy.ante.backwardsCopy.id.placeholder' ),
 					value: this.backwardsCopyTemplate.revid?.trim()
 				} )
 			};
 			const fields = {
 				comments: new OO.ui.FieldLayout( inputSet.comments, {
 					$overlay: this.parent.$overlay,
-					label: mw.message( 'deputy.ante.backwardsCopy.comments.label' ).text(),
-					help: mw.message( 'deputy.ante.backwardsCopy.comments.help' ).text(),
+					label: mw.msg( 'deputy.ante.backwardsCopy.comments.label' ),
+					help: mw.msg( 'deputy.ante.backwardsCopy.comments.help' ),
 					align: 'top'
 				} ),
 				id: new OO.ui.FieldLayout( inputSet.id, {
 					$overlay: this.parent.$overlay,
-					label: mw.message( 'deputy.ante.backwardsCopy.id.label' ).text(),
-					help: mw.message( 'deputy.ante.backwardsCopy.id.help' ).text(),
+					label: mw.msg( 'deputy.ante.backwardsCopy.id.label' ),
+					help: mw.msg( 'deputy.ante.backwardsCopy.id.help' ),
 					align: 'top'
 				} )
 			};

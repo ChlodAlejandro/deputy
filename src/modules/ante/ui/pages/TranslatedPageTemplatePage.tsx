@@ -108,7 +108,7 @@ function initTranslatedPageTemplatePage() {
 		renderButtons(): JSX.Element {
 			const copyButton = new OO.ui.ButtonWidget( {
 				icon: 'quotes',
-				title: mw.message( 'deputy.ante.translatedPage.copy' ).text(),
+				title: mw.msg( 'deputy.ante.translatedPage.copy' ),
 				framed: false
 			} );
 			copyButton.on( 'click', () => {
@@ -161,20 +161,20 @@ function initTranslatedPageTemplatePage() {
 
 				if ( lacking ) {
 					mw.notify(
-						mw.message( 'deputy.ante.translatedPage.copy.lacking' ).text(),
-						{ title: mw.message( 'deputy.ante' ).text(), type: 'warn' }
+						mw.msg( 'deputy.ante.translatedPage.copy.lacking' ),
+						{ title: mw.msg( 'deputy.ante' ), type: 'warn' }
 					);
 				} else {
 					mw.notify(
-						mw.message( 'deputy.ante.translatedPage.copy.success' ).text(),
-						{ title: mw.message( 'deputy.ante' ).text() }
+						mw.msg( 'deputy.ante.translatedPage.copy.success' ),
+						{ title: mw.msg( 'deputy.ante' ) }
 					);
 				}
 			} );
 
 			const deleteButton = new OO.ui.ButtonWidget( {
 				icon: 'trash',
-				title: mw.message( 'deputy.ante.translatedPage.remove' ).text(),
+				title: mw.msg( 'deputy.ante.translatedPage.remove' ),
 				framed: false,
 				flags: [ 'destructive' ]
 			} );
@@ -201,7 +201,7 @@ function initTranslatedPageTemplatePage() {
 		renderTemplateOptions(): JSX.Element {
 			const layout = new OO.ui.FieldsetLayout( {
 				icon: 'parameter',
-				label: mw.message( 'deputy.ante.templateOptions' ).text(),
+				label: mw.msg( 'deputy.ante.templateOptions' ),
 				classes: [ 'cte-fieldset' ]
 			} );
 
@@ -216,7 +216,7 @@ function initTranslatedPageTemplatePage() {
 				lang: new OO.ui.TextInputWidget( {
 					required: true,
 					value: this.translatedPageTemplate.lang,
-					placeholder: mw.message( 'deputy.ante.translatedPage.lang.placeholder' ).text(),
+					placeholder: mw.msg( 'deputy.ante.translatedPage.lang.placeholder' ),
 					validate: /^[a-z\d-]+$/gi
 				} ),
 				page: new mw.widgets.TitleInputWidget( {
@@ -224,33 +224,25 @@ function initTranslatedPageTemplatePage() {
 					api: searchApi,
 					required: true,
 					value: this.translatedPageTemplate.page || '',
-					placeholder: mw.message( 'deputy.ante.translatedPage.page.placeholder' ).text()
+					placeholder: mw.msg( 'deputy.ante.translatedPage.page.placeholder' )
 				} ),
 				comments: new OO.ui.TextInputWidget( {
 					value: this.translatedPageTemplate.comments,
-					placeholder: mw.message(
-						'deputy.ante.translatedPage.comments.placeholder'
-					).text()
+					placeholder: mw.msg( 'deputy.ante.translatedPage.comments.placeholder' )
 				} ),
 				version: new OO.ui.TextInputWidget( {
 					value: this.translatedPageTemplate.version,
-					placeholder: mw.message(
-						'deputy.ante.translatedPage.version.placeholder'
-					).text(),
+					placeholder: mw.msg( 'deputy.ante.translatedPage.version.placeholder' ),
 					validate: /^\d+$/gi
 				} ),
 				insertversion: new OO.ui.TextInputWidget( {
 					value: this.translatedPageTemplate.insertversion,
-					placeholder: mw.message(
-						'deputy.ante.translatedPage.insertversion.placeholder'
-					).text(),
+					placeholder: mw.msg( 'deputy.ante.translatedPage.insertversion.placeholder' ),
 					validate: /^[\d/]+$/gi
 				} ),
 				section: new OO.ui.TextInputWidget( {
 					value: this.translatedPageTemplate.section,
-					placeholder: mw.message(
-						'deputy.ante.translatedPage.section.placeholder'
-					).text()
+					placeholder: mw.msg( 'deputy.ante.translatedPage.section.placeholder' )
 				} ),
 				small: new OO.ui.CheckboxInputWidget( {
 					selected: yesNo( this.translatedPageTemplate.small ?? 'yes' )
@@ -263,50 +255,50 @@ function initTranslatedPageTemplatePage() {
 				lang: new OO.ui.FieldLayout( inputs.lang, {
 					$overlay: this.parent.$overlay,
 					align: 'left',
-					label: mw.message( 'deputy.ante.translatedPage.lang.label' ).text(),
-					help: mw.message( 'deputy.ante.translatedPage.lang.help' ).text()
+					label: mw.msg( 'deputy.ante.translatedPage.lang.label' ),
+					help: mw.msg( 'deputy.ante.translatedPage.lang.help' )
 				} ),
 				page: new OO.ui.FieldLayout( inputs.page, {
 					$overlay: this.parent.$overlay,
 					align: 'left',
-					label: mw.message( 'deputy.ante.translatedPage.page.label' ).text(),
-					help: mw.message( 'deputy.ante.translatedPage.page.help' ).text()
+					label: mw.msg( 'deputy.ante.translatedPage.page.label' ),
+					help: mw.msg( 'deputy.ante.translatedPage.page.help' )
 				} ),
 				comments: new OO.ui.FieldLayout( inputs.comments, {
 					$overlay: this.parent.$overlay,
 					align: 'left',
-					label: mw.message( 'deputy.ante.translatedPage.comments.label' ).text(),
-					help: mw.message( 'deputy.ante.translatedPage.comments.help' ).text()
+					label: mw.msg( 'deputy.ante.translatedPage.comments.label' ),
+					help: mw.msg( 'deputy.ante.translatedPage.comments.help' )
 				} ),
 				version: new OO.ui.FieldLayout( inputs.version, {
 					$overlay: this.parent.$overlay,
 					align: 'left',
-					label: mw.message( 'deputy.ante.translatedPage.version.label' ).text(),
-					help: mw.message( 'deputy.ante.translatedPage.version.help' ).text()
+					label: mw.msg( 'deputy.ante.translatedPage.version.label' ),
+					help: mw.msg( 'deputy.ante.translatedPage.version.help' )
 				} ),
 				insertversion: new OO.ui.FieldLayout( inputs.insertversion, {
 					$overlay: this.parent.$overlay,
 					align: 'left',
-					label: mw.message( 'deputy.ante.translatedPage.insertversion.label' ).text(),
-					help: mw.message( 'deputy.ante.translatedPage.insertversion.help' ).text()
+					label: mw.msg( 'deputy.ante.translatedPage.insertversion.label' ),
+					help: mw.msg( 'deputy.ante.translatedPage.insertversion.help' )
 				} ),
 				section: new OO.ui.FieldLayout( inputs.section, {
 					$overlay: this.parent.$overlay,
 					align: 'left',
-					label: mw.message( 'deputy.ante.translatedPage.section.label' ).text(),
-					help: mw.message( 'deputy.ante.translatedPage.section.help' ).text()
+					label: mw.msg( 'deputy.ante.translatedPage.section.label' ),
+					help: mw.msg( 'deputy.ante.translatedPage.section.help' )
 				} ),
 				small: new OO.ui.FieldLayout( inputs.small, {
 					$overlay: this.parent.$overlay,
 					align: 'inline',
-					label: mw.message( 'deputy.ante.translatedPage.small.label' ).text(),
-					help: mw.message( 'deputy.ante.translatedPage.small.help' ).text()
+					label: mw.msg( 'deputy.ante.translatedPage.small.label' ),
+					help: mw.msg( 'deputy.ante.translatedPage.small.help' )
 				} ),
 				partial: new OO.ui.FieldLayout( inputs.partial, {
 					$overlay: this.parent.$overlay,
 					align: 'inline',
-					label: mw.message( 'deputy.ante.translatedPage.partial.label' ).text(),
-					help: mw.message( 'deputy.ante.translatedPage.partial.help' ).text()
+					label: mw.msg( 'deputy.ante.translatedPage.partial.label' ),
+					help: mw.msg( 'deputy.ante.translatedPage.partial.help' )
 				} )
 			};
 

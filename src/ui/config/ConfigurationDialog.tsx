@@ -16,17 +16,17 @@ function initConfigurationDialog() {
 
 		static static = {
 			name: 'configurationDialog',
-			title: mw.message( 'deputy.setting.dialog.title' ).text(),
+			title: mw.msg( 'deputy.setting.dialog.title' ),
 			size: 'huge',
 			actions: [
 				{
 					action: 'close',
-					label: mw.message( 'deputy.close' ).text(),
+					label: mw.msg( 'deputy.close' ),
 					flags: 'safe'
 				},
 				{
 					action: 'save',
-					label: mw.message( 'deputy.save' ).text(),
+					label: mw.msg( 'deputy.save' ),
 					flags: [ 'progressive, primary' ]
 				}
 			]

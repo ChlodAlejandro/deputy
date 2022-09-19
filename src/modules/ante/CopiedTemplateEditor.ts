@@ -89,7 +89,7 @@ export default class CopiedTemplateEditor extends DeputyModule {
 			mw.util.addPortletLink(
 				'p-tb',
 				'#',
-				mw.message( 'deputy.ante' ).text(),
+				mw.msg( 'deputy.ante' ),
 				'pt-cte'
 			).addEventListener( 'click', ( event ) => {
 				event.preventDefault();
@@ -127,8 +127,8 @@ export default class CopiedTemplateEditor extends DeputyModule {
 
 								const startButton = new OO.ui.ButtonWidget( {
 									icon: 'edit',
-									title: mw.message( 'deputy.ante.edit' ).text(),
-									label: mw.message( 'deputy.ante.edit' ).text()
+									title: mw.msg( 'deputy.ante.edit' ),
+									label: mw.msg( 'deputy.ante.edit' )
 								} ).setInvisibleLabel( true );
 								this.startButtons.push( startButton );
 								const td = document.createElement( 'td' );

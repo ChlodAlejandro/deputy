@@ -365,7 +365,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			this.renderRow( null, unwrapWidget(
 				new OO.ui.MessageWidget( {
 					type: 'error',
-					label: mw.message( 'deputy.session.row.error', e.message ).text()
+					label: mw.msg( 'deputy.session.row.error', e.message )
 				} )
 			) );
 			this.setDisabled( true );
@@ -408,8 +408,8 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		if ( this.wasFinished && this.statusModified && this.commentsField && this.finishedRow ) {
 			this.commentsField.setNotices(
 				{
-					true: [ mw.message( 'deputy.session.row.close.sigFound' ).text() ],
-					maybe: [ mw.message( 'deputy.session.row.close.sigFound.maybe' ).text() ],
+					true: [ mw.msg( 'deputy.session.row.close.sigFound' ) ],
+					maybe: [ mw.msg( 'deputy.session.row.close.sigFound.maybe' ) ],
 					false: []
 				}[ `${this.finishedRow.hasSignature()}` ]
 			);
@@ -449,7 +449,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	renderCommentsTextInput( value?: string ): any {
 		this.commentsTextInput = new OO.ui.MultilineTextInputWidget( {
 			classes: [ 'dp-cs-row-closeComments' ],
-			placeholder: mw.message( 'deputy.session.row.closeComments' ).text(),
+			placeholder: mw.msg( 'deputy.session.row.closeComments' ),
 			value: value,
 			autosize: true,
 			rows: 1
@@ -482,7 +482,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 					{
 						align: 'top',
 						invisibleLabel: true,
-						label: mw.message( 'deputy.session.row.closeComments' ).text()
+						label: mw.msg( 'deputy.session.row.closeComments' )
 					}
 				)
 			) }
@@ -504,7 +504,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		this.unfinishedMessageBox = new OO.ui.MessageWidget( {
 			classes: [ 'dp-cs-row-unfinishedWarning' ],
 			type: 'warn',
-			label: mw.message( 'deputy.session.row.unfinishedWarning' ).text()
+			label: mw.msg( 'deputy.session.row.unfinishedWarning' )
 		} );
 		this.unfinishedMessageBox.toggle( false );
 		revisionList.appendChild( unwrapWidget( this.unfinishedMessageBox ) );
@@ -549,8 +549,8 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			>
 				{ unwrapWidget( new OO.ui.ButtonWidget( {
 					invisibleLabel: true,
-					label: mw.message( 'deputy.session.row.edit' ).text(),
-					title: mw.message( 'deputy.session.row.edit' ).text(),
+					label: mw.msg( 'deputy.session.row.edit' ),
+					title: mw.msg( 'deputy.session.row.edit' ),
 					icon: 'edit',
 					framed: false
 				} ) ) }
@@ -564,8 +564,8 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			>
 				{ unwrapWidget( new OO.ui.ButtonWidget( {
 					invisibleLabel: true,
-					label: mw.message( 'deputy.session.row.talk' ).text(),
-					title: mw.message( 'deputy.session.row.talk' ).text(),
+					label: mw.msg( 'deputy.session.row.talk' ),
+					title: mw.msg( 'deputy.session.row.talk' ),
 					icon: 'speechBubbles',
 					framed: false
 				} ) ) }
@@ -580,8 +580,8 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			>
 				{ unwrapWidget( new OO.ui.ButtonWidget( {
 					invisibleLabel: true,
-					label: mw.message( 'deputy.session.row.history' ).text(),
-					title: mw.message( 'deputy.session.row.history' ).text(),
+					label: mw.msg( 'deputy.session.row.history' ),
+					title: mw.msg( 'deputy.session.row.history' ),
 					icon: 'history',
 					framed: false
 				} ) ) }
@@ -644,7 +644,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 				{ parts[ index ] }
 			</span> );
 			if ( index !== parts.length - 1 ) {
-				spliced.push( mw.message( 'comma-separator' ).text() );
+				spliced.push( mw.msg( 'comma-separator' ) );
 			}
 		}
 
@@ -685,14 +685,14 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		// Build mass checker
 		this.checkAllButton = new OO.ui.ButtonWidget( {
 			icon: 'checkAll',
-			label: mw.message( 'deputy.session.row.checkAll' ).text(),
-			title: mw.message( 'deputy.session.row.checkAll' ).text(),
+			label: mw.msg( 'deputy.session.row.checkAll' ),
+			title: mw.msg( 'deputy.session.row.checkAll' ),
 			invisibleLabel: true,
 			framed: false
 		} );
 		this.checkAllButton.on( 'click', () => {
 			OO.ui.confirm(
-				mw.message( 'deputy.session.row.checkAll.confirm' ).text()
+				mw.msg( 'deputy.session.row.checkAll.confirm' )
 			).done(
 				( confirmed: boolean ) => {
 					if ( confirmed ) {

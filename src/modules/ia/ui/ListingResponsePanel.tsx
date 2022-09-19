@@ -15,8 +15,8 @@ export default class ListingResponsePanel extends EventTarget {
 	// https://gist.github.com/ChlodAlejandro/33d2e98be1f69b90d9bbd43e22e694d3
 	static readonly responses = [
 		'cleaned', 'no', 'deletedcv', 'histpurge', 'user', 'where', 'unsure', 'deletedcup',
-        'relist', 'resolved', 'redirect', 'deletedother', 'move', 'viable', 'backwardsattributed',
-        'blanked', 'deferred', 'ticket', 'backwards', 'purged', 'OTRS', 'unverified'
+		'relist', 'resolved', 'redirect', 'deletedother', 'move', 'viable', 'backwardsattributed',
+		'blanked', 'deferred', 'ticket', 'backwards', 'purged', 'OTRS', 'unverified'
 	];
 	static readonly nonClosingResponses = [
 		'deferred', 'OTRS', 'unverified', 'viable'
@@ -55,7 +55,7 @@ export default class ListingResponsePanel extends EventTarget {
 	renderPrefillDropdown(): JSX.Element {
 		const options: any[] = [ {
 			data: null,
-			label: mw.message( 'deputy.ia.listing.re.label' ).text(),
+			label: mw.msg( 'deputy.ia.listing.re.label' ),
 			disabled: true
 		} ];
 		for ( const response of ListingResponsePanel.responses ) {
@@ -71,8 +71,8 @@ export default class ListingResponsePanel extends EventTarget {
 		this.dropdown = new OO.ui.DropdownInputWidget( {
 			options,
 			dropdown: {
-				label: mw.message( 'deputy.ia.listing.re.label' ).text(),
-				title: mw.message( 'deputy.ia.listing.re.title' ).text()
+				label: mw.msg( 'deputy.ia.listing.re.label' ),
+				title: mw.msg( 'deputy.ia.listing.re.title' )
 			}
 		} );
 
@@ -90,7 +90,7 @@ export default class ListingResponsePanel extends EventTarget {
 	renderAdditionalCommentsField(): JSX.Element {
 		this.commentsField = new OO.ui.TextInputWidget( {
 			multiline: true,
-			placeholder: mw.message( 'deputy.ia.listing.re.extras' ).text(),
+			placeholder: mw.msg( 'deputy.ia.listing.re.extras' ),
 			autosize: true,
 			rows: 1
 		} );
@@ -109,7 +109,7 @@ export default class ListingResponsePanel extends EventTarget {
 	renderCloseButton(): JSX.Element {
 		const closeButton = new OO.ui.ButtonWidget( {
 			flags: [ 'destructive' ],
-			label: mw.message( 'deputy.ia.listing.re.close' ).text(),
+			label: mw.msg( 'deputy.ia.listing.re.close' ),
 			framed: true
 		} );
 
@@ -126,7 +126,7 @@ export default class ListingResponsePanel extends EventTarget {
 	renderSubmitButton(): JSX.Element {
 		this.submitButton = new OO.ui.ButtonWidget( {
 			flags: [ 'progressive', 'primary' ],
-			label: mw.message( 'deputy.ia.listing.re.submit' ).text(),
+			label: mw.msg( 'deputy.ia.listing.re.submit' ),
 			disabled: true
 		} );
 
@@ -150,12 +150,12 @@ export default class ListingResponsePanel extends EventTarget {
 				}
 
 				this.close();
-				mw.notify( mw.message( 'deputy.ia.listing.re.published' ).text(), {
+				mw.notify( mw.msg( 'deputy.ia.listing.re.published' ), {
 					type: 'success'
 				} );
 			} catch ( e ) {
 				console.error( e );
-				OO.ui.alert( mw.message( 'deputy.ia.listing.re.error', e.message ).text() );
+				OO.ui.alert( mw.msg( 'deputy.ia.listing.re.error', e.message ) );
 
 				this.dropdown.setDisabled( false );
 				this.commentsField.setDisabled( false );
@@ -239,7 +239,7 @@ export default class ListingResponsePanel extends EventTarget {
 			}</div>
 			{ this.previewPanel = <div
 				class="ia-listing-response--preview"
-				data-label={mw.message( 'deputy.ia.listing.re.preview' ).text()}
+				data-label={mw.msg( 'deputy.ia.listing.re.preview' )}
 				style={'display: none'}
 			></div> as HTMLElement }
 			<div class="ia-listing-response--submit">

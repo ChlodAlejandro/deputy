@@ -102,7 +102,7 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 		} );
 
 		this.statusDropdown.addEventListener( 'updateFail', () => {
-			OO.ui.alert( mw.message( 'deputy.session.page.incommunicable' ).text() );
+			OO.ui.alert( mw.msg( 'deputy.session.page.incommunicable' ) );
 		} );
 
 		return unwrapWidget( this.statusDropdown.dropdown );
@@ -116,7 +116,7 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 	renderCaseInfo(): JSX.Element {
 		return <div class="dp-pt-section">
 			<div class="dp-pt-section-label">{
-				mw.message( 'deputy.session.page.caseInfo.label' ).text()
+				mw.msg( 'deputy.session.page.caseInfo.label' )
 			}</div>
 			<a class="dp-pt-section-content dp-pt-caseInfo">{
 				this.row.casePage.getCaseName()
@@ -139,7 +139,7 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 		}
 
 		this.revisionCheckbox = new OO.ui.CheckboxInputWidget( {
-			label: mw.message( 'deputy.session.revision.assessed' ).text(),
+			label: mw.msg( 'deputy.session.revision.assessed' ),
 			selected: this.options.revisionStatus
 		} );
 
@@ -165,7 +165,7 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 			} );
 
 			if ( response == null ) {
-				OO.ui.alert( mw.message( 'deputy.session.page.incommunicable' ).text() );
+				OO.ui.alert( mw.msg( 'deputy.session.page.incommunicable' ) );
 				// Sets flag to avoid running this listener twice.
 				incommunicable = true;
 				this.revisionCheckbox.setSelected( lastStatus );
@@ -191,7 +191,7 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 					this.revisionCheckbox,
 					{
 						align: 'inline',
-						label: mw.message( 'deputy.session.page.caseInfo.assessed' ).text()
+						label: mw.msg( 'deputy.session.page.caseInfo.assessed' )
 					}
 				) ) }
 			</div>
@@ -208,23 +208,23 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 		const helpPopup = new OO.ui.PopupButtonWidget( {
 			icon: 'info',
 			framed: false,
-			label: mw.message( 'deputy.moreInfo' ).text(),
+			label: mw.msg( 'deputy.moreInfo' ),
 			invisibleLabel: true,
 			popup: {
 				head: true,
 				padded: true,
-				label: mw.message( 'deputy.moreInfo' ).text(),
+				label: mw.msg( 'deputy.moreInfo' ),
 				align: 'forwards'
 			}
 		} );
 		unwrapWidget( helpPopup ).querySelector( '.oo-ui-popupWidget-body' )
 			.appendChild( <p>
-				{ mw.message( 'deputy.session.page.caseInfo.revision.help' ).text() }
+				{ mw.msg( 'deputy.session.page.caseInfo.revision.help' ) }
 			</p> );
 
 		return <div class="dp-pt-section">
 			<div class="dp-pt-section-label">
-				{ mw.message( 'deputy.session.page.caseInfo.revision.none' ).text() }
+				{ mw.msg( 'deputy.session.page.caseInfo.revision.none' ) }
 			</div>
 			<div class="dp-pt-section-content dp-pt-missingRevision">
 				{ unwrapWidget( helpPopup ) }
@@ -241,8 +241,8 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 	renderNextRevisionButton(): JSX.Element {
 		this.nextRevisionButton = new OO.ui.ButtonWidget( {
 			invisibleLabel: true,
-			label: mw.message( 'deputy.session.page.diff.next' ).text(),
-			title: mw.message( 'deputy.session.page.diff.next' ).text(),
+			label: mw.msg( 'deputy.session.page.diff.next' ),
+			title: mw.msg( 'deputy.session.page.diff.next' ),
 			icon: this.revision == null ? 'play' : 'next'
 		} );
 
@@ -263,7 +263,7 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 
 					if ( nextRevisionData == null ) {
 						OO.ui.alert(
-							mw.message( 'deputy.session.page.incommunicable' ).text()
+							mw.msg( 'deputy.session.page.incommunicable' )
 						);
 						this.setDisabled( false );
 					} else if ( nextRevisionData.revid != null ) {
@@ -323,11 +323,11 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 		return <div class="dp-pt-section">
 			<div class="dp-pt-section-content dp-pt-menu">
 				{this.renderMenu(
-					mw.message( 'deputy.session.page.analysis' ).text(),
+					mw.msg( 'deputy.session.page.analysis' ),
 					deputyPageAnalysisOptions()
 				)}
 				{this.renderMenu(
-					mw.message( 'deputy.session.page.tools' ).text(),
+					mw.msg( 'deputy.session.page.tools' ),
 					deputyPageTools()
 				)}
 			</div>

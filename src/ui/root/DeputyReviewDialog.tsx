@@ -20,11 +20,11 @@ function initDeputyReviewDialog() {
 
 		static static = {
 			name: 'deputyReviewDialog',
-			title: mw.message( 'deputy.diff' ).text(),
+			title: mw.msg( 'deputy.diff' ),
 			actions: [
 				{
 					action: 'close',
-					label: mw.message( 'deputy.close' ).text(),
+					label: mw.msg( 'deputy.close' ),
 					flags: 'safe'
 				}
 			]
@@ -63,7 +63,7 @@ function initDeputyReviewDialog() {
 				textAlign: 'center'
 			}}>
 				<div style={{ marginBottom: '8px' }}>
-					{mw.message( 'deputy.diff.load' ).text()}
+					{mw.msg( 'deputy.diff.load' )}
 				</div>
 				{
 					unwrapWidget(
@@ -111,7 +111,7 @@ function initDeputyReviewDialog() {
 					if ( compareRequest.error ) {
 						swapElements( this.element, new OO.ui.MessageWidget( {
 							type: 'error',
-							label: mw.message( 'deputy.diff.error' ).text()
+							label: mw.msg( 'deputy.diff.error' )
 						} ) );
 					}
 
@@ -121,7 +121,7 @@ function initDeputyReviewDialog() {
 						this.element = swapElements(
 							this.element,
 							<div style={ { textAlign: 'center' } }>
-								{ mw.message( 'deputy.diff.no-changes' ).text() }
+								{ mw.msg( 'deputy.diff.no-changes' ) }
 							</div>
 						);
 					} else {

@@ -10,9 +10,9 @@ export default function () {
 
 	return <span>
 		<b>{
-			mw.message( 'deputy.session.otherActive.head' ).text()
+			mw.msg( 'deputy.session.otherActive.head' )
 		}</b><br/>{
-			mw.message( 'deputy.session.otherActive.help' ).text()
+			mw.msg( 'deputy.session.otherActive.help' )
 		}<br/><span class="dp-cs-session-stop" />
 		{/* The above <span> will be replaced in DeputySession. */}
 	</span>;

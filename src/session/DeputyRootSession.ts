@@ -85,7 +85,7 @@ export default class DeputyRootSession {
 
 					const stopButton = new OO.ui.ButtonWidget( {
 						classes: [ 'dp-cs-session-stop' ],
-						label: mw.message( 'deputy.session.otherActive.button' ).text(),
+						label: mw.msg( 'deputy.session.otherActive.button' ),
 						flags: [ 'primary', 'destructive' ]
 					} );
 					stopButton.on( 'click', async () => {
@@ -156,7 +156,7 @@ export default class DeputyRootSession {
 
 						const continueButton = new OO.ui.ButtonWidget( {
 							classes: [ 'dp-cs-session-continue' ],
-							label: mw.message( 'deputy.session.continue.button' ).text(),
+							label: mw.msg( 'deputy.session.continue.button' ),
 							flags: [ 'primary', 'progressive' ]
 						} );
 						const sessionStartListener = async () => {
@@ -343,8 +343,8 @@ export default class DeputyRootSession {
 			// User is on another tab, don't load interface.
 			mw.loader.using( [ 'oojs-ui-core', 'oojs-ui-windows' ], () => {
 				OO.ui.alert(
-					mw.message( 'deputy.session.tabActive.help' ).text(),
-					{ title: mw.message( 'deputy.session.tabActive.head' ).text() }
+					mw.msg( 'deputy.session.tabActive.help' ),
+					{ title: mw.msg( 'deputy.session.tabActive.head' ) }
 				);
 			} );
 			return;

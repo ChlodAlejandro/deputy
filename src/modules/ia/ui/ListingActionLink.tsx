@@ -15,7 +15,7 @@ export default function ListingActionLink(
 ): JSX.Element {
 	const element = <div class="ia-listing-action">
 		<span class="ia-listing-action--bracket">{
-			mw.message( 'deputy.ia.listing.respondPre' ).text()
+			mw.msg( 'deputy.ia.listing.respondPre' )
 		}</span>
 		<a
 			class="ia-listing-action--link"
@@ -39,9 +39,9 @@ export default function ListingActionLink(
 					);
 				} );
 			}}
-		>{mw.message( 'deputy.ia.listing.respond' ).text()}</a>
+		>{mw.msg( 'deputy.ia.listing.respond' )}</a>
 		<span class="ia-listing-action--bracket">{
-			mw.message( 'deputy.ia.listing.respondPost' ).text()
+			mw.msg( 'deputy.ia.listing.respondPost' )
 		}</span>
 	</div> as HTMLElement;
 
