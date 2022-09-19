@@ -10,5 +10,8 @@
     "deputy.diff": "Review your changes",
     "deputy.diff.load": "Loading changes...",
     "deputy.diff.no-changes": "No difference",
-    "deputy.diff.error": "An error occurred while trying to get the comparison."
+    "deputy.diff.error": "An error occurred while trying to get the comparison.",
+
+    "deputy.loadError.userConfig": "Due to an error, your Deputy configuration has been reset.",
+    "deputy.loadError.wikiConfig": "An error occurred while loading this wiki's Deputy configuration. Please report this to the Deputy maintainers for this wiki."
 }

@@ -2,7 +2,7 @@ import '../../types';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import deputySettingsStyles from '../../css/settings.css';
-import Configuration from '../../config/Configuration';
+import UserConfiguration from '../../config/UserConfiguration';
 import ConfigurationGroupTabPanel from './ConfigurationGroupTabPanel';
 import openWindow from '../../wiki/util/openWindow';
 import deputySettingsEnglish from '../../../i18n/settings/en.json';
@@ -35,7 +35,7 @@ function initConfigurationDialog() {
 		};
 
 		data: any;
-		config: Configuration;
+		config: UserConfiguration;
 
 		/**
 		 *
@@ -45,7 +45,7 @@ function initConfigurationDialog() {
 
 			// Load a fresh version of the configuration - this way we can make modifications
 			// live to the configuration without actually affecting tool usage.
-			this.config = Configuration.load();
+			this.config = UserConfiguration.load();
 		}
 
 		/**
@@ -73,7 +73,7 @@ function initConfigurationDialog() {
 		 */
 		generateGroupLayouts(): any[] {
 			return Object.keys( this.config.all ).map(
-				( group: keyof Configuration['all'] ) => ConfigurationGroupTabPanel( {
+				( group: keyof UserConfiguration['all'] ) => ConfigurationGroupTabPanel( {
 					config: this.config,
 					group
 				} )
@@ -83,6 +83,7 @@ function initConfigurationDialog() {
 		/**
 		 *
 		 * @param action
+		 * @return An OOUI Process.
 		 */
 		getActionProcess( action: string ): typeof window.OO.ui.Process {
 			const process = super.getActionProcess();
@@ -95,7 +96,7 @@ function initConfigurationDialog() {
 					} );
 					// Override local Deputy option, just in case the user wishes to
 					// change the configuration again.
-					mw.user.options.set( Configuration.optionKey, this.config.serialize() );
+					mw.user.options.set( UserConfiguration.optionKey, this.config.serialize() );
 				} );
 			}
 

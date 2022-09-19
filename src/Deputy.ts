@@ -22,7 +22,7 @@ import deputyStyles from './css/deputy.css';
 import deputyCoreEnglish from '../i18n/core/en.json';
 import deputySharedEnglish from '../i18n/shared/en.json';
 import InfringementAssistant from './modules/ia/InfringementAssistant';
-import Configuration from './config/Configuration';
+import UserConfiguration from './config/UserConfiguration';
 import { attachConfigurationDialogPortletLink } from './ui/config/ConfigurationDialog';
 
 /**
@@ -82,7 +82,7 @@ class Deputy {
 	prefs: DeputyPreferences;
 	comms: DeputyCommunications;
 	session: DeputySession;
-	config: Configuration;
+	config: UserConfiguration;
 
 	// Modules
 	/**
@@ -133,7 +133,7 @@ class Deputy {
 		await attachConfigurationDialogPortletLink();
 
 		// Initialize the configuration
-		this.config = await Configuration.load();
+		this.config = await UserConfiguration.load();
 		// Initialize the storage.
 		this.storage = new DeputyStorage();
 		await this.storage.init();

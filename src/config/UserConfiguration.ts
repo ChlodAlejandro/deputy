@@ -5,11 +5,12 @@ import { generateEnumConfigurationProperties, PortletNameView } from './types';
 import { CompletionAction, TripleCompletionAction } from '../modules/shared/CompletionAction';
 import { EnumValue } from '../types';
 import DeputyVersion from '../DeputyVersion';
+import ConfigurationBase from './ConfigurationBase';
 
 /**
  * A configuration. Defines settings and setting groups.
  */
-export default class Configuration {
+export default class UserConfiguration extends ConfigurationBase {
 
 	static readonly configVersion = 1;
 	static readonly optionKey = 'userjs-deputy';
@@ -17,16 +18,18 @@ export default class Configuration {
 	/**
 	 * @return the configuration from the current wiki.
 	 */
-	static load(): Configuration {
-		const config = new Configuration();
+	static load(): UserConfiguration {
+		const config = new UserConfiguration();
 		try {
-			if ( mw.user.options.get( Configuration.optionKey ) ) {
-				const decodedOptions = JSON.parse( mw.user.options.get( Configuration.optionKey ) );
+			if ( mw.user.options.get( UserConfiguration.optionKey ) ) {
+				const decodedOptions = JSON.parse(
+					mw.user.options.get( UserConfiguration.optionKey )
+				);
 				config.deserialize( decodedOptions );
 			}
 		} catch ( e ) {
-			console.error( e, mw.user.options.get( Configuration.optionKey ) );
-			mw.notify( 'Due to an error, your Deputy configuration has been reset.', {
+			console.error( e, mw.user.options.get( UserConfiguration.optionKey ) );
+			mw.notify( mw.msg( 'deputy.loadError.userConfig' ), {
 				type: 'error'
 			} );
 			config.save();
@@ -40,7 +43,7 @@ export default class Configuration {
 		 * configuration file change.
 		 */
 		configVersion: new Setting<number, number>( {
-			defaultValue: Configuration.configVersion,
+			defaultValue: UserConfiguration.configVersion,
 			displayOptions: { hidden: true },
 			alwaysSave: true
 		} ),
@@ -136,16 +139,14 @@ export default class Configuration {
 	 *
 	 * @param serializedData
 	 */
-	constructor( serializedData: any = {} ) {
-		if ( mw.storage.get( `mw-${Configuration.optionKey}-lastVersion` ) !== DeputyVersion ) {
+	protected constructor( serializedData: any = {} ) {
+		super( serializedData );
+
+		if ( mw.storage.get( `mw-${UserConfiguration.optionKey}-lastVersion` ) !== DeputyVersion ) {
 			// Version change detected.
 			// Do nothing... for now.
 		}
-		mw.storage.set( `mw-${Configuration.optionKey}-lastVersion`, DeputyVersion );
-
-		if ( serializedData ) {
-			this.deserialize( serializedData );
-		}
+		mw.storage.set( `mw-${UserConfiguration.optionKey}-lastVersion`, DeputyVersion );
 	}
 
 	/**
@@ -153,67 +154,8 @@ export default class Configuration {
 	 */
 	async save(): Promise<void> {
 		await MwApi.action.saveOption(
-			Configuration.optionKey, JSON.stringify( this.serialize() )
+			UserConfiguration.optionKey, JSON.stringify( this.serialize() )
 		);
-	}
-
-	/**
-	 * Deserializes a JSON configuration into this configuration. This WILL overwrite
-	 * past settings.
-	 *
-	 * @param serializedData
-	 */
-	deserialize( serializedData: any ): void {
-		for ( const group in this.all ) {
-			const groupObject = this.all[ group as keyof typeof this.all ];
-			for ( const key in this.all[ group as keyof Configuration['all'] ] ) {
-				const setting: Setting<any, any> = groupObject[ key as keyof typeof groupObject ];
-				if ( serializedData?.[ group ]?.[ key ] !== undefined ) {
-					setting.set( setting.deserialize ?
-						// Type-checked upon declaration, just trust it to skip errors.
-						( setting.deserialize as any )( serializedData[ group ][ key ] ) :
-						serializedData[ group ][ key ]
-					);
-				}
-			}
-		}
-	}
-
-	/**
-	 * @return the serialized version of the configuration. All `undefined` values are stripped
-	 * from output. If a category remains unchanged from defaults, it is skipped. If the entire
-	 * configuration remains unchanged, `null` is returned.
-	 */
-	serialize(): any {
-		const config: Record<any, any> = {};
-		for ( const group of Object.keys( this.all ) ) {
-			const groupConfig: Record<any, any> = {};
-			const groupObject = this.all[ group as keyof typeof this.all ];
-			for ( const key in this.all[ group as keyof Configuration['all'] ] ) {
-				const setting: Setting<any, any> = groupObject[ key as keyof typeof groupObject ];
-
-				if ( setting.get() === setting.defaultValue && !setting.alwaysSave ) {
-					continue;
-				}
-
-				const serialized = setting.serialize ?
-					// Type-checked upon declaration, just trust it to skip errors.
-					( setting.serialize as any )( setting.get() ) : setting.get();
-				if ( serialized !== undefined ) {
-					groupConfig[ key ] = serialized;
-				}
-			}
-
-			if ( Object.keys( groupConfig ).length > 0 ) {
-				config[ group ] = groupConfig;
-			}
-		}
-
-		if ( Object.keys( config ).length > 0 ) {
-			return config;
-		} else {
-			return null;
-		}
 	}
 
 }

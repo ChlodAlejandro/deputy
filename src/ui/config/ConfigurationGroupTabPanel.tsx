@@ -1,13 +1,13 @@
 /* eslint-disable mediawiki/msg-doc */
 import '../../types';
-import type Configuration from '../../config/Configuration';
+import type UserConfiguration from '../../config/UserConfiguration';
 import Setting from '../../config/Setting';
 import { h } from 'tsx-dom';
 import unwrapWidget from '../../util/unwrapWidget';
 
 export interface ConfigurationGroupTabPanelData {
-	config: Configuration;
-	group: keyof Configuration['all'];
+	config: UserConfiguration;
+	group: keyof UserConfiguration['all'];
 }
 
 let InternalConfigurationGroupTabPanel: any;

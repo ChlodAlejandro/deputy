@@ -145,7 +145,7 @@ const axios = require( 'axios' );
 	const out = [];
 	for ( const [ key ] of sortedCounts ) {
 		out.push( {
-			id: key,
+			template: `{{subst:CPC|${key}|$2}}`,
 			label: templates[key],
 			closing: nonClosingTags.includes( key ) ? false : undefined
 		} );

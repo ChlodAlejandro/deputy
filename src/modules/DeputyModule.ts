@@ -1,7 +1,7 @@
 import { Deputy } from '../Deputy';
 import unwrapWidget from '../util/unwrapWidget';
 import DeputyLanguage from '../DeputyLanguage';
-import Configuration from '../config/Configuration';
+import UserConfiguration from '../config/UserConfiguration';
 import { attachConfigurationDialogPortletLink } from '../ui/config/ConfigurationDialog';
 
 /**
@@ -24,7 +24,7 @@ export default abstract class DeputyModule {
 	/**
 	 * The configuration object handling this module.
 	 */
-	private _config: Configuration;
+	private _config: UserConfiguration;
 
 	/**
 	 * @return The responsible window manager for this class.
@@ -45,9 +45,9 @@ export default abstract class DeputyModule {
 	 * @return the configuration handler for this module. If Deputy is loaded, this reuses
 	 * the configuration handler of Deputy.
 	 */
-	get config(): Configuration {
+	get config(): UserConfiguration {
 		if ( !this.deputy ) {
-			return this._config ?? ( this._config = Configuration.load() );
+			return this._config ?? ( this._config = UserConfiguration.load() );
 		} else {
 			return this.deputy.config;
 		}

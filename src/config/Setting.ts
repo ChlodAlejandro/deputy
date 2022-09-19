@@ -1,7 +1,7 @@
 /**
  * Defines interface UI elements.
  */
-import Configuration from './Configuration';
+import UserConfiguration from './UserConfiguration';
 import { ArrayOrNot } from '../types';
 import getObjectValues from '../util/getObjectValues';
 
@@ -24,7 +24,7 @@ interface DisplayOptionsBase {
 	/**
 	 * Whether an option should be disabled or not.
 	 */
-	disabled?: boolean | string | ( ( config: Configuration ) => boolean | string );
+	disabled?: boolean | string | ( ( config: UserConfiguration ) => boolean | string );
 
 }
 
@@ -37,7 +37,7 @@ interface VisibleDisplayOptions extends DisplayOptionsBase {
 	 * Whether an option should be hidden or not. If an option is hidden, it will not
 	 * show up in the settings interface at all.
 	 */
-	hidden?: false | ( ( config: Configuration ) => boolean | string );
+	hidden?: false | ( ( config: UserConfiguration ) => boolean | string );
 }
 
 interface HiddenDisplayOptions extends DisplayOptionsBase {
