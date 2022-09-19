@@ -25,7 +25,7 @@ export function generateEnumConfigurationProperties<T>(
 		},
 		allowedValues: fromObjectEntries(
 			Array.from( new Set( Object.keys( _enum ) ).values() )
-				.map( ( v ) => [ v, ( _enum as any )[ v ] ] )
+				.map( ( v ) => [ ( _enum as any )[ v ], ( _enum as any )[ v ] ] )
 		),
 		defaultValue: defaultValue
 	};

@@ -146,11 +146,18 @@ class Deputy {
 		this.comms.init();
 		// Initialize session
 		this.session = new DeputySession();
-		await this.session.init();
+
+		if ( this.config.core.modules.get().indexOf( 'cci' ) !== -1 ) {
+			await this.session.init();
+		}
 
 		// Load modules
-		await this.ante.preInit();
-		await this.ia.preInit();
+		if ( this.config.core.modules.get().indexOf( 'ante' ) !== -1 ) {
+			await this.ante.preInit();
+		}
+		if ( this.config.core.modules.get().indexOf( 'ia' ) !== -1 ) {
+			await this.ia.preInit();
+		}
 
 		console.log( 'Loaded!' );
 

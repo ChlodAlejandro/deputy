@@ -102,6 +102,8 @@ function initConfigurationDialog() {
 			process.next( () => {
 				this.close();
 			} );
+
+			return process;
 		}
 
 	};

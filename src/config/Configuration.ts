@@ -1,10 +1,10 @@
 import Setting from './Setting';
-import DeputyVersion from '../DeputyVersion';
 import MwApi from '../MwApi';
 import { CopyrightProblemsResponseSet } from '../modules/ia/models/CopyrightProblemsResponse';
 import { generateEnumConfigurationProperties, PortletNameView } from './types';
 import { CompletionAction, TripleCompletionAction } from '../modules/shared/CompletionAction';
 import { EnumValue } from '../types';
+import DeputyVersion from '../DeputyVersion';
 
 /**
  * A configuration. Defines settings and setting groups.
@@ -19,27 +19,23 @@ export default class Configuration {
 	 */
 	static load(): Configuration {
 		const config = new Configuration();
-		config.deserialize(
-			mw.user.options.get( Configuration.optionKey )
-		);
+		if ( mw.user.options.get( Configuration.optionKey ) ) {
+			config.deserialize(
+				mw.user.options.get( Configuration.optionKey )
+			);
+		}
 		return config;
 	}
 
 	public readonly core = <const>{
-		/**
-		 * The last version Deputy was loaded with.
-		 */
-		lastVersion: new Setting<string, string>( {
-			defaultValue: DeputyVersion,
-			displayOptions: { hidden: true }
-		} ),
 		/**
 		 * Numerical code that identifies this config version. Increments for every breaking
 		 * configuration file change.
 		 */
 		configVersion: new Setting<number, number>( {
 			defaultValue: Configuration.configVersion,
-			displayOptions: { hidden: true }
+			displayOptions: { hidden: true },
+			alwaysSave: true
 		} ),
 		language: new Setting<string, string>( {
 			defaultValue: 'en',
@@ -47,7 +43,8 @@ export default class Configuration {
 		} ),
 		modules: new Setting<string[], string[]>( {
 			defaultValue: [ 'cci', 'ante', 'ia' ],
-			displayOptions: { type: 'checkboxes' }
+			displayOptions: { type: 'checkboxes' },
+			allowedValues: [ 'cci', 'ante', 'ia' ]
 		} ),
 		portletNames: new Setting<
 			EnumValue<typeof PortletNameView>,
@@ -68,7 +65,8 @@ export default class Configuration {
 		enableAutoMerge: new Setting<boolean, boolean>( {
 			defaultValue: false,
 			displayOptions: {
-				type: 'checkbox'
+				type: 'checkbox',
+				disabled: 'unimplemented'
 			}
 		} ),
 		onSubmit: new Setting<
@@ -132,6 +130,12 @@ export default class Configuration {
 	 * @param serializedData
 	 */
 	constructor( serializedData: any = {} ) {
+		if ( mw.storage.get( `mw-${Configuration.optionKey}-lastVersion` ) !== DeputyVersion ) {
+			// Version change detected.
+			// Do nothing... for now.
+		}
+		mw.storage.set( `mw-${Configuration.optionKey}-lastVersion`, DeputyVersion );
+
 		if ( serializedData ) {
 			this.deserialize( serializedData );
 		}
@@ -178,6 +182,11 @@ export default class Configuration {
 			const groupObject = this.all[ group as keyof typeof this.all ];
 			for ( const key in this.all[ group as keyof Configuration['all'] ] ) {
 				const setting: Setting<any, any> = groupObject[ key as keyof typeof groupObject ];
+
+				if ( setting.get() === setting.defaultValue && !setting.alwaysSave ) {
+					continue;
+				}
+
 				const serialized = setting.serialize ?
 					// Type-checked upon declaration, just trust it to skip errors.
 					( setting.serialize as any )( setting.get() ) : setting.get();
@@ -186,7 +195,7 @@ export default class Configuration {
 				}
 			}
 
-			if ( Object.keys( group ).length > 0 ) {
+			if ( Object.keys( groupConfig ).length > 0 ) {
 				config[ group ] = groupConfig;
 			}
 		}

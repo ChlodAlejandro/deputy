@@ -108,6 +108,19 @@ export default class Setting<SerializedType, DeserializedType> {
 	private value: DeserializedType;
 
 	/**
+	 * The default value of the setting.
+	 */
+	public readonly defaultValue: DeserializedType;
+
+	/**
+	 * Whether to always save if the default value was provided or not. Useful for values
+	 * that change per configuration upgrade.
+	 *
+	 * @private
+	 */
+	public readonly alwaysSave: boolean;
+
+	/**
 	 * Serialize this setting's value or a given value.
 	 *
 	 * @param value The value to serialize
@@ -127,6 +140,7 @@ export default class Setting<SerializedType, DeserializedType> {
 	 * @param options
 	 * @param options.serialize Serialization function. See {@link Setting#serialize}
 	 * @param options.deserialize Deserialization function. See {@link Setting#deserialize}
+	 * @param options.alwaysSave See {@link Setting#alwaysSave}.
 	 * @param options.defaultValue Default value. If not supplied, `undefined` is used.
 	 * @param options.displayOptions See {@link Setting#displayOptions}
 	 * @param options.allowedValues See {@link Setting#allowedValues}
@@ -135,14 +149,18 @@ export default class Setting<SerializedType, DeserializedType> {
 		options: {
 			displayOptions: DisplayOptions,
 			defaultValue?: DeserializedType,
-			allowedValues?: Setting<SerializedType, DeserializedType>['allowedValues']
+			allowedValues?: DeserializedType extends any[] ?
+				Setting<SerializedType, DeserializedType[number]>['allowedValues'] :
+				Setting<SerializedType, DeserializedType>['allowedValues'],
+			alwaysSave?: boolean
 		} &
 			SelfTransformerParameter<'serialize', SerializedType, DeserializedType> &
 			TransformerParameter<'deserialize', DeserializedType, SerializedType>
 	) {
 		this.displayOptions = options.displayOptions;
 		this.allowedValues = options.allowedValues;
-		this.value = options.defaultValue;
+		this.value = this.defaultValue = options.defaultValue;
+		this.alwaysSave = options.alwaysSave;
 	}
 
 	/**
@@ -178,14 +196,27 @@ export default class Setting<SerializedType, DeserializedType> {
 	 * @param throwOnInvalid
 	 */
 	set( v: DeserializedType, throwOnInvalid = false ) {
-		const keys = Array.isArray( this.allowedValues ) ?
-			this.allowedValues : getObjectValues( this.allowedValues );
-		if ( this.allowedValues && keys.indexOf( v ) === -1 ) {
-			if ( throwOnInvalid ) {
-				throw new Error( 'Invalid value' );
+		if ( this.allowedValues ) {
+			const keys = Array.isArray( this.allowedValues ) ?
+				this.allowedValues : getObjectValues( this.allowedValues );
+
+			if ( Array.isArray( v ) ) {
+				if ( v.some( ( v1 ) => keys.indexOf( v1 ) === -1 ) ) {
+					if ( throwOnInvalid ) {
+						throw new Error( 'Invalid value' );
+					}
+					v = this.value;
+				}
+			} else {
+				if ( this.allowedValues && keys.indexOf( v ) === -1 ) {
+					if ( throwOnInvalid ) {
+						throw new Error( 'Invalid value' );
+					}
+					v = this.value;
+				}
 			}
-			v = this.value;
 		}
+
 		this.value = v;
 	}
 

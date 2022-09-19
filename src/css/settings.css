@@ -1,3 +1,7 @@
 .deputy-setting {
 	margin-bottom: 1em;
 }
+
+.deputy-setting > .oo-ui-fieldLayout-align-top .oo-ui-fieldLayout-header .oo-ui-labelElement-label {
+	font-weight: bold;
+}
