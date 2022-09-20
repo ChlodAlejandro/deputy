@@ -332,7 +332,7 @@ function initSinglePageWorkflowDialog() {
 					return;
 				}
 
-                this.data.fromUrls = selected;
+				this.data.fromUrls = selected;
 				fields.sourceUrls.toggle( selected );
 				fields.sourceText.toggle( !selected );
 			} );
@@ -341,7 +341,7 @@ function initSinglePageWorkflowDialog() {
 				this.data.sourceUrls = items.map( ( item ) => item.data );
 			} );
 			this.inputs.sourceText.on( 'change', ( text: string ) => {
-				this.data.sourceText = text.replace(/\.\s*$/, "");
+				this.data.sourceText = text.replace( /\.\s*$/, '' );
 			} );
 			fields.sourceText.toggle( false );
 
@@ -488,7 +488,7 @@ function initSinglePageWorkflowDialog() {
 			const comments = `${
 				( from || '' ).trim().length !== 0 ? 'from ' + from + '. ' : ''
 			}${
-				this.data.notes
+				this.data.notes ?? ''
 			}`;
 
 			await CopyrightProblemsPage.getCurrent()
