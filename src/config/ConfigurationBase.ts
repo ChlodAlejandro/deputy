@@ -4,7 +4,7 @@ import { PromiseOrNot } from '../types';
 /**
  * A configuration. Defines settings and setting groups.
  */
-export default abstract class UserConfiguration {
+export default abstract class ConfigurationBase {
 
 	static readonly configVersion = 1;
 	static readonly optionKey = 'userjs-deputy';
@@ -13,7 +13,7 @@ export default abstract class UserConfiguration {
 	/**
 	 * @return the configuration from the current wiki.
 	 */
-	static load(): PromiseOrNot<UserConfiguration> {
+	static load(): PromiseOrNot<ConfigurationBase> {
 		throw new Error( 'Unimplemented method.' );
 	}
 
@@ -44,7 +44,7 @@ export default abstract class UserConfiguration {
 	deserialize( serializedData: any ): void {
 		for ( const group in this.all ) {
 			const groupObject = this.all[ group as keyof typeof this.all ];
-			for ( const key in this.all[ group as keyof UserConfiguration['all'] ] ) {
+			for ( const key in this.all[ group as keyof ConfigurationBase['all'] ] ) {
 				const setting: Setting<any, any> = groupObject[ key as keyof typeof groupObject ];
 				if ( serializedData?.[ group ]?.[ key ] !== undefined ) {
 					setting.set( setting.deserialize ?
@@ -67,7 +67,7 @@ export default abstract class UserConfiguration {
 		for ( const group of Object.keys( this.all ) ) {
 			const groupConfig: Record<any, any> = {};
 			const groupObject = this.all[ group as keyof typeof this.all ];
-			for ( const key in this.all[ group as keyof UserConfiguration['all'] ] ) {
+			for ( const key in this.all[ group as keyof ConfigurationBase['all'] ] ) {
 				const setting: Setting<any, any> = groupObject[ key as keyof typeof groupObject ];
 
 				if ( setting.get() === setting.defaultValue && !setting.alwaysSave ) {
