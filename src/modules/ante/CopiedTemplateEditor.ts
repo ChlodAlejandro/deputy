@@ -21,6 +21,7 @@ declare global {
 export default class CopiedTemplateEditor extends DeputyModule {
 
 	static readonly dependencies = [
+		'moment',
 		'oojs-ui-core',
 		'oojs-ui-windows',
 		'oojs-ui-widgets',
@@ -76,9 +77,14 @@ export default class CopiedTemplateEditor extends DeputyModule {
 	 * Perform actions that run *before* CTE starts (prior to execution). This involves
 	 * adding in necessary UI elements that serve as an entry point to CTE.
 	 */
-	async preInit(): Promise<void> {
-		await super.preInit( deputyAnteEnglish );
-		await DeputyLanguage.load( 'shared', deputySharedEnglish );
+	async preInit(): Promise<boolean> {
+		if ( !await super.preInit( deputyAnteEnglish ) ) {
+			return false;
+		}
+		await Promise.all( [
+			DeputyLanguage.load( 'shared', deputySharedEnglish ),
+			DeputyLanguage.loadMomentLocale()
+		] );
 
 		if (
 			// Button not yet appended
@@ -161,6 +167,7 @@ export default class CopiedTemplateEditor extends DeputyModule {
 			this.toggleButtons( false );
 			this.openEditDialog();
 		}
+		return true;
 	}
 
 	/**

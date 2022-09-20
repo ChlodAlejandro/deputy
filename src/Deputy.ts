@@ -24,6 +24,7 @@ import deputySharedEnglish from '../i18n/shared/en.json';
 import InfringementAssistant from './modules/ia/InfringementAssistant';
 import UserConfiguration from './config/UserConfiguration';
 import { attachConfigurationDialogPortletLink } from './ui/config/ConfigurationDialog';
+import WikiConfiguration from './config/WikiConfiguration';
 
 /**
  * The main class for Deputy. Entry point for execution.
@@ -83,6 +84,7 @@ class Deputy {
 	comms: DeputyCommunications;
 	session: DeputySession;
 	config: UserConfiguration;
+	wikiConfig: WikiConfiguration;
 
 	// Modules
 	/**
@@ -125,15 +127,21 @@ class Deputy {
 		window.InfringementAssistant = this.ia;
 		mw.hook( 'deputy.preload' ).fire( this );
 
+		// Initialize the configuration
+		this.config = await UserConfiguration.load();
+		window.deputyLang = this.config.core.language.get();
+
 		// Inject CSS
 		mw.util.addCSS( deputyStyles );
 		// Load strings
-		await DeputyLanguage.load( 'core', deputyCoreEnglish );
-		await DeputyLanguage.load( 'shared', deputySharedEnglish );
+		await Promise.all( [
+			DeputyLanguage.load( 'core', deputyCoreEnglish ),
+			DeputyLanguage.load( 'shared', deputySharedEnglish ),
+			DeputyLanguage.loadMomentLocale()
+		] );
+		mw.hook( 'deputy.i18nDone' ).fire( this );
 		await attachConfigurationDialogPortletLink();
 
-		// Initialize the configuration
-		this.config = await UserConfiguration.load();
 		// Initialize the storage.
 		this.storage = new DeputyStorage();
 		await this.storage.init();
@@ -164,12 +172,22 @@ class Deputy {
 		mw.hook( 'deputy.load' ).fire( this );
 	}
 
+	/**
+	 * Gets the wiki-specific configuration for Deputy.
+	 *
+	 * @return A promise resolving to the loaded configuration
+	 */
+	async getWikiConfig(): Promise<WikiConfiguration> {
+		return this.wikiConfig ?? ( this.wikiConfig = await WikiConfiguration.load() );
+	}
+
 }
 
 mw.loader.using( [
 	'mediawiki.api',
 	'mediawiki.Title',
 	'mediawiki.util',
+	'moment',
 	'oojs'
 ], function () {
 	performHacks();

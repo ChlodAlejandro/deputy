@@ -6,6 +6,7 @@ import unwrapWidget from '../../util/unwrapWidget';
 import { DeputyMessageEvent, DeputyRevisionStatusUpdateMessage } from '../../DeputyCommunications';
 import type DeputyContributionSurveyRow from './DeputyContributionSurveyRow';
 import nsId from '../../wiki/util/nsId';
+import getRevisionURL from '../../wiki/util/getRevisionURL';
 
 /**
  * A specific revision for a section row.
@@ -167,18 +168,22 @@ export default class DeputyContributionSurveyRevision
 	 */
 	render(): HTMLElement {
 		const time = new Date( this.revision.timestamp );
+		let now = window.moment( time );
 
-		const formattedTime = time.toLocaleTimeString( mw.config.get( 'wgUserLanguage' ), {
+		if ( window.deputy.config.cci.forceUtc.get() ) {
+			now = now.utc();
+		}
+
+		const formattedTime = time.toLocaleTimeString( window.deputyLang, {
 			hourCycle: 'h24',
-			timeStyle: 'short'
+			timeStyle: mw.user.options.get( 'date' ) === 'ISO 8601' ? 'long' : 'short'
 		} );
-		const formattedDate = {
-			dmy: time.toLocaleDateString( 'en-US', { dateStyle: 'long' } ),
-			mdy: time.toLocaleDateString( 'en-GB', { dateStyle: 'long' } )
-		}[ mw.config.get( 'wgDefaultDateFormat' ) as string ] ??
-			`${time.getFullYear()} ${
-				time.toLocaleString( mw.config.get( 'wgUserLanguage' ), { month: 'long' } )
-			} ${time.getDate()}`;
+		const formattedDate = now.locale( window.deputyLang ).format( {
+			dmy: 'D MMMM YYYY',
+			mdy: 'MMMM D, Y',
+			ymd: 'YYYY MMMM D',
+			'ISO 8601': 'YYYY:MM:DD[T]HH:mm:SS'
+		}[ mw.user.options.get( 'date' ) as string ] );
 
 		const userPage = new mw.Title(
 			this.revision.user,
@@ -234,9 +239,9 @@ export default class DeputyContributionSurveyRevision
 				}</span>
 			</span>
 			<span class="mw-changeslist-time">{ formattedTime }</span>
-			<span class="mw-changeslist-date">{ formattedTime }{
-				comma
-			}{ formattedDate }</span>
+			<a class="mw-changeslist-date" href={
+				getRevisionURL( this.revision.revid, this.revision.page.title )
+			}>{ formattedTime }{comma}{ formattedDate }</a>
 			<span class="history-user">
 				<a class="mw-userlink" target="_blank" rel="noopener" href={
 					mw.format(

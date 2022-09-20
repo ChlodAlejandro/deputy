@@ -158,6 +158,8 @@ export default class Setting<SerializedType, DeserializedType> {
 			SelfTransformerParameter<'serialize', SerializedType, DeserializedType> &
 			TransformerParameter<'deserialize', DeserializedType, SerializedType>
 	) {
+		this.serialize = options.serialize;
+		this.deserialize = options.deserialize;
 		this.displayOptions = options.displayOptions;
 		this.allowedValues = options.allowedValues;
 		this.value = this.defaultValue = options.defaultValue;

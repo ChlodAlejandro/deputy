@@ -43,7 +43,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 			titles: WikiConfiguration.configLocations.join( '|' )
 		} );
 
-		const redirects = toRedirectsObject( response.query.redirects );
+		const redirects = toRedirectsObject( response.query.redirects, response.query.normalized );
 		for ( const page of WikiConfiguration.configLocations ) {
 			const title = normalizeTitle(
 				redirects[ page ] || page
@@ -73,8 +73,11 @@ export default class WikiConfiguration extends ConfigurationBase {
 			return new WikiConfiguration( configPage.title, JSON.parse( configPage.wt ) );
 		} catch ( e ) {
 			console.error( e, configPage );
-			mw.notify( mw.msg( 'deputy.loadError.wikiConfig' ), {
-				type: 'error'
+			mw.hook( 'deputy.i18nDone' ).add( function notifyConfigFailure() {
+				mw.notify( mw.msg( 'deputy.loadError.wikiConfig' ), {
+					type: 'error'
+				} );
+				mw.hook( 'deputy.i18nDone' ).remove( notifyConfigFailure );
 			} );
 			return null;
 		}
@@ -116,18 +119,16 @@ export default class WikiConfiguration extends ConfigurationBase {
 				type: 'page'
 			}
 		} ),
-		// Figure out how to do l10n dates in this thing
 		subpageFormat: new Setting<string, string>( {
 			defaultValue: null,
 			displayOptions: {
 				type: 'text'
 			}
 		} ),
-		// Figure out how to do l10n dates in this thing
-		preloadFormat: new Setting<string, string>( {
+		preload: new Setting<string, string>( {
 			defaultValue: null,
 			displayOptions: {
-				type: 'code'
+				type: 'page'
 			}
 		} ),
 		responses: new Setting<CopyrightProblemsResponse[], CopyrightProblemsResponse[]>( {
@@ -147,7 +148,10 @@ export default class WikiConfiguration extends ConfigurationBase {
 	 * @param serializedData
 	 */
 	constructor( readonly sourcePage: mw.Title, serializedData: any ) {
-		super( serializedData );
+		super();
+		if ( serializedData ) {
+			this.deserialize( serializedData );
+		}
 	}
 
 	/**

@@ -21,14 +21,8 @@ export default abstract class ConfigurationBase {
 
 	/**
 	 * Creates a new Configuration.
-	 *
-	 * @param serializedData
 	 */
-	protected constructor( serializedData: any = {} ) {
-		if ( serializedData ) {
-			this.deserialize( serializedData );
-		}
-	}
+	protected constructor() { /* ignored */ }
 
 	/**
 	 * Saves the configuration.

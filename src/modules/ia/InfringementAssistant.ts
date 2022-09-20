@@ -21,6 +21,7 @@ declare global {
 export default class InfringementAssistant extends DeputyModule {
 
 	static readonly dependencies = [
+		'moment',
 		'oojs-ui-core',
 		'oojs-ui-widgets',
 		'oojs-ui-windows',
@@ -47,9 +48,22 @@ export default class InfringementAssistant extends DeputyModule {
 	 * Perform actions that run *before* IA starts (prior to execution). This involves
 	 * adding in necessary UI elements that serve as an entry point to IA.
 	 */
-	async preInit(): Promise<void> {
-		await super.preInit( deputyIaEnglish );
-		await DeputyLanguage.load( 'shared', deputySharedEnglish );
+	async preInit(): Promise<boolean> {
+		if ( !await super.preInit( deputyIaEnglish ) ) {
+			return false;
+		}
+
+		if ( this.wikiConfig.ia.rootPage.get() == null ) {
+			// Root page is invalid. Don't run.
+			return false;
+		}
+
+		await Promise.all( [
+			DeputyLanguage.load( 'shared', deputySharedEnglish ),
+			DeputyLanguage.loadMomentLocale()
+		] );
+		const config = await this.getWikiConfig();
+		CopyrightProblemsPage.rootPage = config.ia.rootPage.get();
 
 		mw.hook( 'infringementAssistant.preload' ).fire();
 		mw.util.addCSS( iaStyles );
@@ -90,6 +104,7 @@ export default class InfringementAssistant extends DeputyModule {
 		if ( !/[?&]ia-autostart(=(0|no|false|off)?(&|$)|$)/.test( window.location.search ) ) {
 			await this.init();
 		}
+		return true;
 	}
 
 	/**

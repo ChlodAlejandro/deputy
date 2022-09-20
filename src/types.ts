@@ -1,5 +1,6 @@
 /* eslint-disable jsdoc/require-jsdoc */
 import { Deputy } from './Deputy';
+import moment from 'moment';
 
 export type PromiseOrNot<T> = Promise<T> | T;
 export type JQueryPromiseOrPromise<T> = JQuery.Promise<T> | Promise<T>;
@@ -85,7 +86,8 @@ declare global {
 	interface Window {
 		OO: any;
 		deputy: Deputy;
-		deputyLang?: string | Record<string, string>;
+		deputyLang?: string;
+		moment: moment.Moment;
 	}
 }
 

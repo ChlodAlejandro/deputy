@@ -14,24 +14,14 @@ export default class DeputyLanguage {
 	 * that a language pack is always available, even if a language file could not be loaded.
 	 */
 	static async load( module: string, fallback: Record<string, string> ) {
-		const lang = window.deputyLang ?? mw.config.get( 'wgUserLanguage' ) ?? 'en';
+		const lang = window.deputyLang ?? 'en';
 
 		// The loaded language resource file. Forced to `null` if using English, since English
 		// is our fallback language.
 		const langResource = lang === 'en' ? null :
 			await DeputyResources.loadResource( `i18n/${module}/${lang}.json` )
 				.catch( () => {
-					if ( window.deputyLang ) {
-					// Only show this warning if a language was explicitly requested. There are
-					// cases where Deputy does not yet have a language file (likely due to a lack
-					// of translations), but the user has a 'wgUserLanguage' differing from
-					// English.
-						mw.notify(
-							// No languages to fall back on. Do not translate this string.
-							'Deputy: Could not load requested language file.',
-							{ type: 'error' }
-						);
-					}
+					// Could not find requested language file.
 					return null;
 				} );
 		if ( !langResource ) {
@@ -60,6 +50,34 @@ export default class DeputyLanguage {
 				mw.messages.set( key, ( fallback as Record<string, string> )[ key ] );
 			}
 		}
+	}
+
+	/**
+	 * Loads a specific moment.js locale. It's possible for nothing to be loaded (e.g. if the
+	 * locale is not supported by moment.js), in which case nothing happens and English is
+	 * likely used.
+	 *
+	 * @param locale The locale to load. `window.deputyLang` by default.
+	 */
+	static async loadMomentLocale( locale = window.deputyLang ) {
+		if ( locale === 'en' ) {
+			// Always loaded.
+			return;
+		}
+
+		if ( window.moment.locales().indexOf( locale ) !== -1 ) {
+			// Already loaded.
+			return;
+		}
+
+		await mw.loader.using( 'moment' )
+			.then( () => true, () => null );
+		await mw.loader.getScript(
+			new URL(
+				`resources/lib/moment/locale/${ locale }.js`,
+				new URL( mw.util.wikiScript( 'index' ), window.location.href )
+			).toString()
+		).then( () => true, () => null );
 	}
 
 }

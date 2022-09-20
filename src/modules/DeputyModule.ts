@@ -3,6 +3,7 @@ import unwrapWidget from '../util/unwrapWidget';
 import DeputyLanguage from '../DeputyLanguage';
 import UserConfiguration from '../config/UserConfiguration';
 import { attachConfigurationDialogPortletLink } from '../ui/config/ConfigurationDialog';
+import WikiConfiguration from '../config/WikiConfiguration';
 
 /**
  * A Deputy module. Modules are parts of Deputy that can usually be removed
@@ -22,9 +23,17 @@ export default abstract class DeputyModule {
 	 */
 	private _windowManager: any;
 	/**
-	 * The configuration object handling this module.
+	 * The configuration object handling this module. Unavailable if Deputy is active.
+	 *
+	 * @private
 	 */
 	private _config: UserConfiguration;
+	/**
+	 * The wiki configuration object handling this module. Unavailable if Deputy is active.
+	 *
+	 * @private
+	 */
+	private _wikiConfig: WikiConfiguration;
 
 	/**
 	 * @return The responsible window manager for this class.
@@ -54,6 +63,16 @@ export default abstract class DeputyModule {
 	}
 
 	/**
+	 * @return the wiki-wide configuration handler for this module. If Deputy is loaded,
+	 * this reuses the configuration handler of Deputy. Since the wiki config is loaded
+	 * asynchronously, this may not be populated at runtime. Only use it if you're sure
+	 * that `preInit` has already been called and finished.
+	 */
+	get wikiConfig(): WikiConfiguration {
+		return this.deputy ? this.deputy.wikiConfig : this._wikiConfig;
+	}
+
+	/**
 	 *
 	 * @param deputy
 	 */
@@ -74,7 +93,10 @@ export default abstract class DeputyModule {
 	 * @param fallback The fallback to use if a language pack could not be loaded.
 	 */
 	async loadLanguages( fallback: Record<string, string> ): Promise<void> {
-		await DeputyLanguage.load( this.getName(), fallback );
+		await Promise.all( [
+			DeputyLanguage.load( this.getName(), fallback ),
+			DeputyLanguage.loadMomentLocale()
+		] );
 	}
 
 	/**
@@ -83,9 +105,34 @@ export default abstract class DeputyModule {
 	 *
 	 * @param languageFallback The fallback language pack to use if one could not be loaded.
 	 */
-	async preInit( languageFallback: Record<string, string> ): Promise<void> {
+	async preInit( languageFallback: Record<string, string> ): Promise<boolean> {
+		await this.getWikiConfig();
+
+		if ( this.wikiConfig[ this.getName() as 'ia' | 'ante' ]?.enabled.get() !== true ) {
+			// Stop loading here.
+			console.warn( `[Deputy] Preinit for ${
+				this.getName()
+			} cancelled; module is disabled.` );
+			return false;
+		}
+
 		await this.loadLanguages( languageFallback );
 		await attachConfigurationDialogPortletLink();
+
+		return true;
+	}
+
+	/**
+	 * Gets the wiki-specific configuration for Deputy.
+	 *
+	 * @return A promise resolving to the loaded configuration
+	 */
+	async getWikiConfig(): Promise<WikiConfiguration> {
+		if ( this.deputy ) {
+			return this.deputy.getWikiConfig();
+		} else {
+			return this._wikiConfig ?? ( this._wikiConfig = await WikiConfiguration.load() );
+		}
 	}
 
 }

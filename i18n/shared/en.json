@@ -1,4 +1,12 @@
 {
+    "deputy.ia": "Infringement Assistant",
+    "deputy.ia.short": "I. Assistant",
+    "deputy.ia.acronym": "Deputy: IA",
+
+    "deputy.ante": "Attribution Notice Template Editor",
+    "deputy.ante.short": "Attrib. Template Editor",
+    "deputy.ante.acronym": "Deputy: ANTE",
+
     "deputy.cancel": "Cancel",
     "deputy.review": "Review",
     "deputy.save": "Save",

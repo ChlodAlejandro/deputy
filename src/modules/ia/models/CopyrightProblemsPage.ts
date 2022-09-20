@@ -14,43 +14,18 @@ import MwApi from '../../../MwApi';
  */
 export default class CopyrightProblemsPage {
 
-	static rootPage = new mw.Title(
-		'Wikipedia:Copyright problems'
-	);
-
-	/**
-	 * Gets the date to use for the current listing.
-	 * TODO: Check if this is i18n-safe
-	 *
-	 * @param header
-	 * @return The current date as a string
-	 */
-	static getCurrentListingDate( header = false ): string {
-		const style = {
-			// TODO: l10n
-			header: 'dmy',
-			page: 'ymd'
-		}[ header ? 'header' : 'page' ];
-		const now = new Date();
-		const locale = mw.config.get( 'wgContentLanguage' );
-		return `${now.toLocaleString( locale, {
-			[ style === 'ymd' ? 'year' : 'day' ]: 'numeric',
-			timeZone: 'UTC'
-		} )} ${now.toLocaleString( locale, {
-			month: 'long',
-			timeZone: 'UTC'
-		} )} ${now.toLocaleString( locale, {
-			[ style === 'ymd' ? 'day' : 'year' ]: 'numeric',
-			timeZone: 'UTC'
-		} )}`;
-	}
+	// Loaded later on.
+	static rootPage = new mw.Title( 'Special:BlankPage' );
 
 	/**
 	 * @return The title of the current copyright problems subpage.
 	 */
 	static getCurrentListingPage(): mw.Title {
-		return new mw.Title(
-			`${this.rootPage.getPrefixedText()}/${this.getCurrentListingDate()}`
+		return normalizeTitle(
+			CopyrightProblemsPage.rootPage.getPrefixedText() + '/' +
+			window.moment().utc().format(
+				window.InfringementAssistant.wikiConfig.ia.subpageFormat.get()
+			)
 		);
 	}
 
@@ -61,7 +36,7 @@ export default class CopyrightProblemsPage {
 	static isListingPage( title = mw.config.get( 'wgPageName' ) ): boolean {
 		return normalizeTitle( title )
 			.getPrefixedText()
-			.startsWith( this.rootPage.getPrefixedText() );
+			.startsWith( CopyrightProblemsPage.rootPage.getPrefixedText() );
 	}
 
 	/**
@@ -172,11 +147,16 @@ export default class CopyrightProblemsPage {
 			throw new Error( 'Attempted to post listing on non-current page' );
 		}
 
+		const config = await window.InfringementAssistant.getWikiConfig();
+		const preloadText = config.ia.preload.get() ? `{{subst:${
+			config.ia.preload.get()
+		}}}` : '';
+
 		const textParameters = appendMode ? {
 			appendtext: content,
 			nocreate: true
 		} : {
-			text: `{{subst:${CopyrightProblemsPage.rootPage.getPrefixedText()}/preload}}${content}`,
+			text: preloadText + content,
 			createonly: true
 		};
 

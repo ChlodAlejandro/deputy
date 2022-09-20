@@ -29,8 +29,11 @@ export default class UserConfiguration extends ConfigurationBase {
 			}
 		} catch ( e ) {
 			console.error( e, mw.user.options.get( UserConfiguration.optionKey ) );
-			mw.notify( mw.msg( 'deputy.loadError.userConfig' ), {
-				type: 'error'
+			mw.hook( 'deputy.i18nDone' ).add( function notifyConfigFailure() {
+				mw.notify( mw.msg( 'deputy.loadError.userConfig' ), {
+					type: 'error'
+				} );
+				mw.hook( 'deputy.i18nDone' ).remove( notifyConfigFailure );
 			} );
 			config.save();
 		}
@@ -48,7 +51,7 @@ export default class UserConfiguration extends ConfigurationBase {
 			alwaysSave: true
 		} ),
 		language: new Setting<string, string>( {
-			defaultValue: 'en',
+			defaultValue: mw.config.get( 'wgUserLanguage' ),
 			displayOptions: { type: 'select' }
 		} ),
 		modules: new Setting<string[], string[]>( {
@@ -66,6 +69,12 @@ export default class UserConfiguration extends ConfigurationBase {
 	public readonly cci = <const>{
 		enablePageToolbar: new Setting<boolean, boolean>( {
 			defaultValue: true,
+			displayOptions: {
+				type: 'checkbox'
+			}
+		} ),
+		forceUtc: new Setting<boolean, boolean>( {
+			defaultValue: false,
 			displayOptions: {
 				type: 'checkbox'
 			}
@@ -140,7 +149,11 @@ export default class UserConfiguration extends ConfigurationBase {
 	 * @param serializedData
 	 */
 	protected constructor( serializedData: any = {} ) {
-		super( serializedData );
+		super();
+
+		if ( serializedData ) {
+			this.deserialize( serializedData );
+		}
 
 		if ( mw.storage.get( `mw-${UserConfiguration.optionKey}-lastVersion` ) !== DeputyVersion ) {
 			// Version change detected.
