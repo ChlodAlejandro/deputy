@@ -495,7 +495,7 @@ function initSinglePageWorkflowDialog() {
 			const comments = `${
 				( from || '' ).trim().length !== 0 ? 'from ' + from + '. ' : ''
 			}${
-				this.data.notes
+				this.data.notes ?? ''
 			}`;
 
 			await CopyrightProblemsPage.getCurrent()

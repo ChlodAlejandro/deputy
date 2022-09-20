@@ -118,17 +118,18 @@ export default class CopyrightProblemsListing {
 			// This ensures we're always using the prefixedDb version of the title (as
 			// provided by the anchor) for stability.
 			const prefixedDb = anchor.getAttribute( 'id' );
-			const href = el.getAttribute( 'href' );
 			const title = anchorToTitle( el as HTMLAnchorElement );
-            
-            if ( title === false ) {
-                // Not a valid link.
-                return false;
-            } else if ( title.getPrefixedText() !== new mw.Title( prefixedDb ).getPrefixedText() ) {
-                // Anchor and link mismatch. Someone tampered with the template?
-                // In this case, rely on the link instead, as the anchor is merely invisible.
-                console.warn( `Anchor and link mismatch for "${title.getPrefixedText()}".`, title, prefixedDb );
-            }
+
+			if ( title === false ) {
+				// Not a valid link.
+				return false;
+			} else if ( title.getPrefixedText() !== new mw.Title( prefixedDb ).getPrefixedText() ) {
+				// Anchor and link mismatch. Someone tampered with the template?
+				// In this case, rely on the link instead, as the anchor is merely invisible.
+				console.warn(
+					`Anchor and link mismatch for "${title.getPrefixedText()}".`, title, prefixedDb
+				);
+			}
 
 			// Checks for the <span class="plainlinks"> element.
 			// This ensures that the listing came from {{article-cv}} and isn't just a
