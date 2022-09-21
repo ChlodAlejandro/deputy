@@ -68,6 +68,15 @@ function initConfigurationGroupTabPanel() {
 					case 'radio':
 						this.$element.append( this.newRadioField( settingKey, setting ) );
 						break;
+					case 'text':
+						this.$element.append( this.newStringField( settingKey, setting ) );
+						break;
+					case 'page':
+						this.$element.append( this.newPageField( settingKey, setting ) );
+						break;
+					case 'code':
+						this.$element.append( this.newCodeField( settingKey, setting ) );
+						break;
 					default:
 						this.$element.append( this.newUnimplementedField( settingKey ) );
 						break;
@@ -290,6 +299,85 @@ function initConfigurationGroupTabPanel() {
 			} );
 
 			return <div class="deputy-setting">{ unwrapWidget( layout ) }</div>;
+		}
+
+		/**
+		 * Creates a new field that acts like a string field.
+		 *
+		 * @param FieldClass
+		 * @param settingKey
+		 * @param setting
+		 * @param extraFieldOptions
+		 * @return A Deputy setting field
+		 */
+		newStringLikeField(
+			FieldClass: any,
+			settingKey: string,
+			setting: Setting<any, any>,
+			extraFieldOptions = {}
+		): Element {
+			const isDisabled = setting.disabled;
+			const desc = mw.message(
+				`deputy.setting.${this.mode}.${this.config.group}.${settingKey}.description`
+			);
+
+			const field = new FieldClass( {
+				value: setting.serialize?.( setting.get() ) ?? setting.get(),
+				disabled: isDisabled !== undefined && isDisabled !== false,
+				...extraFieldOptions
+			} );
+			const layout = new OO.ui.FieldLayout( field, {
+				align: 'top',
+				label: this.getSettingMsg( settingKey, 'name' ),
+				help: typeof isDisabled === 'string' ?
+					this.getSettingMsg( settingKey, isDisabled ) :
+					desc.exists() ? desc.text() : undefined,
+				helpInline: true
+			} );
+
+			field.on( 'change', ( value: string ) => {
+				setting.set( value );
+				this.emit( 'change' );
+			} );
+			// Attach disabled re-checker
+			this.on( 'change', () => {
+				field.setDisabled( setting.disabled );
+			} );
+
+			return <div class="deputy-setting">{ unwrapWidget( layout ) }</div>;
+		}
+
+		/**
+		 * Creates a new string setting field.
+		 *
+		 * @param settingKey
+		 * @param setting
+		 * @return An HTMLElement of the given setting's field.
+		 */
+		newStringField( settingKey: string, setting: Setting<any, any> ): Element {
+			return this.newStringLikeField( OO.ui.TextInputWidget, settingKey, setting );
+		}
+
+		/**
+		 * Creates a new page title setting field.
+		 *
+		 * @param settingKey
+		 * @param setting
+		 * @return An HTMLElement of the given setting's field.
+		 */
+		newPageField( settingKey: string, setting: Setting<any, any> ): Element {
+			return this.newStringLikeField( mw.widgets.TitleInputWidget, settingKey, setting );
+		}
+
+		/**
+		 * Creates a new code setting field.
+		 *
+		 * @param settingKey
+		 * @param setting
+		 * @return An HTMLElement of the given setting's field.
+		 */
+		newCodeField( settingKey: string, setting: Setting<any, any> ): Element {
+			return this.newStringLikeField( OO.ui.MultilineTextInputWidget, settingKey, setting );
 		}
 
 	};

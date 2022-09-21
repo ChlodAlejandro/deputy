@@ -134,6 +134,23 @@ export default function ConfigurationDialogBuilder( data: ConfigurationDialogDat
 let attached = false;
 
 /**
+ * Spawns a new configuration dialog.
+ *
+ * @param config
+ */
+export function spawnConfigurationDialog( config: any ) {
+	mw.loader.using(
+		[
+			'oojs-ui-core', 'oojs-ui-windows', 'oojs-ui-widgets', 'mediawiki.widgets'
+		],
+		() => {
+			const dialog = ConfigurationDialogBuilder( { config } );
+			openWindow( dialog );
+		}
+	);
+}
+
+/**
  * Attaches the "Deputy preferences" portlet link in the toolbox. Ensures that it doesn't
  * get attached twice.
  */
@@ -153,17 +170,9 @@ export async function attachConfigurationDialogPortletLink() {
 		'deputy-config',
 		mw.msg( 'deputy.settings.portlet.tooltip' )
 	).addEventListener( 'click', () => {
-		mw.loader.using(
-			[ 'oojs-ui-core', 'oojs-ui-windows', 'oojs-ui-widgets' ],
-			() => {
-				const dialog = ConfigurationDialogBuilder( {
-					// Load a fresh version of the configuration - this way we can make
-					// modifications live to the configuration without actually affecting
-					// tool usage.
-					config: UserConfiguration.load()
-				} );
-				openWindow( dialog );
-			}
-		);
+		// Load a fresh version of the configuration - this way we can make
+		// modifications live to the configuration without actually affecting
+		// tool usage.
+		spawnConfigurationDialog( UserConfiguration.load() );
 	} );
 }

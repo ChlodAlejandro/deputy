@@ -85,7 +85,7 @@
     "deputy.setting.wiki.ia.enabled.name": "Enable the Infringement Assistant",
     "deputy.setting.wiki.ia.enabled.description": "Enables IA for all users. IA allows users to easily and graphically report pages with suspected or complicated copyright infringements.",
     "deputy.setting.wiki.ia.rootPage.name": "Root page",
-    "deputy.setting.wiki.ia.rootPage.description": "The root page for Infringement Assistant. This should be the copyright problems noticeboard for this specific wiki.",
+    "deputy.setting.wiki.ia.rootPage.description": "The root page for Infringement Assistant. This should be the copyright problems noticeboard for this specific wiki. IA will only show quick response links for the root page and its subpages.",
     "deputy.setting.wiki.ia.subpageFormat.name": "Subpage format",
     "deputy.setting.wiki.ia.subpageFormat.description": "The format to use for subpages of the root page. This is a moment.js format string.",
     "deputy.setting.wiki.ia.preload.name": "Preload",

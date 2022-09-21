@@ -2,8 +2,7 @@ import unwrapWidget from '../../util/unwrapWidget';
 import { h } from 'tsx-dom';
 import WikiConfiguration from '../../config/WikiConfiguration';
 import swapElements from '../../util/swapElements';
-import ConfigurationDialogBuilder from './ConfigurationDialog';
-import openWindow from '../../wiki/util/openWindow';
+import { spawnConfigurationDialog } from './ConfigurationDialog';
 import normalizeTitle from '../../wiki/util/normalizeTitle';
 
 /**
@@ -46,8 +45,7 @@ export default function WikiConfigurationEditIntro( config: WikiConfiguration ):
 				undefined : mw.msg( 'deputy.settings.wikiEditIntro.edit.protected' )
 		} );
 		editCurrent.on( 'click', () => {
-			const configWindow = ConfigurationDialogBuilder( { config } );
-			openWindow( configWindow );
+			spawnConfigurationDialog( config );
 		} );
 		buttons = [ editCurrent ];
 	} else {
@@ -59,8 +57,7 @@ export default function WikiConfigurationEditIntro( config: WikiConfiguration ):
 				undefined : mw.msg( 'deputy.settings.wikiEditIntro.edit.protected' )
 		} );
 		editCurrent.on( 'click', async () => {
-			const configWindow = ConfigurationDialogBuilder( { config } );
-			openWindow( configWindow );
+			spawnConfigurationDialog( config );
 		} );
 		const editOther = new OO.ui.ButtonWidget( {
 			flags: [ 'progressive' ],
@@ -70,10 +67,7 @@ export default function WikiConfigurationEditIntro( config: WikiConfiguration ):
 				undefined : mw.msg( 'deputy.settings.wikiEditIntro.edit.protected' )
 		} );
 		editOther.on( 'click', async () => {
-			const configWindow = ConfigurationDialogBuilder( {
-				config: await config.static.load( normalizeTitle() )
-			} );
-			openWindow( configWindow );
+			spawnConfigurationDialog( await config.static.load( normalizeTitle() ) );
 		} );
 		buttons = [ editCurrent, editOther ];
 	}
