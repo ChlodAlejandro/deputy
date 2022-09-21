@@ -1,7 +1,5 @@
 {
     "deputy.ante.edit": "Modify content attribution notices for this page",
-    "deputy.ante.close": "Close",
-    "deputy.ante.save": "Save",
     "deputy.ante.add": "Add a notice",
     "deputy.ante.mergeAll": "Merge all notices",
     "deputy.ante.mergeAll.confirm": "You are about to merge $1 {{PLURAL:$1|notice|notices}}. Continue?",

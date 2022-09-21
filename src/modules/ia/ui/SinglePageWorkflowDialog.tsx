@@ -70,9 +70,12 @@ function initSinglePageWorkflowDialog() {
 			title: mw.msg( 'deputy.ia' ),
 			actions: [
 				{
-					action: 'close',
-					label: mw.msg( 'deputy.close' ),
-					flags: 'safe'
+					flags: [ 'safe', 'close' ],
+					icon: 'close',
+					label: mw.msg( 'deputy.ante.close' ),
+					title: mw.msg( 'deputy.ante.close' ),
+					invisibleLabel: true,
+					action: 'close'
 				}
 			]
 		};

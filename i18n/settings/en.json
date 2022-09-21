@@ -2,9 +2,18 @@
     "deputy.settings.portlet": "Deputy preferences",
     "deputy.settings.portlet.tooltip": "Opens a dialog to modify Deputy preferences",
 
+    "deputy.settings.wikiEditIntro.title": "This is a Deputy configuration page",
+    "deputy.settings.wikiEditIntro.current": "Deputy's active configuration comes from this page. Changing this page will affect the settings of all Deputy users on this wiki. Edit responsibly, and avoid making significant changes without prior discussion.",
+    "deputy.settings.wikiEditIntro.other": "This is a valid Deputy configuration page, but the configuration is currently being loaded from {{wikilink:$1}}. If this becomes the active configuration page, changing it will affect the settings of all Deputy users on this wiki. Edit responsibly, and avoid making significant changes without prior discussion.",
+    "deputy.settings.wikiEditIntro.edit.current": "Modify configuration",
+    "deputy.settings.wikiEditIntro.edit.other": "Modify this configuration",
+    "deputy.settings.wikiEditIntro.edit.otherCurrent": "Modify the active configuration",
+    "deputy.settings.wikiEditIntro.edit.protected": "This page's protection settings do not allow you to edit the page.",
+
     "deputy.settings.dialog.title": "Deputy Preferences",
     "deputy.settings.dialog.unimplemented": "A way to modify this setting has not yet been implemented. Check back later!",
     "deputy.settings.saved": "Preferences saved. Please refresh the page to see changes.",
+    "deputy.settings.dialog.wikiConfigWarning": "You are currently editing a wiki-wide Deputy configuration page. Changes made to this page may affect the settings of all Deputy users on this wiki. Edit responsibly, and avoid making significant changes without prior discussion.",
 
     "deputy.setting.user.core": "Deputy",
 
@@ -59,5 +68,28 @@
     "deputy.setting.user.ia.onSubmit.description": "Choose what to do after the \"Submit\" button is selected, the relevant content is hidden from the page, and the page is reported.",
     "deputy.setting.user.ia.onSubmit.nothing": "Do nothing",
     "deputy.setting.user.ia.onSubmit.reload": "Reload the page",
-    "deputy.setting.user.ia.onSubmit.redirect": "Redirect to the noticeboard page"
+    "deputy.setting.user.ia.onSubmit.redirect": "Redirect to the noticeboard page",
+
+    "deputy.setting.wiki.cci": "CCI",
+
+    "deputy.setting.wiki.cci.enabled.name": "Enable contributor copyright investigations assistant",
+    "deputy.setting.wiki.cci.enabled.description": "Enables the CCI workflow assistant. This allows Deputy to replace the contribution survey found on CCI case pages with a graphical interface which works with other tabs to make the CCI workflow easier.",
+
+    "deputy.setting.wiki.ante": "ANTE",
+
+    "deputy.setting.wiki.ante.enabled.name": "Enable the Attribution Notice Template Editor",
+    "deputy.setting.wiki.ante.enabled.description": "Enables ANTE for all users. ANTE is currently the least-optimized module for localization, and may not work for all wikis.",
+
+    "deputy.setting.wiki.ia": "IA",
+
+    "deputy.setting.wiki.ia.enabled.name": "Enable the Infringement Assistant",
+    "deputy.setting.wiki.ia.enabled.description": "Enables IA for all users. IA allows users to easily and graphically report pages with suspected or complicated copyright infringements.",
+    "deputy.setting.wiki.ia.rootPage.name": "Root page",
+    "deputy.setting.wiki.ia.rootPage.description": "The root page for Infringement Assistant. This should be the copyright problems noticeboard for this specific wiki.",
+    "deputy.setting.wiki.ia.subpageFormat.name": "Subpage format",
+    "deputy.setting.wiki.ia.subpageFormat.description": "The format to use for subpages of the root page. This is a moment.js format string.",
+    "deputy.setting.wiki.ia.preload.name": "Preload",
+    "deputy.setting.wiki.ia.preload.description": "Defines the page content to preload the page with if a given subpage does not exist yet. This should be an existing page on-wiki. Leave blank to avoid using a preload entirely.",
+    "deputy.setting.wiki.ia.responses.name": "Responses",
+    "deputy.setting.wiki.ia.responses.description": "Quick responses for copyright problems listings. Used by clerks to resolve specific listings or provide more information about the progress of a given listing."
 }

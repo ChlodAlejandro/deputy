@@ -7,6 +7,11 @@ import ConfigurationGroupTabPanel from './ConfigurationGroupTabPanel';
 import openWindow from '../../wiki/util/openWindow';
 import deputySettingsEnglish from '../../../i18n/settings/en.json';
 import DeputyLanguage from '../../DeputyLanguage';
+import ConfigurationBase from '../../config/ConfigurationBase';
+
+interface ConfigurationDialogData {
+	config: ConfigurationBase;
+}
 
 let InternalConfigurationDialog: any;
 
@@ -22,9 +27,12 @@ function initConfigurationDialog() {
 			size: 'large',
 			actions: [
 				{
-					action: 'close',
-					label: mw.msg( 'deputy.close' ),
-					flags: 'safe'
+					flags: [ 'safe', 'close' ],
+					icon: 'close',
+					label: mw.msg( 'deputy.ante.close' ),
+					title: mw.msg( 'deputy.ante.close' ),
+					invisibleLabel: true,
+					action: 'close'
 				},
 				{
 					action: 'save',
@@ -35,17 +43,15 @@ function initConfigurationDialog() {
 		};
 
 		data: any;
-		config: UserConfiguration;
+		config: ConfigurationBase;
 
 		/**
 		 *
+		 * @param data
 		 */
-		constructor() {
+		constructor( data: ConfigurationDialogData ) {
 			super();
-
-			// Load a fresh version of the configuration - this way we can make modifications
-			// live to the configuration without actually affecting tool usage.
-			this.config = UserConfiguration.load();
+			this.config = data.config;
 		}
 
 		/**
@@ -73,7 +79,7 @@ function initConfigurationDialog() {
 		 */
 		generateGroupLayouts(): any[] {
 			return Object.keys( this.config.all ).map(
-				( group: keyof UserConfiguration['all'] ) => ConfigurationGroupTabPanel( {
+				( group: keyof ConfigurationBase['all'] ) => ConfigurationGroupTabPanel( {
 					config: this.config,
 					group
 				} )
@@ -94,9 +100,11 @@ function initConfigurationDialog() {
 					mw.notify( mw.msg( 'deputy.settings.saved' ), {
 						type: 'success'
 					} );
-					// Override local Deputy option, just in case the user wishes to
-					// change the configuration again.
-					mw.user.options.set( UserConfiguration.optionKey, this.config.serialize() );
+					if ( this.config instanceof UserConfiguration ) {
+						// Override local Deputy option, just in case the user wishes to
+						// change the configuration again.
+						mw.user.options.set( UserConfiguration.optionKey, this.config.serialize() );
+					}
 				} );
 			}
 
@@ -113,13 +121,14 @@ function initConfigurationDialog() {
 /**
  * Creates a new ConfigurationDialog.
  *
+ * @param data
  * @return A ConfigurationDialog object
  */
-export default function ConfigurationDialogBuilder() {
+export default function ConfigurationDialogBuilder( data: ConfigurationDialogData ) {
 	if ( !InternalConfigurationDialog ) {
 		initConfigurationDialog();
 	}
-	return new InternalConfigurationDialog();
+	return new InternalConfigurationDialog( data );
 }
 
 let attached = false;
@@ -147,7 +156,12 @@ export async function attachConfigurationDialogPortletLink() {
 		mw.loader.using(
 			[ 'oojs-ui-core', 'oojs-ui-windows', 'oojs-ui-widgets' ],
 			() => {
-				const dialog = ConfigurationDialogBuilder();
+				const dialog = ConfigurationDialogBuilder( {
+					// Load a fresh version of the configuration - this way we can make
+					// modifications live to the configuration without actually affecting
+					// tool usage.
+					config: UserConfiguration.load()
+				} );
 				openWindow( dialog );
 			}
 		);

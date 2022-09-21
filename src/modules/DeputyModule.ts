@@ -118,6 +118,7 @@ export default abstract class DeputyModule {
 
 		await this.loadLanguages( languageFallback );
 		await attachConfigurationDialogPortletLink();
+		await this.wikiConfig.prepareEditBanners();
 
 		return true;
 	}

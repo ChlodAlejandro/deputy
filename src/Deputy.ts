@@ -166,6 +166,7 @@ class Deputy {
 		if ( this.config.core.modules.get().indexOf( 'ia' ) !== -1 ) {
 			await this.ia.preInit();
 		}
+		await this.wikiConfig.prepareEditBanners();
 
 		console.log( 'Loaded!' );
 

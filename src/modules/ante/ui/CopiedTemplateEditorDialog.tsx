@@ -44,15 +44,15 @@ function initCopiedTemplateEditorDialog() {
 			actions: [
 				{
 					flags: [ 'primary', 'progressive' ],
-					label: mw.msg( 'deputy.ante.save' ),
-					title: mw.msg( 'deputy.ante.save' ),
+					label: mw.msg( 'deputy.save' ),
+					title: mw.msg( 'deputy.save' ),
 					action: 'save'
 				},
 				{
 					flags: [ 'safe', 'close' ],
 					icon: 'close',
-					label: mw.msg( 'deputy.ante.close' ),
-					title: mw.msg( 'deputy.ante.close' ),
+					label: mw.msg( 'deputy.close' ),
+					title: mw.msg( 'deputy.close' ),
 					invisibleLabel: true,
 					action: 'close'
 				}
