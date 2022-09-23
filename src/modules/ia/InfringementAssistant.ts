@@ -116,8 +116,12 @@ export default class InfringementAssistant extends DeputyModule {
 			[ 'view', 'diff' ].indexOf( mw.config.get( 'wgAction' ) ) !== -1
 		) {
 			this.session = new CopyrightProblemsSession();
-			mw.hook( 'wikipage.content' ).add( () => {
-				this.session.getListings().forEach( ( listing ) => {
+			mw.hook( 'wikipage.content' ).add( ( el: Element[] ) => {
+				if ( el[ 0 ].classList.contains( 'ia-upgraded' ) ) {
+					return;
+				}
+				el[ 0 ].classList.add( 'ia-upgraded' );
+				this.session.getListings( el[ 0 ] ).forEach( ( listing ) => {
 					this.session.addListingActionLink( listing );
 				} );
 			} );

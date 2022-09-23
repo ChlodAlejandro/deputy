@@ -35,16 +35,17 @@ export default class CopyrightProblemsSession extends CopyrightProblemsPage {
 	}
 
 	/**
+	 * @param root
 	 * @return all copyright problem listings on the page.
 	 */
-	getListings(): CopyrightProblemsListing[] {
+	getListings( root: ParentNode = this.document ): CopyrightProblemsListing[] {
 		const links: HTMLElement[] = [];
 		/**
 		 * Avoids collisions by assigning an `i` number when a page appears as a listing twice.
 		 */
 		const headingSets: Record<string, Record<string, number>> = {};
 
-		this.document.querySelectorAll(
+		root.querySelectorAll(
 			'#mw-content-text .mw-parser-output a:not(.external)'
 		).forEach( ( link: HTMLElement ) => {
 			if ( this.listingMap.has( link ) ) {
