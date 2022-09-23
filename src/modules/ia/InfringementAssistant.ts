@@ -62,8 +62,7 @@ export default class InfringementAssistant extends DeputyModule {
 			DeputyLanguage.load( 'shared', deputySharedEnglish ),
 			DeputyLanguage.loadMomentLocale()
 		] );
-		const config = await this.getWikiConfig();
-		CopyrightProblemsPage.rootPage = config.ia.rootPage.get();
+		await this.getWikiConfig();
 
 		mw.hook( 'infringementAssistant.preload' ).fire();
 		mw.util.addCSS( iaStyles );

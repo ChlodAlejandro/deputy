@@ -4,23 +4,36 @@ import unwrapWidget from '../../../util/unwrapWidget';
 import type CopyrightProblemsListing from '../models/CopyrightProblemsListing';
 import removeElement from '../../../util/removeElement';
 import renderWikitext from '../../../wiki/util/renderWikitext';
+import { CopyrightProblemsResponse } from '../models/CopyrightProblemsResponse';
 
 /**
  *
  */
 export default class ListingResponsePanel extends EventTarget {
 
-	// TODO: l10n
-	// Sorted by frequency.
-	// https://gist.github.com/ChlodAlejandro/33d2e98be1f69b90d9bbd43e22e694d3
-	static readonly responses = [
-		'cleaned', 'no', 'deletedcv', 'histpurge', 'user', 'where', 'unsure', 'deletedcup',
-		'relist', 'resolved', 'redirect', 'deletedother', 'move', 'viable', 'backwardsattributed',
-		'blanked', 'deferred', 'ticket', 'backwards', 'purged', 'OTRS', 'unverified'
-	];
-	static readonly nonClosingResponses = [
-		'deferred', 'OTRS', 'unverified', 'viable'
-	];
+	/**
+	 * @return A set of possible copyright problems responses.
+	 */
+	static get responses(): CopyrightProblemsResponse[] {
+		return window.InfringementAssistant.wikiConfig.ia.responses.get();
+	}
+
+	/**
+	 *
+	 * @param response
+	 * @param locale
+	 * @return The given response for the given locale
+	 */
+	static getResponseLabel( response: CopyrightProblemsResponse, locale?: string ) {
+		if ( !locale ) {
+			locale = window.deputyLang ?? mw.config.get( 'wgUserLanguage' );
+		}
+		const locale1 = locale.replace( /-.*$/g, '' );
+
+		return typeof response.label === 'string' ?
+			response.label :
+			( response.label[ locale ] ?? response.label[ locale1 ] ?? response.label[ 0 ] );
+	}
 
 	originLink: HTMLElement;
 	listing: CopyrightProblemsListing;
@@ -58,13 +71,11 @@ export default class ListingResponsePanel extends EventTarget {
 			label: mw.msg( 'deputy.ia.listing.re.label' ),
 			disabled: true
 		} ];
-		for ( const response of ListingResponsePanel.responses ) {
+		for ( const responseId in ListingResponsePanel.responses ) {
+			const response = ListingResponsePanel.responses[ responseId ];
 			options.push( {
-				data: response,
-				// The list is long, but you can easily guess the values.
-				// See the `responses` static variable for possible suffixes.
-				// eslint-disable-next-line mediawiki/msg-doc
-				label: mw.message( 'deputy.ia.listing.re.' + response ).plain()
+				data: responseId,
+				label: ListingResponsePanel.getResponseLabel( response )
 			} );
 		}
 

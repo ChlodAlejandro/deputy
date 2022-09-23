@@ -179,6 +179,15 @@ export default class WikiConfiguration extends ConfigurationBase {
 				type: 'page'
 			}
 		} ),
+		/**
+		 * @see {@link CopyrightProblemsListing#articleCvRegex}
+		 */
+		listingWikitextMatch: new Setting<string, string>( {
+			defaultValue: null,
+			displayOptions: {
+				type: 'code'
+			}
+		} ),
 		responses: new Setting<CopyrightProblemsResponse[], CopyrightProblemsResponse[]>( {
 			...Setting.basicSerializers,
 			defaultValue: null,

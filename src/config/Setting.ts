@@ -185,6 +185,13 @@ export default class Setting<SerializedType, DeserializedType> {
 	}
 
 	/**
+	 * @return `true` if `this.value` is not null or undefined.
+	 */
+	ok(): boolean {
+		return this.value != null;
+	}
+
+	/**
 	 * @return The current value of this setting.
 	 */
 	get(): DeserializedType {

@@ -14,8 +14,12 @@ import MwApi from '../../../MwApi';
  */
 export default class CopyrightProblemsPage {
 
-	// Loaded later on.
-	static rootPage = new mw.Title( 'Special:BlankPage' );
+	/**
+	 * @return See {@link WikiConfiguration#ia}.rootPage.
+	 */
+	static get rootPage() {
+		return window.InfringementAssistant.wikiConfig.ia.rootPage.get();
+	}
 
 	/**
 	 * @return The title of the current copyright problems subpage.

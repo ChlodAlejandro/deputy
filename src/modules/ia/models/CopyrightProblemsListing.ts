@@ -41,8 +41,22 @@ type CopyrightProblemsListingData =
  */
 export default class CopyrightProblemsListing {
 
-	// TODO: l10n
-	static articleCvRegex = /^(\*\s*)?(?:\{\{anchor\|(.+)}}\[\[\2]]|\[\[([^|]*?)]])/g;
+	/**
+	 * Responsible for determining listings on a page. This method allows for full-metadata
+	 * listing detection, and makes the process of detecting a given listing much more precise.
+	 *
+	 * This regular expression must catch three groups:
+	 * - $1 - The initial `* `, used to keep the correct number of whitespace between parts.
+	 * - $2 - The page title, ONLY IF the page is listed with an `article-cv`-like template
+	 * - $3 - The page title, ONLY IF the page is a bare link to another page and does not use
+	 *        `article-cv`.
+	 *
+	 *
+	 * @return A regular expression.
+	 */
+	static get articleCvRegex(): RegExp {
+		return new RegExp( window.InfringementAssistant.wikiConfig.ia.listingWikitextMatch.get() );
+	}
 
 	/**
 	 * Gets the page title of the listing page. This is used in `getListing` and
