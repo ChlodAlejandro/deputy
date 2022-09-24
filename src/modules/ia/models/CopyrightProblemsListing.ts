@@ -175,7 +175,7 @@ export default class CopyrightProblemsListing {
 				plainlinks: plainlinks as HTMLSpanElement
 			};
 		} catch ( e ) {
-			console.error( "Couldn't parse listing. Might be malformed?", e, el );
+			console.warn( "Couldn't parse listing. Might be malformed?", e, el );
 			return false;
 		}
 	}
@@ -234,7 +234,7 @@ export default class CopyrightProblemsListing {
 				element: el as HTMLAnchorElement
 			};
 		} catch ( e ) {
-			console.error( "Couldn't parse listing. Might be malformed?", e, el );
+			console.warn( "Couldn't parse listing. Might be malformed?", e, el );
 			return false;
 		}
 	}

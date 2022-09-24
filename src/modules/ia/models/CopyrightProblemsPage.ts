@@ -202,19 +202,17 @@ export default class CopyrightProblemsPage {
 		const listingPage = this.main ? CopyrightProblemsPage.getCurrentListingPage() : this.title;
 
 		await this.tryListingAppend(
-			`\n* {{subst:article-cv|1=${
-				page.getPrefixedText()
-			}}}${
-				comments ? ' ' + comments : ''
-			} ~~~~`,
+			mw.format(
+				window.InfringementAssistant.wikiConfig.ia.listingWikitext.get(),
+				page.getPrefixedText(),
+				comments || ''
+			).replace( /(\s){2,}/g, '$1' ),
 			decorateEditSummary(
-				`Adding listing for [[${
-					listingPage.getPrefixedText()
-				}#${
+				mw.msg(
+					'deputy.ia.content.listing',
+					listingPage.getPrefixedText(),
 					page.getPrefixedText()
-				}|${
-					page.getPrefixedText()
-				}]]`
+				)
 			)
 		);
 	}

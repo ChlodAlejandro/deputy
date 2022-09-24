@@ -19,12 +19,8 @@ export default async function renderWikitext(
 		preview: true,
 		disableeditsection: true
 	}, options ) ).then( ( data ) => {
-		const str = data.parse.text;
-
-		if ( data.parse.parsedsummary ) {
-			Object.assign( str, { summary: data.parse.parsedsummary } );
-		}
-
-		return str;
+		return Object.assign( data.parse.text, {
+			summary: data.parse.parsedsummary
+		} );
 	} );
 }

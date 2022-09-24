@@ -168,6 +168,8 @@ export default class ListingResponsePanel extends EventTarget {
 					false
 				);
 				const dd = <dd dangerouslySetInnerHTML={this.previewPanel.innerHTML} />;
+				dd.querySelectorAll( '.deputy' )
+					.forEach( ( v : HTMLElement ) => removeElement( v ) );
 
 				// Try to insert at an existing list for better spacing.
 				if ( this.element.previousElementSibling.tagName === 'DL' ) {
@@ -224,29 +226,40 @@ export default class ListingResponsePanel extends EventTarget {
 				this.previewPanel.innerHTML = cpcContent.innerHTML;
 			}
 
-			// Make all anchor links open in a new tab (prevents exit navigation)
-			this.previewPanel.querySelectorAll( 'a' )
-				.forEach( ( el: HTMLElement ) => {
-					el.setAttribute( 'target', '_blank' );
-					el.setAttribute( 'rel', 'noopener' );
-				} );
-
 			// Infuse collapsibles
 			( $( this.previewPanel ).find( '.mw-collapsible' ) as any )
-				.makeCollapsible();
+				.makeCollapsible?.();
 			$( this.previewPanel ).find( '.collapsible' )
 				.each( ( i, e ) => {
-					( $( e ) as any ).makeCollapsible( {
+					( $( e ) as any ).makeCollapsible?.( {
 						collapsed: e.classList.contains( 'collapsed' )
 					} );
 				} );
 
 			// Add in "summary" row.
-			this.previewPanel.insertAdjacentElement( 'afterbegin', <div style={{
-				fontSize: '0.9em'
-			}}>
-				Summary: <i>({this.getEditSummary()})</i>
-			</div> );
+			this.previewPanel.insertAdjacentElement(
+				'afterbegin',
+				<div class="deputy" style={ {
+					fontSize: '0.9em',
+					borderBottom: '1px solid #c6c6c6',
+					marginBottom: '0.5em',
+					paddingBottom: '0.5em'
+				} }>
+					Summary: <i>(<span
+						class="mw-content-text"
+						dangerouslySetInnerHTML={ data.summary }
+					/>)</i>
+				</div>
+			);
+
+			// Make all anchor links open in a new tab (prevents exit navigation)
+			this.previewPanel.querySelectorAll( 'a' )
+				.forEach( ( el: HTMLElement ) => {
+					if ( el.hasAttribute( 'href' ) ) {
+						el.setAttribute( 'target', '_blank' );
+						el.setAttribute( 'rel', 'noopener' );
+					}
+				} );
 		} );
 	}
 

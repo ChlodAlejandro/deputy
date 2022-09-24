@@ -191,6 +191,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 
 	public readonly cci = {
 		enabled: new Setting<boolean, boolean>( {
+			defaultValue: false,
 			displayOptions: { type: 'checkbox' }
 		} ),
 		rootPage: new Setting<string, mw.Title>( {
@@ -203,12 +204,14 @@ export default class WikiConfiguration extends ConfigurationBase {
 
 	public readonly ante = {
 		enabled: new Setting<boolean, boolean>( {
+			defaultValue: false,
 			displayOptions: { type: 'checkbox' }
 		} )
 	};
 
 	public readonly ia = {
 		enabled: new Setting<boolean, boolean>( {
+			defaultValue: false,
 			displayOptions: { type: 'checkbox' }
 		} ),
 		rootPage: new Setting<string, mw.Title>( {
@@ -218,7 +221,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 			displayOptions: { type: 'page' }
 		} ),
 		subpageFormat: new Setting<string, string>( {
-			defaultValue: null,
+			defaultValue: 'YYYY MMMM D',
 			displayOptions: { type: 'text' }
 		} ),
 		preload: new Setting<string, string>( {
@@ -226,19 +229,23 @@ export default class WikiConfiguration extends ConfigurationBase {
 			defaultValue: null,
 			displayOptions: { type: 'page' }
 		} ),
+		listingWikitext: new Setting<string, string>( {
+			defaultValue: '* [[$1]] $2 ~~~~',
+			displayOptions: { type: 'code' }
+		} ),
 		/**
 		 * @see {@link CopyrightProblemsListing#articleCvRegex}
 		 */
 		listingWikitextMatch: new Setting<string, string>( {
-			defaultValue: null,
+			defaultValue: '(\\*\\s*)?\\[\\[([^\\]]+)\\]\\]',
 			displayOptions: { type: 'code' }
 		} ),
 		hideTemplate: new Setting<string, string>( {
-			defaultValue: null,
+			defaultValue: '<div style="display: none" data-copyvio>',
 			displayOptions: { type: 'code' }
 		} ),
 		hideTemplateBottom: new Setting<string, string>( {
-			defaultValue: null,
+			defaultValue: '</div>',
 			displayOptions: { type: 'code' }
 		} ),
 		responses: new Setting<CopyrightProblemsResponse[], CopyrightProblemsResponse[]>( {
@@ -297,7 +304,11 @@ export default class WikiConfiguration extends ConfigurationBase {
 				WikiConfiguration.optionKey,
 				// Use `liveWikiConfig`, since this contains the compressed version and is more
 				// bandwidth-friendly.
-				liveWikiConfig
+				JSON.stringify( {
+					title: fromWiki.title,
+					editable: fromWiki.editable,
+					wt: liveWikiConfig
+				} )
 			).then( () => {
 				// Only mark outdated after saving, so we don't indirectly cause a save operation
 				// to cancel.

@@ -13,4 +13,7 @@ export default function (): void {
 	( mw as any ).jqueryMsg.HtmlEmitter.prototype.MediaWiki =
 		( mw as any ).jqueryMsg.HtmlEmitter.prototype.int;
 
+	( mw as any ).jqueryMsg.HtmlEmitter.prototype.if = function ( nodes: string[] ) {
+		return nodes[ 0 ] ? nodes[ 1 ] : nodes[ 2 ];
+	};
 }

@@ -111,7 +111,10 @@ export default class InfringementAssistant extends DeputyModule {
 	async init(): Promise<void> {
 		if (
 			CopyrightProblemsPage.isListingPage() &&
-			[ 'view', 'diff' ].indexOf( mw.config.get( 'wgAction' ) ) !== -1
+			[ 'view', 'diff' ].indexOf( mw.config.get( 'wgAction' ) ) !== -1 &&
+			// Configured
+			this.wikiConfig.ia.listingWikitextMatch.get() != null &&
+			this.wikiConfig.ia.responses.get() != null
 		) {
 			this.session = new CopyrightProblemsSession();
 			mw.hook( 'wikipage.content' ).add( ( el: Element[] ) => {

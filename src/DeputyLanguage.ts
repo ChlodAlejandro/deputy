@@ -1,4 +1,5 @@
 import { DeputyResources } from './DeputyResources';
+import cloneRegex from './util/cloneRegex';
 
 /**
  * Handles internationalization and localization for Deputy and sub-modules.
@@ -39,6 +40,7 @@ export default class DeputyLanguage {
 				mw.messages.set( key, langData[ key ] );
 			}
 		} catch ( e ) {
+			console.error( e );
 			mw.notify(
 				// No languages to fall back on. Do not translate this string.
 				'Deputy: Requested language page is not a valid JSON file.',
@@ -49,6 +51,10 @@ export default class DeputyLanguage {
 			for ( const key in fallback ) {
 				mw.messages.set( key, ( fallback as Record<string, string> )[ key ] );
 			}
+		}
+
+		if ( lang !== mw.config.get( 'wgUserLanguage' ) ) {
+			await DeputyLanguage.loadSecondary();
 		}
 	}
 
@@ -78,6 +84,52 @@ export default class DeputyLanguage {
 				new URL( mw.util.wikiScript( 'index' ), window.location.href )
 			).toString()
 		).then( () => true, () => null );
+	}
+
+	/**
+	 * There are times when the user interface language do not match the wiki content
+	 * language. Since Deputy's edit summary and content strings are found in the
+	 * i18n files, however, there are cases where the wrong language would be used.
+	 *
+	 * This solves this problem by manually overriding content-specific i18n keys with
+	 * the correct language. By default, all keys that match `deputy.*.content.**` get
+	 * overridden.
+	 *
+	 * There are no fallbacks for this. If it fails, the user interface language is
+	 * used anyway. In the event that the user interface language is not English,
+	 * this will cause awkward situations. Whether or not something should be done to
+	 * catch this specific edge case will depend on how frequent it happens.
+	 *
+	 * @param locale
+	 * @param match
+	 */
+	static async loadSecondary(
+		locale = mw.config.get( 'wgContentLanguage' ),
+		match = /^deputy\.(?:[^.]+)?\.content\./g
+	) {
+		// The loaded language resource file. Forced to `null` if using English, since English
+		// is our fallback language.
+		const langResource = locale === 'en' ? null :
+			await DeputyResources.loadResource( `i18n/${module}/${locale}.json` )
+				.catch( () => {
+					// Could not find requested language file.
+					return null;
+				} );
+		if ( !langResource ) {
+			return;
+		}
+
+		try {
+			const langData = JSON.parse( langResource );
+			for ( const key in langData ) {
+				if ( cloneRegex( match ).test( key ) ) {
+					mw.messages.set( key, langData[ key ] );
+				}
+			}
+		} catch ( e ) {
+			// Silent failure.
+			console.error( 'Deputy: Requested language page is not a valid JSON file.', e );
+		}
 	}
 
 }

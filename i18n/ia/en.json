@@ -1,9 +1,10 @@
 {
-    "deputy.ia.content.respond": "Responding to [[$1#$2|$1]]",
+    "deputy.ia.content.respond": "Responding to [[$1#$2|$2]]",
     "deputy.ia.content.close": "-1) (Responding to [[$1#$2|$2]]",
+    "deputy.ia.content.listing": "Adding listing for [[$1#$2|$2]]",
+    "deputy.ia.content.listingComment": "from $1. $2",
     "deputy.ia.content.hideAll": "Hiding page content due to a suspected or complicated copyright issue",
     "deputy.ia.content.hide": "Hiding sections [[$1#$2|$3]] to [[$1#$4|$5]] for suspected or complicated copyright issues",
-    "deputy.ia.content.listingComment": "from $1. $2",
 
     "deputy.ia.listing.respondPre": "[",
     "deputy.ia.listing.respond": "respond",

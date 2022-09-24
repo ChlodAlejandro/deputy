@@ -37,7 +37,7 @@ export default class WikiAttributionNotices {
 	/**
 	 * An object mapping all supported attribution notice templates to their template pages titles.
 	 *
-	 * TODO: l10n - Add ability to override template names/disable templates.
+	 * TODO: ANTE l10n - Add ability to override template names/disable templates.
 	 */
 	static attributionNoticeTemplates: Record<SupportedAttributionNoticeType, mw.Title>;
 	/**
