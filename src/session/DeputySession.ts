@@ -48,6 +48,14 @@ export default class DeputySession {
 		// Check if there is an active session.
 		const session = await this.getSession();
 
+		// Ensure wiki config is loaded
+		const wikiConfig = await window.deputy.getWikiConfig();
+
+		if ( !wikiConfig.cci.enabled.get() || wikiConfig.cci.rootPage.get() == null ) {
+			// Not configured. Exit.
+			return;
+		}
+
 		if ( session ) {
 			const viewingCurrent =
 				// Page is being viewed.

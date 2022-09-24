@@ -1,4 +1,7 @@
 {
+    "deputy.ante.content.modify": "Modifying content attribution notices.",
+    "deputy.ante.content.add": "Adding content attribution notices.",
+
     "deputy.ante.edit": "Modify content attribution notices for this page",
     "deputy.ante.add": "Add a notice",
     "deputy.ante.mergeAll": "Merge all notices",

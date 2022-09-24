@@ -44,7 +44,7 @@ export default class ListingResponsePanel extends EventTarget {
 	previewPanel: HTMLElement;
 	submitButton: any;
 
-	prefill: string;
+	prefill: CopyrightProblemsResponse;
 	comments: string;
 
 	readonly reloadPreviewThrottled = ( mw.util as any ).throttle( this.reloadPreview, 500 );
@@ -61,6 +61,21 @@ export default class ListingResponsePanel extends EventTarget {
 	}
 
 	/**
+	 * @return The edit summary for this edit.
+	 */
+	getEditSummary(): string {
+		return this.prefill?.closing === false ? mw.msg(
+			'deputy.ia.content.respond',
+			this.listing.listingPage.title.getPrefixedText(),
+			this.listing.title.getPrefixedText()
+		) : mw.msg(
+			'deputy.ia.content.close',
+			this.listing.listingPage.title.getPrefixedText(),
+			this.listing.title.getPrefixedText()
+		);
+	}
+
+	/**
 	 * Renders the response dropdown.
 	 *
 	 * @return An unwrapped OOUI DropdownInputWidget.
@@ -74,7 +89,7 @@ export default class ListingResponsePanel extends EventTarget {
 		for ( const responseId in ListingResponsePanel.responses ) {
 			const response = ListingResponsePanel.responses[ responseId ];
 			options.push( {
-				data: responseId,
+				data: `${responseId}`,
 				label: ListingResponsePanel.getResponseLabel( response )
 			} );
 		}
@@ -88,7 +103,7 @@ export default class ListingResponsePanel extends EventTarget {
 		} );
 
 		this.dropdown.on( 'change', ( value: string ) => {
-			this.prefill = value;
+			this.prefill = ListingResponsePanel.responses[ +value ];
 			this.reloadPreviewThrottled();
 		} );
 
@@ -147,7 +162,11 @@ export default class ListingResponsePanel extends EventTarget {
 			this.submitButton.setDisabled( true );
 
 			try {
-				await this.listing.respond( this.toWikitext(), null, false );
+				await this.listing.respond(
+					this.toWikitext(),
+					this.getEditSummary(),
+					false
+				);
 				const dd = <dd dangerouslySetInnerHTML={this.previewPanel.innerHTML} />;
 
 				// Try to insert at an existing list for better spacing.
@@ -191,7 +210,10 @@ export default class ListingResponsePanel extends EventTarget {
 		renderWikitext(
 			wikitext,
 			this.listing.listingPage.title.getPrefixedText(),
-			{ pst: true }
+			{
+				pst: true,
+				summary: this.getEditSummary()
+			}
 		).then( ( data ) => {
 			this.previewPanel.innerHTML = data;
 			const cpcContent = this.previewPanel.querySelector(
@@ -218,6 +240,13 @@ export default class ListingResponsePanel extends EventTarget {
 						collapsed: e.classList.contains( 'collapsed' )
 					} );
 				} );
+
+			// Add in "summary" row.
+			this.previewPanel.insertAdjacentElement( 'afterbegin', <div style={{
+				fontSize: '0.9em'
+			}}>
+				Summary: <i>({this.getEditSummary()})</i>
+			</div> );
 		} );
 	}
 
@@ -233,7 +262,7 @@ export default class ListingResponsePanel extends EventTarget {
 		}
 
 		return this.prefill ?
-			`{{subst:CPC|1=${this.prefill}|2=${this.comments ?? ''}}}` :
+			mw.format( this.prefill.template, this.listing.title, this.comments ?? '' ) :
 			this.comments;
 	}
 

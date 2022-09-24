@@ -1,4 +1,4 @@
-import normalizeTitle from './normalizeTitle';
+import normalizeTitle, { TitleLike } from './normalizeTitle';
 
 /**
  * Gets the URL of a permanent link page.
@@ -10,7 +10,7 @@ import normalizeTitle from './normalizeTitle';
  */
 export default function (
 	revid: number,
-	page: string | mw.Title,
+	page: TitleLike,
 	includeCurrentParams = false
 ): string {
 	const url = new URL( window.location.href );

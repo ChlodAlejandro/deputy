@@ -1,5 +1,5 @@
 import getPageTitle from './util/getPageTitle';
-import normalizeTitle from './util/normalizeTitle';
+import normalizeTitle, { TitleLike } from './util/normalizeTitle';
 
 /**
  * Base class for Deputy cases. Extended into {@link DeputyCasePage} to refer to an
@@ -7,9 +7,12 @@ import normalizeTitle from './util/normalizeTitle';
  */
 export default class DeputyCase {
 
-	static rootPage = new mw.Title(
-		'Wikipedia:Contributor copyright investigations'
-	);
+	/**
+	 * @return the title of the case page
+	 */
+	static get rootPage(): mw.Title {
+		return window.deputy.wikiConfig.cci.rootPage.get();
+	}
 
 	/**
 	 * Checks if the current page (or a supplied page) is a case page (subpage of
@@ -18,7 +21,7 @@ export default class DeputyCase {
 	 * @param title The title of the page to check.
 	 * @return `true` if the page is a case page.
 	 */
-	static isCasePage( title?: string | mw.Title ): boolean {
+	static isCasePage( title?: TitleLike ): boolean {
 		return normalizeTitle( title ).getPrefixedDb()
 			.startsWith( this.rootPage.getPrefixedDb() + '/' );
 	}
@@ -29,12 +32,12 @@ export default class DeputyCase {
 	 * @param title The title of the case page
 	 * @return The case name, or `null` if the title was not a valid case page
 	 */
-	static getCaseName?( title?: string | mw.Title ): string {
-		title = normalizeTitle( title );
-		if ( !this.isCasePage( title ) ) {
+	static getCaseName?( title?: TitleLike ): string {
+		const _title = normalizeTitle( title );
+		if ( !this.isCasePage( _title ) ) {
 			return null;
 		} else {
-			return title.getPrefixedText().replace(
+			return _title.getPrefixedText().replace(
 				this.rootPage.getPrefixedText() + '/', ''
 			);
 		}

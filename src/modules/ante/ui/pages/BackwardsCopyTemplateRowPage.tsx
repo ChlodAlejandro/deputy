@@ -173,7 +173,7 @@ function initBackwardsCopyTemplateRowPage() {
 						this.backwardsCopyTemplateRow.year
 				);
 
-			// TODO: l10n
+			// TODO: ANTE l10n
 			const authorRegex = /(.+?, (?:[A-Z]\.\s?)*)(?:(?:&amp;|[&;]|[,;] (?:&amp;|[&;])?)\s*|$)/g;
 			const authors = matchAll(
 				authorRegex,
@@ -261,7 +261,7 @@ function initBackwardsCopyTemplateRowPage() {
 						} else if ( value.length > 1 ) {
 							this.backwardsCopyTemplateRow.author = null;
 							this.backwardsCopyTemplateRow.authorlist =
-								// TODO: l10n
+								// TODO: ANTE l10n
 								value.map( ( v ) => v.data ).join( '; ' );
 						} else {
 							this.backwardsCopyTemplateRow.authorlist = null;

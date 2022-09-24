@@ -383,7 +383,11 @@ export default class CopyrightProblemsListing {
 	 * @param summary
 	 * @param indent
 	 */
-	async respond( message: string, summary?: string, indent = false ): Promise<void> {
+	async respond(
+		message: string,
+		summary?: string,
+		indent = false
+	): Promise<void> {
 		const newWikitext = await this.addComment( message, indent );
 
 		await MwApi.action.postWithEditToken( {
@@ -393,15 +397,12 @@ export default class CopyrightProblemsListing {
 			utf8: 'true',
 			title: this.listingPage.title.getPrefixedText(),
 			text: newWikitext,
-			// TODO: l10n
 			summary: decorateEditSummary(
-				summary ?? `Responding to [[${
-					this.listingPage.title.getPrefixedText()
-				}#${
+				summary ?? mw.msg(
+					'deputy.ia.content.respond',
+					this.listingPage.title.getPrefixedText(),
 					this.title.getPrefixedText()
-				}|${
-					this.title.getPrefixedText()
-				}]]`
+				)
 			)
 		} );
 		await this.listingPage.getWikitext( true );

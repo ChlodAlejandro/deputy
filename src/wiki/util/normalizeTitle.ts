@@ -1,3 +1,5 @@
+export type TitleLike = string | mw.Title | { namespace: number, title: string };
+
 /**
  * Normalizes the title into an mw.Title object based on either a given title or
  * the current page.
@@ -6,13 +8,16 @@
  * @return {mw.Title} A mw.Title object.
  * @private
  */
-export default function normalizeTitle( title?: string | mw.Title ): mw.Title {
+export default function normalizeTitle( title?: TitleLike ): mw.Title {
 	if ( title instanceof mw.Title ) {
 		return title;
 	} else if ( typeof title === 'string' ) {
 		return new mw.Title( title );
 	} else if ( title == null ) {
+		// Null check goes first to avoid accessing properties of `null`.
 		return new mw.Title( mw.config.get( 'wgPageName' ) );
+	} else if ( title.title != null && title.namespace != null ) {
+		return new mw.Title( title.title, title.namespace );
 	} else {
 		return null;
 	}

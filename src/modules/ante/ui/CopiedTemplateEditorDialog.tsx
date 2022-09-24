@@ -477,11 +477,13 @@ function initCopiedTemplateEditorDialog() {
 						utf8: 'true',
 						title: this.parsoid.getPage(),
 						text: await this.parsoid.toWikitext(),
-						// TODO: l10n
-						summary: decorateEditSummary( `${
-							this.parsoid.originalCount > 0 ?
-								'Modifying' : 'Adding'
-						} content attribution notices` )
+						summary: decorateEditSummary(
+							mw.msg(
+								this.parsoid.originalCount > 0 ?
+									'deputy.ante.content.modify' :
+									'deputy.ante.content.add'
+							)
+						)
 					} ).catch( errorToOO );
 				}, this );
 

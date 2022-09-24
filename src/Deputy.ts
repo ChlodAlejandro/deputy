@@ -171,6 +171,9 @@ class Deputy {
 		console.log( 'Loaded!' );
 
 		mw.hook( 'deputy.load' ).fire( this );
+
+		// Asynchronously reload wiki configuration.
+		this.wikiConfig.update().catch( () => { /* silently fail */ } );
 	}
 
 	/**

@@ -1,6 +1,6 @@
 import '../../../types';
 import { blockExit, unblockExit } from '../../../util/blockExit';
-import normalizeTitle from '../../../wiki/util/normalizeTitle';
+import normalizeTitle, { TitleLike } from '../../../wiki/util/normalizeTitle';
 import MwApi from '../../../MwApi';
 import getObjectValues from '../../../util/getObjectValues';
 import { h } from 'tsx-dom';
@@ -10,7 +10,7 @@ import decorateEditSummary from '../../../wiki/util/decorateEditSummary';
 import { TripleCompletionAction } from '../../shared/CompletionAction';
 
 export interface SinglePageWorkflowDialogData {
-	page: string | mw.Title;
+	page: TitleLike;
 	revid: number;
 }
 
@@ -438,13 +438,13 @@ function initSinglePageWorkflowDialog() {
 		 */
 		async hideContent(): Promise<void> {
 			let finalPageContent;
+			const wikiConfig = ( await window.InfringementAssistant.getWikiConfig() ).ia;
 
-			// TODO: l10n
-			const copyvioWikitext = `{{subst:copyvio|url=${
-				this.data.fromUrls ? this.data.sourceUrls[ 0 ] : this.data.sourceText
-			}|fullpage=${
+			const copyvioWikitext = mw.format(
+				wikiConfig.hideTemplate.get(),
+				this.data.fromUrls ? this.data.sourceUrls[ 0 ] : this.data.sourceText,
 				this.data.entirePage ? 'true' : 'false'
-			}}}`;
+			);
 
 			if ( this.data.entirePage ) {
 				finalPageContent = copyvioWikitext + '\n' + this.wikitext;
@@ -453,7 +453,7 @@ function initSinglePageWorkflowDialog() {
 					this.wikitext.slice( 0, this.data.startOffset ) +
 					copyvioWikitext + '\n' +
 					this.wikitext.slice( this.data.startOffset, this.data.endOffset ) +
-					'{{subst:copyvio/bottom}}\n' +
+					wikiConfig.hideTemplateBottom.get() + '\n' +
 					this.wikitext.slice( this.data.endOffset );
 			}
 
@@ -461,23 +461,17 @@ function initSinglePageWorkflowDialog() {
 				action: 'edit',
 				title: this.page.getPrefixedText(),
 				text: finalPageContent,
-				// TODO: l10n
 				summary: decorateEditSummary(
-					this.data.entirePage ?
-						'Hiding page content due to a suspected or complicated copyright issue' :
-						`Hiding sections [[${
-							this.page.getPrefixedText()
-						}#${
-							this.data.startSection.anchor
-						}|${
-							this.data.startSection.line
-						}]] to [[${
-							this.page.getPrefixedText()
-						}#${
-							this.data.endSection.anchor
-						}|${
-							this.data.endSection.line
-						}]] for suspected or complicated copyright issues`
+					mw.msg(
+						this.data.entirePage ?
+							'deputy.ia.content.hideAll' :
+							'deputy.ia.content.hide',
+						this.page.getPrefixedText(),
+						this.data.startSection.anchor,
+						this.data.startSection.line,
+						this.data.endSection.anchor,
+						this.data.endSection.line
+					)
 				)
 			} );
 		}
@@ -486,20 +480,19 @@ function initSinglePageWorkflowDialog() {
 		 * Posts a listing to the current copyright problems listing page.
 		 */
 		async postListing(): Promise<void> {
-			// TODO: l10n
 			const from =
 				this.data.fromUrls ?
-					this.data.sourceUrls.map(
-						( v, i ) => `${
-							i === this.data.sourceUrls.length - 1 && i > 0 ? 'and ' : ''
-						}[${v}]`
-					).join( this.data.sourceUrls.length > 2 ? ', ' : ' ' ) :
+					this.data.sourceUrls
+						.map( ( v ) => `[${v}]` )
+						.join(
+							this.data.sourceUrls.length > 2 ?
+								mw.msg( 'deputy.comma-separator' ) :
+								' '
+						) :
 					this.data.sourceText;
-			const comments = `${
-				( from || '' ).trim().length !== 0 ? 'from ' + from + '. ' : ''
-			}${
-				this.data.notes ?? ''
-			}`;
+			const comments = ( from || '' ).trim().length !== 0 ?
+				mw.format( mw.msg( 'deputy.ia.content.listingComment', from, this.data.notes ) ) :
+				this.data.notes ?? '';
 
 			await CopyrightProblemsPage.getCurrent()
 				.postListing( this.page, comments );

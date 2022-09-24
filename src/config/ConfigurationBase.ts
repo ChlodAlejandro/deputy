@@ -7,7 +7,6 @@ import { PromiseOrNot } from '../types';
 export default abstract class ConfigurationBase {
 
 	static readonly configVersion = 1;
-	static readonly optionKey = 'userjs-deputy';
 
 	// eslint-disable-next-line jsdoc/require-returns-check
 	/**

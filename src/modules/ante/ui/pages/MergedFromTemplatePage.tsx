@@ -177,7 +177,7 @@ function initMergedFromTemplatePage() {
 					value: this.mergedFromTemplate.afd || '',
 					placeholder: mw.msg( 'deputy.ante.mergedFrom.afd.placeholder' ),
 					validate: ( title: string ) => {
-						// TODO: l10n
+						// TODO: ANTE l10n
 						return title.trim().length === 0 || title.startsWith(
 							new mw.Title( 'Articles for deletion/', nsId( 'wikipedia' ) )
 								.toText()

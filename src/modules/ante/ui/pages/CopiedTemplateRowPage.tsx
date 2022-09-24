@@ -428,7 +428,6 @@ function initCopiedTemplateRowPage() {
 					try {
 						// Check if the diff URL is from this wiki.
 						if (
-							// TODO: l10n
 							new URL(
 								this.inputs.diff.getValue(), window.location.href
 							).host === window.location.host
