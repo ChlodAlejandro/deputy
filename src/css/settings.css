@@ -9,3 +9,53 @@
 .dp-mb {
 	margin-bottom: 1em;
 }
+
+.deputy-about {
+	display: flex;
+}
+
+.deputy-about > :first-child {
+	flex: 0;
+}
+
+.deputy-about > :first-child > img {
+	height: 5em;
+	width: auto;
+}
+
+.ltr .deputy-about > :first-child {
+	margin-right: 1em;
+}
+
+.rtl .deputy-about > :first-child {
+	margin-left: 1em;
+}
+
+.deputy-about > :nth-child(2) {
+	flex: 1;
+}
+
+.deputy-about > :nth-child(2) > :first-child {
+	font-weight: bold;
+	font-size: 2em;
+}
+
+.deputy-about > :nth-child(2) > :not(:first-child) {
+	margin-top: 0.5em;
+}
+
+.ltr .deputy-about > :nth-child(2) > :last-child > :not(:last-child) {
+	margin-right: 0.5em;
+}
+
+.rtl .deputy-about > :nth-child(2) > :last-child > :not(:last-child) {
+	margin-left: 0.5em;
+}
+
+.ltr .deputy-about > :nth-child(2) > :last-child {
+	text-align: right;
+}
+
+.rtl .deputy-about > :nth-child(2) > :last-child {
+	text-align: left;
+}

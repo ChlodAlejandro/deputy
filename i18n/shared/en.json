@@ -1,5 +1,6 @@
 {
     "deputy.name": "Deputy",
+    "deputy.description": "Copyright cleanup and case processing tool for Wikipedia.",
 
     "deputy.ia": "Infringement Assistant",
     "deputy.ia.short": "I. Assistant",

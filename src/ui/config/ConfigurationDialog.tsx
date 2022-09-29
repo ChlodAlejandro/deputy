@@ -8,6 +8,7 @@ import openWindow from '../../wiki/util/openWindow';
 import deputySettingsEnglish from '../../../i18n/settings/en.json';
 import DeputyLanguage from '../../DeputyLanguage';
 import ConfigurationBase from '../../config/ConfigurationBase';
+import ConfigurationAboutTabPanel from './ConfigurationAboutTabPanel';
 
 interface ConfigurationDialogData {
 	config: ConfigurationBase;
@@ -69,6 +70,9 @@ function initConfigurationDialog() {
 
 			this.layout = new OO.ui.IndexLayout();
 			this.layout.addTabPanels( this.generateGroupLayouts() );
+			if ( this.config instanceof UserConfiguration ) {
+				this.layout.addTabPanels( [ ConfigurationAboutTabPanel() ] );
+			}
 			this.$body.append( this.layout.$element );
 		}
 
