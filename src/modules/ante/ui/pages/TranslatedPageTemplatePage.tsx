@@ -131,7 +131,9 @@ function initTranslatedPageTemplatePage() {
 					}
 				}
 				if ( this.translatedPageTemplate.version != null ) {
-					attributionString += ` as of revision [[:ru:Special:Diff/${
+					attributionString += ` as of revision [[:${
+						this.translatedPageTemplate.lang
+					}:Special:Diff/${
 						this.translatedPageTemplate.version
 					}|${
 						this.translatedPageTemplate.version
