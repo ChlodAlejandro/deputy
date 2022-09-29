@@ -118,7 +118,7 @@ export default class DeputyCasePage extends DeputyCase {
 		const headlineElement = this.parsoid ? el : el.querySelector<HTMLElement>( '.mw-headline' );
 		return /^H\d$/.test( el.tagName ) &&
 			headlineElement != null &&
-			/(Page|Article|Local file|File)s? \d+ to \d+$/.test( headlineElement.innerText );
+			/(Page|Article|Local file|File)s? \d+ (to|through) \d+$/.test( headlineElement.innerText );
 	}
 
 	/**
