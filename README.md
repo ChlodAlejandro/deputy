@@ -29,10 +29,14 @@ choice ([common.js](https://en.wikipedia.org/wiki/Special:MyPage/common.js)) wit
 ```js
 mw.loader.load( "http://localhost:45000/Deputy.js" );
 mw.hook( 'deputy.preload' ).add( function () {
-	// Used to test in a sandbox environment than on the actual CCI pagespace.
-	// Feel free to change the values to fit your sandbox.
-	window.deputy.DeputyCase.rootPage = new mw.Title( 'User:Chlod/Scripts/Deputy/tests' );
-	window.deputy.DeputyCasePage.rootPage = new mw.Title( 'User:Chlod/Scripts/Deputy/tests' );
+	// Replace resource root to load local development assets
+	window.deputy.resourceRoot = { type: "url", url: new URL( "http://localhost:45000/" ) };
+	window.deputy.getWikiConfig().then( function (wikiConfig) {
+		// Used to test in a sandbox environment than on the actual CCI pagespace.
+		// Feel free to change the values to fit your sandbox.
+		wikiConfig.cci.rootPage.set(new mw.Title( 'User:Chlod/Scripts/Deputy/tests' ));
+		wikiConfig.ia.rootPage.set(new mw.Title("User:Chlod/Scripts/Deputy/tests/Problems"));
+	} );
 } );
 ```
 
@@ -45,13 +49,9 @@ of many `any` types may prevent you from knowing when something might break.
 
 ### Live testing
 
-[Pre-alpha releases](https://github.com/ChlodAlejandro/deputy/releases/) are being made available as technical
-demonstrations. You may experiment with these version of Deputy, but keep in mind that they are **extremely unstable**
+Bleeding edge builds of Deputy are always provided through [GitHub Actions](https://github.com/ChlodAlejandro/deputy/actions). You may experiment with these versions of Deputy, but keep in mind that they are **extremely unstable**
 and significant bugs may be found. Nevertheless,
 please [report bugs found](https://github.com/ChlodAlejandro/deputy/issues) so that they may be actioned on.
-
-Starting version v0.1.0 (not yet released), Deputy's browser database will no longer be updated without proper handling
-of breaking changes. This will be the first version to be released on Wikipedia.
 
 ### Automated testing
 
