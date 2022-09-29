@@ -34,8 +34,11 @@ body.rtl .ia-listing-action--bracket:last-child {
 	animation: ia-newResponse 2s ease-out;
 }
 
-.ia-listing-response {
+.ia-listing-response, .ia-listing-new {
 	max-width: 50em;
+}
+
+.ia-listing-response {
 	margin-top: 0.4em;
 	margin-bottom: 0.4em;
 }
@@ -54,7 +57,7 @@ body.rtl .ia-listing-action--bracket:last-child {
 	margin-bottom: 8px;
 }
 
-.ia-listing-response--preview {
+.ia-listing--preview {
 	box-sizing: border-box;
 	background: #f6f6f6;
 	padding: 0.5em 1em;
@@ -62,7 +65,7 @@ body.rtl .ia-listing-action--bracket:last-child {
 }
 
 /** "Preview" */
-.ia-listing-response--preview::before {
+.ia-listing--preview::before {
 	content: attr(data-label);
 	color: #808080;
 	display: block;
@@ -71,6 +74,43 @@ body.rtl .ia-listing-action--bracket:last-child {
 
 .ia-listing-response--submit {
 	text-align: right;
+}
+
+/**
+ * NEW LISTINGS
+ */
+
+.ia-listing-newPanel {
+	margin-top: 0.5em;
+}
+
+.ia-listing-new {
+	display: flex;
+	align-items: end;
+	margin-top: 0.5em;
+	padding: 1em;
+}
+
+.ia-listing-new--field {
+	flex: 1;
+}
+.ia-listing-new--cancel {
+	margin-left: 0.5em;
+}
+
+.ia-batchListing-new {
+	padding: 1em;
+	max-width: 50em;
+}
+
+.ia-batchListing-new--buttons {
+	display: flex;
+	justify-content: end;
+	margin-top: 12px;
+}
+
+.ia-batchListing-new .ia-listing--preview {
+	margin-top: 12px;
 }
 
 /**

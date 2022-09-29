@@ -125,6 +125,7 @@ export default class InfringementAssistant extends DeputyModule {
 				this.session.getListings( el[ 0 ] ).forEach( ( listing ) => {
 					this.session.addListingActionLink( listing );
 				} );
+				this.session.addNewListingsPanel();
 			} );
 		}
 	}

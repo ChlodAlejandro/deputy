@@ -1,4 +1,5 @@
 import CopiedTemplateEditor from './CopiedTemplateEditor';
+import Recents from '../../wiki/Recents';
 
 /**
  * This function handles CTE loading when Deputy isn't present. When Deputy is not
@@ -12,6 +13,7 @@ import CopiedTemplateEditor from './CopiedTemplateEditor';
  */
 ( async ( window: Window & { CopiedTemplateEditor?: CopiedTemplateEditor } ) => {
 
+	Recents.save();
 	window.CopiedTemplateEditor = new CopiedTemplateEditor();
 	await window.CopiedTemplateEditor.preInit();
 

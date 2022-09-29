@@ -52,7 +52,8 @@ export default class DeputyPageSession {
 				'oojs-ui.styles.icons-interactions',
 				'oojs-ui.styles.icons-movement',
 				'oojs-ui.styles.icons-moderation',
-				'oojs-ui.styles.icons-media'
+				'oojs-ui.styles.icons-media',
+				'oojs-ui.styles.icons-editing-citation'
 			], () => {
 				mw.hook( 'wikipage.diff' ).add( async () => {
 					// Attempt to get new revision data *with revision ID*.

@@ -69,6 +69,10 @@
     "deputy.setting.user.ia.onSubmit.nothing": "Do nothing",
     "deputy.setting.user.ia.onSubmit.reload": "Reload the page",
     "deputy.setting.user.ia.onSubmit.redirect": "Redirect to the noticeboard page",
+    "deputy.setting.user.ia.onBatchSubmit.name": "Action on batch listing submit",
+    "deputy.setting.user.ia.onBatchSubmit.description": "When reporting a batch of pages, choose what to do after the \"Report\" button is selected and the pages are reported.",
+    "deputy.setting.user.ia.onBatchSubmit.nothing": "Do nothing",
+    "deputy.setting.user.ia.onBatchSubmit.reload": "Reload the noticeboard page",
 
     "deputy.setting.wiki.cci": "CCI",
 

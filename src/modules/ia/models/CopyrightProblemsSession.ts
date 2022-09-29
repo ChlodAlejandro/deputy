@@ -1,6 +1,9 @@
 import CopyrightProblemsPage from './CopyrightProblemsPage';
 import CopyrightProblemsListing from './CopyrightProblemsListing';
 import ListingActionLink from '../ui/ListingActionLink';
+import equalTitle from '../../../util/equalTitle';
+import swapElements from '../../../util/swapElements';
+import NewCopyrightProblemsListing from '../ui/NewCopyrightProblemsListing';
 
 /**
  * A CopyrightProblemsPage that represents a page that currently exists on a document.
@@ -103,6 +106,85 @@ export default class CopyrightProblemsSession extends CopyrightProblemsPage {
 		} else {
 			baseElement.appendChild( link );
 		}
+	}
+
+	/**
+	 *
+	 */
+	addNewListingsPanel(): void {
+		document.querySelectorAll(
+			'.mw-headline > a, a.external, a.redlink'
+		).forEach( ( el ) => {
+			const href = el.getAttribute( 'href' );
+			const url = new URL( href, window.location.href );
+			if (
+				equalTitle(
+					url.searchParams.get( 'title' ),
+					CopyrightProblemsPage.getCurrentListingPage()
+				) ||
+				url.pathname === mw.util.getUrl(
+					CopyrightProblemsPage.getCurrentListingPage().getPrefixedText()
+				)
+			) {
+				// Crawl backwards, avoiding common inline elements, to see if this is a standalone
+				// line within the rendered text.
+				let currentPivot: Element = el.parentElement;
+
+				while (
+					currentPivot !== null &&
+					[ 'I', 'B', 'SPAN', 'EM', 'STRONG' ].indexOf( currentPivot.tagName ) !== -1
+				) {
+					currentPivot = currentPivot.parentElement;
+				}
+
+				// By this point, current pivot will be a <div>, <p>, or other usable element.
+				if (
+					!el.parentElement.classList.contains( 'mw-headline' ) &&
+					( currentPivot == null ||
+						currentPivot.children.length > 1 )
+				) {
+					return;
+				} else if ( el.parentElement.classList.contains( 'mw-headline' ) ) {
+					// "Edit source" button of an existing section heading.
+					let headingBottom = el.parentElement.parentElement.nextElementSibling;
+					let pos: InsertPosition = 'beforebegin';
+					while (
+						headingBottom != null &&
+						!/^H[123456]$/.test( headingBottom.tagName )
+					) {
+						headingBottom = headingBottom.nextElementSibling;
+					}
+
+					if ( headingBottom == null ) {
+						headingBottom = el.parentElement.parentElement.parentElement;
+						pos = 'beforeend';
+					}
+
+					// Add below today's section header.
+					mw.loader.using( [
+						'oojs-ui-core',
+						'oojs-ui.styles.icons-interactions',
+						'mediawiki.widgets',
+						'mediawiki.widgets.TitlesMultiselectWidget'
+					], () => {
+						// H4
+						headingBottom.insertAdjacentElement(
+							pos,
+							NewCopyrightProblemsListing()
+						);
+					} );
+				} else {
+					mw.loader.using( [
+						'oojs-ui-core',
+						'oojs-ui.styles.icons-interactions',
+						'mediawiki.widgets',
+						'mediawiki.widgets.TitlesMultiselectWidget'
+					], () => {
+						swapElements( el, NewCopyrightProblemsListing() );
+					} );
+				}
+			}
+		} );
 	}
 
 }

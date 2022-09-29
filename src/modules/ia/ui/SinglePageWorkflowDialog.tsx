@@ -8,10 +8,17 @@ import CopyrightProblemsPage from '../models/CopyrightProblemsPage';
 import unwrapWidget from '../../../util/unwrapWidget';
 import decorateEditSummary from '../../../wiki/util/decorateEditSummary';
 import { TripleCompletionAction } from '../../shared/CompletionAction';
+import equalTitle from '../../../util/equalTitle';
 
 export interface SinglePageWorkflowDialogData {
 	page: TitleLike;
-	revid: number;
+	revid?: number;
+	/**
+	 * If `false`, no shadowing options will be provided (hide content only, etc.)
+	 *
+	 * @default true
+	 */
+	shadow?: boolean;
 }
 
 /**
@@ -91,6 +98,12 @@ function initSinglePageWorkflowDialog() {
 		externalLinks: string[];
 		/** Sections in this revision */
 		sections: Section[];
+		/**
+		 * If `false`, no shadowing options will be provided (hide content only, etc.)
+		 *
+		 * @default true
+		 */
+		shadow: boolean;
 
 		/**
 		 * @param config Configuration to be passed to the element.
@@ -100,6 +113,7 @@ function initSinglePageWorkflowDialog() {
 
 			this.page = normalizeTitle( config.page );
 			this.revid = config.revid;
+			this.shadow = config.shadow ?? true;
 
 			const userConfig = window.InfringementAssistant.config;
 			this.data = {
@@ -131,6 +145,18 @@ function initSinglePageWorkflowDialog() {
 				}
 			/>;
 			intro.querySelector( 'a' ).setAttribute( 'target', '_blank' );
+
+			const page = <div
+				class="ia-report-intro"
+				dangerouslySetInnerHTML={
+					mw.message(
+						'deputy.ia.report.page',
+						this.page.getPrefixedText()
+					).parse()
+				}
+			/>;
+			page.querySelector( 'a' ).setAttribute( 'target', '_blank' );
+
 			this.fieldsetLayout = new OO.ui.FieldsetLayout( {
 				items: this.renderFields()
 			} );
@@ -140,6 +166,7 @@ function initSinglePageWorkflowDialog() {
 				framed: false,
 				padded: true,
 				content: [
+					equalTitle( null, this.page ) ? '' : page,
 					intro,
 					this.fieldsetLayout,
 					this.renderSubmitButton()
@@ -172,7 +199,7 @@ function initSinglePageWorkflowDialog() {
 			} );
 
 			return <div class="ia-report-submit">
-				{ unwrapWidget( hideButton ) }
+				{ this.shadow && unwrapWidget( hideButton ) }
 				{ unwrapWidget( submitButton ) }
 			</div>;
 		}
@@ -355,7 +382,10 @@ function initSinglePageWorkflowDialog() {
 				this.data.notes = text;
 			} );
 
-			return getObjectValues( fields );
+			return this.shadow ? getObjectValues( fields ) : [
+				fields.fromUrls, fields.sourceUrls, fields.sourceText,
+				fields.additionalNotes
+			];
 		}
 
 		/**
@@ -480,12 +510,13 @@ function initSinglePageWorkflowDialog() {
 		 * Posts a listing to the current copyright problems listing page.
 		 */
 		async postListing(): Promise<void> {
+			const sourceUrls = this.data.sourceUrls ?? [];
 			const from =
 				this.data.fromUrls ?
-					this.data.sourceUrls
+					sourceUrls
 						.map( ( v ) => `[${v}]` )
 						.join(
-							this.data.sourceUrls.length > 2 ?
+							sourceUrls.length > 2 ?
 								mw.msg( 'deputy.comma-separator' ) :
 								' '
 						) :
@@ -509,12 +540,16 @@ function initSinglePageWorkflowDialog() {
 				process.next( this.postListing() );
 			}
 			if ( action === 'submit' || action === 'hide' ) {
-				process.next( this.hideContent() );
+				if ( this.shadow ) {
+					process.next( this.hideContent() );
+				}
 				process.next( () => {
 					mw.notify(
-						action === 'hide' ?
-							mw.msg( 'deputy.ia.report.success.hide' ) :
-							mw.msg( 'deputy.ia.report.success' ),
+						this.shadow ?
+							mw.msg( 'deputy.ia.report.success.report' ) :
+							( action === 'hide' ?
+								mw.msg( 'deputy.ia.report.success.hide' ) :
+								mw.msg( 'deputy.ia.report.success' ) ),
 						{ type: 'success' }
 					);
 				} );
@@ -523,12 +558,14 @@ function initSinglePageWorkflowDialog() {
 					action === 'hide' ? 'Hide' : 'Submit'
 				) as 'onHide' | 'onSubmit' ].get() ) {
 					case TripleCompletionAction.Reload:
-						window.location.reload();
+						process.next( () => window.location.reload() );
 						break;
 					case TripleCompletionAction.Redirect:
-						window.location.href = mw.util.getUrl(
-							CopyrightProblemsPage.getCurrent().title.getPrefixedText()
-						);
+						process.next( () => {
+							window.location.href = mw.util.getUrl(
+								CopyrightProblemsPage.getCurrent().title.getPrefixedText()
+							);
+						} );
 						break;
 				}
 			}

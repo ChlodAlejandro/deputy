@@ -39,5 +39,18 @@ export default () => <DeputyPageMenuOption[]>[
 				window.open( url, '_blank', 'noopener' );
 			}
 		}
+	},
+	{
+		icon: 'references',
+		label: mw.msg( 'deputy.session.page.iabot' ),
+		action: async ( toolbar ) => {
+			const url = new URL( 'https://iabot.toolforge.org/index.php' );
+			url.searchParams.set( 'page', 'runbotsingle' );
+			url.searchParams.set( 'pagesearch', toolbar.row.title.getPrefixedText() );
+			url.searchParams.set( 'archiveall', 'on' );
+			url.searchParams.set( 'wiki', 'enwiki' );
+			url.searchParams.set( 'reason', mw.msg( 'deputy.session.page.iabot.reason' ) );
+			window.open( url, '_blank', 'noopener' );
+		}
 	}
 ];

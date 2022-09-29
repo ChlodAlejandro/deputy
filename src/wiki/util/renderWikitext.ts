@@ -17,7 +17,8 @@ export default async function renderWikitext(
 		title: title,
 		text: wikitext,
 		preview: true,
-		disableeditsection: true
+		disableeditsection: true,
+		disablelimitreport: true
 	}, options ) ).then( ( data ) => {
 		return Object.assign( data.parse.text, {
 			summary: data.parse.parsedsummary

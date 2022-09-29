@@ -58,7 +58,7 @@
     "deputy.session.revision.byteChange": "{{FORMATNUM:$1}} bytes after change of this size",
     "deputy.session.revision.tags": "{{PLURAL:$1|Tag|Tags}}:",
 
-    "deputy.session.page.diff.next": "Navigate to next revision",
+    "deputy.session.page.diff.next": "Navigate to the next unassessed revision",
     "deputy.session.page.diff.loadFail": "Failed to load diff. Please check your internet connection and try again.",
     "deputy.session.page.incommunicable": "Cannot find an active Deputy session. Please ensure that Deputy is running on a contributor investigation case page.",
     "deputy.session.page.caseInfo.label": "Current case",
@@ -72,6 +72,8 @@
     "deputy.session.page.earwigLatest": "Earwig's Copyvio Detector (latest)",
     "deputy.session.page.earwigRevision": "Earwig's Copyvio Detector (revision)",
     "deputy.session.page.earwigUnsupported": "Earwig's Copyvio Detector does not support this wiki.",
+    "deputy.session.page.iabot": "Add archives to a page (IABot)",
+    "deputy.session.page.iabot.reason": "Possible copyright violation investigation",
 
     "deputy.session.page.tools": "Tools"
 }

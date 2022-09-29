@@ -1,4 +1,5 @@
 import InfringementAssistant from './InfringementAssistant';
+import Recents from '../../wiki/Recents';
 
 /**
  * This function handles IA loading when Deputy isn't present. When Deputy is not
@@ -12,6 +13,7 @@ import InfringementAssistant from './InfringementAssistant';
  */
 ( async ( window: Window & { InfringementAssistant?: InfringementAssistant } ) => {
 
+	Recents.save();
 	window.InfringementAssistant = new InfringementAssistant();
 	await window.InfringementAssistant.preInit();
 

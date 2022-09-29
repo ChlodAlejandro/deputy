@@ -291,12 +291,12 @@ export default class ListingResponsePanel extends EventTarget {
 				this.renderAdditionalCommentsField()
 			}</div>
 			{ this.previewPanel = <div
-				class="ia-listing-response--preview"
+				class="ia-listing--preview"
 				data-label={mw.msg( 'deputy.ia.listing.re.preview' )}
 				style={'display: none'}
 			></div> as HTMLElement }
 			<div class="ia-listing-response--submit">
-				{ this.renderCloseButton() },
+				{ this.renderCloseButton() }
 				{ this.renderSubmitButton() }
 			</div>
 		</div> as HTMLElement;

@@ -135,10 +135,17 @@ export default class UserConfiguration extends ConfigurationBase {
 		onSubmit: new Setting<
 			EnumValue<typeof TripleCompletionAction>,
 			TripleCompletionAction
-		>( generateEnumConfigurationProperties(
-			TripleCompletionAction,
-			TripleCompletionAction.Reload
-		) )
+			>( generateEnumConfigurationProperties(
+				TripleCompletionAction,
+				TripleCompletionAction.Reload
+			) ),
+		onBatchSubmit: new Setting<
+			EnumValue<typeof CompletionAction>,
+			CompletionAction
+			>( generateEnumConfigurationProperties(
+				CompletionAction,
+				CompletionAction.Reload
+			) )
 	};
 
 	public readonly all = { core: this.core, cci: this.cci, ante: this.ante, ia: this.ia };

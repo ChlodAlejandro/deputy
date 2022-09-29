@@ -108,6 +108,10 @@ export default class CopyrightProblemsPage {
 		}
 
 		const content = await getPageContent( this.title );
+		if ( content == null ) {
+			return null;
+		}
+
 		this.revid = content.revid;
 		this.wikitext = content;
 		return content;
@@ -202,11 +206,7 @@ export default class CopyrightProblemsPage {
 		const listingPage = this.main ? CopyrightProblemsPage.getCurrentListingPage() : this.title;
 
 		await this.tryListingAppend(
-			mw.format(
-				window.InfringementAssistant.wikiConfig.ia.listingWikitext.get(),
-				page.getPrefixedText(),
-				comments || ''
-			).replace( /(\s){2,}/g, '$1' ),
+			this.getListingWikitext( page, comments ),
 			decorateEditSummary(
 				mw.msg(
 					'deputy.ia.content.listing',
@@ -215,6 +215,21 @@ export default class CopyrightProblemsPage {
 				)
 			)
 		);
+	}
+
+	/**
+	 * Generates the listing wikitext using wiki configuration values.
+	 *
+	 * @param page
+	 * @param comments
+	 * @return Wikitext
+	 */
+	getListingWikitext( page: mw.Title, comments?: string ): string {
+		return mw.format(
+			window.InfringementAssistant.wikiConfig.ia.listingWikitext.get(),
+			page.getPrefixedText(),
+			comments || ''
+		).replace( /(\s){2,}/g, '$1' );
 	}
 
 	/**
@@ -234,26 +249,38 @@ export default class CopyrightProblemsPage {
 	 */
 	async postListings( page: mw.Title[], title: string, comments?: string ): Promise<void> {
 		const listingPage = this.main ? CopyrightProblemsPage.getCurrentListingPage() : this.title;
+
 		await this.tryListingAppend(
-			`\n;{{anchor|1=${
-				title
-			}}}${
-				title
-			}\n${
-				page.map( ( p ) => `* {{subst:article-cv|1=${p.getPrefixedText()}}}` ).join( '\n' )
-			}\n${
-				comments ?? ''
-			} ~~~~`,
+			this.getBatchListingWikitext( page, title, comments ),
 			decorateEditSummary(
-				`Adding a batch listing for "[[${
-					listingPage.getPrefixedText()
-				}#${
-					title
-				}|${
-					title
-				}]]"`
+				mw.msg(
+					'deputy.ia.content.batchListing',
+					listingPage.getPrefixedText(), title
+				)
 			)
 		);
+	}
+
+	/**
+	 * Generates the batch listing wikitext using wiki configuration values.
+	 *
+	 * @param page
+	 * @param title
+	 * @param comments
+	 * @return Wikitext
+	 */
+	getBatchListingWikitext( page: mw.Title[], title: string, comments?: string ): string {
+		const pages = page
+			.map( ( p ) => mw.format(
+				window.InfringementAssistant.wikiConfig.ia.batchListingPageWikitext.get(),
+				p.getPrefixedText()
+			) )
+			.join( '' );
+
+		return mw.format(
+			window.InfringementAssistant.wikiConfig.ia.batchListingWikitext.get(),
+			title, pages, comments || ''
+		).replace( /^\s+~~~~$/gm, '~~~~' );
 	}
 
 }

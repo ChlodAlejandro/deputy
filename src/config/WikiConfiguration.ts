@@ -234,7 +234,25 @@ export default class WikiConfiguration extends ConfigurationBase {
 			displayOptions: { type: 'code' }
 		} ),
 		/**
+		 * $1 - Title of the batch
+		 * $2 - List of pages (newlines should be added in batchListingPageWikitext).
+		 * $3 - User comment
+		 */
+		batchListingWikitext: new Setting<string, string>( {
+			defaultValue: '*; <span style="display: none;" id="$1"></span> $1\n$2\n$3',
+			displayOptions: { type: 'code' }
+		} ),
+		/**
+		 * $1 - Page to include
+		 */
+		batchListingPageWikitext: new Setting<string, string>( {
+			defaultValue: '* [[$1]]\n',
+			displayOptions: { type: 'code' }
+		} ),
+		/**
 		 * @see {@link CopyrightProblemsListing#articleCvRegex}
+		 *
+		 * This should match both normal and batch listings.
 		 */
 		listingWikitextMatch: new Setting<string, string>( {
 			defaultValue: '(\\*\\s*)?\\[\\[([^\\]]+)\\]\\]',

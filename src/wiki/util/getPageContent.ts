@@ -7,7 +7,7 @@ import MwApi from '../../MwApi';
  * @param page The page to get
  * @param extraOptions Extra options to pass to the request
  * @param api The API object to use
- * @return A promise resolving to the page content
+ * @return A promise resolving to the page content. Resolves to `null` if missing page.
  */
 export default function (
 	page: mw.Title|string|number,

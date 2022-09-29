@@ -25,6 +25,7 @@ import InfringementAssistant from './modules/ia/InfringementAssistant';
 import UserConfiguration from './config/UserConfiguration';
 import { attachConfigurationDialogPortletLink } from './ui/config/ConfigurationDialog';
 import WikiConfiguration from './config/WikiConfiguration';
+import Recents from './wiki/Recents';
 
 /**
  * The main class for Deputy. Entry point for execution.
@@ -194,6 +195,7 @@ mw.loader.using( [
 	'moment',
 	'oojs'
 ], function () {
+	Recents.save();
 	performHacks();
 	window.deputy = Deputy.instance;
 	window.deputy.init();
