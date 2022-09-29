@@ -21,10 +21,13 @@ describe( 'DeputyCasePage static unit tests', () => {
 
 	test( 'isCasePage', async () => {
 		// Override root page
-		await page.evaluate( () => {
-			window.deputy.DeputyCasePage.rootPage = new mw.Title(
-				'Wikipedia:Contributor copyright investigations'
-			);
+		await page.evaluate( async () => {
+			await window.deputy.getWikiConfig().then( function ( wikiConfig ) {
+				// Override root pages for testing
+				wikiConfig.cci.rootPage.set(
+					new mw.Title( 'Wikipedia:Contributor copyright investigations' )
+				);
+			} );
 		} );
 
 		return Promise.all( [
@@ -107,10 +110,13 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 		await loadWikipediaPage( 'User:Chlod/Scripts/Deputy/tests/TestCase 01' );
 		await loadDeputyScript();
 		// Override root page
-		await page.evaluate( () => {
-			window.deputy.DeputyCasePage.rootPage = new mw.Title(
-				'User:Chlod/Scripts/Deputy/tests'
-			);
+		await page.evaluate( async () => {
+			await window.deputy.getWikiConfig().then( function ( wikiConfig ) {
+				// Override root pages for testing
+				wikiConfig.cci.rootPage.set(
+					new mw.Title( 'User:Chlod/Scripts/Deputy/tests' )
+				);
+			} );
 		} );
 
 		jest.setTimeout( 10e3 );
