@@ -563,15 +563,18 @@ function initSinglePageWorkflowDialog() {
 						{ type: 'success' }
 					);
 				} );
-
 				switch ( window.InfringementAssistant.config.ia[ 'on' + (
 					action === 'hide' ? 'Hide' : 'Submit'
 				) as 'onHide' | 'onSubmit' ].get() ) {
 					case TripleCompletionAction.Reload:
-						process.next( () => window.location.reload() );
+						process.next( () => {
+							unblockExit( 'ia-spwd' );
+							window.location.reload();
+						} );
 						break;
 					case TripleCompletionAction.Redirect:
 						process.next( () => {
+							unblockExit( 'ia-spwd' );
 							window.location.href = mw.util.getUrl(
 								CopyrightProblemsPage.getCurrent().title.getPrefixedText()
 							);
