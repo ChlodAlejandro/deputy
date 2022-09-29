@@ -1,5 +1,9 @@
 {
-    "deputy.name": "Deputy",
+    "deputy.content.assessed": "Assessed $1 revisions across $2 pages",
+    "deputy.content.assessed.comma": ", ",
+    "deputy.content.assessed.finished": "$1 finished",
+    "deputy.content.assessed.reworked": "$1 reworked",
+    "deputy.content.reformat": "Reformatting section",
 
     "deputy.session.start": "start CCI session",
     "deputy.session.continue": "continue CCI session",

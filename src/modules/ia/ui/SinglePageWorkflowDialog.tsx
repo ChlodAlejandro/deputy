@@ -9,6 +9,7 @@ import unwrapWidget from '../../../util/unwrapWidget';
 import decorateEditSummary from '../../../wiki/util/decorateEditSummary';
 import { TripleCompletionAction } from '../../shared/CompletionAction';
 import equalTitle from '../../../util/equalTitle';
+import msgEval from '../../../wiki/util/msgEval';
 
 export interface SinglePageWorkflowDialogData {
 	page: TitleLike;
@@ -439,6 +440,11 @@ function initSinglePageWorkflowDialog() {
 				) ?? [];
 				this.wikitext = res.parse.wikitext;
 
+				if ( this.sections.length === 0 ) {
+					// No sections. Automatically use full page.
+					this.data.entirePage = true;
+				}
+
 				const options = [
 					{
 						data: '-1',
@@ -470,11 +476,13 @@ function initSinglePageWorkflowDialog() {
 			let finalPageContent;
 			const wikiConfig = ( await window.InfringementAssistant.getWikiConfig() ).ia;
 
-			const copyvioWikitext = mw.format(
+			const copyvioWikitext = msgEval(
 				wikiConfig.hideTemplate.get(),
-				this.data.fromUrls ? this.data.sourceUrls[ 0 ] : this.data.sourceText,
+				this.data.fromUrls ?
+					( this.data.sourceUrls ?? [] )[ 0 ] ?? '' :
+					this.data.sourceText,
 				this.data.entirePage ? 'true' : 'false'
-			);
+			).text();
 
 			if ( this.data.entirePage ) {
 				finalPageContent = copyvioWikitext + '\n' + this.wikitext;
@@ -492,16 +500,18 @@ function initSinglePageWorkflowDialog() {
 				title: this.page.getPrefixedText(),
 				text: finalPageContent,
 				summary: decorateEditSummary(
-					mw.msg(
-						this.data.entirePage ?
-							'deputy.ia.content.hideAll' :
+					this.data.entirePage ?
+						mw.msg(
+							'deputy.ia.content.hideAll'
+						) :
+						mw.msg(
 							'deputy.ia.content.hide',
-						this.page.getPrefixedText(),
-						this.data.startSection.anchor,
-						this.data.startSection.line,
-						this.data.endSection.anchor,
-						this.data.endSection.line
-					)
+							this.page.getPrefixedText(),
+							this.data.startSection?.anchor,
+							this.data.startSection?.line,
+							this.data.endSection?.anchor,
+							this.data.endSection?.line
+						)
 				)
 			} );
 		}

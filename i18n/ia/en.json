@@ -6,6 +6,9 @@
     "deputy.ia.content.batchListing": "Adding batch listing: \"[[$1#$2|$2]]\"",
     "deputy.ia.content.hideAll": "Hiding page content due to a suspected or complicated copyright issue",
     "deputy.ia.content.hide": "Hiding sections [[$1#$2|$3]] to [[$1#$4|$5]] for suspected or complicated copyright issues",
+    "deputy.ia.content.copyvio": "⛔ Content on this page has been temporarily hidden due to a suspected copyright violation",
+    "deputy.ia.content.copyvio.help": "Please see this wiki's noticeboard for copyright problems for more information.",
+    "deputy.ia.content.copyvio.content": "The following content may be a copyright violation. Please do not unhide it unless you have determined that it is compatible with this wiki's copyright license.",
 
     "deputy.ia.listing.new": "New listing",
     "deputy.ia.listing.new.batch": "New batch listing",

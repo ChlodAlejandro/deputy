@@ -231,6 +231,13 @@ export default class Setting<SerializedType, DeserializedType> {
 	}
 
 	/**
+	 * Resets this setting to its original value.
+	 */
+	reset() {
+		this.set( this.defaultValue );
+	}
+
+	/**
 	 * Parses a given raw value and mutates the setting.
 	 *
 	 * @param raw The raw value to parse.

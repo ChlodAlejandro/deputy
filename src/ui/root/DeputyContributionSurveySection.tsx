@@ -13,6 +13,7 @@ import getSectionHTML from '../../wiki/util/getSectionHTML';
 import removeElement from '../../util/removeElement';
 import decorateEditSummary from '../../wiki/util/decorateEditSummary';
 import MwApi from '../../MwApi';
+import msgEval from '../../wiki/util/msgEval';
 
 /**
  * The contribution survey section UI element. This includes a list of revisions
@@ -103,15 +104,15 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		}
 
 		if ( this.closed ) {
-			// TODO: Wiki localization
-			final.splice( 1, 0, `{{collapse top|${
+			final.splice( 1, 0, msgEval(
+				window.deputy.wikiConfig.cci.collapseTop.get(),
 				( ( this.comments ?? '' ) + ' ~~~~' ).trim()
-			}}}` );
+			).plain() );
 
 			if ( final[ final.length - 1 ].trim().length === 0 ) {
 				final.pop();
 			}
-			final.push( '{{collapse bottom}}' );
+			final.push( window.deputy.wikiConfig.cci.collapseBottom.get() );
 		}
 
 		return final.join( '\n' );
@@ -121,8 +122,6 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	 * @return The edit summary for this section's changes.
 	 */
 	get editComment(): string {
-		// TODO: Wiki localization
-		// Not i18n, since this is dependent on the wiki content language.
 		if ( this.modified ) {
 			const modified = this.rows.filter( ( row ) => row.modified );
 			let worked = 0;
@@ -144,18 +143,27 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 
 			const message: string[] = [];
 			if ( assessed > 0 ) {
-				message.push( `${assessed} revisions assessed across ${worked} pages` );
+				message.push(
+					mw.msg(
+						'deputy.content.assessed.assessed',
+						`${assessed}`, `${worked}`
+					)
+				);
 			}
 			if ( finished > 0 ) {
-				message.push( `${finished} pages finished` );
+				message.push(
+					mw.msg( 'deputy.content.assessed.finished', `${finished}` )
+				);
 			}
 			if ( reworked > 0 ) {
-				message.push( `${reworked} pages reworked` );
+				message.push(
+					mw.msg( 'deputy.content.assessed.reworked', `${reworked}` )
+				);
 			}
 
-			return 'Assessed ' + message.join( '; ' );
+			return message.join( mw.msg( 'deputy.content.assessed.comma' ) );
 		} else {
-			return 'Reformatting section';
+			return mw.msg( 'deputy.content.reformat' );
 		}
 	}
 

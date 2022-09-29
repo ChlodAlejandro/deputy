@@ -7,6 +7,13 @@ import { CopyrightProblemsResponse } from '../modules/ia/models/CopyrightProblem
 import equalTitle from '../util/equalTitle';
 import WikiConfigurationEditIntro from '../ui/config/WikiConfigurationEditIntro';
 import getPageContent from '../wiki/util/getPageContent';
+import {
+	batchListingPageWikitext,
+	batchListingWikitext,
+	collapseBottom,
+	collapseTop, copyvioBottom, copyvioTop,
+	listingWikitext
+} from '../wiki/TemplatePolyfills';
 
 /**
  * Wiki-wide configuration. This is applied to all users of the wiki, and has
@@ -199,6 +206,14 @@ export default class WikiConfiguration extends ConfigurationBase {
 			deserialize: ( v ) => new mw.Title( v ),
 			defaultValue: null,
 			displayOptions: { type: 'page' }
+		} ),
+		collapseTop: new Setting<string, string>( {
+			defaultValue: collapseTop,
+			displayOptions: { type: 'code' }
+		} ),
+		collapseBottom: new Setting<string, string>( {
+			defaultValue: collapseBottom,
+			displayOptions: { type: 'code' }
 		} )
 	};
 
@@ -230,7 +245,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 			displayOptions: { type: 'page' }
 		} ),
 		listingWikitext: new Setting<string, string>( {
-			defaultValue: '* [[$1]] $2 ~~~~',
+			defaultValue: listingWikitext,
 			displayOptions: { type: 'code' }
 		} ),
 		/**
@@ -239,14 +254,14 @@ export default class WikiConfiguration extends ConfigurationBase {
 		 * $3 - User comment
 		 */
 		batchListingWikitext: new Setting<string, string>( {
-			defaultValue: '*; <span style="display: none;" id="$1"></span> $1\n$2\n$3',
+			defaultValue: batchListingWikitext,
 			displayOptions: { type: 'code' }
 		} ),
 		/**
 		 * $1 - Page to include
 		 */
 		batchListingPageWikitext: new Setting<string, string>( {
-			defaultValue: '* [[$1]]\n',
+			defaultValue: batchListingPageWikitext,
 			displayOptions: { type: 'code' }
 		} ),
 		/**
@@ -259,11 +274,11 @@ export default class WikiConfiguration extends ConfigurationBase {
 			displayOptions: { type: 'code' }
 		} ),
 		hideTemplate: new Setting<string, string>( {
-			defaultValue: '<div style="display: none" data-copyvio>',
+			defaultValue: copyvioTop,
 			displayOptions: { type: 'code' }
 		} ),
 		hideTemplateBottom: new Setting<string, string>( {
-			defaultValue: '</div>',
+			defaultValue: copyvioBottom,
 			displayOptions: { type: 'code' }
 		} ),
 		responses: new Setting<CopyrightProblemsResponse[], CopyrightProblemsResponse[]>( {
