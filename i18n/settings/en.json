@@ -10,6 +10,10 @@
     "deputy.settings.wikiEditIntro.edit.otherCurrent": "Modify the active configuration",
     "deputy.settings.wikiEditIntro.edit.protected": "This page's protection settings do not allow you to edit the page.",
 
+    "deputy.settings.wikiOutdated": "Outdated configuration",
+    "deputy.settings.wikiOutdated.help": "Deputy has detected a change in this wiki's configuration for all Deputy users. We've automatically downloaded the changes for you, but you have to reload to apply the changes.",
+    "deputy.settings.wikiOutdated.reload": "Reload",
+
     "deputy.settings.dialog.title": "Deputy Preferences",
     "deputy.settings.dialog.unimplemented": "A way to modify this setting has not yet been implemented. Check back later!",
     "deputy.settings.saved": "Preferences saved. Please refresh the page to see changes.",
@@ -78,6 +82,12 @@
 
     "deputy.setting.wiki.cci.enabled.name": "Enable contributor copyright investigations assistant",
     "deputy.setting.wiki.cci.enabled.description": "Enables the CCI workflow assistant. This allows Deputy to replace the contribution survey found on CCI case pages with a graphical interface which works with other tabs to make the CCI workflow easier.",
+    "deputy.setting.wiki.cci.rootPage.name": "Root page",
+    "deputy.setting.wiki.cci.rootPage.description": "The main page that holds all subpages containing valid contribution copyright investigation cases.",
+    "deputy.setting.wiki.cci.collapseTop.name": "Collapsible wikitext (top)",
+    "deputy.setting.wiki.cci.collapseTop.description": "Placed just below a section heading when closing a contributor survey section. Use \"$1\" to denote user comments and signature. On the English Wikipedia, this is {{collapse top}}. Other wikis may have an equivalent template. This should go hand in hand with \"{{int:deputy.setting.wiki.cci.collapseBottom.name}}\", as they are used as a pair.",
+    "deputy.setting.wiki.cci.collapseBottom.name": "Collapsible wikitext (bottom)",
+    "deputy.setting.wiki.cci.collapseBottom.description": "Placed at the end of a section when closing a contributor survey section. On the English Wikipedia, this is {{collapse bottom}}. Other wikis may have an equivalent template.",
 
     "deputy.setting.wiki.ante": "ANTE",
 
@@ -94,6 +104,18 @@
     "deputy.setting.wiki.ia.subpageFormat.description": "The format to use for subpages of the root page. This is a moment.js format string.",
     "deputy.setting.wiki.ia.preload.name": "Preload",
     "deputy.setting.wiki.ia.preload.description": "Defines the page content to preload the page with if a given subpage does not exist yet. This should be an existing page on-wiki. Leave blank to avoid using a preload entirely.",
+    "deputy.setting.wiki.ia.listingWikitext": "Listing wikitext",
+    "deputy.setting.wiki.ia.listingWikitext.description": "Defines the wikitext that will be used when adding listings to a noticeboard page. You may use \"$1\" to denote the page being reported, and \"$2\" for user comments (which shouldn't contain the signature).",
+    "deputy.setting.wiki.ia.listingWikitextMatch.name": "Regular expression for listings",
+    "deputy.setting.wiki.ia.listingWikitextMatch.description": "A regular expression that will be used to parse and detect listings on a given noticeboard page. Since its usage is rather technical, this value should be edited by someone with technical knowledge of regular expressions. This regular expression must provide three captured groups: group \"$1\" will catch any bullet point, space, or prefix, \"$2\" will catch the page title ONLY if the given page matches \"{{int:deputy.setting.wiki.ia.listingWikitext.name}}\" or \"{{int:deputy.setting.wiki.ia.batchListingWikitext.name}}\", and \"$3\" will catch the page title ONLY IF the page wasn't caught in \"$2\" (such as in cases where there is only a bare link to the page).",
+    "deputy.setting.wiki.ia.batchListingWikitext.name": "Batch listing wikitext",
+    "deputy.setting.wiki.ia.batchListingWikitext.description": "Defines the wikitext that will be used when adding batch listings to a noticeboard page. You may use \"$1\" to denote the page being reported, and \"$2\" for the list of pages (as determined by \"{{int:deputy.setting.wiki.ia.batchListingPageWikitext.name}}\") and \"$3\" for user comments (which doesn't contain the signature).",
+    "deputy.setting.wiki.ia.batchListingPageWikitext.name": "Batch listing page wikitext",
+    "deputy.setting.wiki.ia.batchListingPageWikitext.description": "Wikitext to use for every row of text in \"{{int:deputy.setting.wiki.ia.batchListingWikitext.name}}\". No line breaks are automatically added; these must be added into this string.",
+    "deputy.setting.wiki.ia.hideTemplate.name": "Content hiding wikitext (top)",
+    "deputy.setting.wiki.ia.hideTemplate.description": "Wikitext to hide offending content with. On the English Wikipedia, this is a usage of {{copyvio}}. Other wikis may have an equivalent template. This should go hand in hand with \"{{int:deputy.setting.wiki.ia.hideTemplateBottom.name}}\", as they are used as a pair.",
+    "deputy.setting.wiki.ia.hideTemplateBottom.name": "Content hiding wikitext (bottom)",
+    "deputy.setting.wiki.ia.hideTemplateBottom.description": "Placed at the end of hidden content to hide only part of a page. On the English Wikipedia, this is {{copyvio/bottom}}. Other wikis may have an equivalent template.",
     "deputy.setting.wiki.ia.responses.name": "Responses",
     "deputy.setting.wiki.ia.responses.description": "Quick responses for copyright problems listings. Used by clerks to resolve specific listings or provide more information about the progress of a given listing."
 }

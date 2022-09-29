@@ -508,7 +508,9 @@ export default class DeputyRootSession {
 		heading: ContributionSurveyHeading
 	): Promise<void> {
 		const el = new DeputyContributionSurveySection( casePage, heading );
-		await el.prepare();
+		if ( !( await el.prepare() ) ) {
+			return;
+		}
 
 		const sectionName = sectionHeadingName( heading );
 		this.sections.push( el );

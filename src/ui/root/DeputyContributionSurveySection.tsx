@@ -83,7 +83,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	 * Sets the comments of a section.
 	 */
 	set comments( value: string ) {
-		if ( this._section?.closingComments == null ) {
+		if ( this._section == null ) {
 			throw new Error( 'Section has not been loaded yet.' );
 		}
 		this._section.closingComments = value;
@@ -121,7 +121,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	/**
 	 * @return The edit summary for this section's changes.
 	 */
-	get editComment(): string {
+	get editSummary(): string {
 		if ( this.modified ) {
 			const modified = this.rows.filter( ( row ) => row.modified );
 			let worked = 0;
@@ -145,7 +145,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			if ( assessed > 0 ) {
 				message.push(
 					mw.msg(
-						'deputy.content.assessed.assessed',
+						'deputy.content.assessed',
 						`${assessed}`, `${worked}`
 					)
 				);
@@ -161,7 +161,13 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 				);
 			}
 
-			return message.join( mw.msg( 'deputy.content.assessed.comma' ) );
+			if ( !this._section.originallyClosed && this.closed ) {
+				// Now closed.
+				message.push( mw.msg( 'deputy.content.assessed.sectionClosed' ) );
+			}
+
+			const m = message.join( mw.msg( 'deputy.content.assessed.comma' ) );
+			return m[ 0 ].toUpperCase() + m.slice( 1 );
 		} else {
 			return mw.msg( 'deputy.content.reformat' );
 		}
@@ -203,16 +209,25 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 
 	/**
 	 * Perform any required pre-render operations.
+	 *
+	 * @return `true` if prepared successfully.
+	 *         `false` if not (invalid section, already closed, etc.)
 	 */
-	async prepare(): Promise<void> {
+	async prepare(): Promise<boolean> {
 		const firstList = this.sectionElements.find( ( el ) => el.tagName === 'UL' );
+
+		if ( firstList == null ) {
+			// Not a valid section! Might be closed already.
+			return false;
+		}
+
 		this.originalList = firstList.parentElement.removeChild( firstList ) as HTMLElement;
 
 		const rowElements: Record<string, HTMLLIElement> = {};
 		for ( let i = 0; i < this.originalList.children.length; i++ ) {
 			const li = this.originalList.children.item( i );
 			if ( li.tagName !== 'LI' ) {
-				return;
+				return false;
 			}
 			const anchor: HTMLElement = li.querySelector( 'a:first-of-type' );
 			// Avoid enlisting if the anchor can't be found (invalid row).
@@ -244,6 +259,8 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			}
 			this.wikitextLines.push( rowElement );
 		}
+
+		return true;
 	}
 
 	/**
@@ -310,7 +327,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			pageid: this.casePage.pageId,
 			section: sectionId,
 			text: this.wikitext,
-			summary: decorateEditSummary( this.editComment )
+			summary: decorateEditSummary( this.editSummary )
 		} ).then( function ( data ) {
 			return data;
 		}, function ( code, data ) {
@@ -414,10 +431,13 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 						}
 					}
 
-					this._section = null;
-					await this.getSection( wikitext );
-					await this.prepare();
-					oldHeading.insertAdjacentElement( 'afterend', this.render() );
+					if ( !this._section.closed ) {
+						this._section = null;
+						await this.getSection( wikitext );
+						await this.prepare();
+						oldHeading.insertAdjacentElement( 'afterend', this.render() );
+					}
+
 					removeElement( oldHeading );
 				}
 			}, ( error ) => {
@@ -449,6 +469,9 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			this.closed = v;
 			closingCommentsField.toggle( v );
 			this.toggleClosingComments( v );
+		} );
+		this.closingComments.on( 'change', ( v: string ) => {
+			this.comments = v;
 		} );
 
 		( window as any ).test = this;

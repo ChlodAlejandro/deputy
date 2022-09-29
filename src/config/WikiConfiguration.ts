@@ -14,6 +14,7 @@ import {
 	collapseTop, copyvioBottom, copyvioTop,
 	listingWikitext
 } from '../wiki/TemplatePolyfills';
+import ConfigurationReloadBanner from '../ui/config/ConfigurationReloadBanner';
 
 /**
  * Wiki-wide configuration. This is applied to all users of the wiki, and has
@@ -346,6 +347,12 @@ export default class WikiConfiguration extends ConfigurationBase {
 				// Only mark outdated after saving, so we don't indirectly cause a save operation
 				// to cancel.
 				this.outdated = true;
+
+				// Attempt to add site notice.
+				document.getElementById( 'siteNotice' )?.insertAdjacentElement(
+					'afterend',
+					ConfigurationReloadBanner()
+				);
 			}, () => { /* silent fail */ } );
 		}
 	}

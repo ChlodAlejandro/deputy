@@ -3,6 +3,7 @@
     "deputy.content.assessed.comma": ", ",
     "deputy.content.assessed.finished": "$1 finished",
     "deputy.content.assessed.reworked": "$1 reworked",
+    "deputy.content.assessed.sectionClosed": "section closed",
     "deputy.content.reformat": "Reformatting section",
 
     "deputy.session.start": "start CCI session",

@@ -9,6 +9,7 @@ import delink from '../../../wiki/util/delink';
 import getObjectValues from '../../../util/getObjectValues';
 import { CompletionAction } from '../../shared/CompletionAction';
 import purge from '../../../wiki/util/purge';
+import { blockExit, unblockExit } from '../../../util/blockExit';
 
 /**
  *
@@ -77,6 +78,7 @@ function NewCopyrightProblemsListingPanel( props: { button: any } ): JSX.Element
  * @return A panel for reporting multiple pages
  */
 function NewCopyrightProblemsBatchListingPanel( props: { button: any } ) {
+	blockExit( 'ia-ncpbl' );
 	const cancelButton = new OO.ui.ButtonWidget( {
 		label: mw.msg( 'deputy.cancel' ),
 		flags: [ 'destructive' ]
@@ -242,6 +244,7 @@ function NewCopyrightProblemsBatchListingPanel( props: { button: any } ) {
 				mw.notify( mw.msg( 'deputy.ia.listing.new.batchListed' ), {
 					type: 'success'
 				} );
+				unblockExit( 'ia-ncpbl' );
 				removeElement( el as HTMLElement );
 				props.button.setDisabled( false );
 
@@ -265,6 +268,7 @@ function NewCopyrightProblemsBatchListingPanel( props: { button: any } ) {
 
 	cancelButton.on( 'click', () => {
 		props.button.setDisabled( false );
+		unblockExit( 'ia-ncpbl' );
 		removeElement( el as HTMLElement );
 	} );
 
