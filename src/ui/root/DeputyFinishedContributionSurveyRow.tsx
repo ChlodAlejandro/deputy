@@ -3,6 +3,8 @@ import '../../types';
 import ContributionSurveyRow from '../../models/ContributionSurveyRow';
 import guessAuthor from '../../wiki/util/guessAuthor';
 import nsId from '../../wiki/util/nsId';
+import type { Moment } from 'moment';
+import { guessTrace } from '../../models/DeputyTrace';
 
 /**
  * Displayed when a ContributionSurveyRow has no remaining diffs. Deputy is not able
@@ -22,7 +24,7 @@ export default class DeputyFinishedContributionSurveyRow {
 	/**
 	 * The timestamp of the signature. A `moment.js` object.
 	 */
-	timestamp: any;
+	timestamp: Moment;
 
 	/**
 	 * @param props Element properties
@@ -55,9 +57,19 @@ export default class DeputyFinishedContributionSurveyRow {
 		// Use DiscussionTools to identify the user and timestamp.
 		const parsedComment = parser.parse( props.originalElement )?.commentItems?.[ 0 ];
 		if ( !parsedComment ) {
-			// Fall back to guessing the author based on an in-house parser.
-			this.author = guessAuthor( props.row.comment );
-			// Don't even try to guess the timestamp.
+			// See if the Deputy trace exists.
+			const fromTrace = guessTrace( props.row.wikitext );
+
+			if ( fromTrace ) {
+				this.author = fromTrace.author;
+				this.timestamp = fromTrace.timestamp && !isNaN( fromTrace.timestamp.getTime() ) ?
+					window.moment( fromTrace.timestamp ) :
+					undefined;
+			} else {
+				// Fall back to guessing the author based on an in-house parser.
+				this.author = guessAuthor( props.row.comment );
+				// Don't even try to guess the timestamp.
+			}
 		} else {
 			this.author = parsedComment.author;
 			this.timestamp = parsedComment.timestamp;
@@ -82,20 +94,21 @@ export default class DeputyFinishedContributionSurveyRow {
 							target="_blank"
 							rel="noopener" href={ mw.util.getUrl( talkPage.getPrefixedDb() ) }
 							title={ talkPage.getPrefixedText() }
-						>talk</a></span>
+						>{ mw.msg( 'deputy.session.revision.talk' ) }</a></span>
 						<span><a
 							class="mw-usertoollinks-contribs"
 							target="_blank"
 							rel="noopener" href={ mw.util.getUrl( contribsPage.getPrefixedDb() ) }
 							title={ contribsPage.getPrefixedText() }
-						>contribs</a></span>
+						>{ mw.msg( 'deputy.session.revision.contribs' ) }</a></span>
 					</span>
 				</span> ).outerHTML
 			];
 
 			if ( this.timestamp ) {
 				params.push(
-					new Date().toLocaleString( 'en-US', { dateStyle: 'long', timeStyle: 'short' } ),
+					this.timestamp.toDate()
+						.toLocaleString( 'en-US', { dateStyle: 'long', timeStyle: 'short' } ),
 					this.timestamp.toNow( true )
 				);
 			}
@@ -110,10 +123,8 @@ export default class DeputyFinishedContributionSurveyRow {
 					).text()
 				}
 			/>;
+		} else {
+			return null;
 		}
-
-		return this.author && <i>Checked by {this.author} {
-			this.timestamp && [ ' at ', this.timestamp.toLocaleString() ]
-		}</i>;
 	}
 }

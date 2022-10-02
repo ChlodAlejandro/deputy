@@ -6,6 +6,9 @@ import { CompletionAction, TripleCompletionAction } from '../modules/shared/Comp
 import { EnumValue } from '../types';
 import DeputyVersion from '../DeputyVersion';
 import ConfigurationBase from './ConfigurationBase';
+import {
+	ContributionSurveyRowSigningBehavior
+} from '../models/ContributionSurveyRowSigningBehavior';
 
 /**
  * A configuration. Defines settings and setting groups.
@@ -78,7 +81,16 @@ export default class UserConfiguration extends ConfigurationBase {
 			displayOptions: {
 				type: 'checkbox'
 			}
-		} )
+		} ),
+		signingBehavior: new Setting<
+			EnumValue<typeof ContributionSurveyRowSigningBehavior>,
+			ContributionSurveyRowSigningBehavior
+		>(
+			generateEnumConfigurationProperties(
+				ContributionSurveyRowSigningBehavior,
+				ContributionSurveyRowSigningBehavior.Always
+			)
+		)
 	};
 	public readonly ante = <const>{
 		enableAutoMerge: new Setting<boolean, boolean>( {

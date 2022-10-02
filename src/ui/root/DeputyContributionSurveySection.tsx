@@ -14,6 +14,10 @@ import removeElement from '../../util/removeElement';
 import decorateEditSummary from '../../wiki/util/decorateEditSummary';
 import MwApi from '../../MwApi';
 import msgEval from '../../wiki/util/msgEval';
+import {
+	ContributionSurveyRowSigningBehavior
+} from '../../models/ContributionSurveyRowSigningBehavior';
+import { generateTrace } from '../../models/DeputyTrace';
 
 /**
  * The contribution survey section UI element. This includes a list of revisions
@@ -93,13 +97,58 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	 * @return The wikitext for this section.
 	 */
 	get wikitext(): string {
-		const final: string[] = [];
+		let final: string[] = [];
 
 		for ( const obj of this.wikitextLines ) {
 			if ( typeof obj === 'string' ) {
 				final.push( obj );
 			} else {
 				final.push( obj.wikitext );
+			}
+		}
+
+		let lastModifiedRowIndex: keyof typeof final;
+		for ( const i in final ) {
+			const wikitext = final[ +i ];
+			if ( wikitext.indexOf( ' ~~~~' ) !== -1 ) {
+				lastModifiedRowIndex = +i;
+			}
+		}
+
+		const trace = ` ${generateTrace()}`;
+		if ( lastModifiedRowIndex != null ) {
+			// If `lastModifiedRowIndex` exists, we can assume that a modified row exists.
+			// This prevents the following from running on unmodified rows, which is
+			// wasteful.
+			switch ( window.deputy.config.cci.signingBehavior.get() ) {
+				case ContributionSurveyRowSigningBehavior.AlwaysTrace:
+					final = final.map( ( line ) => {
+						return line.replace( / ~~~~$/, trace );
+					} );
+					break;
+				case ContributionSurveyRowSigningBehavior.AlwaysTraceLastOnly:
+					final = final.map( ( line, i ) => {
+						if ( i !== lastModifiedRowIndex ) {
+							return line.replace( / ~~~~$/, trace );
+						} else {
+							return line;
+						}
+					} );
+					break;
+				case ContributionSurveyRowSigningBehavior.LastOnly:
+					final = final.map( ( line, i ) => {
+						if ( i !== lastModifiedRowIndex ) {
+							return line.replace( / ~~~~$/, '' );
+						} else {
+							return line;
+						}
+					} );
+					break;
+				case ContributionSurveyRowSigningBehavior.Never:
+					final = final.map( ( line ) => {
+						return line.replace( / ~~~~$/, '' );
+					} );
+					break;
 			}
 		}
 

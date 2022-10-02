@@ -50,6 +50,13 @@
     "deputy.setting.user.cci.enablePageToolbar.unimplemented": "This feature has not yet been implemented.",
     "deputy.setting.user.cci.forceUtc.name": "Force UTC time",
     "deputy.setting.user.cci.forceUtc.description": "Forces Deputy to use UTC time whenever displaying dates and times, irregardless of your system's timezone or your MediaWiki time settings.",
+    "deputy.setting.user.cci.signingBehavior.name": "Row signing behavior",
+    "deputy.setting.user.cci.signingBehavior.description": "Choose how Deputy should behave when signing rows. By default, all rows are always signed with your signature (~~~~). You may configure Deputy to only sign the last row or never sign. You can also configure Deputy to leave a hidden trace behind (<!-- User:Example|2016-05-28T14:32:12Z -->), which helps Deputy (for other users) determine who assessed a row.",
+    "deputy.setting.user.cci.signingBehavior.always": "Always sign rows",
+    "deputy.setting.user.cci.signingBehavior.alwaysTrace": "Always leave a trace",
+    "deputy.setting.user.cci.signingBehavior.alwaysTraceLastOnly": "Always leave a trace, but sign the last row modified",
+    "deputy.setting.user.cci.signingBehavior.lastOnly": "Only sign the last row modified (prevents assessor recognition)",
+    "deputy.setting.user.cci.signingBehavior.never": "Never sign rows (prevents assessor recognition)",
 
     "deputy.setting.user.ante": "ANTE",
 
