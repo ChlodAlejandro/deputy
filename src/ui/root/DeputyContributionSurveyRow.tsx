@@ -851,7 +851,8 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	): void {
 		if (
 			event.data.page === this.row.title.getPrefixedText() ||
-			this.revisions.some( ( r ) => r.revision.revid === event.data.revision )
+			// `this.revisions` may be undefined. If so, don't reply.
+			this.revisions?.some( ( r ) => r.revision.revid === event.data.revision )
 		) {
 			window.deputy.comms.reply(
 				event.data, {
