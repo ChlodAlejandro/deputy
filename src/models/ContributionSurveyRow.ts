@@ -27,11 +27,13 @@ export default class ContributionSurveyRow {
 
 	/**
 	 * Wikitext for checking if a given row is a contribution survey row.
-	 * $1 is the page name. $2 is the ID of the first revision. If $2 is undefined, the
-	 * page has been cleared and commented on by a user.
+	 * $1 - Page name
+	 * $2 - Post-page name text (`(3 edits)`)
+	 * $3 - ID of first revision
+	 * $4 - Comments
 	 */
 	static readonly rowWikitextRegex =
-		/\*?(?:'''.''' )?\[\[:?(.+?)]] ?([^:]*) ?(?:: ?)?(?:(?:\[\[Special:Diff\/(\d+)\|.+?]])+|(.+$))/gm;
+		/\*?(?:'''.''' )?\[\[:?(.+?)]](?: ?([^{:]*) ?(?:: ?)?)?(?:(?:\[\[Special:Diff\/(\d+)\|.+?]])+|(.+$))/gm;
 
 	/**
 	 * A set of regular expressions that will match a specific contribution survey row
