@@ -13,7 +13,9 @@ export enum ContributionSurveyRowStatus {
 	// The row has been processed and violations were not found ({{n}})
 	WithoutViolations = 3,
 	// The row has been found but the added text is no longer in the existing revision
-	Missing = 4
+	Missing = 4,
+	// The row has been processed and text was presumptively removed ({{x}}),
+	PresumptiveRemoval = 5
 }
 
 /**
@@ -45,7 +47,8 @@ export default class ContributionSurveyRow {
 			// TODO: Wiki localization
 			[ ContributionSurveyRowStatus.WithViolations ]: /\{\{(aye|y)}}/gi,
 			[ ContributionSurveyRowStatus.WithoutViolations ]: /\{\{n(ay)?}}/gi,
-			[ ContributionSurveyRowStatus.Missing ]: /\{\{\?}}/gi
+			[ ContributionSurveyRowStatus.Missing ]: /\{\{\?}}/gi,
+			[ ContributionSurveyRowStatus.PresumptiveRemoval ]: /\{\{x}}/gi
 		};
 
 	/**

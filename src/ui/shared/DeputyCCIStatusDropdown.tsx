@@ -36,7 +36,8 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 		[ ContributionSurveyRowStatus.Unknown ]: 'alert',
 		[ ContributionSurveyRowStatus.WithViolations ]: 'check',
 		[ ContributionSurveyRowStatus.WithoutViolations ]: 'close',
-		[ ContributionSurveyRowStatus.Missing ]: 'help'
+		[ ContributionSurveyRowStatus.Missing ]: 'help',
+		[ ContributionSurveyRowStatus.PresumptiveRemoval ]: 'trash'
 	};
 
 	/**
@@ -377,6 +378,7 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 	 *   - WithViolations: _usually not disabled, kept as is_
 	 *   - WithoutViolations: _usually not disabled, kept as is_
 	 *   - Missing: _usually not disabled, kept as is_
+	 *   - PresumptiveRemoval: _usually not disabled, kept as is_
 	 *
 	 * @param status The status that was <b>changed into</b>
 	 */

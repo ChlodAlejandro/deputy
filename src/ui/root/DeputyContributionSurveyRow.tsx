@@ -53,7 +53,8 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		[ ContributionSurveyRowStatus.Unknown ]: 'alert',
 		[ ContributionSurveyRowStatus.WithViolations ]: 'check',
 		[ ContributionSurveyRowStatus.WithoutViolations ]: 'close',
-		[ ContributionSurveyRowStatus.Missing ]: 'help'
+		[ ContributionSurveyRowStatus.Missing ]: 'help',
+		[ ContributionSurveyRowStatus.PresumptiveRemoval ]: 'trash'
 	};
 
 	disabled: boolean;
@@ -258,6 +259,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			const useUserData = () => {
 				let addComments = false;
 				switch ( this.status ) {
+					// TODO: l10n
 					case ContributionSurveyRowStatus.Unfinished:
 						// This state should not exist. Just add signature (done outside of switch).
 						break;
@@ -277,6 +279,10 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 						break;
 					case ContributionSurveyRowStatus.Missing:
 						result += '{{?}}';
+						addComments = true;
+						break;
+					case ContributionSurveyRowStatus.PresumptiveRemoval:
+						result += '{{x}}';
 						addComments = true;
 						break;
 				}

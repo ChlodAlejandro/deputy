@@ -115,6 +115,7 @@ export default class DeputyCasePage extends DeputyCase {
 	 */
 	isContributionSurveyHeading( el: HTMLElement ): el is ContributionSurveyHeading {
 		// All headings (h1, h2, h3, h4, h5, h6)
+		// TODO: l10n
 		const headlineElement = this.parsoid ? el : el.querySelector<HTMLElement>( '.mw-headline' );
 		return /^H\d$/.test( el.tagName ) &&
 			headlineElement != null &&
@@ -157,7 +158,7 @@ export default class DeputyCasePage extends DeputyCase {
 			throw new Error( 'Current page is not a case page.' );
 		} else {
 			return ( Array.from( this.document.querySelectorAll(
-				// All headings (h1, h2, h3, h4, h5, h6)
+				// All headings (`h1, h2, h3, h4, h5, h6`)
 				[ 1, 2, 3, 4, 5, 6 ]
 					.map( ( i ) => `.mw-parser-output h${i}` )
 					.join( ',' )

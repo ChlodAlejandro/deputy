@@ -141,6 +141,27 @@ describe( 'ContributionSurveyRow static unit tests', () => {
 			expect(
 				page.evaluate( () => {
 					return window.deputy.models.ContributionSurveyRow.identifyCommentStatus(
+						'{{x}}'
+					);
+				} )
+			).resolves.toBe( ContributionSurveyRowStatus.PresumptiveRemoval ),
+			expect(
+				page.evaluate( () => {
+					return window.deputy.models.ContributionSurveyRow.identifyCommentStatus(
+						'BOOM {{x}}'
+					);
+				} )
+			).resolves.toBe( ContributionSurveyRowStatus.PresumptiveRemoval ),
+			expect(
+				page.evaluate( () => {
+					return window.deputy.models.ContributionSurveyRow.identifyCommentStatus(
+						'{{x}} explosion!'
+					);
+				} )
+			).resolves.toBe( ContributionSurveyRowStatus.PresumptiveRemoval ),
+			expect(
+				page.evaluate( () => {
+					return window.deputy.models.ContributionSurveyRow.identifyCommentStatus(
 						'cleaned'
 					);
 				} )
