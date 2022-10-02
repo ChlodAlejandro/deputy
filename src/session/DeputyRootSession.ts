@@ -385,24 +385,30 @@ export default class DeputyRootSession {
 				// TODO: Do interface functions
 				this.sections = [];
 
-				const foundSections: string[] = [];
+				const activeSectionPromises = [];
 				for ( const heading of this.casePage.findContributionSurveyHeadings() ) {
 					const headingName = sectionHeadingName( heading );
 
 					if ( this.session.caseSections.indexOf( headingName ) !== -1 ) {
-						foundSections.push( headingName );
-						( () => {
-							// Placed in self-executing function for asynchronicity.
-							this.activateSection( this.casePage, heading );
-						} )();
+						activeSectionPromises.push(
+							this.activateSection( this.casePage, heading )
+								.then( v => v ? headingName : null )
+						);
 					} else {
 						this.addSectionOverlay( this.casePage, heading );
 					}
 				}
 
 				// Strip missing sections from caseSections.
-				this.session.caseSections = foundSections;
+				this.session.caseSections = ( await Promise.all( activeSectionPromises ) )
+					.filter( v => !!v );
 				await DeputyRootSession.setSession( this.session );
+
+				if ( this.session.caseSections.length === 0 ) {
+					// No sections re-opened. All of them might have been removed or closed already.
+					// Close this entire session.
+					await this.closeSession();
+				}
 
 				res();
 			} );
@@ -502,14 +508,15 @@ export default class DeputyRootSession {
 	 *
 	 * @param casePage
 	 * @param heading
+	 * @return `true` if the section was activated successfully
 	 */
 	async activateSection(
 		casePage: DeputyCasePage,
 		heading: ContributionSurveyHeading
-	): Promise<void> {
+	): Promise<boolean> {
 		const el = new DeputyContributionSurveySection( casePage, heading );
 		if ( !( await el.prepare() ) ) {
-			return;
+			return false;
 		}
 
 		const sectionName = sectionHeadingName( heading );
@@ -522,6 +529,8 @@ export default class DeputyRootSession {
 		await casePage.addActiveSection( sectionName );
 
 		heading.insertAdjacentElement( 'afterend', el.render() );
+
+		return true;
 	}
 
 	/**
