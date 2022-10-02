@@ -1,12 +1,17 @@
 import { DeputyUIElement } from '../DeputyUIElement';
 import { ContributionSurveyRevision } from '../../models/ContributionSurveyRevision';
 import { h } from 'tsx-dom';
-import getRevisionDiffURL from '../../wiki/util/getRevisionDiffURL';
 import unwrapWidget from '../../util/unwrapWidget';
 import { DeputyMessageEvent, DeputyRevisionStatusUpdateMessage } from '../../DeputyCommunications';
 import type DeputyContributionSurveyRow from './DeputyContributionSurveyRow';
-import nsId from '../../wiki/util/nsId';
-import getRevisionURL from '../../wiki/util/getRevisionURL';
+import {
+	ChangesListBytes, ChangesListDate,
+	ChangesListDiff,
+	ChangesListLinks,
+	ChangesListTags, ChangesListTime,
+	ChangesListUser,
+	NewPageIndicator
+} from './DeputyChangesListElements';
 
 /**
  * A specific revision for a section row.
@@ -167,41 +172,6 @@ export default class DeputyContributionSurveyRevision
 	 * @inheritDoc
 	 */
 	render(): HTMLElement {
-		const time = new Date( this.revision.timestamp );
-		let now = window.moment( time );
-
-		if ( window.deputy.config.cci.forceUtc.get() ) {
-			now = now.utc();
-		}
-
-		const formattedTime = time.toLocaleTimeString( window.deputyLang, {
-			hourCycle: 'h24',
-			timeStyle: mw.user.options.get( 'date' ) === 'ISO 8601' ? 'long' : 'short'
-		} );
-		const formattedDate = now.locale( window.deputyLang ).format( {
-			dmy: 'D MMMM YYYY',
-			mdy: 'MMMM D, Y',
-			ymd: 'YYYY MMMM D',
-			'ISO 8601': 'YYYY:MM:DD[T]HH:mm:SS'
-		}[ mw.user.options.get( 'date' ) as string ] );
-
-		const userPage = new mw.Title(
-			this.revision.user,
-			nsId( 'user' )
-		);
-		const userTalkPage = new mw.Title(
-			this.revision.user,
-			nsId( 'user_talk' )
-		);
-		const userContribsPage = new mw.Title(
-			'Special:Contributions/' + this.revision.user
-		);
-
-		const DiffTag = (
-			Math.abs( this.revision.diffsize ) > 500 ?
-				'strong' :
-				'span'
-		) as keyof JSX.IntrinsicElements;
 
 		const commentElement = <span
 			class="comment comment--without-parentheses"
@@ -214,118 +184,34 @@ export default class DeputyContributionSurveyRevision
 			this.revisionStatusUpdateListener
 		);
 
-		const comma = mw.msg( 'comma-separator' );
-
+		// Be wary of the spaces between tags.
 		return <div
 			class={ ( this.revision.tags ?? [] ).map( ( v ) => 'mw-tag-' + v ).join( ' ' ) }
 		>
-			{ unwrapWidget( this.completedCheckbox ) }
-			<span class="mw-changeslist-links">
-				<span><a rel="noopener" href={
-					getRevisionDiffURL( this.revision.revid, 0 )
-				} title="Difference with latest revision" target="_blank">
-					{ mw.msg( 'deputy.session.revision.cur' ) }
-				</a></span>
-				<span>{
-					!this.revision.parentid ?
-						mw.msg( 'deputy.session.revision.prev' ) :
-						<a rel="noopener" href={
-							!this.revision.parentid ?
-								null :
-								getRevisionDiffURL( this.revision.parentid, this.revision.revid )
-						} title="Difference with preceding revision" target="_blank">
-							{ mw.msg( 'deputy.session.revision.prev' ) }
-						</a>
-				}</span>
-			</span>
-			<span class="mw-changeslist-time">{ formattedTime }</span>
-			<a class="mw-changeslist-date" href={
-				getRevisionURL( this.revision.revid, this.revision.page.title )
-			}>{ formattedTime }{comma}{ formattedDate }</a>
-			<span class="history-user">
-				<a class="mw-userlink" target="_blank" rel="noopener" href={
-					mw.format(
-						mw.config.get( 'wgArticlePath' ),
-						userPage.getPrefixedDb()
-					)
-				} title={ userPage.getPrefixedText() }>{ userPage.getPrefixedText() }</a> <span
-					class="mw-usertoollinks mw-changeslist-links"
-				>
-					<span>
-						<a class="mw-usertoollinks-talk" target="_blank" rel="noopener" href={
-							mw.format(
-								mw.config.get( 'wgArticlePath' ),
-								userTalkPage.getPrefixedDb()
-							)
-						} title={ userTalkPage.getPrefixedText() }>
-							{ mw.msg( 'deputy.session.revision.talk' ) }
-						</a>
-					</span>
-					<span>
-						<a class="mw-usertoollinks-contribs" target="_blank" rel="noopener" href={
-							mw.format(
-								mw.config.get( 'wgArticlePath' ),
-								userContribsPage.getPrefixedDb()
-							)
-						} title={ userContribsPage.getPrefixedText() }>
-							{ mw.msg( 'deputy.session.revision.contribs' ) }
-						</a>
-					</span>
-				</span>
-			</span> <span class="mw-changeslist-separator"></span> <span
-				class="history-size mw-diff-bytes"
-				data-mw-bytes={ this.revision.size }
-			>
-				{ mw.message(
-					'deputy.session.revision.bytes',
-					this.revision.size.toString()
-				).text() }
-			</span> <DiffTag class={ `mw-plusminus-${
-				this.revision.diffsize === 0 ? 'null' :
-					( this.revision.diffsize > 0 ? 'pos' : 'neg' )
-			} mw-diff-bytes` } title={
-				mw.message(
-					'deputy.session.revision.byteChange',
-					this.revision.size.toString()
-				).text()
-			}>
-				{
-					mw.message(
-						`deputy.${
-							this.revision.diffsize < 0 ? 'negative' : 'positive'
-						}Diff`,
-						this.revision.diffsize.toString()
-					).text()
-				}
-			</DiffTag> <span class="mw-changeslist-separator"></span> { commentElement } {
-				( this.revision.tags?.length ?? -1 ) > 0 && <span class="mw-tag-markers">
-					<a
-						rel="noopener" href={
-							mw.format(
-								mw.config.get( 'wgArticlePath' ),
-								'Special:Tags'
-							)
-						}
-						title="Special:Tags"
-						target="_blank"
-					>
-						{
-							mw.message(
-								'deputy.session.revision.tags',
-								this.revision.tags.length.toString()
-							).text()
-						}
-					</a>{
-						this.revision.tags.map( ( v ) => {
-							// eslint-disable-next-line mediawiki/msg-doc
-							const tagMessage = mw.message( `tag-${v}` ).parse();
-							return tagMessage !== '-' && <span
-								class={ `mw-tag-marker mw-tag-marker-${v}` }
-								dangerouslySetInnerHTML={tagMessage}
-							/>;
-						} )
-					}
-				</span>
+			{unwrapWidget( this.completedCheckbox )}
+			<ChangesListLinks
+				revid={ this.revision.revid }
+				parentid={ this.revision.parentid }
+			/> {
+				!this.revision.parentid && <NewPageIndicator />
+			}<ChangesListTime
+				timestamp={ this.revision.timestamp }
+			/><ChangesListDate
+				revision={ this.revision }
+			/>  <ChangesListUser
+				user={ this.revision.user }
+			/> <span
+				class="mw-changeslist-separator"
+			/> <ChangesListBytes
+				size={ this.revision.size }
+			/> <ChangesListDiff
+				size={ this.revision.size }
+				diffsize={ this.revision.diffsize }
+			/> <span
+				class="mw-changeslist-separator"
+			/> { commentElement } {
+				( this.revision.tags?.length ?? -1 ) > 0 &&
+				<ChangesListTags tags={this.revision.tags} />
 			}
 		</div> as HTMLElement;
 	}

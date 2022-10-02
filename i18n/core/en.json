@@ -55,14 +55,17 @@
     "deputy.session.row.checked.talk": "talk",
     "deputy.session.row.checked.contribs": "contribs",
 
-    "deputy.session.revision.assessed": "Assessed",
     "deputy.session.revision.cur": "cur",
     "deputy.session.revision.prev": "prev",
+    "deputy.session.revision.cur.tooltip": "Difference with latest revision",
+    "deputy.session.revision.prev.tooltip": "Difference with preceding revision",
     "deputy.session.revision.talk": "talk",
     "deputy.session.revision.contribs": "contribs",
     "deputy.session.revision.bytes": "{{FORMATNUM:$1}} bytes",
     "deputy.session.revision.byteChange": "{{FORMATNUM:$1}} bytes after change of this size",
     "deputy.session.revision.tags": "{{PLURAL:$1|Tag|Tags}}:",
+    "deputy.session.revision.new": "N",
+    "deputy.session.revision.new.tooltip": "This edit created a new page.",
 
     "deputy.session.page.diff.next": "Navigate to the next unassessed revision",
     "deputy.session.page.diff.loadFail": "Failed to load diff. Please check your internet connection and try again.",

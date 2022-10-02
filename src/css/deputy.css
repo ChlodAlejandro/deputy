@@ -238,9 +238,13 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
 }
 
 .dp-cs-row .history-user,
-.dp-cs-row .mw-changeslist-date {
+.dp-cs-row :not(.newpage) + .mw-changeslist-date {
 	margin-left: 0.4em;
 	margin-right: 0.2em;
+}
+
+.dp-cs-row .newpage {
+	margin-left: 0.4em;
 }
 
 .dp-cs-row-content {
