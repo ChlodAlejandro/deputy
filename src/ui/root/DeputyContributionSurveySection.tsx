@@ -102,8 +102,10 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		for ( const obj of this.wikitextLines ) {
 			if ( typeof obj === 'string' ) {
 				final.push( obj );
-			} else {
+			} else if ( obj.modified ) {
 				final.push( obj.wikitext );
+			} else {
+				final.push( obj.originalWikitext );
 			}
 		}
 
