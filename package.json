@@ -80,7 +80,7 @@
         "which": "^2.0.2"
     },
     "browserslist": [
-        "cover 95% and supports fetch, not IE 11"
+        "cover 95% and not IE 11 and supports fetch"
     ],
     "dependencies": {
         "@chlodalejandro/parsoid": "2.0.0-f08be30",
