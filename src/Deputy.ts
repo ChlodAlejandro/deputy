@@ -190,6 +190,7 @@ class Deputy {
 
 mw.loader.using( [
 	'mediawiki.api',
+	'mediawiki.jqueryMsg',
 	'mediawiki.Title',
 	'mediawiki.util',
 	'moment',
