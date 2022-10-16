@@ -26,6 +26,9 @@ describe( 'ContributionSurveyRow static unit tests', () => {
 			'* [[:Example]]: (1 edit) [[Special:Diff/123456|(+173)]]',
 			'* [[:Example]]: (1 edit, 1 major, +173) [[Special:Diff/123456|(+173)]]',
 			'* [[:Example]]: {{?}} Deleted',
+			'* [[:Example]] (1 edit): [[Special:Diff/123456|(+173)]]',
+			'* [[:Example]] (1 edit, 1 major, +173): [[Special:Diff/123456|(+173)]]',
+			'* [[:Example]] {{?}} Deleted',
 
 			// Created page
 			'* \'\'\'N\'\'\' [[:Example]]: (1 edit) [[Special:Diff/123456|(+173)]]',
