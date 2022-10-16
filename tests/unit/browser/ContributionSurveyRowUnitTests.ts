@@ -1,9 +1,9 @@
 import { jest } from '@jest/globals';
 import 'expect-puppeteer';
-import '../../src/types';
-import loadWikipediaPage from '../util/loadWikipediaPage';
-import loadDeputyScript from '../util/loadDeputyScript';
-import { ContributionSurveyRowStatus } from '../../src/models/ContributionSurveyRow';
+import '../../../src/types';
+import loadWikipediaPage from '../../util/loadWikipediaPage';
+import loadDeputyScript from '../../util/loadDeputyScript';
+import { ContributionSurveyRowStatus } from '../../../src/models/ContributionSurveyRow';
 
 describe( 'ContributionSurveyRow static unit tests', () => {
 

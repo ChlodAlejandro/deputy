@@ -1,8 +1,8 @@
 import { jest } from '@jest/globals';
 import 'expect-puppeteer';
-import '../../src/types';
-import loadWikipediaPage from '../util/loadWikipediaPage';
-import loadDeputyScript from '../util/loadDeputyScript';
+import '../../../src/types';
+import loadWikipediaPage from '../../util/loadWikipediaPage';
+import loadDeputyScript from '../../util/loadDeputyScript';
 
 describe( 'DeputyCasePage static unit tests', () => {
 

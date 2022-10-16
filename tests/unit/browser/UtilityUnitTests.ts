@@ -1,7 +1,7 @@
-import loadWikipediaPage from '../util/loadWikipediaPage';
-import loadDeputyScript from '../util/loadDeputyScript';
+import loadWikipediaPage from '../../util/loadWikipediaPage';
+import loadDeputyScript from '../../util/loadDeputyScript';
 import { jest } from '@jest/globals';
-import '../../src/types';
+import '../../../src/types';
 
 describe( 'Utility function tests', () => {
 
