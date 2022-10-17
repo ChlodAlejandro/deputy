@@ -2,6 +2,7 @@
  * Data that constructs a raw contribution survey row.
  */
 interface RawContributionSurveyRow {
+	type: 'detailed' | 'pageonly';
 	/**
 	 * The bullet and all trailing whitespace. This matches the starting bullet
 	 * (an asterisk) and the trailing whitespace. The whitespace is also included
@@ -29,11 +30,9 @@ interface RawContributionSurveyRow {
 	page: string;
 	/**
 	 * Extra information attached to the diff. This usually comes before or after
-	 * the colon, depending on the year the case was opened. This also includes
-	 * the actual colon. If the colon was not detected, this value is undefined
-	 * and the extra text is assumed to be part of the user comments. If a diff
-	 * link was encountered, however, all text between the page's closing link
-	 * brackets and the diff's opening link brackets is considered extra text.
+	 * the colon, depending on the year the case was opened, including the
+	 * actual colon. In practice, this string contains any text between the page
+	 * title and the diffs.
 	 *
 	 * @example `": (1 edits, 1 major, +10929)"`, `"(3 edits):"`
 	 */
@@ -52,6 +51,13 @@ interface RawContributionSurveyRow {
 	 * @example `"{{x}} [[User:Foo|Foo]] ([[User talk:Foo|talk]]) 00:00, 1 January 2000 (UTC)"`
 	 */
 	comments?: string;
+
+	// Non-raw string values:
+
+	/**
+	 * An array of all revision IDs parsed from the diffs.
+	 */
+	revids: number[];
 }
 
 /**
@@ -59,7 +65,7 @@ interface RawContributionSurveyRow {
  *
  * This is used directly in unit tests. Do not import unnecessary
  * dependencies, as they may indirectly import the entire Deputy
- * codebase outside of a browser environment.
+ * codebase outside a browser environment.
  */
 export default class ContributionSurveyRowParser {
 
@@ -83,10 +89,81 @@ export default class ContributionSurveyRowParser {
 	parse(): RawContributionSurveyRow {
 		this.current = this.wikitext;
 
+		const bullet = this.eatUntil( /^[^*\s]/g );
+
+		if ( !bullet ) {
+			throw new Error( 'dp-malformed-row' );
+		}
+
+		const creation = this.eatExpression( /^\s*'''N'''\s*/g ) != null;
+		const page = this.eatExpression( /\[\[([^\]|]+)(?:\|.*)?]]/g, 1 );
+
+		if ( !page ) {
+			// Malformed or unparsable listing.
+			throw new Error( 'dp-undetectable-page-name' );
+		}
+
+		let extras = this.eatUntil( /^\[\[Special:Diff\/\d+/, true );
+
+		// At this point, `extras` is either a string or `null`. If it's a string,
+		// extras exist, and we should add them. If not, there's likely no more
+		// revisions to be processed here, and can assume that the rest is user comments.
+		const revids: number[] = [];
+		let diffs: string = null,
+			comments: string;
+		if ( extras ) {
+			const starting = this.current;
+			let diff: true | string = true;
+			while ( diff ) {
+				diff = this.eatExpression( /\[\[Special:Diff\/(\d+)(?:\|.*)?]]/g, 1 );
+				if ( diff != null ) {
+					revids.push( +diff );
+				}
+			}
+
+			// All diff links removed. Get diff of starting and current to get entire diff part.
+			diffs = starting.slice( 0, starting.length - this.current.length );
+			// Comments should be empty, but just in case we do come across comments.
+			comments = this.isEmpty() ? null : this.eatRemaining();
+		} else {
+			// Try to grab extras. This is done by detecting any form of parentheses and
+			// matching them, including any possible included colon. If that doesn't work,
+			// try pulling out just the colon.
+			const maybeExtras = this.eatExpression(
+				/\s*(?::\s*)?\(.+\)(?:\s*:)?\s*/
+			) || this.eatExpression( /\s*:\s*/g );
+			if ( maybeExtras ) {
+				extras = maybeExtras;
+			}
+
+			// Only comments probably remain. Eat out whitespaces and the rest is a comment.
+			extras = ( extras || '' ) + ( this.eatUntil( /^\S/g, true ) || '' );
+			if ( extras === '' ) {
+				extras = null;
+			}
+
+			comments = this.getCurrentLength() > 0 ? this.eatRemaining() : null;
+		}
+
 		return {
-			bullet: '*',
-			page: 'test' // TODO: DO THIS!
+			type: ( extras || comments || diffs ) == null ? 'pageonly' : 'detailed',
+			bullet,
+			creation,
+			page,
+			extras,
+			diffs,
+			comments,
+			revids
 		};
+	}
+
+	/**
+	 * Returns `true` if the working string is empty.
+	 *
+	 * @return `true` if the length of `current` is zero. `false` if otherwise.
+	 */
+	isEmpty(): boolean {
+		return this.current.length === 0;
 	}
 
 	/**
@@ -119,7 +196,7 @@ export default class ContributionSurveyRowParser {
 	/**
 	 * Continue eating from the string until a string or regular expression
 	 * is matched. Unlike {@link eatExpression}, passed regular expressions
-	 * will not be re-wrapped with `^()`. These must be added on your own if
+	 * will not be re-wrapped with `^(?:)`. These must be added on your own if
 	 * you wish to match the start of the string.
 	 *
 	 * @param pattern The string or regular expression to match.
@@ -162,14 +239,15 @@ export default class ContributionSurveyRowParser {
 	 * behavior is expected.
 	 *
 	 * The regular expression passed into this function is automatically re-wrapped
-	 * with `^(<source>)`. Avoid adding these expressions on your own.
+	 * with `^(?:<source>)`. Avoid adding these expressions on your own.
 	 *
 	 * @param pattern The pattern to match.
+	 * @param n The capture group to return (returns the entire string (`0`) by default)
 	 * @return The consumed characters.
 	 */
-	eatExpression( pattern: RegExp ): string {
+	eatExpression( pattern: RegExp, n = 0 ): string {
 		const expression = new RegExp(
-			`^(${pattern.source})`,
+			`^(?:${pattern.source})`,
 			// Ban global and multiline, useless since this only matches once and to
 			// ensure that the reading remains 'flat'.
 			pattern.flags.replace( /[gm]/g, '' )
@@ -178,10 +256,21 @@ export default class ContributionSurveyRowParser {
 		const match = expression.exec( this.current );
 		if ( match ) {
 			this.current = this.current.slice( match[ 0 ].length );
-			return match[ 0 ];
+			return match[ n ];
 		} else {
 			return null;
 		}
+	}
+
+	/**
+	 * Consumes the rest of the working string.
+	 *
+	 * @return The remaining characters in the working string.
+	 */
+	eatRemaining(): string {
+		const remaining = this.current;
+		this.current = '';
+		return remaining;
 	}
 
 }
