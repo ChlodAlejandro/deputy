@@ -2,8 +2,10 @@ import * as path from 'path';
 
 /**
  * Loads the Deputy script into the current browser context.
+ *
+ * @param timeout
  */
-export default async function () {
+export default async function ( timeout?: number ) {
 	return page.addScriptTag( {
 		path: path.resolve( __dirname, '..', '..', 'build', 'deputy.js' )
 	} ).then( async () => {
@@ -14,7 +16,7 @@ export default async function () {
 				mw.hook( 'deputy.load' ).add( () => res( true ) );
 				setTimeout( () => {
 					res( false );
-				}, 60000 );
+				}, timeout ?? 60000 );
 			} );
 		} );
 

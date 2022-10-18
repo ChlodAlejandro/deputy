@@ -211,7 +211,7 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 		);
 		expect( parser.parse() ).toEqual( {
 			type: 'detailed',
-			bullet: '*',
+			bullet: '* ',
 			creation: false,
 			page: ':Example',
 			extras: ': (1 edits, 1 major, +15927) ',

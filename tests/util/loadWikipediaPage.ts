@@ -3,13 +3,14 @@
  *
  * @param targetPage The page to navigate to.
  * @param testWiki
+ * @param timeout
  */
-export default async function ( targetPage: string, testWiki = false ) {
+export default async function ( targetPage: string, testWiki = false, timeout?: number ) {
 	await page.goto(
 		`https://${testWiki ? 'test' : 'en'}.wikipedia.org/wiki/${
 			encodeURIComponent( targetPage.trim().replace( / /g, '_' ) )
 		}`, {
-			timeout: 120e3
+			timeout: timeout ?? 120e3
 		}
 	);
 }
