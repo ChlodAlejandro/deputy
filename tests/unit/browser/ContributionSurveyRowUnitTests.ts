@@ -43,14 +43,14 @@ describe( 'ContributionSurveyRow static unit tests', () => {
 			'*[[:Example]] (1 edit, 1 major, +173)',
 			'*[[:Example]] (1 edit, 1 major, +173) {{n}}',
 			'*[[:Example]] {{?}}',
-			'*[[:Example]] {{done}} with {{y}}'
-		];
-		// Cases that require special treatment from other parsing methods.
-		const expectFalse: string[] = [
+			'*[[:Example]] {{done}} with {{y}}',
 			// WikiProject Tropical cyclones
 			'*[[:1852 Atlantic hurricane season]]',
 			// 20110727 11
-			'*[[:c:File:Corrected Pueblo County, CO, Courthouse IMG 5089.JPG]]',
+			'*[[:c:File:Corrected Pueblo County, CO, Courthouse IMG 5089.JPG]]'
+		];
+		// Cases that require special treatment from other parsing methods.
+		const expectFalse: string[] = [
 			// Not part of a list
 			'[[:1852 Atlantic hurricane season]]',
 			// Not a contribution survey row

@@ -2,6 +2,9 @@ import cloneRegex from '../util/cloneRegex';
 import { ContributionSurveyRevision } from './ContributionSurveyRevision';
 import DeputyCasePage from '../wiki/DeputyCasePage';
 import MwApi from '../MwApi';
+import ContributionSurveyRowParser, {
+	RawContributionSurveyRow
+} from './ContributionSurveyRowParser';
 
 export enum ContributionSurveyRowStatus {
 	// The row has not been processed yet.
@@ -26,16 +29,6 @@ export enum ContributionSurveyRowStatus {
 export default class ContributionSurveyRow {
 
 	/**
-	 * Wikitext for checking if a given row is a contribution survey row.
-	 * $1 - Page name
-	 * $2 - Post-page name text (`(3 edits)`)
-	 * $3 - ID of first revision
-	 * $4 - Comments
-	 */
-	static readonly rowWikitextRegex =
-		/\*?(?:'''.''' )?\[\[:?(.+?)]](?: ?([^{:]*) ?(?:: ?)?)?(?:(?:\[\[Special:Diff\/(\d+)\|.+?]])+|(.+$))/gm;
-
-	/**
 	 * A set of regular expressions that will match a specific contribution survey row
 	 * comment. Used to determine the status of the comment.
 	 */
@@ -52,16 +45,6 @@ export default class ContributionSurveyRow {
 			[ ContributionSurveyRowStatus.Missing ]: /\{\{\?}}/gi,
 			[ ContributionSurveyRowStatus.PresumptiveRemoval ]: /\{\{x}}/gi
 		};
-
-	/**
-	 * Determines if a given wikitext line is a valid contribution survey row.
-	 *
-	 * @param text The wikitext to check
-	 * @return Whether the provided wikitext is a contribution survey row or not
-	 */
-	static isContributionSurveyRowText( text: string ): boolean {
-		return cloneRegex( ContributionSurveyRow.rowWikitextRegex ).test( text );
-	}
 
 	/**
 	 * Identifies a row's current status based on the comment's contents.
@@ -141,22 +124,30 @@ export default class ContributionSurveyRow {
 	private diffs?: Map<number, ContributionSurveyRevision>;
 
 	/**
+	 * Data returned by the ContributionSurveyRowParser. Run on the wikitext
+	 * during instantiation.
+	 *
+	 * @private
+	 */
+	private readonly data: RawContributionSurveyRow;
+
+	/**
 	 * Creates a new contribution survey row from MediaWiki parser output.
 	 *
 	 * @param casePage The case page of this row
 	 * @param wikitext The wikitext of the row
 	 */
 	constructor( casePage: DeputyCasePage, wikitext: string ) {
-		const rowExec = cloneRegex( ContributionSurveyRow.rowWikitextRegex ).exec( wikitext );
+		this.data = new ContributionSurveyRowParser( wikitext ).parse();
 
 		this.casePage = casePage;
 		this.wikitext = wikitext;
-		this.title = new mw.Title( rowExec[ 1 ] );
-		this.extras = rowExec[ 2 ];
-		this.comment = rowExec[ 4 ];
-		this.status = this.originalStatus = rowExec[ 4 ] == null ?
+		this.title = new mw.Title( this.data.page );
+		this.extras = this.data.extras;
+		this.comment = this.data.comments;
+		this.status = this.originalStatus = this.data.comments == null ?
 			ContributionSurveyRowStatus.Unfinished :
-			ContributionSurveyRow.identifyCommentStatus( rowExec[ 4 ] );
+			ContributionSurveyRow.identifyCommentStatus( this.data.comments );
 
 		if ( ( ContributionSurveyRow.commentMatchRegex as any )[ this.status ] != null ) {
 			if (
@@ -187,49 +178,34 @@ export default class ContributionSurveyRow {
 			return this.diffs;
 		}
 
-		const rowExec = cloneRegex( ContributionSurveyRow.rowWikitextRegex ).exec( this.wikitext );
 		const revisionData: Map<number, ContributionSurveyRevision> = new Map();
-		const diffs = [];
+		const revids = this.data.revids;
 
 		// Load revision information
-		if ( rowExec[ 3 ] !== null && rowExec.length !== 0 ) {
-			const diffRegex = cloneRegex( /Special:Diff\/(\d+)/g );
-			let diffMatch = diffRegex.exec( rowExec[ 0 ] );
-			while ( diffMatch != null ) {
-				if ( diffMatch[ 1 ] == null ) {
-					console.warn( 'Could not parse revision ID: ' + diffMatch[ 0 ] );
-				} else {
-					diffs.push( +diffMatch[ 1 ] );
-				}
-
-				diffMatch = diffRegex.exec( rowExec[ 0 ] );
+		const toCache = [];
+		for ( const revisionID of revids ) {
+			const cachedDiff = await window.deputy.storage.db.get( 'diffCache', revisionID );
+			if ( cachedDiff ) {
+				revisionData.set(
+					revisionID, new ContributionSurveyRevision( this, cachedDiff )
+				);
+			} else {
+				toCache.push( revisionID );
+			}
+		}
+		if ( toCache.length > 0 ) {
+			const expandedData = await window.deputy.api.getExpandedRevisionData( toCache );
+			for ( const revisionID in expandedData ) {
+				revisionData.set(
+					+revisionID,
+					new ContributionSurveyRevision( this, expandedData[ revisionID ] )
+				);
 			}
 
-			const toCache = [];
-			for ( const revisionID of diffs ) {
-				const cachedDiff = await window.deputy.storage.db.get( 'diffCache', revisionID );
-				if ( cachedDiff ) {
-					revisionData.set(
-						revisionID, new ContributionSurveyRevision( this, cachedDiff )
-					);
-				} else {
-					toCache.push( revisionID );
-				}
-			}
-			if ( toCache.length > 0 ) {
-				const expandedData = await window.deputy.api.getExpandedRevisionData( toCache );
-				for ( const revisionID in expandedData ) {
-					revisionData.set(
-						+revisionID,
-						new ContributionSurveyRevision( this, expandedData[ revisionID ] )
-					);
-				}
-
-				for ( const revisionID in expandedData ) {
-					await window.deputy.storage.db.put(
-						'diffCache', expandedData[ revisionID ]
-					);
-				}
+			for ( const revisionID in expandedData ) {
+				await window.deputy.storage.db.put(
+					'diffCache', expandedData[ revisionID ]
+				);
 			}
 		}
 

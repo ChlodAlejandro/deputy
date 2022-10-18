@@ -1,7 +1,7 @@
 /**
  * Data that constructs a raw contribution survey row.
  */
-interface RawContributionSurveyRow {
+export interface RawContributionSurveyRow {
 	type: 'detailed' | 'pageonly';
 	/**
 	 * The bullet and all trailing whitespace. This matches the starting bullet

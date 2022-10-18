@@ -55,7 +55,12 @@ export default class DeputyFinishedContributionSurveyRow {
 
 		const parser = window.deputy.session.rootSession.parser;
 		// Use DiscussionTools to identify the user and timestamp.
-		const parsedComment = parser.parse( props.originalElement )?.commentItems?.[ 0 ];
+		let parsedComment;
+		try {
+			parsedComment = parser.parse( props.originalElement )?.commentItems?.[ 0 ];
+		} catch ( e ) {
+			console.warn( 'Failed to parse user signature.', e );
+		}
 		if ( !parsedComment ) {
 			// See if the Deputy trace exists.
 			const fromTrace = guessTrace( props.row.wikitext );

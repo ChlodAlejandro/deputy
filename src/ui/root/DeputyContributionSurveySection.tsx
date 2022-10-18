@@ -102,10 +102,8 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		for ( const obj of this.wikitextLines ) {
 			if ( typeof obj === 'string' ) {
 				final.push( obj );
-			} else if ( obj.modified ) {
-				final.push( obj.wikitext );
 			} else {
-				final.push( obj.originalWikitext );
+				final.push( obj.wikitext );
 			}
 		}
 
@@ -297,12 +295,12 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			const line = wikitextLines[ i ];
 
 			let rowElement;
-			if ( ContributionSurveyRow.isContributionSurveyRowText( line ) ) {
+			try {
 				const csr = new ContributionSurveyRow( this.casePage, line );
 				rowElement = new DeputyContributionSurveyRow(
 					csr, rowElements[ csr.title.getPrefixedText() ], line, this
 				);
-			} else {
+			} catch ( e ) {
 				rowElement = line;
 			}
 			if ( typeof rowElement !== 'string' ) {
