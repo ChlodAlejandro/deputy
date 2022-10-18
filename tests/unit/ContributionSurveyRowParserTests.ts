@@ -204,6 +204,23 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 		} );
 	} );
 
+	test( '{{dif}}, pre-colon', () => {
+		// Dawkeye
+		const parser = new ContributionSurveyRowParser(
+			'* [[:Example]]: (1 edits, 1 major, +15927) \'\'\'{{dif|340829968|(+15927)}}\'\'\''
+		);
+		expect( parser.parse() ).toEqual( {
+			type: 'detailed',
+			bullet: '*',
+			creation: false,
+			page: ':Example',
+			extras: ': (1 edits, 1 major, +15927) ',
+			diffs: '\'\'\'{{dif|340829968|(+15927)}}\'\'\'',
+			comments: null,
+			revids: [ 340829968 ]
+		} );
+	} );
+
 	test( 'edge: pre-colon, no comment, no diffs', () => {
 		const parser = new ContributionSurveyRowParser(
 			'*[[:Example]]: (1 edit)'

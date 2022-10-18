@@ -1,6 +1,8 @@
 /**
  * Data that constructs a raw contribution survey row.
  */
+import cloneRegex from '../util/cloneRegex';
+
 export interface RawContributionSurveyRow {
 	type: 'detailed' | 'pageonly';
 	/**
@@ -103,7 +105,11 @@ export default class ContributionSurveyRowParser {
 			throw new Error( 'dp-undetectable-page-name' );
 		}
 
-		let extras = this.eatUntil( /^\[\[Special:Diff\/\d+/, true );
+		let extras =
+			// [[Special:Diff/12345|6789]]
+			this.eatUntil( /^(?:'''?)?\[\[Special:Diff\/\d+/, true ) ??
+			// {{dif|12345|6789}}
+			this.eatUntil( /^(?:'''?)?{{dif\|\d+/, true );
 
 		// At this point, `extras` is either a string or `null`. If it's a string,
 		// extras exist, and we should add them. If not, there's likely no more
@@ -115,7 +121,11 @@ export default class ContributionSurveyRowParser {
 			const starting = this.current;
 			let diff: true | string = true;
 			while ( diff ) {
-				diff = this.eatExpression( /\[\[Special:Diff\/(\d+)(?:\|.*)?]]/g, 1 );
+				diff =
+					// [[Special:Diff/12345|6789]]
+					this.eatExpression( /(?:'''?)?\[\[Special:Diff\/(\d+)(?:\|.*)?]](?:'''?)?/g, 1 ) ??
+					// {{dif|12345|6789}}
+					this.eatExpression( /(?:'''?)?{{dif\|(\d+)\|[^}]+}}(?:'''?)?/g, 1 );
 				if ( diff != null ) {
 					revids.push( +diff );
 				}
@@ -215,7 +225,7 @@ export default class ContributionSurveyRowParser {
 					return consumed;
 				}
 			} else {
-				if ( pattern.test( this.current ) ) {
+				if ( cloneRegex( pattern ).test( this.current ) ) {
 					return consumed;
 				}
 			}

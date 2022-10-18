@@ -301,9 +301,12 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 					csr, rowElements[ csr.title.getPrefixedText() ], line, this
 				);
 			} catch ( e ) {
-				console.warn( 'Could not parse row.', line, e );
-				// For debugging and tests.
-				mw.hook( 'deputy.errors.cciRowParse' ).fire( { line, e } );
+				// Only trigger on actual bulleted lists.
+				if ( line.startsWith( '*' ) ) {
+					console.warn( 'Could not parse row.', line, e );
+					// For debugging and tests.
+					mw.hook( 'deputy.errors.cciRowParse' ).fire( { line, error: e } );
+				}
 				rowElement = line;
 			}
 			if ( typeof rowElement !== 'string' ) {
