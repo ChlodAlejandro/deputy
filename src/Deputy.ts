@@ -40,7 +40,7 @@ class Deputy {
 	 *
 	 * @private
 	 */
-	static readonly instance: Deputy = new Deputy();
+	static instance: Deputy;
 	readonly DeputyAPI = DeputyAPI;
 	readonly DeputyStorage = DeputyStorage;
 	readonly DeputySession = DeputySession;
@@ -109,6 +109,15 @@ class Deputy {
 			document.body.appendChild( unwrapWidget( this._windowManager ) );
 		}
 		return this._windowManager;
+	}
+
+	/**
+	 * Initialize Deputy.
+	 */
+	static async init(): Promise<void> {
+		Deputy.instance = new Deputy();
+		window.deputy = Deputy.instance;
+		return window.deputy.init();
 	}
 
 	/**
@@ -198,8 +207,7 @@ mw.loader.using( [
 ], function () {
 	Recents.save();
 	performHacks();
-	window.deputy = Deputy.instance;
-	window.deputy.init();
+	Deputy.init();
 } );
 
 // We only want to export the type, not the actual class. This cuts down on
