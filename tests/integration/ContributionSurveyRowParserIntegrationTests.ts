@@ -24,7 +24,7 @@ describe( 'ContributionSurveyRowParser integration tests', () => {
 					const fakePromise = new Promise( ( _res ) => {
 						res = _res;
 					} );
-					mw.hook( 'deputy.load.cci.root' ).add( () => {
+					mw.hook( 'deputy.load.cci.session' ).add( () => {
 						res( false );
 					} );
 					mw.hook( 'deputy.errors.cciRowParse' ).add( ( data ) => {

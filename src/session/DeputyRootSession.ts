@@ -413,6 +413,7 @@ export default class DeputyRootSession {
 					await this.closeSession();
 				}
 
+				mw.hook( 'deputy.load.cci.root' ).fire();
 				res();
 			} );
 		} );
@@ -533,7 +534,7 @@ export default class DeputyRootSession {
 
 		heading.insertAdjacentElement( 'afterend', el.render() );
 		await el.loadData();
-		mw.hook( 'deputy.load.cci.root' ).fire();
+		mw.hook( 'deputy.load.cci.session' ).fire();
 
 		return true;
 	}
