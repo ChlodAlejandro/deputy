@@ -803,8 +803,6 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			{ this.element }
 		</div> as HTMLElement;
 
-		this.loadData();
-
 		return this.rootElement;
 	}
 

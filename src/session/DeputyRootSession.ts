@@ -529,6 +529,8 @@ export default class DeputyRootSession {
 		await casePage.addActiveSection( sectionName );
 
 		heading.insertAdjacentElement( 'afterend', el.render() );
+		await el.loadData();
+		mw.hook( 'deputy.load.cci.root' ).fire();
 
 		return true;
 	}

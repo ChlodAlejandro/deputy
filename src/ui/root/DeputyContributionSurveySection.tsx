@@ -301,6 +301,9 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 					csr, rowElements[ csr.title.getPrefixedText() ], line, this
 				);
 			} catch ( e ) {
+				console.warn( 'Could not parse row.', line, e );
+				// For debugging and tests.
+				mw.hook( 'deputy.errors.cciRowParse' ).fire( { line, e } );
 				rowElement = line;
 			}
 			if ( typeof rowElement !== 'string' ) {
@@ -392,6 +395,15 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			);
 			return false;
 		} );
+	}
+
+	/**
+	 * Makes all rows of this section being loading data.
+	 *
+	 * @return A Promise that resolves when all rows have finished loading data.
+	 */
+	async loadData(): Promise<void> {
+		await Promise.all( this.rows.map( row => row.loadData() ) );
 	}
 
 	/**

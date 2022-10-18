@@ -172,7 +172,6 @@ export default class DeputyContributionSurveyRevision
 	 * @inheritDoc
 	 */
 	render(): HTMLElement {
-
 		const commentElement = <span
 			class="comment comment--without-parentheses"
 			/** Stranger danger! Yes. */
