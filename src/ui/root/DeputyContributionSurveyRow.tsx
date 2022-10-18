@@ -522,7 +522,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		for ( const revision of diffs.values() ) {
 			const revisionUIEl = new DeputyContributionSurveyRevision( revision, this );
 
-			revisionUIEl.on(
+			revisionUIEl.addEventListener(
 				'update',
 				() => {
 					// Recheck options first to avoid "Unfinished" being selected when done.

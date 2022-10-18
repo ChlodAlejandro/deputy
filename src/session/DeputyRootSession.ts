@@ -15,6 +15,7 @@ import DeputyCCISessionAddSection from '../ui/root/DeputyCCISessionAddSection';
 import DeputyContributionSurveySection from '../ui/root/DeputyContributionSurveySection';
 import { SessionInformation } from './DeputySession';
 import DeputyCCISessionOverwriteMessage from '../ui/root/DeputyCCISessionOverwriteMessage';
+import { ArrayOrNot } from '../types';
 
 /**
  * The DeputyRootSession. Instantiated only when:
@@ -242,16 +243,18 @@ export default class DeputyRootSession {
 	 * @param _casePage
 	 */
 	static async startSession(
-		section: ContributionSurveyHeading,
+		section: ArrayOrNot<ContributionSurveyHeading>,
 		_casePage?: DeputyCasePage
 	): Promise<void> {
-		const sectionName = sectionHeadingName( section );
+		const sectionNames = ( Array.isArray( section ) ? section : [ section ] ).map(
+			( _section ) => sectionHeadingName( _section )
+		);
 
 		// Save session to storage
 		const casePage = _casePage ?? await DeputyCasePage.build();
 		const session = await this.setSession( {
 			casePageId: casePage.pageId,
-			caseSections: [ sectionName ]
+			caseSections: sectionNames
 		} );
 
 		const rootSession =

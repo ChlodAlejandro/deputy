@@ -17,7 +17,7 @@ import {
  * A specific revision for a section row.
  */
 export default class DeputyContributionSurveyRevision
-	extends OO.EventEmitter implements DeputyUIElement {
+	extends EventTarget implements DeputyUIElement {
 
 	disabled: boolean;
 	/**
@@ -153,7 +153,12 @@ export default class DeputyContributionSurveyRevision
 		} );
 
 		this.completedCheckbox.on( 'change', ( checked: boolean ) => {
-			this.emit( 'update', checked, this.revision );
+			this.dispatchEvent( new CustomEvent( 'update', {
+				detail: {
+					checked: checked,
+					revision: this.revision
+				}
+			} ) );
 			window.deputy.comms.send( {
 				type: 'revisionStatusUpdate',
 				caseId: this.uiRow.row.casePage.pageId,

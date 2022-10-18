@@ -406,7 +406,10 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	 * @return A Promise that resolves when all rows have finished loading data.
 	 */
 	async loadData(): Promise<void> {
-		await Promise.all( this.rows.map( row => row.loadData() ) );
+		// For debugging and tests.
+		if ( ( window.deputy as any ).NO_ROW_LOADING !== true ) {
+			await Promise.all( this.rows.map( row => row.loadData() ) );
+		}
 	}
 
 	/**
