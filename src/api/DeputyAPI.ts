@@ -1,4 +1,5 @@
 import { ExpandedRevisionData } from './ExpandedRevisionData';
+import Requester from '../util/Requester';
 
 /**
  * API communication class
@@ -21,7 +22,7 @@ export default class DeputyAPI {
 	 */
 	async logout() {
 		// TODO: Make logout API request
-		window.deputy.storage.setKV( 'api-token', null );
+		await window.deputy.storage.setKV( 'api-token', null );
 	}
 
 	/**
@@ -45,7 +46,7 @@ export default class DeputyAPI {
 	async getExpandedRevisionData(
 		revisions: number[]
 	): Promise<Record<number, ExpandedRevisionData>> {
-		return fetch(
+		return Requester.fetch(
 			`https://zoomiebot.toolforge.org/bot/api/deputy/v1/revisions/${
 				mw.config.get( 'wgWikiID' )
 			}`,
