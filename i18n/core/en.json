@@ -18,11 +18,12 @@
     "deputy.session.otherActive.button": "Stop session",
     "deputy.session.add": "Start working on this section",
 
-    "deputy.session.section.close": "Close section",
-    "deputy.session.section.closeComments": "Closing comments",
+    "deputy.session.section.close": "Archive section",
+    "deputy.session.section.closeComments": "Archiving comments",
     "deputy.session.section.closeHelp": "Your signature will automatically be included.",
     "deputy.session.section.closeWarn": "You have unsaved changes. Close the section without saving?",
 
+    "deputy.session.section.stop": "Stop session",
     "deputy.session.section.saved": "Section saved",
     "deputy.session.section.failed": "Failed to save section",
     "deputy.session.section.missingSection": "The target section is missing from the case page.",

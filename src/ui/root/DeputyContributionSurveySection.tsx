@@ -422,7 +422,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			disabled: true
 		} );
 		this.closeButton = new OO.ui.ButtonWidget( {
-			label: mw.msg( 'deputy.close' )
+			label: mw.msg( 'deputy.session.section.stop' )
 		} );
 		this.reviewButton = new OO.ui.ButtonWidget( {
 			label: mw.msg( 'deputy.review' )
