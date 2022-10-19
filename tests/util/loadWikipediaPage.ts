@@ -10,7 +10,8 @@ export default async function ( targetPage: string, testWiki = false, timeout?: 
 		`https://${testWiki ? 'test' : 'en'}.wikipedia.org/wiki/${
 			encodeURIComponent( targetPage.trim().replace( / /g, '_' ) )
 		}`, {
-			timeout: timeout ?? 120e3
+			timeout: timeout ?? 120e3,
+			waitUntil: 'domcontentloaded'
 		}
 	);
 }

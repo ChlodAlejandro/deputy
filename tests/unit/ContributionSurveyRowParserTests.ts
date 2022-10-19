@@ -244,7 +244,7 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 			diffs: '\'\'\'{{dif|340829968|(+15927)}}\'\'\'',
 			comments: null,
 			revids: [ 340829968 ],
-			diffTemplate: '$3{{diff|$1|$2}}$3'
+			diffTemplate: '$3{{dif|$1|$2}}$3'
 		} );
 	} );
 
