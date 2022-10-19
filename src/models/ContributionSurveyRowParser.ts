@@ -125,7 +125,7 @@ export default class ContributionSurveyRowParser {
 		const revids: number[] = [];
 		let diffs: string = null,
 			comments: string,
-			diffTemplate: string;
+			diffTemplate = '[[Special:Diff/$1|($2)]]';
 		if ( extras ) {
 			const starting = this.current;
 			let diff: true | string = true;
@@ -143,9 +143,10 @@ export default class ContributionSurveyRowParser {
 			// All diff links removed. Get diff of starting and current to get entire diff part.
 			diffs = starting.slice( 0, starting.length - this.current.length );
 
-			diffTemplate = ( diffs ?? '' ).includes( '{{dif' ) ?
-				'$3{{dif|$1|$2}}$3' :
-				'[[Special:Diff/$1|($2)]]';
+			// Dawkeye support.
+			if ( ( diffs ?? '' ).includes( '{{dif' ) ) {
+				diffTemplate = '$3{{dif|$1|$2}}$3';
+			}
 
 			// Comments should be empty, but just in case we do come across comments.
 			comments = this.isEmpty() ? null : this.eatRemaining();
