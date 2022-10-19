@@ -28,6 +28,8 @@ export enum ContributionSurveyRowStatus {
  */
 export default class ContributionSurveyRow {
 
+	static readonly Parser = ContributionSurveyRowParser;
+
 	/**
 	 * A set of regular expressions that will match a specific contribution survey row
 	 * comment. Used to determine the status of the comment.
@@ -129,7 +131,7 @@ export default class ContributionSurveyRow {
 	 *
 	 * @private
 	 */
-	private readonly data: RawContributionSurveyRow;
+	readonly data: RawContributionSurveyRow;
 
 	/**
 	 * Creates a new contribution survey row from MediaWiki parser output.

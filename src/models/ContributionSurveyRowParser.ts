@@ -60,6 +60,14 @@ export interface RawContributionSurveyRow {
 	 * An array of all revision IDs parsed from the diffs.
 	 */
 	revids: number[];
+	/**
+	 * Template to use for rebuilding row revisions.
+	 *
+	 * $1 - Revision ID
+	 * $2 - Diff size
+	 * $3 - Bold syntax (if any; "'''").
+	 */
+	diffTemplate: string;
 }
 
 /**
@@ -116,14 +124,15 @@ export default class ContributionSurveyRowParser {
 		// revisions to be processed here, and can assume that the rest is user comments.
 		const revids: number[] = [];
 		let diffs: string = null,
-			comments: string;
+			comments: string,
+			diffTemplate: string;
 		if ( extras ) {
 			const starting = this.current;
 			let diff: true | string = true;
 			while ( diff ) {
 				diff =
 					// [[Special:Diff/12345|6789]]
-					this.eatExpression( /(?:'''?)?\[\[Special:Diff\/(\d+)(?:\|.*)?]](?:'''?)?/g, 1 ) ??
+					this.eatExpression( /(?:'''?)?\[\[Special:Diff\/(\d+)(?:\|[^\]]*)?]](?:'''?)?/g, 1 ) ??
 					// {{dif|12345|6789}}
 					this.eatExpression( /(?:'''?)?{{dif\|(\d+)\|[^}]+}}(?:'''?)?/g, 1 );
 				if ( diff != null ) {
@@ -133,6 +142,11 @@ export default class ContributionSurveyRowParser {
 
 			// All diff links removed. Get diff of starting and current to get entire diff part.
 			diffs = starting.slice( 0, starting.length - this.current.length );
+
+			diffTemplate = ( diffs ?? '' ).includes( '{{dif' ) ?
+				'$3{{dif|$1|$2}}$3' :
+				'[[Special:Diff/$1|($2)]]';
+
 			// Comments should be empty, but just in case we do come across comments.
 			comments = this.isEmpty() ? null : this.eatRemaining();
 		} else {
@@ -140,7 +154,7 @@ export default class ContributionSurveyRowParser {
 			// matching them, including any possible included colon. If that doesn't work,
 			// try pulling out just the colon.
 			const maybeExtras = this.eatExpression(
-				/\s*(?::\s*)?\(.+\)(?:\s*:)?\s*/
+				/\s*(?::\s*)?\(.+?\)(?:\s*:)?\s*/
 			) || this.eatExpression( /\s*:\s*/g );
 			if ( maybeExtras ) {
 				extras = maybeExtras;
@@ -155,6 +169,7 @@ export default class ContributionSurveyRowParser {
 			comments = this.getCurrentLength() > 0 ? this.eatRemaining() : null;
 		}
 
+		// "{bullet}{creation}[[{page}]]{extras}{diffs}{comments}"
 		return {
 			type: ( extras || comments || diffs ) == null ? 'pageonly' : 'detailed',
 			bullet,
@@ -163,7 +178,8 @@ export default class ContributionSurveyRowParser {
 			extras,
 			diffs,
 			comments,
-			revids
+			revids,
+			diffTemplate
 		};
 	}
 

@@ -224,23 +224,20 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		}
 		const finished = this.wasFinished ?? false;
 
-		const wikitext = this.row.wikitext;
 		// "* "
-		let result = /\*\s*/g.exec( wikitext )[ 0 ];
+		let result = this.row.data.bullet;
 
-		if ( /'''N'''/.test( wikitext ) ) {
-			// '''N'''
+		if ( this.row.data.creation ) {
 			result += "'''N''' ";
 		}
 
 		// [[:Example]]
-		result += `[[:${this.row.title.getPrefixedText()}]]`;
+		result += `[[${this.row.data.page}]]`;
 
+		// "{bullet}{creation}[[{page}]]{extras}{diffs}{comments}"
 		if ( this.row.extras ) {
-			result += ` ${this.row.extras}`;
+			result += `${this.row.extras}`;
 		}
-
-		result += ': ';
 
 		const unfinishedDiffs = this.revisions?.filter(
 			( v ) => !v.completed
@@ -248,9 +245,12 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 
 		if ( unfinishedDiffs.length > 0 ) {
 			result += unfinishedDiffs.map( ( v ) => {
-				return `[[Special:Diff/${v.revision.revid}|(${
-					v.revision.diffsize > 0 ? '+' + v.revision.diffsize : v.revision.diffsize
-				})]]`;
+				return mw.format(
+					this.row.data.diffTemplate,
+					v.revision.revid,
+					v.revision.diffsize > 0 ? '+' + v.revision.diffsize : v.revision.diffsize,
+					Math.abs( v.revision.diffsize ) > 500 ? "'''" : ''
+				);
 			} ).join( '' );
 		} else {
 			/**

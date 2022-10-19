@@ -102,6 +102,23 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 		} );
 	} );
 
+	test( 'normal, long, multiple diffs', () => {
+		const parser = new ContributionSurveyRowParser(
+			'* [[:Example]] (1 edit, 1 major, +173): [[Special:Diff/123456|(+173)]]' +
+			'[[Special:Diff/7890|(+22)]]'
+		);
+		expect( parser.parse() ).toEqual( {
+			type: 'detailed',
+			bullet: '* ',
+			creation: false,
+			page: ':Example',
+			extras: ' (1 edit, 1 major, +173): ',
+			diffs: '[[Special:Diff/123456|(+173)]][[Special:Diff/7890|(+22)]]',
+			comments: null,
+			revids: [ 123456, 7890 ]
+		} );
+	} );
+
 	test( 'normal, short, pre-colon', () => {
 		const parser = new ContributionSurveyRowParser(
 			'* [[:Example]]: (1 edit) [[Special:Diff/123456|(+173)]]'
