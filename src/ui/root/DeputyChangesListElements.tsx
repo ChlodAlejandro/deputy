@@ -115,7 +115,7 @@ export function ChangesListUser( { user }: { user: string } ) {
 				userPage.getPrefixedDb()
 			) }
 			title={ userPage.getPrefixedText() }
-		>{ userPage.getPrefixedText() }</a> <span
+		>{ userPage.getNameText() }</a> <span
 			class="mw-usertoollinks mw-changeslist-links"
 		><span><a
 				class="mw-usertoollinks-talk"
