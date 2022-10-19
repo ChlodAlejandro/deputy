@@ -34,6 +34,13 @@ jobs:
         env:
           NODE_ENV: production
 
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-artifacts
+          path: tests/artifacts/*
+
       - name: Upload transpiled code
         uses: actions/upload-artifact@v3
         with:

@@ -1,6 +1,7 @@
 import loadWikipediaPage from '../util/loadWikipediaPage';
 import loadDeputyScript from '../util/loadDeputyScript';
 import '../../src/types';
+import screenshot from '../util/screenshot';
 
 describe( 'Browser load tests', () => {
 
@@ -20,7 +21,7 @@ describe( 'Browser load tests', () => {
 				} );
 			} );
 		} );
-	} );
+	}, 60e3 );
 
 	test( 'Deputy loads successfully', async () => {
 		await expect( loadDeputyScript() ).resolves.toBe( true );
@@ -30,11 +31,20 @@ describe( 'Browser load tests', () => {
 		await expect( loadDeputyScript() ).resolves.toBe( true );
 
 		// Click the "start CCI session" button.
-		await page.$( '.deputy.dp-sessionStarter a' )
-			.then( ( a ) => {
-				expect( a ).not.toBeUndefined();
-				a.click();
-			} );
+		if (
+			page.$( '.deputy.dp-sessionStarter a' )
+				.then( async ( a ) => {
+					expect( a ).not.toBeUndefined();
+					if ( !a ) {
+						await screenshot( 'fail-loadCCISession' );
+						return true;
+					}
+					await a.click();
+					return false;
+				} )
+		) {
+			return;
+		}
 
 		// Wait for load finish
 		await expect( page.evaluate( async () => {
@@ -57,6 +67,6 @@ describe( 'Browser load tests', () => {
 
 		// Appended to UI
 		await expect( page.$( '.deputy.dp-cs-section' ) ).resolves.not.toBeFalsy();
-	} );
+	}, 120e3 );
 
 } );

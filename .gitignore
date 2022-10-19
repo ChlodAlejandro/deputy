@@ -14,3 +14,5 @@ build
 .rollup.cache
 tsconfig.buildinfo
 coverage/
+
+tests/artifacts
