@@ -155,7 +155,8 @@ export default class DeputyCasePage extends DeputyCase {
 	 */
 	findContributionSurveyHeadings(): ContributionSurveyHeading[] {
 		if ( !DeputyCasePage.isCasePage() ) {
-			throw new Error( 'Current page is not a case page.' );
+			throw new Error( 'Current page is not a case page. Expected subpage of ' +
+				DeputyCasePage.rootPage.getPrefixedText() );
 		} else {
 			return ( Array.from( this.document.querySelectorAll(
 				// All headings (`h1, h2, h3, h4, h5, h6`)

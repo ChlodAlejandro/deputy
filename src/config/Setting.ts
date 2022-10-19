@@ -109,6 +109,13 @@ export default class Setting<SerializedType, DeserializedType> {
 	private value: DeserializedType;
 
 	/**
+	 * Whether the value is locked or not. Used in debugging.
+	 *
+	 * @private
+	 */
+	private locked: boolean;
+
+	/**
 	 * The default value of the setting.
 	 */
 	public readonly defaultValue: DeserializedType;
@@ -206,6 +213,11 @@ export default class Setting<SerializedType, DeserializedType> {
 	 * @param throwOnInvalid
 	 */
 	set( v: DeserializedType, throwOnInvalid = false ) {
+		if ( this.locked ) {
+			console.warn( 'Attempted to modify locked setting.' );
+			return;
+		}
+
 		if ( this.allowedValues ) {
 			const keys = Array.isArray( this.allowedValues ) ?
 				this.allowedValues : getObjectValues( this.allowedValues );
@@ -245,6 +257,20 @@ export default class Setting<SerializedType, DeserializedType> {
 	 */
 	load( raw: SerializedType ): DeserializedType {
 		return ( this.value = this.deserialize( raw ) );
+	}
+
+	/**
+	 * Prevents the value of the setting from being changed. Used for debugging.
+	 */
+	lock() {
+		this.locked = true;
+	}
+
+	/**
+	 * Allows the value of the setting to be changed. Used for debugging.
+	 */
+	unlock() {
+		this.locked = false;
 	}
 
 }
