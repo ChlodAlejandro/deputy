@@ -2,6 +2,7 @@
 ヾ(•ω•`)o hai!
 
 # [v0.2.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.2.0) - 2022-10-20
+Small number of changes but relatively large in size; the contribution survey row detection now relies on a dedicated parser instead of regular expressions. This hopefully decreases the amount of false positive matches on contribution survey rows. In addition, support for the Dawkeye case, which has a different format from other CCI casepages, has been added. Also includes bugfixes.
 
 ## Added
 * [[`e394ea6`](../../commit/e394ea6)] Added `mw.hook` hooks for integration tests
@@ -12,6 +13,8 @@
 * [[`effba5d`](../../commit/effba5d)] Changed browserslist string to "[cover 95% and not IE 11 and supports fetch](https://browserslist.dev/?q=Y292ZXIgOTUlIGFuZCBub3QgSUUgMTEgYW5kIHN1cHBvcnRzIGZldGNo)".
 * [[`5ad0992`](../../commit/5ad0992)] Made row return original wikitext if unmodified (reverted by [[`2dc0405`](../../commit/2dc0405)])
 * [[`2dc0405`](../../commit/2dc0405)] Moved row wikitext recognition to dedicated parser (from a regular expression)
+* [[`7dfb394`](../../commit/7dfb394)] Hid "User:" prefix on contribution survey revisions
+* [[`ac05d66`](../../commit/ac05d66)] Changed "close section" and "close" button labels on contribution survey sections to "archive" and "stop session"
 * [[`df98dd8`](../../commit/df98dd8)] Switched from Puppeteer to Selenium for integration testing
 
 ## Bugs
