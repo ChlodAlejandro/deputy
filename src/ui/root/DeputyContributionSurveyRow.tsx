@@ -241,6 +241,9 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 
 		const unfinishedDiffs = this.revisions?.filter(
 			( v ) => !v.completed
+		)?.sort(
+			( a, b ) => ( b.revision.diffsize - a.revision.diffsize ) ||
+                ( b.revision.revid - a.revision.revid )
 		) ?? [];
 
 		if ( unfinishedDiffs.length > 0 ) {
@@ -252,6 +255,11 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 					Math.abs( v.revision.diffsize ) > 500 ? "'''" : ''
 				);
 			} ).join( '' );
+
+			if ( this.row.data.comments ) {
+				// Comments existed despite not being finished yet. Allow anyway.
+				result += this.row.data.comments;
+			}
 		} else {
 			/**
 			 * Function will apply the current user values to the row.
