@@ -1,16 +1,22 @@
-import loadWikipediaPage from '../../util/loadWikipediaPage';
-import loadDeputyScript from '../../util/loadDeputyScript';
-import { jest } from '@jest/globals';
 import '../../../src/types';
+import BrowserHelper from '../../util/BrowserHelper';
+import { jest } from '@jest/globals';
 
 describe( 'Utility function tests', () => {
 
+	let page: BrowserHelper;
+
 	beforeAll( async () => {
-		await loadWikipediaPage( 'Wikipedia:Sandbox' );
-		await loadDeputyScript();
+		page = await BrowserHelper.build()
+			.then( p => p.loadWikipediaPage( 'Wikipedia:Sandbox' ) )
+			.then( p => p.loadDeputyScript() );
 
 		jest.setTimeout( 10e3 );
 	}, 30e3 );
+
+	afterAll( async () => {
+		await page.close();
+	} );
 
 	test( 'normalizeTitle', async () => {
 		await Promise.all( [

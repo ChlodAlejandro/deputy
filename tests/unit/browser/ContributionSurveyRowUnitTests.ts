@@ -1,18 +1,24 @@
 import { jest } from '@jest/globals';
 import 'expect-puppeteer';
 import '../../../src/types';
-import loadWikipediaPage from '../../util/loadWikipediaPage';
-import loadDeputyScript from '../../util/loadDeputyScript';
 import { ContributionSurveyRowStatus } from '../../../src/models/ContributionSurveyRow';
+import BrowserHelper from '../../util/BrowserHelper';
 
 describe( 'ContributionSurveyRow static unit tests', () => {
 
+	let page: BrowserHelper;
+
 	beforeAll( async () => {
-		await loadWikipediaPage( 'Wikipedia:Sandbox' );
-		await loadDeputyScript();
+		page = await BrowserHelper.build()
+			.then( p => p.loadWikipediaPage( 'Wikipedia:Sandbox' ) )
+			.then( p => p.loadDeputyScript() );
 
 		jest.setTimeout( 10e3 );
 	}, 180e3 );
+
+	afterAll( async () => {
+		await page.close();
+	} );
 
 	test( 'ContributionSurveyRow accessible', async () => {
 		expect( await page.evaluate( () => {

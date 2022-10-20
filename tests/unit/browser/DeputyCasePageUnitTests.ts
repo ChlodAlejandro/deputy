@@ -1,17 +1,22 @@
 import { jest } from '@jest/globals';
-import 'expect-puppeteer';
 import '../../../src/types';
-import loadWikipediaPage from '../../util/loadWikipediaPage';
-import loadDeputyScript from '../../util/loadDeputyScript';
+import BrowserHelper from '../../util/BrowserHelper';
 
 describe( 'DeputyCasePage static unit tests', () => {
 
+	let page: BrowserHelper;
+
 	beforeAll( async () => {
-		await loadWikipediaPage( 'Wikipedia:Sandbox' );
-		await loadDeputyScript();
+		page = await BrowserHelper.build()
+			.then( p => p.loadWikipediaPage( 'Wikipedia:Sandbox' ) )
+			.then( p => p.loadDeputyScript() );
 
 		jest.setTimeout( 10e3 );
 	}, 180e3 );
+
+	afterAll( async () => {
+		await page.close();
+	} );
 
 	test( 'DeputyCasePage accessible', async () => {
 		expect( await page.evaluate( () => {
@@ -106,9 +111,13 @@ describe( 'DeputyCasePage static unit tests', () => {
 
 describe( 'DeputyCasePage implementation unit tests', () => {
 
+	let page: BrowserHelper;
+
 	beforeAll( async () => {
-		await loadWikipediaPage( 'User:Chlod/Scripts/Deputy/tests/TestCase 01' );
-		await loadDeputyScript();
+		page = await BrowserHelper.build()
+			.then( p => p.loadWikipediaPage( 'User:Chlod/Scripts/Deputy/tests/TestCase 01' ) )
+			.then( p => p.loadDeputyScript() );
+
 		// Override root page
 		await page.evaluate( async () => {
 			await window.deputy.getWikiConfig().then( function ( wikiConfig ) {
@@ -121,6 +130,10 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 
 		jest.setTimeout( 10e3 );
 	}, 180e3 );
+
+	afterAll( async () => {
+		await page.close();
+	} );
 
 	test( 'DeputyCasePage accessible', async () => {
 		expect( await page.evaluate( () => {

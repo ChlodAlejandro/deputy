@@ -1,6 +1,5 @@
-import loadWikipediaPage from '../util/loadWikipediaPage';
-import loadDeputyScript from '../util/loadDeputyScript';
 import '../../src/types';
+import BrowserHelper from '../util/BrowserHelper';
 
 describe( 'ContributionSurveyRowParser integration tests', () => {
 	const cases: string[] = [
@@ -16,8 +15,9 @@ describe( 'ContributionSurveyRowParser integration tests', () => {
 			test( 'enwiki:' + caseName, async () => {
 				const caseTitle = 'Wikipedia:Contributor copyright investigations/' + caseName;
 
-				await loadWikipediaPage( caseTitle );
-				await loadDeputyScript();
+				const page = await BrowserHelper.build()
+					.then( p => p.loadWikipediaPage( caseTitle ) )
+					.then( p => p.loadDeputyScript() );
 
 				await expect( page.evaluate( async () => {
 					let res: ( result: boolean ) => void;
@@ -39,6 +39,8 @@ describe( 'ContributionSurveyRowParser integration tests', () => {
 
 					return fakePromise;
 				} ) ).resolves.toEqual( false );
+
+				await page.close();
 			} );
 		}
 	} );

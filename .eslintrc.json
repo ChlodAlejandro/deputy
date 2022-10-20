@@ -68,7 +68,10 @@
         "no-return-assign": "off",
         "no-console": "off",
 
-        "mediawiki/no-nodelist-unsupported-methods": "off"
+        "mediawiki/no-nodelist-unsupported-methods": "off",
+
+        "space-before-function-paren": "off",
+        "@typescript-eslint/space-before-function-paren": ["error", { "anonymous": "always", "named": "never" }]
     },
     "ignorePatterns": [ "*.d.ts", "external/" ]
 }

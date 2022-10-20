@@ -1,11 +1,13 @@
-import loadWikipediaPage from '../util/loadWikipediaPage';
-import loadDeputyScript from '../util/loadDeputyScript';
 import '../../src/types';
+import BrowserHelper from '../util/BrowserHelper';
 
 describe( 'Browser load tests', () => {
 
+	let page: BrowserHelper;
+
 	beforeAll( async () => {
-		await loadWikipediaPage( 'User:Chlod/Scripts/Deputy/tests/TestCase 01' );
+		page = await BrowserHelper.build()
+			.then( p => p.loadWikipediaPage( 'Wikipedia:Sandbox' ) );
 
 		// Override root page
 		await page.evaluate( () => {
@@ -23,8 +25,12 @@ describe( 'Browser load tests', () => {
 		} );
 	}, 60e3 );
 
-	test( 'Deputy loads successfully', async () => {
-		await expect( loadDeputyScript() ).resolves.toBe( true );
+	afterAll( async () => {
+		await page.close();
 	} );
+
+	test( 'Deputy loads successfully', async () => {
+		await expect( page.loadDeputyScript() ).resolves.not.toThrow();
+	}, 20e3 );
 
 } );

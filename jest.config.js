@@ -1,7 +1,6 @@
 /** @type {import("@jest/types").Config.InitialOptions} */
 module.exports = {
 
-	preset: 'jest-puppeteer',
 	testRegex: '(/tests/)(.*?)(Tests?)(\\.[jt]s)$',
 
 	transform: {
