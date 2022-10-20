@@ -11,7 +11,7 @@ export default async function ( targetPage: string, testWiki = false, timeout?: 
 			encodeURIComponent( targetPage.trim().replace( / /g, '_' ) )
 		}`, {
 			timeout: timeout ?? 120e3,
-			waitUntil: 'domcontentloaded'
+			waitUntil: 'networkidle0'
 		}
 	);
 }
