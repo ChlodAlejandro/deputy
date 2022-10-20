@@ -58,7 +58,7 @@ please [report bugs found](https://github.com/ChlodAlejandro/deputy/issues) so t
 ### Automated testing
 
 Unit and end-to-end tests exist for Deputy and can be found in the [`tests/`](tests) directory. These tests are run with
-Puppeteer and Jest. This ensures that Deputy's most vital components work as expected. Tests are still incomplete and
+Selenium and Jest. This ensures that Deputy's most vital components work as expected. Tests are still incomplete and
 coverage is not available, however by the end of the project, at least one end-to-end test should be finished.
 
 You can trigger automated testing by running the following:
@@ -67,9 +67,11 @@ You can trigger automated testing by running the following:
 npm run test
 ```
 
-You may also modify the browser to be used with Puppeteer using the `PUPPETEER_PRODUCT` environment variable. See
-the [Puppeteer documentation](https://pptr.dev/#environment-variables) for more information. Automated tests are also
-run on GitHub, a log of which can be found [here](https://github.com/ChlodAlejandro/deputy/actions/workflows/ci-cd.yml).
+You may also modify the browser to be used with Selenium using the `BROWSER` environment variable.
+
+You **must** have the appropriate browser driver installed for whichever browser you wish to test on. If you want to test on Chrome browsers, run `npm i -g chromedriver@106.x` prior to running any tests (and change `106` to whichever version of Chrome you're using). For Firefox, run `npm i -g geckodriver`. Not having the proper browser driver installed with causes tests to fail.
+
+Some automated tests require an internet connection as they load English Wikipedia pages. Ensure that you have a working (and decently fast) internet connection to pass tests.
 
 ## Licensing
 
