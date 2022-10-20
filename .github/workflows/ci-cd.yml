@@ -23,6 +23,14 @@ jobs:
         if: matrix.product == 'firefox'
         uses: browser-actions/setup-firefox@latest
 
+      - name: Install geckodriver
+        if: matrix.product == 'firefox'
+        uses: browser-actions/setup-geckodriver@latest
+
+      - name: Install chromedriver
+        if: matrix.product == 'chrome'
+        uses: nanasess/setup-chromedriver@v1
+
       - name: Install dependencies
         run: npm ci
 

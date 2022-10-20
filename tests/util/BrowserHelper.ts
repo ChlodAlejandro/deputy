@@ -1,8 +1,6 @@
 import webdriver from 'selenium-webdriver';
 import chrome from 'selenium-webdriver/chrome';
 import firefox from 'selenium-webdriver/firefox';
-import 'chromedriver';
-import 'geckodriver';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
