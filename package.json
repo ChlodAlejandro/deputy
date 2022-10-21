@@ -4,7 +4,8 @@
     "version": "0.2.0",
     "main": "src/deputy.js",
     "scripts": {
-        "test": "npm run build && jest",
+        "test": "npm run build && npm run test:jest",
+        "test:jest": "jest",
         "version": "node scripts/sync-version.js && git add src/DeputyVersion.ts",
         "clean": "shx rm -rf build .rollup.cache",
         "prebuild": "shx mkdir -p build/i18n/ && shx cp -Rf i18n/* build/i18n/",

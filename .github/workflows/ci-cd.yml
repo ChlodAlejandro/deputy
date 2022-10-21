@@ -5,11 +5,38 @@ on:
   pull_request:
 
 jobs:
+  build:
+    name: Build Deputy
+    if: ${{ !contains(github.event.head_commit.message, '[failing]') }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Upload transpiled code
+        uses: actions/upload-artifact@v3
+        with:
+          name: builds
+          path: build/*.js
+
+      - name: Upload sourcemaps
+        uses: actions/upload-artifact@v3
+        with:
+          name: sourcemaps
+          path: build/*.js.map
+    
   tests:
     name: Perform tests
     if: ${{ !contains(github.event.head_commit.message, '[failing]') }}
     strategy:
-      max-parallel: 1
+      max-parallel: 4
       fail-fast: false
       matrix:
         os: [ windows-latest, ubuntu-latest, macos-latest ]
@@ -55,34 +82,19 @@ jobs:
         if: matrix.browser.product == 'chrome'
         uses: nanasess/setup-chromedriver@v1
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run tests
-        run: npm run test
-        env:
-          BROWSER: ${{ matrix.browser.product }}
-
-      - name: Build
-        run: npm run build
-        env:
-          NODE_ENV: production
-
-      - name: Upload test artifacts
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: test-artifacts
-          path: tests/artifacts/*
-
-      - name: Upload transpiled code
-        uses: actions/upload-artifact@v3
+      - name: Download transpiled code
+        uses: actions/download-artifact@v3
         with:
           name: builds
-          path: build/*.js
+          path: build/
 
-      - name: Upload sourcemaps
-        uses: actions/upload-artifact@v3
+      - name: Download sourcemaps
+        uses: actions/download-artifact@v3
         with:
           name: sourcemaps
-          path: build/*.js.map
+          path: build/
+
+      - name: Run tests
+        run: npm run test:jest
+        env:
+          BROWSER: ${{ matrix.browser.product }}
