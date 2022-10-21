@@ -35,9 +35,6 @@ jobs:
     
   tests:
     name: Perform tests
-    if: ${{ !contains(github.event.head_commit.message, '[failing]') || (
-        matrix.browser.product == 'firefox' && matrix.os != 'windows-latest'
-      ) }}
     needs: build
     strategy:
       max-parallel: 4
@@ -68,9 +65,17 @@ jobs:
           - product: firefox
             version: '52.0'
     runs-on: ${{ matrix.os }}
+    if: ${{ !contains(github.event.head_commit.message, '[failing]') }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        
+      - name: Ensure this isn't Windows + Firefox
+        if: ( matrix.browser.product == 'firefox' && matrix.os != 'windows-latest' )
+        uses: saulmaldonado/skip-workflow@v1
+        with:
+          phrase: '/^(\s\S)+$/g'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install Firefox
         if: matrix.browser.product == 'firefox'
