@@ -302,10 +302,12 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 				);
 			} catch ( e ) {
 				// Only trigger on actual bulleted lists.
-				if ( line.startsWith( '*' ) ) {
+				if ( /^\*[^*]+/.test( line ) ) {
 					console.warn( 'Could not parse row.', line, e );
 					// For debugging and tests.
-					mw.hook( 'deputy.errors.cciRowParse' ).fire( { line, error: e } );
+					mw.hook( 'deputy.errors.cciRowParse' ).fire( {
+						line, error: e.toString()
+					} );
 				}
 				rowElement = line;
 			}
