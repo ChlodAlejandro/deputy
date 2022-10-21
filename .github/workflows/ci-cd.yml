@@ -89,7 +89,7 @@ jobs:
         if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
         run: npm ci
         env:
-          NODE_ENV: production
+          NODE_ENV: development
 
       - name: Download transpiled code
         if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
