@@ -32,12 +32,11 @@ jobs:
         with:
           name: sourcemaps
           path: build/*.js.map
-    
+
   tests:
     name: Perform tests
     needs: build
     strategy:
-      max-parallel: 4
       fail-fast: false
       matrix:
         os: [ windows-latest, ubuntu-latest, macos-latest ]
@@ -51,7 +50,7 @@ jobs:
           # Chrome 79 (oldest supported by Browserslist string)
           - product: chrome
             version: '706915'
-            
+
           # Firefox stable
           - product: firefox
             version: latest
