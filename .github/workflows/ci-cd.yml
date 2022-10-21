@@ -68,7 +68,7 @@ jobs:
     if: ${{ !contains(github.event.head_commit.message, '[failing]') }}
     steps:
       - name: Checkout code
-        if: matrix.browser.product == 'firefox' && matrix.os != 'windows-latest'
+        if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
         uses: actions/checkout@v3
 
       - name: Install Firefox
@@ -86,27 +86,27 @@ jobs:
         uses: nanasess/setup-chromedriver@v1
 
       - name: Install dependencies
-        if: matrix.browser.product == 'firefox' && matrix.os != 'windows-latest'
+        if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
         run: npm ci
         env:
           NODE_ENV: production
 
       - name: Download transpiled code
-        if: matrix.browser.product == 'firefox' && matrix.os != 'windows-latest'
+        if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
         uses: actions/download-artifact@v3
         with:
           name: builds
           path: build/
 
       - name: Download sourcemaps
-        if: matrix.browser.product == 'firefox' && matrix.os != 'windows-latest'
+        if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
         uses: actions/download-artifact@v3
         with:
           name: sourcemaps
           path: build/
 
       - name: Run tests
-        if: matrix.browser.product == 'firefox' && matrix.os != 'windows-latest'
+        if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
         run: npm run test:jest
         env:
           BROWSER: ${{ matrix.browser.product }}
