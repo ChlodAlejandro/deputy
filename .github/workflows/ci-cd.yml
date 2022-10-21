@@ -7,28 +7,61 @@ on:
 jobs:
   tests:
     name: Perform tests
-    runs-on: ubuntu-latest
     if: ${{ !contains(github.event.head_commit.message, '[failing]') }}
     strategy:
       max-parallel: 1
       fail-fast: false
       matrix:
-        product: [ 'chrome', 'firefox' ]
-
+        os: [ windows-latest, ubuntu-latest, macos-latest ]
+        browsers:
+          # Chrome stable
+          - product: chrome
+            version: stable
+          # Chrome Beta
+          - product: chrome
+            version: beta
+          # Chrome Dev
+          - product: chrome
+            version: dev
+          # Chrome Canary
+          - product: chrome
+            version: canary
+          # Chrome 79 (oldest supported by Browserslist string)
+          - product: chrome
+            version: '706915'
+            
+          # Firefox stable
+          - product: firefox
+            version: latest
+          # Firefox beta
+          - product: firefox
+            version: latest-beta
+          # Firefox dev edition
+          - product: firefox
+            version: latest-beta
+          # Firefox ESR
+          - product: firefox
+            version: latest-esr
+          # Firefox 52 (oldest supported by Browserslist string)
+          - product: firefox
+            version: '52.0'
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install Firefox
-        if: matrix.product == 'firefox'
+        if: matrix.browser.product == 'firefox'
         uses: browser-actions/setup-firefox@latest
+        with:
+          firefox-version: ${{ matrix.browser.version }}
 
       - name: Install geckodriver
-        if: matrix.product == 'firefox'
+        if: matrix.browser.product == 'firefox'
         uses: browser-actions/setup-geckodriver@latest
 
       - name: Install chromedriver
-        if: matrix.product == 'chrome'
+        if: matrix.browser.product == 'chrome'
         uses: nanasess/setup-chromedriver@v1
 
       - name: Install dependencies
@@ -37,7 +70,7 @@ jobs:
       - name: Run tests
         run: npm run test
         env:
-          BROWSER: ${{ matrix.product }}
+          BROWSER: ${{ matrix.browser.product }}
 
       - name: Build
         run: npm run build
