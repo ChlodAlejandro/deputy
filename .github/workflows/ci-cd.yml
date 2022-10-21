@@ -13,16 +13,10 @@ jobs:
       fail-fast: false
       matrix:
         os: [ windows-latest, ubuntu-latest, macos-latest ]
-        browsers:
+        browser:
           # Chrome stable
           - product: chrome
             version: stable
-          # Chrome Beta
-          - product: chrome
-            version: beta
-          # Chrome Dev
-          - product: chrome
-            version: dev
           # Chrome Canary
           - product: chrome
             version: canary
@@ -34,9 +28,6 @@ jobs:
           - product: firefox
             version: latest
           # Firefox beta
-          - product: firefox
-            version: latest-beta
-          # Firefox dev edition
           - product: firefox
             version: latest-beta
           # Firefox ESR
