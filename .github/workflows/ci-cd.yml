@@ -71,7 +71,7 @@ jobs:
         uses: actions/checkout@v3
         
       - name: Ensure this isn't Windows + Firefox
-        if: ( matrix.browser.product == 'firefox' && matrix.os != 'windows-latest' )
+        if: ( matrix.browser.product == 'firefox' && matrix.os == 'windows-latest' )
         uses: saulmaldonado/skip-workflow@v1
         with:
           phrase: '/^(\s\S)+$/g'
