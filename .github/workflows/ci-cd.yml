@@ -7,10 +7,7 @@ on:
 jobs:
   build:
     name: Build Deputy
-    if: !contains(github.event.head_commit.message, '[failing]') || (
-        # browser-actions/setup-firefox does not support windows :/
-        matrix.browser.product == 'firefox' && matrix.os != 'windows-latest'
-      )
+    if: ${{ !contains(github.event.head_commit.message, '[failing]') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -38,7 +35,9 @@ jobs:
     
   tests:
     name: Perform tests
-    if: ${{ !contains(github.event.head_commit.message, '[failing]') }}
+    if: ${{ !contains(github.event.head_commit.message, '[failing]') || (
+        matrix.browser.product == 'firefox' && matrix.os != 'windows-latest'
+      ) }}
     needs: build
     strategy:
       max-parallel: 4
