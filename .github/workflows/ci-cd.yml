@@ -78,7 +78,9 @@ jobs:
 
       - name: Install geckodriver
         if: matrix.browser.product == 'firefox' && matrix.os != 'windows-latest'
-        uses: ChlodAlejandro/setup-geckodriver@d1b6160d5ede35f95651c6cf0ca8d4fb4653b317
+        uses: ChlodAlejandro/setup-geckodriver@latest
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install chromedriver
         if: matrix.browser.product == 'chrome'
