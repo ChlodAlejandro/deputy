@@ -111,3 +111,4 @@ jobs:
         run: npm run test:jest
         env:
           BROWSER: ${{ matrix.browser.product }}
+          BROWSER_VERSION: ${{ matrix.browser.version }}
