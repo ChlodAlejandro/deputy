@@ -80,6 +80,7 @@ jobs:
         if: matrix.browser.product == 'firefox' && matrix.os != 'windows-latest'
         uses: ChlodAlejandro/setup-geckodriver@latest
         with:
+          geckodriver-version: ${{ matrix.browser.version == '52.0' && '0.17.0' || 'latest' }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install chromedriver
