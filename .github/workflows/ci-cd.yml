@@ -47,9 +47,6 @@ jobs:
           # Chrome Canary
           - product: chrome
             version: canary
-          # Chrome 79 (oldest supported by Browserslist string)
-          - product: chrome
-            version: '706915'
 
           # Firefox stable
           - product: firefox
@@ -60,9 +57,6 @@ jobs:
           # Firefox ESR
           - product: firefox
             version: latest-esr
-          # Firefox 52 (oldest supported by Browserslist string)
-          - product: firefox
-            version: '52.0'
     runs-on: ${{ matrix.os }}
     if: ${{ !contains(github.event.head_commit.message, '[failing]') }}
     steps:
@@ -80,7 +74,6 @@ jobs:
         if: matrix.browser.product == 'firefox' && matrix.os != 'windows-latest'
         uses: ChlodAlejandro/setup-geckodriver@latest
         with:
-          geckodriver-version: ${{ matrix.browser.version == '52.0' && '0.16.0' || 'latest' }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install chromedriver
@@ -112,4 +105,3 @@ jobs:
         run: npm run test:jest
         env:
           BROWSER: ${{ matrix.browser.product }}
-          BROWSER_VERSION: ${{ matrix.browser.version }}

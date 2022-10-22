@@ -28,22 +28,7 @@ export default class BrowserHelper extends webdriver.WebDriver {
 			chromeOpts.headless();
 
 			if ( browser === 'firefox' ) {
-
-				const browserVersion = process.env.BROWSER_VERSION || await ( async () => {
-					console.log( 'Browser version not specified. Will attempt to guess ' +
-						'(browser may open momentarily).' );
-					return await new webdriver.Builder()
-						.forBrowser( 'firefox' )
-						.build()
-						.then( async ( d ) => {
-							const v = d.getCapabilities().then( c => c.getBrowserVersion() );
-							await d.close();
-							return v;
-						} );
-				} )();
-				if ( +( /^(\d+)\./.exec( browserVersion )?.[ 1 ] ?? '56' ) > 55 ) {
-					firefoxOpts.headless();
-				}
+				firefoxOpts.headless();
 			}
 		}
 
