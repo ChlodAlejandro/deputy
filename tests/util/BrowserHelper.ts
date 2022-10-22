@@ -59,7 +59,7 @@ export default class BrowserHelper extends webdriver.WebDriver {
 				) ).createWriteStream();
 			}
 		} catch ( e ) {
-			console.warn( 'Browser does not support logs. Going in blind.' );
+			console.warn( 'Browser does not support logs. Going in blind.', e );
 		}
 
 		return new BrowserHelper( driver.getSession(), driver.getExecutor(), logStreams );
