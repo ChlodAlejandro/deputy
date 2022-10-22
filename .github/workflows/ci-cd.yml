@@ -5,51 +5,21 @@ on:
   pull_request:
 
 jobs:
-  tests:
-    name: Perform tests
-    runs-on: ubuntu-latest
+  build:
+    name: Build Deputy
     if: ${{ !contains(github.event.head_commit.message, '[failing]') }}
-    strategy:
-      max-parallel: 1
-      fail-fast: false
-      matrix:
-        product: [ 'chrome', 'firefox' ]
-
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Install Firefox
-        if: matrix.product == 'firefox'
-        uses: browser-actions/setup-firefox@latest
-
-      - name: Install geckodriver
-        if: matrix.product == 'firefox'
-        uses: browser-actions/setup-geckodriver@latest
-
-      - name: Install chromedriver
-        if: matrix.product == 'chrome'
-        uses: nanasess/setup-chromedriver@v1
+        uses: actions/checkout@v3
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Run tests
-        run: npm run test
-        env:
-          BROWSER: ${{ matrix.product }}
 
       - name: Build
         run: npm run build
         env:
           NODE_ENV: production
-
-      - name: Upload test artifacts
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: test-artifacts
-          path: tests/artifacts/*
 
       - name: Upload transpiled code
         uses: actions/upload-artifact@v3
@@ -62,3 +32,82 @@ jobs:
         with:
           name: sourcemaps
           path: build/*.js.map
+
+  tests:
+    name: Perform tests
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ windows-latest, ubuntu-latest, macos-latest ]
+        browser:
+          # Chrome stable
+          - product: chrome
+            version: stable
+          # Chrome Canary
+          - product: chrome
+            version: canary
+
+          # Firefox stable
+          - product: firefox
+            version: latest
+          # Firefox beta
+          - product: firefox
+            version: latest-beta
+          # Firefox ESR
+          - product: firefox
+            version: latest-esr
+    runs-on: ${{ matrix.os }}
+    if: ${{ !contains(github.event.head_commit.message, '[failing]') }}
+    steps:
+      - name: Checkout code
+        if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
+        uses: actions/checkout@v3
+
+      - name: Install Firefox
+        if: matrix.browser.product == 'firefox' && matrix.os != 'windows-latest'
+        uses: browser-actions/setup-firefox@latest
+        with:
+          firefox-version: ${{ matrix.browser.version }}
+
+      - name: Install geckodriver
+        if: matrix.browser.product == 'firefox' && matrix.os != 'windows-latest'
+        uses: ChlodAlejandro/setup-geckodriver@latest
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install chromedriver
+        if: matrix.browser.product == 'chrome'
+        uses: nanasess/setup-chromedriver@v1
+
+      - name: Install dependencies
+        if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
+        run: npm ci
+        env:
+          NODE_ENV: development
+
+      - name: Download transpiled code
+        if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
+        uses: actions/download-artifact@v3
+        with:
+          name: builds
+          path: build/
+
+      - name: Download sourcemaps
+        if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
+        uses: actions/download-artifact@v3
+        with:
+          name: sourcemaps
+          path: build/
+
+      - name: Run tests
+        if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
+        run: npm run test:jest
+        env:
+          BROWSER: ${{ matrix.browser.product }}
+
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-artifacts--${{ matrix.os }}-${{ matrix.browser.product }}-${{ matrix.browser.version }}
+          path: tests/artifacts/*

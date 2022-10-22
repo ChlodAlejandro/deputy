@@ -1,18 +1,25 @@
-import webdriver from 'selenium-webdriver';
+import webdriver, { error } from 'selenium-webdriver';
+import type { Executor } from 'selenium-webdriver/lib/command';
 import chrome from 'selenium-webdriver/chrome';
 import firefox from 'selenium-webdriver/firefox';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { PromiseOrNot } from '../../src/types';
+import { WriteStream } from 'fs';
+import WebDriverError = error.WebDriverError;
 
 /**
  * Utility class for handling a browser environment during tests.
  */
 export default class BrowserHelper extends webdriver.WebDriver {
 
+	static readonly artifactFolder = path.resolve( __dirname, '..', 'artifacts' );
+
 	/**
 	 * Builds a BrowserHelper.
 	 */
 	static async build() {
+		const browser = ( process.env.BROWSER || 'chrome' ).toLowerCase();
 		const size = { width: 1280, height: 768 };
 
 		const chromeOpts = new chrome.Options()
@@ -22,16 +29,119 @@ export default class BrowserHelper extends webdriver.WebDriver {
 
 		if ( ![ '0', 'false', 'no', '' ].includes( process.env.HEADLESS?.toLowerCase() ) ) {
 			chromeOpts.headless();
-			firefoxOpts.headless();
+
+			if ( browser === 'firefox' ) {
+				firefoxOpts.headless();
+			}
 		}
 
+		const logOptions = new webdriver.logging.Preferences();
+		logOptions.setLevel( webdriver.logging.Type.BROWSER, webdriver.logging.Level.ALL );
+		logOptions.setLevel( webdriver.logging.Type.CLIENT, webdriver.logging.Level.ALL );
+		logOptions.setLevel( webdriver.logging.Type.DRIVER, webdriver.logging.Level.ALL );
+		logOptions.setLevel( webdriver.logging.Type.PERFORMANCE, webdriver.logging.Level.ALL );
+		logOptions.setLevel( webdriver.logging.Type.SERVER, webdriver.logging.Level.ALL );
+
+		chromeOpts.setLoggingPrefs( logOptions );
+		firefoxOpts.setLoggingPrefs( logOptions );
+
 		const driver = await new webdriver.Builder()
-			.forBrowser( ( process.env.BROWSER ?? 'chrome' ).toLowerCase() )
 			.setChromeOptions( chromeOpts )
 			.setFirefoxOptions( firefoxOpts )
+			.forBrowser( browser )
 			.build();
 
-		return new BrowserHelper( driver.getSession(), driver.getExecutor() );
+		const logStreams: Record<string, WriteStream> = {};
+		try {
+			for ( const stream of await driver.manage().logs().getAvailableLogTypes() ) {
+				if ( fs.stat( BrowserHelper.artifactFolder ).catch( () => false ) ) {
+					await fs.mkdir( BrowserHelper.artifactFolder, { recursive: true } );
+				}
+
+				logStreams[ stream ] = ( await fs.open(
+					path.join( BrowserHelper.artifactFolder, `selenium-${
+						stream.toLowerCase()
+					}.log` ), 'a'
+				) ).createWriteStream();
+			}
+		} catch ( e ) {
+			console.warn( 'Browser does not support logs. Going in blind.', e );
+		}
+
+		return new BrowserHelper( driver.getSession(), driver.getExecutor(), logStreams );
+	}
+
+	private readonly logStreams: Record<string, WriteStream>;
+
+	/**
+	 *
+	 * @param session
+	 * @param executor
+	 * @param logStreams
+	 */
+	constructor(
+		session: PromiseOrNot<webdriver.Session>,
+		executor: Executor,
+		logStreams?: Record<string, WriteStream>
+	) {
+		super( session, executor );
+
+		if ( logStreams ) {
+			this.logStreams = logStreams;
+		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	async close(): Promise<void> {
+		await this.dumpLogs();
+		await super.close();
+
+		if ( this.logStreams ) {
+			for ( const stream of Object.values( this.logStreams ) ) {
+				await new Promise<void>( ( res, rej ) => {
+					stream.close( ( err ) => {
+						if ( err ) {
+							rej( err );
+						} else {
+							res();
+						}
+					} );
+				} );
+			}
+		}
+	}
+
+	/**
+	 * Dumps all logs to the artifacts folder.
+	 */
+	async dumpLogs(): Promise<void> {
+		const writePromises: Promise<void>[] = [];
+		for ( const [ type, stream ] of Object.entries( this.logStreams ) ) {
+			const logs = await this.manage().logs().get( type );
+
+			for ( const entry of logs ) {
+				writePromises.push( new Promise<void>( ( resolve, reject ) => {
+					stream.write( `[${
+						new Date( entry.timestamp ).toISOString()
+					}][${
+						entry.level
+					}]${
+						entry.type ? `[${entry.type}]` : ''
+					} ${ entry.message }`, ( err ) => {
+						if ( err ) {
+							reject( err );
+						} else {
+							resolve();
+						}
+					} );
+				} ) );
+			}
+		}
+		await Promise.all( writePromises ).catch( ( e ) => {
+			console.error( 'Error occurred when dumping logs.', e );
+		} );
 	}
 
 	/**
@@ -95,7 +205,7 @@ export default class BrowserHelper extends webdriver.WebDriver {
 		func: U,
 		...args: Parameters<U>
 	): Promise<T> {
-		return this.executeAsyncScript<T>(
+		const buildPromise = () => this.executeAsyncScript<T>(
 			async function (
 				_func: string,
 				_args: Parameters<U>,
@@ -105,6 +215,32 @@ export default class BrowserHelper extends webdriver.WebDriver {
 				callback( await eval( _func )( ..._args ) );
 			}, func, args
 		);
+
+		let retryCount = 0;
+		let success = false;
+
+		while ( !success && retryCount < 5 ) {
+			const result = await buildPromise()
+				.then( ( res ) => {
+					success = true;
+					return res;
+				} )
+				.catch( ( e ) => {
+					console.warn( `Error when attempting to evaluate script (try ${
+						retryCount + 1
+					} of 5)`, e );
+					success = false;
+					return null;
+				} );
+
+			if ( !success ) {
+				retryCount++;
+			} else {
+				return result;
+			}
+		}
+
+		throw new WebDriverError( "Couldn't evaluate script" );
 	}
 
 }
