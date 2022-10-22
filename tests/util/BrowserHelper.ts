@@ -1,8 +1,11 @@
 import webdriver from 'selenium-webdriver';
+import type { Executor } from 'selenium-webdriver/lib/command';
 import chrome from 'selenium-webdriver/chrome';
 import firefox from 'selenium-webdriver/firefox';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { PromiseOrNot } from '../../src/types';
+import { WriteStream } from 'fs';
 
 /**
  * Utility class for handling a browser environment during tests.
@@ -13,6 +16,7 @@ export default class BrowserHelper extends webdriver.WebDriver {
 	 * Builds a BrowserHelper.
 	 */
 	static async build() {
+		const browser = ( process.env.BROWSER || 'chrome' ).toLowerCase();
 		const size = { width: 1280, height: 768 };
 
 		const chromeOpts = new chrome.Options()
@@ -22,16 +26,123 @@ export default class BrowserHelper extends webdriver.WebDriver {
 
 		if ( ![ '0', 'false', 'no', '' ].includes( process.env.HEADLESS?.toLowerCase() ) ) {
 			chromeOpts.headless();
-			firefoxOpts.headless();
+
+			if ( browser === 'firefox' ) {
+
+				const firefoxDriver = await new webdriver.Builder()
+					.forBrowser( 'firefox' )
+					.build();
+				if ( +( /^(\d+)\./.exec(
+					( await firefoxDriver.getCapabilities() ).getBrowserVersion()
+				) ) > 55 ) {
+					firefoxOpts.headless();
+				}
+			}
 		}
 
+		const logOptions = new webdriver.logging.Preferences();
+		logOptions.setLevel( webdriver.logging.Type.BROWSER, webdriver.logging.Level.ALL );
+		logOptions.setLevel( webdriver.logging.Type.CLIENT, webdriver.logging.Level.ALL );
+		logOptions.setLevel( webdriver.logging.Type.DRIVER, webdriver.logging.Level.ALL );
+		logOptions.setLevel( webdriver.logging.Type.PERFORMANCE, webdriver.logging.Level.ALL );
+		logOptions.setLevel( webdriver.logging.Type.SERVER, webdriver.logging.Level.ALL );
+
+		chromeOpts.setLoggingPrefs( logOptions );
+		firefoxOpts.setLoggingPrefs( logOptions );
+
 		const driver = await new webdriver.Builder()
-			.forBrowser( ( process.env.BROWSER ?? 'chrome' ).toLowerCase() )
 			.setChromeOptions( chromeOpts )
 			.setFirefoxOptions( firefoxOpts )
+			.forBrowser( browser )
 			.build();
 
-		return new BrowserHelper( driver.getSession(), driver.getExecutor() );
+		const logStreams: Record<string, WriteStream> = {};
+		try {
+			for ( const stream of await driver.manage().logs().getAvailableLogTypes() ) {
+				logStreams[ stream ] = ( await fs.open(
+					path.join( __dirname, '..', 'artifacts', `selenium-${
+						stream.toLowerCase()
+					}.log` ), 'a'
+				) ).createWriteStream();
+			}
+		} catch ( e ) {
+			console.warn( 'Browser does not support logs. Going in blind.' );
+		}
+
+		return new BrowserHelper( driver.getSession(), driver.getExecutor(), logStreams );
+	}
+
+	private readonly logStreams: Record<string, WriteStream>;
+
+	/**
+	 *
+	 * @param session
+	 * @param executor
+	 * @param logStreams
+	 */
+	constructor(
+		session: PromiseOrNot<webdriver.Session>,
+		executor: Executor,
+		logStreams?: Record<string, WriteStream>
+	) {
+		super( session, executor );
+
+		if ( logStreams ) {
+			this.logStreams = logStreams;
+		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	async close(): Promise<void> {
+		await this.dumpLogs();
+		await super.close();
+
+		if ( this.logStreams ) {
+			for ( const stream of Object.values( this.logStreams ) ) {
+				await new Promise<void>( ( res, rej ) => {
+					stream.close( ( err ) => {
+						if ( err ) {
+							rej( err );
+						} else {
+							res();
+						}
+					} );
+				} );
+			}
+		}
+	}
+
+	/**
+	 * Dumps all logs to the artifacts folder.
+	 */
+	async dumpLogs(): Promise<void> {
+		const writePromises: Promise<void>[] = [];
+		for ( const [ type, stream ] of Object.entries( this.logStreams ) ) {
+			const logs = await this.manage().logs().get( type );
+
+			for ( const entry of logs ) {
+				writePromises.push( new Promise<void>( ( resolve, reject ) => {
+					stream.write( `[${
+						new Date( entry.timestamp ).toISOString()
+					}][${
+						entry.level
+					}]${
+						entry.type ? `[${entry.type}]` : ''
+					} ${ entry.message }`, ( error ) => {
+						if ( error ) {
+							reject( error );
+						} else {
+							resolve();
+						}
+					} );
+				} ) );
+			}
+		}
+		await Promise.all( writePromises ).catch( ( e ) => {
+			console.error( 'Error occurred when dumping logs.', e );
+		} );
 	}
 
 	/**
