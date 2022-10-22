@@ -1,4 +1,4 @@
-import webdriver from 'selenium-webdriver';
+import webdriver, { error } from 'selenium-webdriver';
 import type { Executor } from 'selenium-webdriver/lib/command';
 import chrome from 'selenium-webdriver/chrome';
 import firefox from 'selenium-webdriver/firefox';
@@ -6,6 +6,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { PromiseOrNot } from '../../src/types';
 import { WriteStream } from 'fs';
+import WebDriverError = error.WebDriverError;
 
 /**
  * Utility class for handling a browser environment during tests.
@@ -122,9 +123,9 @@ export default class BrowserHelper extends webdriver.WebDriver {
 						entry.level
 					}]${
 						entry.type ? `[${entry.type}]` : ''
-					} ${ entry.message }`, ( error ) => {
-						if ( error ) {
-							reject( error );
+					} ${ entry.message }`, ( err ) => {
+						if ( err ) {
+							reject( err );
 						} else {
 							resolve();
 						}
@@ -198,7 +199,7 @@ export default class BrowserHelper extends webdriver.WebDriver {
 		func: U,
 		...args: Parameters<U>
 	): Promise<T> {
-		return this.executeAsyncScript<T>(
+		const buildPromise = () => this.executeAsyncScript<T>(
 			async function (
 				_func: string,
 				_args: Parameters<U>,
@@ -208,6 +209,32 @@ export default class BrowserHelper extends webdriver.WebDriver {
 				callback( await eval( _func )( ..._args ) );
 			}, func, args
 		);
+
+		let retryCount = 0;
+		let success = false;
+
+		while ( !success && retryCount < 5 ) {
+			const result = await buildPromise()
+				.then( ( res ) => {
+					success = true;
+					return res;
+				} )
+				.catch( ( e ) => {
+					console.warn( `Error when attempting to evaluate script (try ${
+						retryCount + 1
+					} of 5)`, e );
+					success = false;
+					return null;
+				} );
+
+			if ( !success ) {
+				retryCount++;
+			} else {
+				return result;
+			}
+		}
+
+		throw new WebDriverError( "Couldn't evaluate script" );
 	}
 
 }
