@@ -105,3 +105,9 @@ jobs:
         run: npm run test:jest
         env:
           BROWSER: ${{ matrix.browser.product }}
+
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-artifacts--${{ matrix.os }}-${{ matrix.browser.product }}-${{ matrix.browser.version }}
+          path: test/artifacts/*
