@@ -41,7 +41,7 @@ export default class BrowserHelper extends webdriver.WebDriver {
 							return v;
 						} );
 				} )();
-				if ( +( /^(\d+)\./.exec( browserVersion )[ 1 ] ?? '56' ) > 55 ) {
+				if ( +( /^(\d+)\./.exec( browserVersion )?.[ 1 ] ?? '56' ) > 55 ) {
 					firefoxOpts.headless();
 				}
 			}
