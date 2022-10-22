@@ -13,6 +13,8 @@ import WebDriverError = error.WebDriverError;
  */
 export default class BrowserHelper extends webdriver.WebDriver {
 
+	static readonly artifactFolder = path.resolve( __dirname, '..', 'artifacts' );
+
 	/**
 	 * Builds a BrowserHelper.
 	 */
@@ -52,8 +54,12 @@ export default class BrowserHelper extends webdriver.WebDriver {
 		const logStreams: Record<string, WriteStream> = {};
 		try {
 			for ( const stream of await driver.manage().logs().getAvailableLogTypes() ) {
+				if ( fs.stat( BrowserHelper.artifactFolder ).catch( () => false ) ) {
+					await fs.mkdir( BrowserHelper.artifactFolder, { recursive: true } );
+				}
+
 				logStreams[ stream ] = ( await fs.open(
-					path.join( __dirname, '..', 'artifacts', `selenium-${
+					path.join( BrowserHelper.artifactFolder, `selenium-${
 						stream.toLowerCase()
 					}.log` ), 'a'
 				) ).createWriteStream();
