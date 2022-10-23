@@ -2,6 +2,10 @@ name: CI/CD
 
 on:
   push:
+    paths:
+      - src/**
+      - tests/**
+      - i18n/**
   pull_request:
 
 jobs:
