@@ -82,7 +82,7 @@
     "overrides": {
         "serve-handler": {
             "minimatch": "~3.1.2"
-    }
+        }
     },
     "browserslist": [
         ">0.05% and supports fetch and not dead"

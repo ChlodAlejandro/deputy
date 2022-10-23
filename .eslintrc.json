@@ -40,7 +40,7 @@
                 ]
             }
         ],
-        "compat/compat": ["error", "cover 95% and supports fetch, not IE 11"],
+        "compat/compat": ["error", ">0.05% and supports fetch and not dead"],
         "max-len": ["warn", { "code": 100, "ignoreRegExpLiterals": true }],
 
         "no-unused-vars": "off",
