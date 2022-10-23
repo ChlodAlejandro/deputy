@@ -50,12 +50,12 @@ implements AttributionNoticePageGenerator {
 	 *
 	 * @param parent
 	 */
-	constructor( parent: T ) {
+	protected constructor( parent: T ) {
 		this._parent = parent;
 
-		const r = btoa( ( Math.random() * 10000 ).toString() ).slice( 0, 6 );
+		const r = window.btoa( ( Math.random() * 10000 ).toString() ).slice( 0, 6 );
 		this.name = this.parent.name + '#' + r;
-		this.id = btoa( parent.node.getTarget().wt ) + '-' + this.name;
+		this.id = window.btoa( parent.node.getTarget().wt ) + '-' + this.name;
 	}
 
 	abstract generatePage( dialog: any ): AttributionNoticePageLayout;

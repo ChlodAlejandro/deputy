@@ -82,7 +82,7 @@ export default class DeputyLanguage {
 			new URL(
 				`resources/lib/moment/locale/${ locale }.js`,
 				new URL( mw.util.wikiScript( 'index' ), window.location.href )
-			).toString()
+			).href
 		).then( () => true, () => null );
 	}
 

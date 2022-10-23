@@ -91,6 +91,7 @@ function onOption<
  *
  * @param obj
  * @param _options
+ * @return The cleaned parameter list.
  */
 export default function cleanParams<T extends Record<string, string>>(
 	obj: T, _options: Partial<CleanParamsOptions<T>> = {}

@@ -5,6 +5,7 @@ import cloneRegex from './cloneRegex';
  *
  * @param _regex The regular expression to exec with
  * @param string The string to exec against
+ * @return The matches found
  */
 export default function matchAll( _regex: RegExp, string: string ): RegExpExecArray[] {
 	const regex = cloneRegex( _regex );

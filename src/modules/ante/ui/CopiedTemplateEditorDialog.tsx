@@ -308,7 +308,7 @@ function initCopiedTemplateEditorDialog() {
 			} );
 			previewButton.on( 'click', async () => {
 				previewButton.setDisabled( true );
-				openWindow( DeputyReviewDialog( {
+				await openWindow( DeputyReviewDialog( {
 					title: normalizeTitle( this.parsoid.getPage() ),
 					from: await getPageContent( this.parsoid.getPage() ),
 					to: await this.parsoid.toWikitext()

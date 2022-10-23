@@ -19,5 +19,5 @@ export default function (
 		}
 	}
 
-	return processedClasses.filter( ( v ) => v != null && v != false ).join( ' ' );
+	return processedClasses.filter( ( v ) => v != null && !!v ).join( ' ' );
 }

@@ -59,7 +59,7 @@ export default abstract class AttributionNotice
 		this.node = node;
 		this.name = this.element.getAttribute( 'about' )
 			.replace( /^#mwt/, '' ) + '-' + this.i;
-		this.id = btoa( node.getTarget().wt ) + '-' + this.name;
+		this.id = window.btoa( node.getTarget().wt ) + '-' + this.name;
 		this.parse();
 	}
 

@@ -133,8 +133,9 @@ const axios = require( 'axios' );
 			srinfo: 'totalhits',
 			srprop: ''
 		} ), { responseType: 'json' } );
-		console.log( query + ': ' + req.data.query.searchinfo.totalhits );
-		counts[ key ] = ( counts[ key ] || 0 ) + req.data.query.searchinfo.totalhits;
+
+		console.log( query + ': ' + req.data.query[ 'searchinfo' ][ 'totalhits' ] );
+		counts[ key ] = ( counts[ key ] || 0 ) + req.data.query[ 'searchinfo' ][ 'totalhits' ];
 	}
 
 	console.log( '\nSORTING...\n' );

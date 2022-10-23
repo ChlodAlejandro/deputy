@@ -1,3 +1,5 @@
+// These don't recognize TypeScript multiple definitions.
+/* eslint-disable jsdoc/require-returns-check */
 /**
  * Returns the last item of a NodeList array.
  *
