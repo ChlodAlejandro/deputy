@@ -3,6 +3,8 @@ import BrowserHelper from '../util/BrowserHelper';
 
 describe( 'Browser load tests', () => {
 
+	jest.setTimeout( 20e3 );
+
 	let page: BrowserHelper;
 
 	beforeAll( async () => {
@@ -31,6 +33,6 @@ describe( 'Browser load tests', () => {
 
 	test( 'Deputy loads successfully', async () => {
 		await expect( page.loadDeputyScript() ).resolves.not.toThrow();
-	}, 20e3 );
+	} );
 
 } );
