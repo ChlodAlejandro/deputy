@@ -18,6 +18,7 @@ import {
 	ContributionSurveyRowSigningBehavior
 } from '../../models/ContributionSurveyRowSigningBehavior';
 import { generateTrace } from '../../models/DeputyTrace';
+import DeputyMessageWidget from '../shared/DeputyMessageWidget';
 
 /**
  * The contribution survey section UI element. This includes a list of revisions
@@ -519,6 +520,13 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			this.setDisabled( false );
 		} );
 
+		const closingWarning = DeputyMessageWidget( {
+			classes: [ 'dp-cs-section-unfinishedWarning' ],
+			type: 'warning',
+			label: mw.msg( 'deputy.session.section.closeWarning' )
+		} );
+		closingWarning.toggle( false );
+
 		const closingCommentsField = new OO.ui.FieldLayout( this.closingComments, {
 			align: 'top',
 			label: 'Closing comments',
@@ -537,6 +545,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		this.closingCheckbox.on( 'change', ( v: boolean ) => {
 			this.closed = v;
 			closingCommentsField.toggle( v );
+			closingWarning.toggle( v && this.rows.some( ( row ) => !row.completed ) );
 			this.toggleClosingComments( v );
 		} );
 		this.closingComments.on( 'change', ( v: string ) => {
@@ -561,6 +570,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 							align: 'inline',
 							label: mw.msg( 'deputy.session.section.close' )
 						} ) ) }
+						{ unwrapWidget( closingWarning ) }
 						{ unwrapWidget( closingCommentsField ) }
 					</div>
 					<div style={{ display: 'flex', alignItems: 'end' }}>

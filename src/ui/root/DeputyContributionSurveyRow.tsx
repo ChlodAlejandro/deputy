@@ -517,7 +517,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 
 		this.unfinishedMessageBox = new OO.ui.MessageWidget( {
 			classes: [ 'dp-cs-row-unfinishedWarning' ],
-			type: 'warn',
+			type: 'warning',
 			label: mw.msg( 'deputy.session.row.unfinishedWarning' )
 		} );
 		this.unfinishedMessageBox.toggle( false );

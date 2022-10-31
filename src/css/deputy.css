@@ -265,6 +265,10 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
 	margin-bottom: 8px;
 }
 
+.dp-cs-section-unfinishedWarning {
+	margin-top: 8px;
+}
+
 .dp-cs-row-closeComments {
 	font-family: monospace, monospace;
 	font-size: small;
