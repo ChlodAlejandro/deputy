@@ -11,6 +11,7 @@ import { renderMergePanel, renderPreviewPanel } from '../RowPageShared';
 import swapElements from '../../../../util/swapElements';
 import DemoTemplateMessage from './messages/DemoTemplateMessage';
 import removeElement from '../../../../util/removeElement';
+import DeputyMessageWidget from '../../../../ui/shared/DeputyMessageWidget';
 
 export interface BackwardsCopyTemplatePageData {
 	/**
@@ -220,12 +221,13 @@ function initBackwardsCopyTemplatePage() {
 		renderBotPanel(): JSX.Element {
 			if ( this.backwardsCopyTemplate.node.hasParameter( 'bot' ) ) {
 				const bot = this.backwardsCopyTemplate.node.getParameter( 'bot' );
-				return unwrapWidget( new OO.ui.MessageWidget( {
+				return unwrapWidget( DeputyMessageWidget( {
 					type: 'notice',
 					icon: 'robot',
 					label: new OO.ui.HtmlSnippet(
 						mw.message( 'deputy.ante.backwardsCopy.bot', bot ).parse()
-					)
+					),
+					closable: true
 				} ) );
 			} else {
 				return null;
@@ -241,12 +243,13 @@ function initBackwardsCopyTemplatePage() {
 			if ( this.backwardsCopyTemplate.node.hasParameter( 'bot' ) ) {
 				// Insert element directly into widget (not as text, or else event
 				// handlers will be destroyed).
-				const messageBox = new OO.ui.MessageWidget( {
+				const messageBox = DeputyMessageWidget( {
 					type: 'notice',
 					icon: 'alert',
 					label: new OO.ui.HtmlSnippet(
 						DemoTemplateMessage().innerHTML
-					)
+					),
+					closable: true
 				} );
 
 				const clearButton = new OO.ui.ButtonWidget( {
