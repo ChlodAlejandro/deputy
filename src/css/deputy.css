@@ -54,6 +54,14 @@
 	pointer-events: none;
 }
 
+p.dp-messageWidget-message {
+	margin: 0 0 0.5em 0;
+}
+
+.dp-messageWidget-actions .oo-ui-buttonElement {
+	margin-top: 0;
+}
+
 /*
 ===============================================================================
 
@@ -96,10 +104,6 @@
 .client-js .deputy.dp-sessionStarter .dp-sessionStarter-bracket:not(:first-of-type) {
 	margin-left: 0.25em;
 	color: #54595d
-}
-
-.dp-cs-session-continue {
-	margin-top: 8px;
 }
 
 .dp-cs-section-add {

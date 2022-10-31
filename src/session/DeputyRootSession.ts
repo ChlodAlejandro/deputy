@@ -1,9 +1,7 @@
 import DeputyCasePage, { ContributionSurveyHeading } from '../wiki/DeputyCasePage';
 import DeputyCCISessionStartLink from '../ui/root/DeputyCCISessionStartLink';
-import DeputyCCISessionContinueMessage from '../ui/root/DeputyCCISessionContinueMessage';
 import removeElement from '../util/removeElement';
 import unwrapWidget from '../util/unwrapWidget';
-import swapElements from '../util/swapElements';
 import DeputyCCISessionTabActiveMessage from '../ui/root/DeputyCCISessionTabActiveMessage';
 import sectionHeadingName from '../wiki/util/sectionHeadingName';
 import {
@@ -14,8 +12,8 @@ import {
 import DeputyCCISessionAddSection from '../ui/root/DeputyCCISessionAddSection';
 import DeputyContributionSurveySection from '../ui/root/DeputyContributionSurveySection';
 import { SessionInformation } from './DeputySession';
-import DeputyCCISessionOverwriteMessage from '../ui/root/DeputyCCISessionOverwriteMessage';
 import { ArrayOrNot } from '../types';
+import DeputyMessageWidget from '../ui/shared/DeputyMessageWidget';
 
 /**
  * The DeputyRootSession. Instantiated only when:
@@ -71,24 +69,23 @@ export default class DeputyRootSession {
 			() => {
 				const firstHeading = casePage.findContributionSurveyHeadings()[ 0 ];
 				if ( firstHeading ) {
-					// Insert element directly into widget (not as text, or else event
-					// handlers will be destroyed).
+					const stopButton = new OO.ui.ButtonWidget( {
+						label: mw.msg( 'deputy.session.otherActive.button' ),
+						flags: [ 'primary', 'destructive' ]
+					} );
+
 					const messageBox = new OO.ui.MessageWidget( {
 						classes: [
 							'deputy', 'dp-cs-session-notice', 'dp-cs-session-otherActive'
 						],
 						type: 'notice',
 						icon: 'alert',
-						label: new OO.ui.HtmlSnippet(
-							DeputyCCISessionOverwriteMessage().innerHTML
-						)
+						title: mw.msg( 'deputy.session.otherActive.head' ),
+						message: mw.msg( 'deputy.session.otherActive.help' ),
+						actions: [ stopButton ],
+						closable: true
 					} );
 
-					const stopButton = new OO.ui.ButtonWidget( {
-						classes: [ 'dp-cs-session-stop' ],
-						label: mw.msg( 'deputy.session.otherActive.button' ),
-						flags: [ 'primary', 'destructive' ]
-					} );
 					stopButton.on( 'click', async () => {
 						const session = await window.deputy.comms.sendAndWait( {
 							type: 'sessionStop'
@@ -109,11 +106,6 @@ export default class DeputyRootSession {
 						removeElement( unwrapWidget( messageBox ) );
 						window.deputy.session.init();
 					} );
-					swapElements(
-						unwrapWidget( messageBox )
-							.querySelector( '.dp-cs-session-stop' ),
-						unwrapWidget( stopButton )
-					);
 
 					firstHeading.insertAdjacentElement(
 						'beforebegin',
@@ -142,23 +134,30 @@ export default class DeputyRootSession {
 					if ( firstHeading ) {
 						// Insert element directly into widget (not as text, or else event
 						// handlers will be destroyed).
-						const messageBox = new OO.ui.MessageWidget( {
+						const continueButton = new OO.ui.ButtonWidget( {
+							label: mw.msg( 'deputy.session.continue.button' ),
+							flags: [ 'primary', 'progressive' ]
+						} );
+
+						const messageBox = DeputyMessageWidget( {
 							classes: [
 								'deputy', 'dp-cs-session-notice', 'dp-cs-session-lastActive'
 							],
 							type: 'notice',
 							icon: 'history',
-							label: new OO.ui.HtmlSnippet(
-								DeputyCCISessionContinueMessage( {
-									casePage: casePage
-								} ).innerHTML
-							)
-						} );
-
-						const continueButton = new OO.ui.ButtonWidget( {
-							classes: [ 'dp-cs-session-continue' ],
-							label: mw.msg( 'deputy.session.continue.button' ),
-							flags: [ 'primary', 'progressive' ]
+							title: mw.msg(
+								'deputy.session.continue.head',
+								new Date().toLocaleString(
+									mw.config.get( 'wgUserLanguage' ),
+									{ dateStyle: 'long', timeStyle: 'medium' }
+								)
+							),
+							message: mw.msg(
+								'deputy.session.continue.help',
+								casePage.lastActiveSections[ 0 ]
+							),
+							actions: [ continueButton ],
+							closable: true
 						} );
 						const sessionStartListener = async () => {
 							removeElement( unwrapWidget( messageBox ) );
@@ -172,11 +171,6 @@ export default class DeputyRootSession {
 								sessionStartListener
 							);
 						} );
-						swapElements(
-							unwrapWidget( messageBox )
-								.querySelector( '.dp-cs-session-continue' ),
-							unwrapWidget( continueButton )
-						);
 
 						firstHeading.insertAdjacentElement(
 							'beforebegin',

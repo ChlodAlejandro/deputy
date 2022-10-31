@@ -17,6 +17,7 @@
     "deputy.positiveDiff": "+{{FORMATNUM:$1}}",
     "deputy.negativeDiff": "-{{FORMATNUM:$1}}",
     "deputy.moreInfo": "More information",
+    "deputy.dismiss": "Dismiss",
 
     "deputy.comma-separator": ", ",
 
