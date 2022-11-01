@@ -275,13 +275,13 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 				expect(
 					page.evaluate( async () => {
 						const currentPage = await window.deputy.DeputyCasePage.build();
-						return currentPage.wikitext.getSectionWikitext( 0 );
+						return currentPage.wikitext.getSectionWikitext( 0 ).toString();
 					} )
 				).resolves.toContain( '{{anchor|top}}' ),
 				expect(
 					page.evaluate( async () => {
 						const currentPage = await window.deputy.DeputyCasePage.build();
-						return currentPage.wikitext.getSectionWikitext( 2 );
+						return currentPage.wikitext.getSectionWikitext( 2 ).toString();
 					} )
 				).resolves.toContain( 'Examine the article or the diffs linked below' )
 			] );
@@ -292,13 +292,15 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 				expect(
 					page.evaluate( async () => {
 						const currentPage = await window.deputy.DeputyCasePage.build();
-						return currentPage.wikitext.getSectionWikitext( 'Text' );
+						return currentPage.wikitext.getSectionWikitext( 'Text' )
+							.toString();
 					} )
 				).resolves.toContain( 'Examine the article or the diffs linked below' ),
 				expect(
 					page.evaluate( async () => {
 						const currentPage = await window.deputy.DeputyCasePage.build();
-						return currentPage.wikitext.getSectionWikitext( 'Pages 1 to 20' );
+						return currentPage.wikitext.getSectionWikitext( 'Pages 1 to 20' )
+							.toString();
 					} )
 				).resolves.toContain( 'Special:Diff' )
 			] );
