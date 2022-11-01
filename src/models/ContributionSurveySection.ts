@@ -31,6 +31,10 @@ export default class ContributionSurveySection {
 	 * The original wikitext of this section
 	 */
 	readonly originalWikitext: string;
+	/**
+	 * The revision ID of the wikitext attached to this section.
+	 */
+	readonly revid: number;
 
 	/**
 	 * @param casePage The case page of this section
@@ -38,13 +42,15 @@ export default class ContributionSurveySection {
 	 * @param closed Whether this section has been closed (wrapped in collapse templates)
 	 * @param closingComments Closing comments for this section
 	 * @param wikitext The original wikitext of this section
+	 * @param revid The revision ID of the wikitext attached to this section.
 	 */
 	constructor(
 		casePage: DeputyCasePage,
 		name: string,
 		closed: boolean,
 		closingComments: string,
-		wikitext: string
+		wikitext: string,
+		revid: number
 	) {
 		this.casePage = casePage;
 		this.name = name;
@@ -53,6 +59,7 @@ export default class ContributionSurveySection {
 
 		this.originalWikitext = wikitext;
 		this.originallyClosed = closed;
+		this.revid = revid;
 	}
 
 }

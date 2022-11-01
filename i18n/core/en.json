@@ -28,6 +28,8 @@
     "deputy.session.section.saved": "Section saved",
     "deputy.session.section.failed": "Failed to save section",
     "deputy.session.section.missingSection": "The target section is missing from the case page.",
+    "deputy.session.section.conflict.title": "Edit conflict",
+    "deputy.session.section.conflict.help": "Someone else edited the page before you. Deputy will restart to load the new case content. Your changes will be preserved.",
 
     "deputy.session.row.status": "Current page status",
     "deputy.session.row.status.unfinished": "Unfinished",

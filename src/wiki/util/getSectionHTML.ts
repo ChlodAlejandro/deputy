@@ -14,14 +14,14 @@ export default async function (
 	page: mw.Title | string,
 	section: number | string,
 	extraOptions: Record<string, any> = {}
-): Promise<{ element: HTMLDivElement, wikitext: string }> {
+): Promise<{ element: HTMLDivElement, wikitext: string, revid: number }> {
 	if ( typeof section === 'string' ) {
 		section = await getSectionId( page, section );
 	}
 
 	return MwApi.action.get( {
 		action: 'parse',
-		prop: 'text|wikitext',
+		prop: 'text|wikitext|revid',
 		page: normalizeTitle( page ).getPrefixedText(),
 		section: section,
 		disablelimitreport: true,
@@ -32,7 +32,8 @@ export default async function (
 
 		return {
 			element: temp.children[ 0 ] as HTMLDivElement,
-			wikitext: data.parse.wikitext
+			wikitext: data.parse.wikitext,
+			revid: data.parse.revid
 		};
 	} );
 }

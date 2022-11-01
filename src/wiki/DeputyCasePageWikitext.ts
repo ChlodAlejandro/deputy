@@ -34,18 +34,29 @@ export default class DeputyCasePageWikitext {
 	}
 
 	/**
+	 * Removes the cached wikitext for this page.
+	 */
+	resetCachedWikitext(): void {
+		this.content = undefined;
+	}
+
+	/**
 	 * Gets the wikitext for a specific section. The section will be parsed using the
 	 * wikitext cache if a section title was provided. Otherwise, it will attempt to
 	 * grab the section using API:Query for an up-to-date version.
 	 *
 	 * @param section The section to edit
 	 */
-	async getSectionWikitext( section: string | number ): Promise<string> {
+	async getSectionWikitext( section: string | number ): Promise<string & { revid: number }> {
 		if ( typeof section === 'number' ) {
 			return getPageContent(
 				this.casePage.pageId,
 				{ rvsection: section }
-			).then( ( v ) => v.toString() );
+			).then( ( v ) => {
+				return Object.assign( v.toString(), {
+					revid: v.revid
+				} );
+			} );
 		} else {
 			const wikitext = await this.getWikitext();
 			const wikitextLines = wikitext.split( '\n' );
@@ -70,7 +81,11 @@ export default class DeputyCasePageWikitext {
 				}
 			}
 
-			return sectionLines.join( '\n' );
+			return Object.assign(
+				sectionLines.join( '\n' ), {
+					revid: wikitext.revid
+				}
+			);
 		}
 	}
 

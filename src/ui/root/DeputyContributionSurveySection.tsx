@@ -36,6 +36,10 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	headingName: string;
 	sectionElements: HTMLElement[];
 	originalList: HTMLElement;
+	/**
+	 * Revision ID of the actively-used wikitext. Used for detecting edit conflicts.
+	 */
+	revid: number;
 
 	// UI elements (no OOUI types, fall back to `any`)
 	container: HTMLElement;
@@ -241,18 +245,20 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	 *
 	 * @param wikitext Internal use only. Used to skip section loading using existing wikitext.
 	 */
-	async getSection( wikitext?: string ): Promise<ContributionSurveySection> {
+	async getSection( wikitext?: string & { revid: number } ): Promise<ContributionSurveySection> {
 		const collapsible = this.sectionElements.find(
 			( v: HTMLElement ) => v.querySelector( '.mw-collapsible' )
 		)?.querySelector( '.mw-collapsible' ) ?? null;
 
+		const sectionWikitext = await this.casePage.wikitext.getSectionWikitext( this.headingName );
 		return this._section ?? (
 			this._section = new ContributionSurveySection(
 				this.casePage,
 				this.headingName,
 				collapsible != null,
 				collapsible?.querySelector<HTMLElement>( 'th > div' ).innerText,
-				wikitext ?? await this.casePage.wikitext.getSectionWikitext( this.headingName )
+				wikitext ?? sectionWikitext,
+				sectionWikitext.revid
 			)
 		);
 	}
@@ -287,7 +293,9 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			}
 		}
 
-		const sectionWikitext = ( await this.getSection() ).originalWikitext;
+		const section = await this.getSection();
+		const sectionWikitext = section.originalWikitext;
+		this.revid = section.revid;
 
 		const wikitextLines = sectionWikitext.split( '\n' );
 		this.rows = [];
@@ -385,10 +393,25 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			pageid: this.casePage.pageId,
 			section: sectionId,
 			text: this.wikitext,
+			baserevid: this.revid,
 			summary: decorateEditSummary( this.editSummary )
 		} ).then( function ( data ) {
 			return data;
-		}, function ( code, data ) {
+		}, ( code, data ) => {
+			if ( code === 'editconflict' ) {
+				// Wipe cache.
+				this.casePage.wikitext.resetCachedWikitext();
+				OO.ui.alert(
+					mw.msg( 'deputy.session.section.conflict.help' ),
+					{
+						title: mw.msg( 'deputy.session.section.conflict.title' )
+					}
+				).then( () => {
+					window.deputy.session.rootSession.restartSession();
+				} );
+				return false;
+			}
+
 			mw.notify(
 				<span dangerouslySetInnerHTML={
 					data.errors[ 0 ].html
@@ -480,7 +503,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 
 					// Rebuild the entire section to HTML, and then reopen.
 					const {
-						element, wikitext
+						element, wikitext, revid
 					} = await getSectionHTML( this.casePage.title, sectionId );
 
 					removeElement( this.container );
@@ -503,9 +526,11 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 
 					if ( !this._section.closed ) {
 						this._section = null;
-						await this.getSection( wikitext );
+						await this.getSection( Object.assign( wikitext, { revid } ) );
 						await this.prepare();
 						oldHeading.insertAdjacentElement( 'afterend', this.render() );
+						// Run this asynchronously.
+						setTimeout( this.loadData.bind( this ), 0 );
 					}
 
 					removeElement( oldHeading );

@@ -335,6 +335,7 @@ export default class DeputyRootSession {
 			// User is editing, don't load interface.
 			return;
 		}
+
 		if ( await window.deputy.session.checkForActiveSessionTabs() ) {
 			// User is on another tab, don't load interface.
 			mw.loader.using( [ 'oojs-ui-core', 'oojs-ui-windows' ], () => {
@@ -580,5 +581,15 @@ export default class DeputyRootSession {
 				this.addSectionOverlay( casePage, heading );
 			}
 		}
+	}
+
+	/**
+	 * Restarts the section. This rebuilds *everything* from the ground up, which may
+	 * be required when there's an edit conflict.
+	 */
+	async restartSession() {
+		const casePage = this.casePage;
+		await this.closeSession();
+		await window.deputy.session.DeputyRootSession.continueSession( casePage );
 	}
 }
