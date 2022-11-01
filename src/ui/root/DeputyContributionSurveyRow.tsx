@@ -46,7 +46,7 @@ export enum DeputyContributionSurveyRowState {
  * (f) a list of revisions related to this page (as DeputyContributionSurveyRowRevision classes)
  * (g) closing comments
  */
-export default class DeputyContributionSurveyRow implements DeputyUIElement {
+export default class DeputyContributionSurveyRow extends EventTarget implements DeputyUIElement {
 
 	static readonly menuOptionIcon: Record<ContributionSurveyRowStatus, false | string> = {
 		[ ContributionSurveyRowStatus.Unfinished ]: false,
@@ -336,6 +336,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 		originalWikitext: string,
 		section: DeputyContributionSurveySection
 	) {
+		super();
 		this.row = row;
 		this.originalElement = originalElement;
 		this.originalWikitext = originalWikitext;
@@ -431,6 +432,8 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 			this.commentsField.setNotices( [] );
 		}
 
+		// Emit "update" event
+		this.dispatchEvent( new CustomEvent( 'update' ) );
 	}
 
 	/**
@@ -819,6 +822,7 @@ export default class DeputyContributionSurveyRow implements DeputyUIElement {
 	 */
 	close(): void {
 		this.state = DeputyContributionSurveyRowState.Closed;
+
 		window.deputy.comms.removeEventListener(
 			'pageStatusRequest',
 			this.statusRequestResponder

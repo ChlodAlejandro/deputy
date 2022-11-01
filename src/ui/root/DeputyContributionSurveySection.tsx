@@ -551,6 +551,9 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			label: mw.msg( 'deputy.session.section.closeWarning' )
 		} );
 		closingWarning.toggle( false );
+		const updateClosingWarning = ( () => {
+			closingWarning.toggle( this.rows.some( ( row ) => !row.completed ) );
+		} );
 
 		const closingCommentsField = new OO.ui.FieldLayout( this.closingComments, {
 			align: 'top',
@@ -570,8 +573,19 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		this.closingCheckbox.on( 'change', ( v: boolean ) => {
 			this.closed = v;
 			closingCommentsField.toggle( v );
-			closingWarning.toggle( v && this.rows.some( ( row ) => !row.completed ) );
 			this.toggleClosingComments( v );
+
+			if ( v ) {
+				updateClosingWarning();
+				this.rows.forEach( ( row ) => {
+					row.addEventListener( 'update', updateClosingWarning );
+				} );
+			} else {
+				closingWarning.toggle( false );
+				this.rows.forEach( ( row ) => {
+					row.removeEventListener( 'update', updateClosingWarning );
+				} );
+			}
 		} );
 		this.closingComments.on( 'change', ( v: string ) => {
 			this.comments = v;
