@@ -2,7 +2,6 @@ import DeputyCasePage, { ContributionSurveyHeading } from '../wiki/DeputyCasePag
 import DeputyCCISessionStartLink from '../ui/root/DeputyCCISessionStartLink';
 import removeElement from '../util/removeElement';
 import unwrapWidget from '../util/unwrapWidget';
-import DeputyCCISessionTabActiveMessage from '../ui/root/DeputyCCISessionTabActiveMessage';
 import sectionHeadingName from '../wiki/util/sectionHeadingName';
 import {
 	DeputyMessageEvent,
@@ -203,14 +202,14 @@ export default class DeputyRootSession {
 			() => {
 				const firstHeading = casePage.findContributionSurveyHeadings()[ 0 ];
 				if ( firstHeading ) {
-					const messageBox = new OO.ui.MessageWidget( {
+					const messageBox = DeputyMessageWidget( {
 						classes: [
 							'deputy', 'dp-cs-session-notice', 'dp-cs-session-tabActive'
 						],
 						type: 'info',
-						label: new OO.ui.HtmlSnippet(
-							DeputyCCISessionTabActiveMessage().innerHTML
-						)
+						title: mw.msg( 'deputy.session.tabActive.head' ),
+						message: mw.msg( 'deputy.session.tabActive.help' ),
+						closable: true
 					} );
 					firstHeading.insertAdjacentElement(
 						'beforebegin',
@@ -582,5 +581,4 @@ export default class DeputyRootSession {
 			}
 		}
 	}
-
 }
