@@ -1,11 +1,18 @@
 # Unreleased
 ヾ(•ω•`)o hai!
+
+# [v0.2.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.2.1) - 2022-11-01
+~~Halloween update! (I'm late)~~ Small quality of life changes and significant bugfixes.
+
 ## Added
 * [[`09fa40f`](../../commit/09fa40f)] Added "Dismiss" buttons to most banner messages 
 * [[`5f97f34`](../../commit/5f97f34)] Added warning when attempting to archive unfinished section
-## Fixed
+
+## Bugs
 * [[`d321ad5`](../../commit/d321ad5)] Fixed Deputy running over edit conflicts
 * [[`d321ad5`](../../commit/d321ad5)] Fixed section lockup after saving
+
+For a full list of changes, see [v0.2.0...v0.2.1](https://github.com/ChlodAlejandro/deputy/compare/v0.2.0...v0.2.1).
 
 # [v0.2.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.2.0) - 2022-10-20
 Small number of changes but relatively large in size; the contribution survey row detection now relies on a dedicated parser instead of regular expressions. This hopefully decreases the amount of false positive matches on contribution survey rows. In addition, support for the Dawkeye case, which has a different format from other CCI casepages, has been added. Also includes bugfixes.
