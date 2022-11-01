@@ -1,12 +1,9 @@
 # Deputy
 
-<p style="text-align: center">
-  <img width="60" height="60" alt="Deputy logo" src="https://upload.wikimedia.org/wikipedia/commons/2/2b/Deputy_logo.svg">
-</p>
+<img align="right" width="70" height="70" src="https://upload.wikimedia.org/wikipedia/commons/2/2b/Deputy_logo.svg">
 
 Deputy is
-a [contributor copyright investigation](https://en.wikipedia.org/wiki/Wikipedia:Contributor_copyright_investigations) (
-CCI) and copyright cleanup assistance tool for Wikipedia. Its goal is to streamline the workflow for CCI case pages, making it easier to
+a [contributor copyright investigation](https://en.wikipedia.org/wiki/Wikipedia:Contributor_copyright_investigations) (CCI) and copyright cleanup assistance tool for Wikipedia. Its goal is to streamline the workflow for CCI case pages, making it easier to
 process and go through each case. As of now, it is in an extreme in-development phase, meaning most of the targeted
 features are not yet ready. Progress is done every day to accomplish the goals originally set.
 
