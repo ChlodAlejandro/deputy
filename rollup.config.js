@@ -6,6 +6,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import license from 'rollup-plugin-node-license';
 import { createFilter } from 'rollup-pluginutils';
+import serve from 'rollup-plugin-serve';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -101,6 +102,14 @@ function getPlugins() {
 			sourcemaps: true,
 			emitFile: true,
 			open: true
+		} ),
+		// Serving (if dev)
+		process.env.DEPUTY_DEV && serve( {
+			contentBase: [ 'build', 'i18n' ],
+			headers: {
+				'Access-Control-Allow-Origin': '*'
+			},
+			port: 45000
 		} )
 	].filter( ( v ) => !!v );
 }

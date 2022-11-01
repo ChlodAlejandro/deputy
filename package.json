@@ -14,7 +14,7 @@
         "build:deputy": "npm run prebuild && cross-env DEPUTY_ONLY=deputy rollup -c",
         "build:ante": "npm run prebuild && cross-env DEPUTY_ONLY=ante rollup -c",
         "build:ia": "npm run prebuild && cross-env DEPUTY_ONLY=ia rollup -c",
-        "dev": "node scripts/dev.js",
+        "dev": "cross-env DEPUTY_DEV=true rollup -c --watch",
         "dev:deputy": "cross-env DEPUTY_ONLY=deputy npm run dev",
         "dev:ante": "cross-env DEPUTY_ONLY=ante npm run dev",
         "dev:ia": "cross-env DEPUTY_ONLY=ia npm run dev"
@@ -47,8 +47,6 @@
         "@typescript-eslint/eslint-plugin": "^5.41.0",
         "@typescript-eslint/parser": "^5.32.0",
         "axios": "^0.27.2",
-        "chalk": "^4.1.2",
-        "chokidar": "^3.5.3",
         "cross-env": "^7.0.3",
         "eslint": "8.22.0",
         "eslint-config-wikimedia": "^0.23.0",
@@ -61,13 +59,13 @@
         "oojs-ui": "^0.44.2",
         "rollup": "^2.77.0",
         "rollup-plugin-node-license": "^0.2.1",
+        "rollup-plugin-serve": "^2.0.1",
         "rollup-plugin-sourcemaps": "^0.6.3",
         "rollup-plugin-string": "^3.0.0",
         "rollup-plugin-typescript2": "^0.34.1",
         "rollup-plugin-visualizer": "^5.8.1",
         "rollup-pluginutils": "^2.8.2",
         "selenium-webdriver": "^4.5.0",
-        "serve-handler": "^6.1.3",
         "shx": "^0.3.4",
         "ts-jest": "^28.0.5",
         "tslib": "^2.4.0",
@@ -76,8 +74,7 @@
         "typedoc-plugin-missing-exports": "^1.0.0",
         "typedoc-plugin-rename-defaults": "^0.6.4",
         "types-mediawiki": "github:wikimedia-gadgets/types-mediawiki",
-        "typescript": "^4.7.4",
-        "which": "^2.0.2"
+        "typescript": "^4.7.4"
     },
     "overrides": {
         "serve-handler": {
