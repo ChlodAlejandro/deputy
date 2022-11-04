@@ -1,6 +1,20 @@
 # Unreleased
 ヾ(•ω•`)o hai!
 
+# [v0.2.2](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.2.1) - 2022-11-04
+Very small update with one bugfix and one quality-of-life feature.
+
+## Added
+* [[`06830e5`](../../commit/06830e5)] Added a banner and button for previewing hidden copyright violations
+
+## Modified
+* [[`154a339`](../../commit/154a339)] (dev) Removed development script and replaced with concurrent commands
+
+## Bugs
+* [[`8f4f29b`](../../commit/8f4f29b)] Fixed section archive warning not updating when all revisions checked post-open
+
+For a full list of changes, see [v0.2.1...v0.2.2](https://github.com/ChlodAlejandro/deputy/compare/v0.2.1...v0.2.2).
+
 # [v0.2.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.2.1) - 2022-11-01
 ~~Halloween update! (I'm late)~~ Small quality of life changes and significant bugfixes.
 
