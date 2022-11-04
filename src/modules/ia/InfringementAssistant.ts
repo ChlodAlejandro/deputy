@@ -8,6 +8,7 @@ import iaStyles from './css/infringement-assistant.css';
 import DeputyLanguage from '../../DeputyLanguage';
 import deputySharedEnglish from '../../../i18n/shared/en.json';
 import SinglePageWorkflowDialog from './ui/SinglePageWorkflowDialog';
+import HiddenViolationUI from './ui/HiddenViolationUI';
 
 declare global {
 	interface Window {
@@ -128,6 +129,21 @@ export default class InfringementAssistant extends DeputyModule {
 				this.session.addNewListingsPanel();
 			} );
 		}
+
+		mw.hook( 'wikipage.content' ).add( () => {
+			mw.loader.using( [
+				'oojs-ui-core',
+				'oojs-ui-widgets',
+				'oojs-ui.styles.icons-alerts',
+				'oojs-ui.styles.icons-accessibility'
+			], () => {
+				document.querySelectorAll(
+					'.copyvio:not(.deputy-upgraded), [data-copyvio]:not(.deputy-upgraded)'
+				).forEach( ( el ) => {
+					new HiddenViolationUI( el as HTMLElement ).attach();
+				} );
+			} );
+		} );
 	}
 
 	/**

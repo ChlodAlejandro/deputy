@@ -39,7 +39,7 @@ export const copyvioTop = `<div style="padding: 8px; border: 4px solid #0298b1;"
 <div>{{int:deputy.ia.content.copyvio.help}}</div>
 </div>
 <!-- {{int:deputy.ia.content.copyvio.content}} -->
-<div style="display: none" data-copyvio>`;
+<div class="copyvio" style="display: none">`;
 /**
  * `{{subst:copyvio/bottom}}` equivalent.
  */

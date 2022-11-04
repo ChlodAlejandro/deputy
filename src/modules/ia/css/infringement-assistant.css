@@ -133,3 +133,25 @@ body.rtl .ia-listing-action--bracket:last-child {
 	display: flex;
 	justify-content: flex-end;
 }
+/**
+ * COPYVIO PREVIEWS
+ */
+.copyvio.deputy-show {
+	display: inherit !important;
+	border: 0.2em solid #f88;
+	padding: 1em;
+}
+
+.dp-hiddenVio {
+	display: flex;
+	flex-direction: row;
+	margin: 1em 0;
+}
+
+.dp-hiddenVio-actions {
+	flex: 0;
+	margin-left: 1em;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}

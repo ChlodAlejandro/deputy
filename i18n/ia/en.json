@@ -90,5 +90,9 @@
     "deputy.ia.report.success.hide": "Page content hidden",
     "deputy.ia.report.success.report": "Page reported",
     "deputy.ia.report.error.report": "An error occurred while trying to save the entry to today's noticeboard listings. Please visit the noticeboard page and select \"Add listing\" or file the listing manually.",
-    "deputy.ia.report.error.shadow": "An error occurred while trying to append the {{copyvio}} template on the page. Please manually insert the template."
+    "deputy.ia.report.error.shadow": "An error occurred while trying to append the {{copyvio}} template on the page. Please manually insert the template.",
+
+    "deputy.ia.hiddenVio": "A user has marked content on this page as a suspected copyright violation. It is currently hidden from normal viewers of this page while awaiting further action.",
+    "deputy.ia.hiddenVio.show": "Show hidden copyright violation",
+    "deputy.ia.hiddenVio.hide": "Hide hidden copyright violation"
 }
