@@ -55,10 +55,9 @@ export default class DeputyRootSession {
 	}
 
 	/**
-	 * Shows the interface for continuing a previous session. This includes
-	 * the `[continue CCI session]` notice at the top of each CCI page section heading
-	 * and a single message box showing when the page was last worked on on top of the
-	 * first CCI heading found.
+	 * Shows the interface for overwriting an existing session. The provided
+	 * action button will close the other section. This does not start a new
+	 * session; the user must start the session on this page on their own.
 	 *
 	 * @param casePage The case page to continue with
 	 */
@@ -73,7 +72,7 @@ export default class DeputyRootSession {
 						flags: [ 'primary', 'destructive' ]
 					} );
 
-					const messageBox = new OO.ui.MessageWidget( {
+					const messageBox = DeputyMessageWidget( {
 						classes: [
 							'deputy', 'dp-cs-session-notice', 'dp-cs-session-otherActive'
 						],
