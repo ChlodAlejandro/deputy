@@ -1,6 +1,10 @@
 # Unreleased
 ヾ(•ω•`)o hai!
 
+## Bugs
+- [[`0d3524d`](../../commit/0d3524d)] Fixed the banner for tabs with active cases on another tab being missing
+- [[`e3a028f`](../../commit/e3a028f)] Fixed the start and continue links using serifs
+
 # [v0.2.2](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.2.1) - 2022-11-04
 Very small update with one bugfix and one quality-of-life feature.
 
