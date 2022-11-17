@@ -88,6 +88,8 @@ p.dp-messageWidget-message {
 	margin-left: 0.25em;
 	vertical-align: baseline;
 	line-height: 1em;
+
+	font-family: sans-serif;
 }
 
 .deputy.dp-sessionStarter::before {
