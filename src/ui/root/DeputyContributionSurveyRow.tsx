@@ -859,10 +859,12 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 	sendStatusResponse(
 		event: DeputyMessageEvent<DeputyPageStatusRequestMessage>
 	): void {
+		const rev = this.revisions?.find(
+			( r ) => r.revision.revid === event.data.revision
+		);
 		if (
-			event.data.page === this.row.title.getPrefixedText() ||
-			// `this.revisions` may be undefined. If so, don't reply.
-			this.revisions?.some( ( r ) => r.revision.revid === event.data.revision )
+			event.data.page === this.row.title.getPrefixedText() &&
+			( event.data.page !== this.row.title.getPrefixedText() || !!rev )
 		) {
 			window.deputy.comms.reply(
 				event.data, {
@@ -872,9 +874,7 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 					title: this.row.title.getPrefixedText(),
 					status: this.status,
 					enabledStatuses: this.statusDropdown.getEnabledOptions(),
-					revisionStatus: event.data.revision ? this.revisions.find(
-						( r ) => r.revision.revid === event.data.revision
-					)?.completed : undefined,
+					revisionStatus: rev ? rev.completed : undefined,
 					nextRevision: this.revisions?.find(
 						( revision ) => !revision.completed
 					)?.revision.revid ?? null
