@@ -7,7 +7,6 @@
         "test": "npm run build && npm run test:clean && npm run test:jest",
         "test:clean": "shx rm -rf tests/artifacts/ && shx mkdir -p tests/artifacts/",
         "test:jest": "jest",
-        "version": "node scripts/sync-version.js && git add src/DeputyVersion.ts",
         "clean": "shx rm -rf build .rollup.cache",
         "prebuild": "shx mkdir -p build/i18n/ && shx cp -Rf i18n/* build/i18n/",
         "build": "npm run prebuild && rollup -c",

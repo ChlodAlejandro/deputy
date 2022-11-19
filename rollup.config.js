@@ -94,7 +94,9 @@ function getPlugins() {
 		// Transpiles TypeScript
 		typescript(),
 		// Allows JSON imports (i18n files)
-		json(),
+		json( {
+			preferConst: true
+		} ),
 		// Transform CSS to standard JS strings
 		cssString(),
 		// Bundle analysis

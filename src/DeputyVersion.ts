@@ -1,3 +1,4 @@
+import { version } from '../package.json';
 /**
  * Deputy's current version, exported as a string.
  *
@@ -9,8 +10,7 @@
  *
  * This ensures that the version is available, even if the core is not loaded.
  * It also keeps standalone versions lightweight to avoid too much additional code.
- *
- * This file is automatically modified by npm when running `npm version ...`. Avoid
- * modifying it manually.
  */
-export default /* v */'0.2.2'/* v */;
+export default version;
+
+export const deputyVersion = version;
