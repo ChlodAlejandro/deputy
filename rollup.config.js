@@ -115,6 +115,17 @@ function getPlugins() {
 }
 
 /**
+ * Gets global watch options
+ *
+ * @return watch options
+ */
+function getWatch() {
+	return {
+		include: [ 'src/**', 'i18n/**', 'package.json', 'rollup.config.js' ]
+	};
+}
+
+/**
  * Automatically disable a given component based on environment variables.
  *
  * Setting the `DEPUTY_ONLY` environment variable will allow only projects with the
@@ -153,7 +164,8 @@ export default [
 				'\n// <nowiki>',
 			footer: '// </nowiki>\n// <3'
 		},
-		plugins: getPlugins()
+		plugins: getPlugins(),
+		watch: getWatch()
 	} ),
 	// Standalone Attribution Notice Template Editor
 	auto( 'ante', {
@@ -166,7 +178,8 @@ export default [
 				'\n// <nowiki>',
 			footer: '// </nowiki>\n// <3'
 		},
-		plugins: getPlugins()
+		plugins: getPlugins(),
+		watch: getWatch()
 	} ),
 	// Standalone Infringement Assistant
 	auto( 'ia', {
@@ -179,6 +192,7 @@ export default [
 				'\n// <nowiki>',
 			footer: '// </nowiki>\n// <3'
 		},
-		plugins: getPlugins()
+		plugins: getPlugins(),
+		watch: getWatch()
 	} )
 ].filter( ( v ) => !!v );

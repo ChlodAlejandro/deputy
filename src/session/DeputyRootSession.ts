@@ -65,7 +65,7 @@ export default class DeputyRootSession {
 		await mw.loader.using(
 			[ 'oojs-ui-core', 'oojs-ui.styles.icons-content' ],
 			() => {
-				const firstHeading = casePage.findContributionSurveyHeadings()[ 0 ];
+				const firstHeading = casePage.findFirstContributionSurveyHeading();
 				if ( firstHeading ) {
 					const stopButton = new OO.ui.ButtonWidget( {
 						label: mw.msg( 'deputy.session.otherActive.button' ),
@@ -117,7 +117,7 @@ export default class DeputyRootSession {
 	/**
 	 * Shows the interface for continuing a previous session. This includes
 	 * the `[continue CCI session]` notice at the top of each CCI page section heading
-	 * and a single message box showing when the page was last worked on on top of the
+	 * and a single message box showing when the page was last worked on top of the
 	 * first CCI heading found.
 	 *
 	 * @param casePage The case page to continue with
@@ -128,7 +128,7 @@ export default class DeputyRootSession {
 			mw.loader.using(
 				[ 'oojs-ui-core', 'oojs-ui.styles.icons-content' ],
 				() => {
-					const firstHeading = casePage.findContributionSurveyHeadings()[ 0 ];
+					const firstHeading = casePage.findFirstContributionSurveyHeading();
 					if ( firstHeading ) {
 						// Insert element directly into widget (not as text, or else event
 						// handlers will be destroyed).
@@ -199,7 +199,7 @@ export default class DeputyRootSession {
 		return mw.loader.using(
 			[ 'oojs-ui-core', 'oojs-ui.styles.icons-content' ],
 			() => {
-				const firstHeading = casePage.findContributionSurveyHeadings()[ 0 ];
+				const firstHeading = casePage.findFirstContributionSurveyHeading();
 				if ( firstHeading ) {
 					const messageBox = DeputyMessageWidget( {
 						classes: [
@@ -241,7 +241,6 @@ export default class DeputyRootSession {
 		const sectionNames = ( Array.isArray( section ) ? section : [ section ] ).map(
 			( _section ) => sectionHeadingName( _section )
 		);
-
 		// Save session to storage
 		const casePage = _casePage ?? await DeputyCasePage.build();
 		const session = await this.setSession( {

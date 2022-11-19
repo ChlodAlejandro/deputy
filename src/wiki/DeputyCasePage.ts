@@ -78,6 +78,15 @@ export default class DeputyCasePage extends DeputyCase {
 	}
 
 	/**
+	 * The n-cache stores the `n` of contribution survey headings. In other
+	 * words, it differentiates survey headings by giving it a number if
+	 * another section on the page has a matching heading. The n-cache
+	 * only contains the n of contribution survey headings, but counts all
+	 * HTML headings as part of the n-cache.
+	 */
+	nCache: Map<ContributionSurveyHeading, number>;
+
+	/**
 	 * @param pageId The page ID of the case page.
 	 * @param title The title of the page being accessed
 	 * @param document The document to be used as a reference.

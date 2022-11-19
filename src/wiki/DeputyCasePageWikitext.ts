@@ -46,8 +46,13 @@ export default class DeputyCasePageWikitext {
 	 * grab the section using API:Query for an up-to-date version.
 	 *
 	 * @param section The section to edit
+	 * @param n If the section heading appears multiple times in the page and n is
+	 * provided, this function extracts the nth occurrence of that section heading.
 	 */
-	async getSectionWikitext( section: string | number ): Promise<string & { revid: number }> {
+	async getSectionWikitext(
+		section: string | number,
+		n = 1
+	): Promise<string & { revid: number }> {
 		if ( typeof section === 'number' ) {
 			return getPageContent(
 				this.casePage.pageId,
@@ -63,18 +68,28 @@ export default class DeputyCasePageWikitext {
 
 			let capturing = false;
 			let captureLevel = 0;
+			let currentN = 1;
 			const sectionLines = [];
 			for ( let i = 0; i < wikitextLines.length; i++ ) {
 				const line = wikitextLines[ i ];
 				const headerCheck = /^(=={1,5})\s*(.+?)\s*=={1,5}$/.exec( line );
 
-				if ( !capturing && headerCheck != null && headerCheck[ 2 ] === section ) {
-					sectionLines.push( line );
-					capturing = true;
-					captureLevel = headerCheck[ 1 ].length;
+				if (
+					!capturing &&
+					headerCheck != null &&
+					headerCheck[ 2 ] === section
+				) {
+					if ( currentN < n ) {
+						currentN++;
+					} else {
+						sectionLines.push( line );
+						capturing = true;
+						captureLevel = headerCheck[ 1 ].length;
+					}
 				} else if ( capturing ) {
 					if ( headerCheck != null && headerCheck[ 1 ].length <= captureLevel ) {
 						capturing = false;
+						break;
 					} else {
 						sectionLines.push( line );
 					}

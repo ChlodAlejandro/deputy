@@ -19,6 +19,7 @@ import {
 } from '../../models/ContributionSurveyRowSigningBehavior';
 import { generateTrace } from '../../models/DeputyTrace';
 import DeputyMessageWidget from '../shared/DeputyMessageWidget';
+import sectionHeadingN from '../../wiki/util/sectionHeadingN';
 
 /**
  * The contribution survey section UI element. This includes a list of revisions
@@ -250,7 +251,10 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			( v: HTMLElement ) => v.querySelector( '.mw-collapsible' )
 		)?.querySelector( '.mw-collapsible' ) ?? null;
 
-		const sectionWikitext = await this.casePage.wikitext.getSectionWikitext( this.headingName );
+		const sectionWikitext = await this.casePage.wikitext.getSectionWikitext(
+			this.headingName,
+			sectionHeadingN( this.heading, this.headingName )
+		);
 		return this._section ?? (
 			this._section = new ContributionSurveySection(
 				this.casePage,
@@ -258,7 +262,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 				collapsible != null,
 				collapsible?.querySelector<HTMLElement>( 'th > div' ).innerText,
 				wikitext ?? sectionWikitext,
-				sectionWikitext.revid
+				wikitext ? wikitext.revid : sectionWikitext.revid
 			)
 		);
 	}
