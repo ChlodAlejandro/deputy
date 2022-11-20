@@ -35,27 +35,37 @@
 	flex: 1;
 }
 
-.deputy-about > :nth-child(2) > :first-child {
+.deputy-about > :nth-child(2) > :first-child > * {
+	display: inline;
+}
+
+.deputy-about > :nth-child(2) > :first-child > :first-child {
 	font-weight: bold;
 	font-size: 2em;
+}
+
+.deputy-about > :nth-child(2) > :first-child > :nth-child(2) {
+	color: gray;
+	vertical-align: bottom;
+	margin-left: 0.4em;
 }
 
 .deputy-about > :nth-child(2) > :not(:first-child) {
 	margin-top: 0.5em;
 }
 
-.ltr .deputy-about > :nth-child(2) > :last-child > :not(:last-child) {
+.ltr .deputy-about + div > :not(:last-child) {
 	margin-right: 0.5em;
 }
 
-.rtl .deputy-about > :nth-child(2) > :last-child > :not(:last-child) {
+.rtl .deputy-about + div > :not(:last-child) {
 	margin-left: 0.5em;
 }
 
-.ltr .deputy-about > :nth-child(2) > :last-child {
+.ltr .deputy-about + div {
 	text-align: right;
 }
 
-.rtl .deputy-about > :nth-child(2) > :last-child {
+.rtl .deputy-about + div {
 	text-align: left;
 }

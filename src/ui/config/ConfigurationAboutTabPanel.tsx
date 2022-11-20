@@ -1,6 +1,12 @@
 import { h } from 'tsx-dom';
 import '../../types';
 import unwrapWidget from '../../util/unwrapWidget';
+import deputyVersion, {
+	gitAbbrevHash,
+	gitDate,
+	gitBranch,
+	gitVersion
+} from '../../DeputyVersion';
 
 let InternalConfigurationGroupTabPanel: any;
 
@@ -32,29 +38,36 @@ function initConfigurationGroupTabPanel() {
 						ConfigurationGroupTabPanel.logoUrl
 					} alt="Deputy logo"/></div>
 					<div style="flex: 1">
-						<div>{ mw.msg( 'deputy.name' ) }</div>
-						<div>{ mw.msg( 'deputy.description' ) }</div>
 						<div>
-							<a href="https://w.wiki/5k$q" target="_blank">{
-								unwrapWidget( new OO.ui.ButtonWidget( {
-									label: mw.msg( 'deputy.about.homepage' ),
-									flags: [ 'progressive' ]
-								} ) )
-							}</a>
-							<a href="https://github.com/ChlodAlejandro/deputy" target="_blank">{
-								unwrapWidget( new OO.ui.ButtonWidget( {
-									label: mw.msg( 'deputy.about.openSource' ),
-									flags: [ 'progressive' ]
-								} ) )
-							}</a>
-							<a href="https://w.wiki/5k$p" target="_blank">{
-								unwrapWidget( new OO.ui.ButtonWidget( {
-									label: mw.msg( 'deputy.about.contact' ),
-									flags: [ 'progressive' ]
-								} ) )
-							}</a>
+							<div>{ mw.msg( 'deputy.name' ) }</div>
+							<div>{ mw.msg(
+								'deputy.about.version',
+								deputyVersion,
+								gitAbbrevHash
+							) }</div>
 						</div>
+						<div>{ mw.msg( 'deputy.description' ) }</div>
 					</div>
+				</div>
+				<div>
+					<a href="https://w.wiki/5k$q" target="_blank">{
+						unwrapWidget( new OO.ui.ButtonWidget( {
+							label: mw.msg( 'deputy.about.homepage' ),
+							flags: [ 'progressive' ]
+						} ) )
+					}</a>
+					<a href="https://github.com/ChlodAlejandro/deputy" target="_blank">{
+						unwrapWidget( new OO.ui.ButtonWidget( {
+							label: mw.msg( 'deputy.about.openSource' ),
+							flags: [ 'progressive' ]
+						} ) )
+					}</a>
+					<a href="https://w.wiki/5k$p" target="_blank">{
+						unwrapWidget( new OO.ui.ButtonWidget( {
+							label: mw.msg( 'deputy.about.contact' ),
+							flags: [ 'progressive' ]
+						} ) )
+					}</a>
 				</div>
 				<p dangerouslySetInnerHTML={ mw.msg( 'deputy.about.credit' ) }/>
 				<p dangerouslySetInnerHTML={ mw.msg( 'deputy.about.license',
@@ -64,6 +77,15 @@ function initConfigurationGroupTabPanel() {
 				<p dangerouslySetInnerHTML={ mw.msg( 'deputy.about.thirdParty',
 					'https://github.com/ChlodAlejandro/deputy#licensing'
 				) }/>
+				<p
+					style={{ fontSize: '0.9em', color: 'darkgray' }}
+					dangerouslySetInnerHTML={ mw.msg(
+						'deputy.about.buildInfo',
+						gitVersion as string,
+						gitBranch as string,
+						new Date( gitDate as string ).toLocaleString()
+					) }
+				/>
 				<p
 					style={{ fontSize: '0.9em', color: 'darkgray' }}
 					dangerouslySetInnerHTML={ mw.msg( 'deputy.about.footer' ) }

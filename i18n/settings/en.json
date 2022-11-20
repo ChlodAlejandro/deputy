@@ -1,4 +1,5 @@
 {
+    "deputy.about.version": "v$1 ($2)",
     "deputy.about": "About",
     "deputy.about.homepage": "Homepage",
     "deputy.about.openSource": "Source",
@@ -6,6 +7,7 @@
     "deputy.about.credit": "Deputy was made with the help of the English Wikipedia Copyright Cleanup WikiProject and the Wikimedia Foundation.",
     "deputy.about.license": "Deputy is licensed under the <a href=\"$1\">Apache License 2.0</a>. The source code for Deputy is available on <a href=\"$2\">GitHub</a>, and is free for everyone to view and suggest changes.",
     "deputy.about.thirdParty": "Deputy is bundled with third party libraries to make development easier. All libraries have been vetted for user security and license compatibility. For more information, see the <a href=\"$1\">\"Licensing\"</a> section on Deputy's README.",
+    "deputy.about.buildInfo": "Deputy v$1 ($2), committed $3.",
     "deputy.about.footer": "Made with love, coffee, and the tears of copyright editors.",
 
     "deputy.settings.portlet": "Deputy preferences",

@@ -1,4 +1,5 @@
-import { version } from '../package.json';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 /**
  * Deputy's current version, exported as a string.
  *
@@ -11,6 +12,12 @@ import { version } from '../package.json';
  * This ensures that the version is available, even if the core is not loaded.
  * It also keeps standalone versions lightweight to avoid too much additional code.
  */
-export default version;
-
-export const deputyVersion = version;
+export {
+	gitAbbrevHash,
+	gitBranch,
+	gitCommitHash,
+	gitDate,
+	gitVersion,
+	version as deputyVersion,
+	version as default
+} from '../package.json';

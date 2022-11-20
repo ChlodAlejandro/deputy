@@ -4,6 +4,7 @@ import sourcemaps from 'rollup-plugin-sourcemaps';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
+import gitInfo from 'rollup-plugin-git-info';
 import license from 'rollup-plugin-node-license';
 import { createFilter } from 'rollup-pluginutils';
 import serve from 'rollup-plugin-serve';
@@ -91,11 +92,16 @@ function getPlugins() {
 		commonjs(),
 		// Handles Node-like resolution
 		nodeResolve( { browser: false } ),
+		gitInfo( {
+			updateVersion: false,
+			versionFormat: '[version]+g[abbrevHash]'
+		} ),
 		// Transpiles TypeScript
 		typescript(),
 		// Allows JSON imports (i18n files)
 		json( {
-			preferConst: true
+			preferConst: true,
+			exclude: [ 'package.json' ]
 		} ),
 		// Transform CSS to standard JS strings
 		cssString(),

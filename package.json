@@ -87,6 +87,7 @@
         "@chlodalejandro/parsoid": "2.0.0-f08be30",
         "broadcastchannel-polyfill": "^1.0.1",
         "idb": "^7.1.0",
+        "rollup-plugin-git-info": "^1.0.0",
         "tsx-dom": "^1.4.0"
     }
 }
