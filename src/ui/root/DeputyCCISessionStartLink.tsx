@@ -18,10 +18,16 @@ export default function (
 		<a onClick={ async () => {
 			if ( casePage && casePage.lastActiveSections.length > 0 ) {
 				const headingId = sectionHeadingId( heading );
-				if ( casePage.lastActiveSections.indexOf( headingId ) === -1 ) {
-					await casePage.addActiveSection( headingId );
+				if ( window.deputy.config.cci.openOldOnContinue.get() ) {
+					if ( casePage.lastActiveSections.indexOf( headingId ) === -1 ) {
+						await casePage.addActiveSection( headingId );
+					}
+					await window.deputy.session.DeputyRootSession.continueSession( casePage );
+				} else {
+					await window.deputy.session.DeputyRootSession.continueSession(
+						casePage, [ headingId ]
+					);
 				}
-				await window.deputy.session.DeputyRootSession.continueSession( casePage );
 			} else {
 				await window.deputy.session.DeputyRootSession.startSession( heading );
 			}

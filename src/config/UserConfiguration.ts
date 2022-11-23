@@ -90,7 +90,13 @@ export default class UserConfiguration extends ConfigurationBase {
 				ContributionSurveyRowSigningBehavior,
 				ContributionSurveyRowSigningBehavior.Always
 			)
-		)
+		),
+		openOldOnContinue: new Setting<boolean, boolean>( {
+			defaultValue: false,
+			displayOptions: {
+				type: 'checkbox'
+			}
+		} )
 	};
 	public readonly ante = <const>{
 		enableAutoMerge: new Setting<boolean, boolean>( {

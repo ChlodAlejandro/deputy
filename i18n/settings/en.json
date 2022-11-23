@@ -59,6 +59,8 @@
     "deputy.setting.user.cci.signingBehavior.alwaysTraceLastOnly": "Always leave a trace, but sign the last row modified",
     "deputy.setting.user.cci.signingBehavior.lastOnly": "Only sign the last row modified (prevents assessor recognition)",
     "deputy.setting.user.cci.signingBehavior.never": "Never sign rows (prevents assessor recognition)",
+    "deputy.setting.user.cci.openOldOnContinue.name": "Open old versions on continue",
+    "deputy.setting.user.cci.openOldOnContinue.description": "If enabled, all previously-open sections of a given case page will also be opened alongside the section where the \"continue CCI session\" link was clicked.",
 
     "deputy.setting.user.ante": "ANTE",
 

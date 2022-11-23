@@ -304,10 +304,13 @@ export default class DeputyRootSession {
 		sectionIds?: string[]
 	): Promise<void> {
 		// Save session to storage
+		if ( sectionIds ) {
+			casePage.lastActiveSections = sectionIds;
+		}
 		const session = await this.setSession( {
 			casePageId: casePage.pageId,
 			// Shallow array copy
-			caseSections: [ ...( sectionIds ?? casePage.lastActiveSections ) ]
+			caseSections: [ ...casePage.lastActiveSections ]
 		} );
 
 		const rootSession =
