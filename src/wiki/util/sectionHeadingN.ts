@@ -24,8 +24,8 @@ import sectionHeadingId from './sectionHeadingId';
 export default function ( heading: HTMLHeadingElement, headingName: string ): number {
 	try {
 
-		const headingNameEndPattern = /(?:\s|_)*(\d+)$/g;
-		const headingIdEndPattern = /_(\d+)$/g;
+		const headingNameEndPattern = /(?:\s|_)*(\d+)/g;
+		const headingIdEndPattern = /_(\d+)/g;
 
 		const headingId = sectionHeadingId( heading );
 		const headingIdMatches = headingId.match( headingIdEndPattern );

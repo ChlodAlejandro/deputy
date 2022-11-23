@@ -35,6 +35,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	private _section: ContributionSurveySection;
 	heading: HTMLHeadingElement;
 	headingName: string;
+	headingN: number;
 	sectionElements: HTMLElement[];
 	originalList: HTMLElement;
 	/**
@@ -238,6 +239,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		this.casePage = casePage;
 		this.heading = heading;
 		this.headingName = sectionHeadingName( this.heading );
+		this.headingN = sectionHeadingN( this.heading, this.headingName );
 		this.sectionElements = casePage.getContributionSurveySection( heading );
 	}
 
@@ -253,7 +255,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 
 		const sectionWikitext = await this.casePage.wikitext.getSectionWikitext(
 			this.headingName,
-			sectionHeadingN( this.heading, this.headingName )
+			this.headingN
 		);
 		return this._section ?? (
 			this._section = new ContributionSurveySection(
@@ -498,7 +500,11 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			this.setDisabled( true );
 			saveContainer.classList.add( 'active' );
 
-			const sectionId = await getSectionId( this.casePage.title, this.headingName );
+			const sectionId = await getSectionId(
+				this.casePage.title,
+				this.headingName,
+				this.headingN
+			);
 			await this.save( sectionId ).then( async ( result ) => {
 				if ( result ) {
 					mw.notify(
