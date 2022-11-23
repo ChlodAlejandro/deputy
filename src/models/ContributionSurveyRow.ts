@@ -5,6 +5,7 @@ import MwApi from '../MwApi';
 import ContributionSurveyRowParser, {
 	RawContributionSurveyRow
 } from './ContributionSurveyRowParser';
+import { ContributionSurveyRowSort } from './ContributionSurveyRowSort';
 
 export enum ContributionSurveyRowStatus {
 	// The row has not been processed yet.
@@ -69,6 +70,122 @@ export default class ContributionSurveyRow {
 	}
 
 	/**
+	 * Guesses the sort order for a given set of revisions.
+	 *
+	 * @param diffs The diffs to guess from.
+	 * @return The sort order
+	 */
+	static guessSortOrder(
+		diffs: Iterable<ContributionSurveyRevision>
+	): ContributionSurveyRowSort {
+		let last: ContributionSurveyRevision = null;
+		let dateScore = 1;
+		let dateReverseScore = 1;
+		let byteScore = 1;
+		for ( const diff of diffs ) {
+			if ( last == null ) {
+				last = diff;
+			} else {
+				const diffTimestamp = new Date( diff.timestamp ).getTime();
+				const lastTimestamp = new Date( last.timestamp ).getTime();
+				dateScore = ( dateScore + (
+					diffTimestamp > lastTimestamp ? 1 : 0
+				) ) / 2;
+				dateReverseScore = ( dateReverseScore + (
+					diffTimestamp < lastTimestamp ? 1 : 0
+				) ) / 2;
+				byteScore = ( byteScore + (
+					diff.diffsize < last.diffsize ? 1 : 0
+				) ) / 2;
+				last = diff;
+			}
+		}
+
+		// Multiply by weights to remove ties
+		dateScore *= 1.1;
+		dateReverseScore *= 1.05;
+
+		switch ( Math.max( dateScore, dateReverseScore, byteScore ) ) {
+			case byteScore:
+				return ContributionSurveyRowSort.Bytes;
+			case dateScore:
+				return ContributionSurveyRowSort.Date;
+			case dateReverseScore:
+				return ContributionSurveyRowSort.DateReverse;
+		}
+	}
+
+	/**
+	 * Gets the sorter function which will sort a set of diffs based on a given
+	 * sort order. This sorts any array containing revisions.
+	 *
+	 * @param sort
+	 * @param mode The sort mode to use.
+	 */
+	static getSorterFunction( sort: ContributionSurveyRowSort, mode?: 'array' ):
+		( a: ContributionSurveyRevision, b: ContributionSurveyRevision ) => number;
+	/**
+	 * Gets the sorter function which will sort a set of diffs based on a given
+	 * sort order. This sorts any entry array using the first element (the key).
+	 *
+	 * @param sort
+	 * @param mode The sort mode to use.
+	 */
+	static getSorterFunction( sort: ContributionSurveyRowSort, mode?: 'key' ):
+		( a: [ContributionSurveyRevision, any], b: [ContributionSurveyRevision, any] ) => number;
+	/**
+	 * Gets the sorter function which will sort a set of diffs based on a given
+	 * sort order. This sorts any entry array using the second element (the value).
+	 *
+	 * @param sort
+	 * @param mode The sort mode to use.
+	 */
+	static getSorterFunction( sort: ContributionSurveyRowSort, mode?: 'value' ):
+		( a: [any, ContributionSurveyRevision], b: [any, ContributionSurveyRevision] ) => number;
+	/**
+	 * Gets the sorter function which will sort a set of diffs based on a given
+	 * sort order.
+	 *
+	 * @param sort
+	 * @param mode The sort mode to use. If `array`, the returned function sorts an
+	 * array of revisions. If `key`, the returned function sorts entries with the first
+	 * entry element (`entry[0]`) being a revision. If `value`, the returned function
+	 * sorts values with the second entry element (`entry[1]`) being a revision.
+	 * @return The sorted array
+	 */
+	static getSorterFunction(
+		sort: ContributionSurveyRowSort,
+		mode: 'array' | 'key' | 'value' = 'array'
+	) {
+		return ( _a: any, _b: any ) => {
+			let a: ContributionSurveyRevision, b: ContributionSurveyRevision;
+			switch ( mode ) {
+				case 'array':
+					a = _a;
+					b = _b;
+					break;
+				case 'key':
+					a = _a[ 0 ];
+					b = _b[ 0 ];
+					break;
+				case 'value':
+					a = _a[ 1 ];
+					b = _b[ 1 ];
+					break;
+			}
+
+			switch ( sort ) {
+				case ContributionSurveyRowSort.Date:
+					return new Date( a.timestamp ).getTime() - new Date( b.timestamp ).getTime();
+				case ContributionSurveyRowSort.DateReverse:
+					return new Date( b.timestamp ).getTime() - new Date( a.timestamp ).getTime();
+				case ContributionSurveyRowSort.Bytes:
+					return b.diffsize - a.diffsize;
+			}
+		};
+	}
+
+	/**
 	 * The case page of this row.
 	 */
 	casePage: DeputyCasePage;
@@ -121,7 +238,7 @@ export default class ContributionSurveyRow {
 	}
 
 	/**
-	 * The diffs included in this row.
+	 * The diffs included in this row. Mapped by revision IDs.
 	 */
 	private diffs?: Map<number, ContributionSurveyRevision>;
 
@@ -226,9 +343,10 @@ export default class ContributionSurveyRow {
 			}
 		);
 
+		const sortOrder = ContributionSurveyRow.guessSortOrder( revisionData.values() );
 		// Sort from most bytes to least.
 		return this.diffs = new Map( [ ...revisionData.entries() ].sort(
-			( a, b ) => b[ 1 ].diffsize - a[ 1 ].diffsize
+			ContributionSurveyRow.getSorterFunction( sortOrder, 'value' )
 		) );
 	}
 

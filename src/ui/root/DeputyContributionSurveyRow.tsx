@@ -18,6 +18,7 @@ import {
 	DeputyPageStatusRequestMessage
 } from '../../DeputyCommunications';
 import DeputyCCIStatusDropdown from '../shared/DeputyCCIStatusDropdown';
+import { ContributionSurveyRowSort } from '../../models/ContributionSurveyRowSort';
 
 export enum DeputyContributionSurveyRowState {
 	/*
@@ -83,6 +84,10 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 	 * Whether this row was originally finished upon loading.
 	 */
 	wasFinished: boolean;
+	/**
+	 * Sort order of this row. Automatically guessed when loaded.
+	 */
+	sortOrder: ContributionSurveyRowSort;
 	/**
 	 * This row's main root element. Does not get swapped.
 	 */
@@ -242,8 +247,10 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 		const unfinishedDiffs = this.revisions?.filter(
 			( v ) => !v.completed
 		)?.sort(
-			( a, b ) => ( b.revision.diffsize - a.revision.diffsize ) ||
-                ( b.revision.revid - a.revision.revid )
+			( a, b ) => ContributionSurveyRow.getSorterFunction( this.sortOrder )(
+				a.revision,
+				b.revision
+			)
 		) ?? [];
 
 		if ( unfinishedDiffs.length > 0 ) {
@@ -323,6 +330,17 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 	}
 
 	/**
+	 * @return The hash used for autosave keys
+	 */
+	get autosaveHash(): string {
+		return `CASE--${
+			this.row.casePage.title.getPrefixedDb()
+		}+PAGE--${
+			this.row.title.getPrefixedDb()
+		}`;
+	}
+
+	/**
 	 * Creates a new DeputyContributionSurveyRow object.
 	 *
 	 * @param row The contribution survey row data
@@ -349,6 +367,7 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 	async loadData() {
 		try {
 			const diffs = await this.row.getDiffs();
+			this.sortOrder = ContributionSurveyRow.guessSortOrder( diffs.values() );
 
 			this.wasFinished = this.row.completed;
 
@@ -385,17 +404,6 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 			) );
 			this.setDisabled( true );
 		}
-	}
-
-	/**
-	 * @return The hash used for autosave keys
-	 */
-	get autosaveHash(): string {
-		return `CASE--${
-			this.row.casePage.title.getPrefixedDb()
-		}+PAGE--${
-			this.row.title.getPrefixedDb()
-		}`;
 	}
 
 	/**
@@ -640,7 +648,9 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 			// Identify largest diff
 			const largestDiff = diffs.get(
 				Array.from( diffs.values() )
-					.sort( ( a, b ) => b.diffsize - a.diffsize )[ 0 ]
+					.sort( ContributionSurveyRow.getSorterFunction(
+						ContributionSurveyRowSort.Bytes
+					) )[ 0 ]
 					.revid
 			);
 
