@@ -533,6 +533,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 								sectionHeadingName( child as ContributionSurveyHeading );
 						}
 					}
+					this.originalList = element;
 
 					if ( !this._section.closed ) {
 						this._section = null;
