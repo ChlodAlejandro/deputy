@@ -65,7 +65,15 @@ export default class DeputyCasePage extends DeputyCase {
 				title = await getPageTitle( pageId );
 			}
 
-			return new DeputyCasePage(
+			// Fix for old data (moved from section name to IDs as of c5251642)
+			const oldSections =
+				cachedInfo.lastActiveSections.some( ( v ) => v.indexOf( ' ' ) !== -1 );
+			if ( oldSections ) {
+				cachedInfo.lastActiveSections =
+					cachedInfo.lastActiveSections.map( ( v ) => v.replace( / /g, '_' ) );
+			}
+
+			const casePage = new DeputyCasePage(
 				pageId,
 				title,
 				document,
@@ -73,6 +81,11 @@ export default class DeputyCasePage extends DeputyCase {
 				cachedInfo.lastActive,
 				cachedInfo.lastActiveSections
 			);
+			if ( oldSections ) {
+				// Save to fix the data in storage
+				await casePage.saveToCache();
+			}
+			return casePage;
 		} else {
 			return new DeputyCasePage( pageId, title, document, parsoid );
 		}
