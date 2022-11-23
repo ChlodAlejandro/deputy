@@ -20,6 +20,7 @@ import {
 import { generateTrace } from '../../models/DeputyTrace';
 import DeputyMessageWidget from '../shared/DeputyMessageWidget';
 import sectionHeadingN from '../../wiki/util/sectionHeadingN';
+import last from '../../util/last';
 
 /**
  * The contribution survey section UI element. This includes a list of revisions
@@ -34,8 +35,6 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	casePage: DeputyCasePage;
 	private _section: ContributionSurveySection;
 	heading: HTMLHeadingElement;
-	headingName: string;
-	headingN: number;
 	sectionElements: HTMLElement[];
 	originalList: HTMLElement;
 	/**
@@ -230,6 +229,20 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	}
 
 	/**
+	 * @return the name of the section heading.
+	 */
+	get headingName(): string {
+		return sectionHeadingName( this.heading );
+	}
+
+	/**
+	 * @return the `n` of the section heading, if applicable.
+	 */
+	get headingN(): number {
+		return sectionHeadingN( this.heading, this.headingName );
+	}
+
+	/**
 	 * Creates a DeputyContributionSurveySection from a given heading.
 	 *
 	 * @param casePage
@@ -238,8 +251,6 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	constructor( casePage: DeputyCasePage, heading: ContributionSurveyHeading ) {
 		this.casePage = casePage;
 		this.heading = heading;
-		this.headingName = sectionHeadingName( this.heading );
-		this.headingN = sectionHeadingN( this.heading, this.headingName );
 		this.sectionElements = casePage.getContributionSurveySection( heading );
 	}
 
@@ -521,16 +532,15 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 						this.casePage.getContributionSurveySection( this.heading );
 					sectionElements.forEach( ( el ) => removeElement( el ) );
 
+					// Clear out section elements and re-append new ones to the DOM.
 					this.sectionElements = [];
-					const oldHeading = this.heading;
+					// Heading is preserved to avoid messing with IDs.
+					const heading = this.heading;
 					for ( const child of Array.from( element.children ) ) {
-						oldHeading.insertAdjacentElement( 'beforebegin', child );
-						this.sectionElements.push( child as HTMLElement );
-
-						if ( this.casePage.isContributionSurveyHeading( child as HTMLElement ) ) {
-							this.heading = child as ContributionSurveyHeading;
-							this.headingName =
-								sectionHeadingName( child as ContributionSurveyHeading );
+						if ( !this.casePage.isContributionSurveyHeading( child as HTMLElement ) ) {
+							( last( this.sectionElements ) ?? heading )
+								.insertAdjacentElement( 'afterend', child );
+							this.sectionElements.push( child as HTMLElement );
 						}
 					}
 					this.originalList = element;
@@ -539,12 +549,10 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 						this._section = null;
 						await this.getSection( Object.assign( wikitext, { revid } ) );
 						await this.prepare();
-						oldHeading.insertAdjacentElement( 'afterend', this.render() );
+						heading.insertAdjacentElement( 'afterend', this.render() );
 						// Run this asynchronously.
 						setTimeout( this.loadData.bind( this ), 0 );
 					}
-
-					removeElement( oldHeading );
 				}
 			}, ( error ) => {
 				console.error( error );
