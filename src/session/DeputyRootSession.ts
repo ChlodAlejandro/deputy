@@ -606,9 +606,9 @@ export default class DeputyRootSession {
 		if ( el != null && sectionListIndex !== -1 ) {
 			this.sections.splice( sectionListIndex, 1 );
 		}
-		const lastActiveSession = this.session.caseSections.indexOf( sectionId );
-		if ( lastActiveSession !== -1 ) {
-			this.session.caseSections.splice( lastActiveSession, 1 );
+		const lastActiveSection = this.session.caseSections.indexOf( sectionId );
+		if ( lastActiveSection !== -1 ) {
+			this.session.caseSections.splice( lastActiveSection, 1 );
 
 			// If no sections remain, clear the session.
 			if ( this.session.caseSections.length === 0 ) {
