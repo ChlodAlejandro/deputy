@@ -8,7 +8,7 @@ export interface SessionInformation {
 	 */
 	casePageId: number;
 	/**
-	 * The sections which were last left open.
+	 * The sections which were last left open. Stored as heading IDs.
 	 */
 	caseSections: string[];
 }

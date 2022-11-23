@@ -11,6 +11,7 @@
     "deputy.session.continue.button": "Continue session",
     "deputy.session.continue.head": "You last worked on this page on $1.",
     "deputy.session.continue.help": "Continue working on \"$1\" and pick up where you left off.",
+    "deputy.session.continue.help.fromStart": "The section \"$1\" might have been archived already. Not to worry, you can being working on \"$2\".",
     "deputy.session.tabActive.head": "You are working on this case page from another tab.",
     "deputy.session.tabActive.help": "Deputy can only run on one case page and tab at a time. Navigate to the other tab to continue working.",
     "deputy.session.otherActive.head": "Deputy is currently working on a different case page.",

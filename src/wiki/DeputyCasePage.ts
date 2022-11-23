@@ -2,6 +2,7 @@ import DeputyCasePageWikitext from './DeputyCasePageWikitext';
 import sectionHeadingName from './util/sectionHeadingName';
 import getPageTitle from './util/getPageTitle';
 import DeputyCase from './DeputyCase';
+import sectionHeadingId from './util/sectionHeadingId';
 
 export type ContributionSurveyHeading = HTMLHeadingElement;
 
@@ -144,15 +145,23 @@ export default class DeputyCasePage extends DeputyCase {
 	/**
 	 * Find a contribution survey heading by section name.
 	 *
-	 * @param sectionName The section name to look for
+	 * @param sectionIdentifier The section identifier to look for, usually the section
+	 * name unless `useId` is set to true.
+	 * @param useId Whether to use the section name instead of the ID
 	 * @return The <h*> element of the heading.
 	 */
-	findContributionSurveyHeading( sectionName: string ): ContributionSurveyHeading {
+	findContributionSurveyHeading(
+		sectionIdentifier: string,
+		useId = false
+	): ContributionSurveyHeading {
 		// No need to perform .mw-headline existence check here, already
 		// done by `findContributionSurveyHeadings`
 		return this.findContributionSurveyHeadings()
 			.find(
-				( v ) => sectionHeadingName( v ) === sectionName
+				( v ) =>
+					useId ?
+						sectionHeadingId( v ) === sectionIdentifier :
+						sectionHeadingName( v ) === sectionIdentifier
 			);
 	}
 
@@ -251,12 +260,12 @@ export default class DeputyCasePage extends DeputyCase {
 	 * Add a section to the list of active sessions. This is used for automatic starting
 	 * and for one-click continuation of past active sessions.
 	 *
-	 * @param section
+	 * @param sectionId The ID of the section to add.
 	 */
-	async addActiveSection( section: string ): Promise<void> {
-		const lastActiveSection = this.lastActiveSections.indexOf( section );
+	async addActiveSection( sectionId: string ): Promise<void> {
+		const lastActiveSection = this.lastActiveSections.indexOf( sectionId );
 		if ( lastActiveSection === -1 ) {
-			this.lastActiveSections.push( section );
+			this.lastActiveSections.push( sectionId );
 			await this.saveToCache();
 		}
 	}
@@ -265,10 +274,10 @@ export default class DeputyCasePage extends DeputyCase {
 	 * Remove a section from the list of active sections. This will disable autostart
 	 * for this section.
 	 *
-	 * @param section
+	 * @param sectionId ID of the section to remove
 	 */
-	async removeActiveSection( section: string ): Promise<void> {
-		const lastActiveSection = this.lastActiveSections.indexOf( section );
+	async removeActiveSection( sectionId: string ): Promise<void> {
+		const lastActiveSection = this.lastActiveSections.indexOf( sectionId );
 		if ( lastActiveSection !== -1 ) {
 			this.lastActiveSections.splice( lastActiveSection, 1 );
 			await this.saveToCache();

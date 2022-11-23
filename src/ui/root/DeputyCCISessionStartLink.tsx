@@ -1,6 +1,6 @@
 import { h } from 'tsx-dom';
 import DeputyCasePage, { ContributionSurveyHeading } from '../../wiki/DeputyCasePage';
-import sectionHeadingName from '../../wiki/util/sectionHeadingName';
+import sectionHeadingId from '../../wiki/util/sectionHeadingId';
 
 /**
  * The CCI session start link. Starts a CCI session when pressed.
@@ -17,9 +17,9 @@ export default function (
 		<span class="dp-sessionStarter-bracket">[</span>
 		<a onClick={ async () => {
 			if ( casePage && casePage.lastActiveSections.length > 0 ) {
-				const headingName = sectionHeadingName( heading );
-				if ( casePage.lastActiveSections.indexOf( headingName ) === -1 ) {
-					await casePage.addActiveSection( headingName );
+				const headingId = sectionHeadingId( heading );
+				if ( casePage.lastActiveSections.indexOf( headingId ) === -1 ) {
+					await casePage.addActiveSection( headingId );
 				}
 				await window.deputy.session.DeputyRootSession.continueSession( casePage );
 			} else {

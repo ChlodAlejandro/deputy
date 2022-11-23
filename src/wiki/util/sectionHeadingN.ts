@@ -1,4 +1,5 @@
 import last from '../../util/last';
+import sectionHeadingId from './sectionHeadingId';
 
 /**
  * Checks the n of a given element, that is to say the `n`th occurrence of a section
@@ -21,23 +22,28 @@ import last from '../../util/last';
  * @return The n, a number
  */
 export default function ( heading: HTMLHeadingElement, headingName: string ): number {
-	const headingNameEndPattern = /(?:\s|_)*(\d+)$/g;
-	const headingIdEndPattern = /_(\d+)$/g;
+	try {
 
-	const headingId = heading.getAttribute( 'id' ) ??
-		heading.querySelector( '.mw-headline' ).getAttribute( 'id' );
-	const headingIdMatches = headingId.match( headingIdEndPattern );
-	const headingNameMatches = headingName.match( headingNameEndPattern );
+		const headingNameEndPattern = /(?:\s|_)*(\d+)$/g;
+		const headingIdEndPattern = /_(\d+)$/g;
 
-	if ( headingIdMatches == null ) {
-		return 1;
-	} else if ( headingNameMatches == null ) {
-		// Last number of the ID
-		return +( headingIdEndPattern.exec( last( headingIdMatches ) )[ 1 ] );
-	} else if ( headingIdMatches.length === headingNameMatches.length ) {
-		return 1;
-	} else {
-		// Last number of the ID
-		return +( headingIdEndPattern.exec( last( headingIdMatches ) )[ 1 ] );
+		const headingId = sectionHeadingId( heading );
+		const headingIdMatches = headingId.match( headingIdEndPattern );
+		const headingNameMatches = headingName.match( headingNameEndPattern );
+
+		if ( headingIdMatches == null ) {
+			return 1;
+		} else if ( headingNameMatches == null ) {
+			// Last number of the ID
+			return +( headingIdEndPattern.exec( last( headingIdMatches ) )[ 1 ] );
+		} else if ( headingIdMatches.length === headingNameMatches.length ) {
+			return 1;
+		} else {
+			// Last number of the ID
+			return +( headingIdEndPattern.exec( last( headingIdMatches ) )[ 1 ] );
+		}
+	} catch ( e ) {
+		console.error( 'Error getting section number', e, heading );
+		throw e;
 	}
 }

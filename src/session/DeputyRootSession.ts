@@ -13,6 +13,7 @@ import DeputyContributionSurveySection from '../ui/root/DeputyContributionSurvey
 import { SessionInformation } from './DeputySession';
 import { ArrayOrNot } from '../types';
 import DeputyMessageWidget from '../ui/shared/DeputyMessageWidget';
+import sectionHeadingId from '../wiki/util/sectionHeadingId';
 
 /**
  * The DeputyRootSession. Instantiated only when:
@@ -128,59 +129,73 @@ export default class DeputyRootSession {
 			mw.loader.using(
 				[ 'oojs-ui-core', 'oojs-ui.styles.icons-content' ],
 				() => {
-					const firstHeading = casePage.findFirstContributionSurveyHeading();
-					if ( firstHeading ) {
-						// Insert element directly into widget (not as text, or else event
-						// handlers will be destroyed).
-						const continueButton = new OO.ui.ButtonWidget( {
-							label: mw.msg( 'deputy.session.continue.button' ),
-							flags: [ 'primary', 'progressive' ]
-						} );
+					const lastActiveSection =
+						DeputyRootSession.findFirstLastActiveSection( casePage );
+					const firstSection =
+						casePage.findFirstContributionSurveyHeading();
 
-						const messageBox = DeputyMessageWidget( {
-							classes: [
-								'deputy', 'dp-cs-session-notice', 'dp-cs-session-lastActive'
-							],
-							type: 'notice',
-							icon: 'history',
-							title: mw.msg(
-								'deputy.session.continue.head',
-								new Date().toLocaleString(
-									mw.config.get( 'wgUserLanguage' ),
-									{ dateStyle: 'long', timeStyle: 'medium' }
-								)
-							),
-							message: mw.msg(
-								'deputy.session.continue.help',
+					// Insert element directly into widget (not as text, or else event
+					// handlers will be destroyed).
+					const continueButton = new OO.ui.ButtonWidget( {
+						label: mw.msg( 'deputy.session.continue.button' ),
+						flags: [ 'primary', 'progressive' ]
+					} );
+
+					const messageBox = DeputyMessageWidget( {
+						classes: [
+							'deputy', 'dp-cs-session-notice', 'dp-cs-session-lastActive'
+						],
+						type: 'notice',
+						icon: 'history',
+						title: mw.msg(
+							'deputy.session.continue.head',
+							new Date().toLocaleString(
+								mw.config.get( 'wgUserLanguage' ),
+								{ dateStyle: 'long', timeStyle: 'medium' }
+							)
+						),
+						message: mw.msg(
+							lastActiveSection ?
+								'deputy.session.continue.help' :
+								'deputy.session.continue.help.fromStart',
+							lastActiveSection ?
+								sectionHeadingName( lastActiveSection ) :
 								casePage.lastActiveSections[ 0 ]
-							),
-							actions: [ continueButton ],
-							closable: true
-						} );
-						const sessionStartListener = async () => {
-							removeElement( unwrapWidget( messageBox ) );
-							await this.initTabActiveInterface();
-						};
-						continueButton.on( 'click', () => {
-							removeElement( unwrapWidget( messageBox ) );
+									.replace( /_/g, ' ' ),
+							sectionHeadingName( firstSection )
+						),
+						actions: [ continueButton ],
+						closable: true
+					} );
+					const sessionStartListener = async () => {
+						removeElement( unwrapWidget( messageBox ) );
+						await this.initTabActiveInterface();
+					};
+					continueButton.on( 'click', () => {
+						removeElement( unwrapWidget( messageBox ) );
+						if ( lastActiveSection ) {
 							DeputyRootSession.continueSession( casePage );
-							window.deputy.comms.removeEventListener(
-								'sessionStarted',
-								sessionStartListener
-							);
-						} );
-
-						firstHeading.insertAdjacentElement(
-							'beforebegin',
-							unwrapWidget( messageBox )
-						);
-
-						window.deputy.comms.addEventListener(
+						} else {
+							DeputyRootSession.continueSession( casePage, [
+								sectionHeadingId( firstSection )
+							] );
+						}
+						window.deputy.comms.removeEventListener(
 							'sessionStarted',
-							sessionStartListener,
-							{ once: true }
+							sessionStartListener
 						);
-					}
+					} );
+
+					firstSection.insertAdjacentElement(
+						'beforebegin',
+						unwrapWidget( messageBox )
+					);
+
+					window.deputy.comms.addEventListener(
+						'sessionStarted',
+						sessionStartListener,
+						{ once: true }
+					);
 				}
 			)
 		] );
@@ -229,6 +244,27 @@ export default class DeputyRootSession {
 	}
 
 	/**
+	 * Finds the first last active section that exists on the page.
+	 * If a last active section that still exists on the page could not be found,
+	 * `null` is returned.
+	 *
+	 * @param casePage The case page to use
+	 * @return The last active session's heading element.
+	 */
+	static findFirstLastActiveSection( casePage: DeputyCasePage ): ContributionSurveyHeading {
+		const csHeadings = casePage.findContributionSurveyHeadings();
+		for ( const lastActiveSection of casePage.lastActiveSections ) {
+			for ( const heading of csHeadings ) {
+				if ( sectionHeadingId( heading ) === lastActiveSection ) {
+					return heading;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Starts a Deputy session.
 	 *
 	 * @param section
@@ -238,14 +274,14 @@ export default class DeputyRootSession {
 		section: ArrayOrNot<ContributionSurveyHeading>,
 		_casePage?: DeputyCasePage
 	): Promise<void> {
-		const sectionNames = ( Array.isArray( section ) ? section : [ section ] ).map(
-			( _section ) => sectionHeadingName( _section )
+		const sectionIds = ( Array.isArray( section ) ? section : [ section ] ).map(
+			( _section ) => sectionHeadingId( _section )
 		);
 		// Save session to storage
 		const casePage = _casePage ?? await DeputyCasePage.build();
 		const session = await this.setSession( {
 			casePageId: casePage.pageId,
-			caseSections: sectionNames
+			caseSections: sectionIds
 		} );
 
 		const rootSession =
@@ -259,13 +295,19 @@ export default class DeputyRootSession {
 	 * Continue a session from a DeputyCasePage.
 	 *
 	 * @param casePage The case page to continue with
+	 * @param sectionIds The section IDs to load on startup. If not provided, this will be
+	 * taken from the cache. If provided, this overrides the cache, discarding any
+	 * sections cached previously.
 	 */
-	static async continueSession( casePage: DeputyCasePage ): Promise<void> {
+	static async continueSession(
+		casePage: DeputyCasePage,
+		sectionIds?: string[]
+	): Promise<void> {
 		// Save session to storage
 		const session = await this.setSession( {
 			casePageId: casePage.pageId,
 			// Shallow array copy
-			caseSections: [ ...casePage.lastActiveSections ]
+			caseSections: [ ...( sectionIds ?? casePage.lastActiveSections ) ]
 		} );
 
 		const rootSession =
@@ -284,7 +326,6 @@ export default class DeputyRootSession {
 	static async setSession( session: SessionInformation ): Promise<SessionInformation> {
 		return ( await window.deputy.storage.setKV( 'session', session ) ) ? session : null;
 	}
-
 	/**
 	 * The current active session, if one exists.
 	 */
@@ -298,15 +339,16 @@ export default class DeputyRootSession {
 	 * DiscussionTools) as compared to relying on an in-house parser.
 	 */
 	parser: any;
+
 	/**
 	 * An array of active section UI elements. Populated in `initSessionInterface`.
 	 */
 	sections: DeputyContributionSurveySection[];
-
 	/**
 	 * Responder for session requests.
 	 */
 	readonly sessionRequestResponder = this.sendSessionResponse.bind( this );
+
 	readonly sessionStopResponder = this.handleStopRequest.bind( this );
 
 	/*
@@ -382,12 +424,12 @@ export default class DeputyRootSession {
 
 				const activeSectionPromises = [];
 				for ( const heading of this.casePage.findContributionSurveyHeadings() ) {
-					const headingName = sectionHeadingName( heading );
+					const headingId = sectionHeadingId( heading );
 
-					if ( this.session.caseSections.indexOf( headingName ) !== -1 ) {
+					if ( this.session.caseSections.indexOf( headingId ) !== -1 ) {
 						activeSectionPromises.push(
 							this.activateSection( this.casePage, heading )
-								.then( v => v ? headingName : null )
+								.then( v => v ? headingId : null )
 						);
 					} else {
 						this.addSectionOverlay( this.casePage, heading );
@@ -515,14 +557,14 @@ export default class DeputyRootSession {
 			return false;
 		}
 
-		const sectionName = sectionHeadingName( heading );
+		const sectionId = sectionHeadingId( heading );
 		this.sections.push( el );
-		const lastActiveSession = this.session.caseSections.indexOf( sectionName );
+		const lastActiveSession = this.session.caseSections.indexOf( sectionId );
 		if ( lastActiveSession === -1 ) {
-			this.session.caseSections.push( sectionName );
+			this.session.caseSections.push( sectionId );
 			await DeputyRootSession.setSession( this.session );
 		}
-		await casePage.addActiveSection( sectionName );
+		await casePage.addActiveSection( sectionId );
 
 		heading.insertAdjacentElement( 'afterend', el.render() );
 		await el.loadData();
@@ -530,7 +572,6 @@ export default class DeputyRootSession {
 
 		return true;
 	}
-
 	/**
 	 * Closes a section. This removes the section from both the session data and from
 	 * the case page cache.
@@ -541,6 +582,7 @@ export default class DeputyRootSession {
 	 * the case page cache.
 	 */
 	async closeSection( e0: DeputyContributionSurveySection ): Promise<void>;
+
 	/**
 	 * Closes a section. This removes the section from both the session data and from
 	 * the case page cache.
@@ -559,12 +601,12 @@ export default class DeputyRootSession {
 		const heading = e0 instanceof DeputyContributionSurveySection ?
 			e0.heading : e1;
 
-		const sectionName = sectionHeadingName( heading );
+		const sectionId = sectionHeadingId( heading );
 		const sectionListIndex = this.sections.indexOf( el );
 		if ( el != null && sectionListIndex !== -1 ) {
 			this.sections.splice( sectionListIndex, 1 );
 		}
-		const lastActiveSession = this.session.caseSections.indexOf( sectionName );
+		const lastActiveSession = this.session.caseSections.indexOf( sectionId );
 		if ( lastActiveSession !== -1 ) {
 			this.session.caseSections.splice( lastActiveSession, 1 );
 
@@ -575,7 +617,7 @@ export default class DeputyRootSession {
 				// else "continue where you left off" won't work.
 			} else {
 				await DeputyRootSession.setSession( this.session );
-				await casePage.removeActiveSection( sectionName );
+				await casePage.removeActiveSection( sectionId );
 				this.addSectionOverlay( casePage, heading );
 			}
 		}
