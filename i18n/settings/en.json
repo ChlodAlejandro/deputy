@@ -124,7 +124,7 @@
     "deputy.setting.wiki.ia.subpageFormat.description": "The format to use for subpages of the root page. This is a moment.js format string.",
     "deputy.setting.wiki.ia.preload.name": "Preload",
     "deputy.setting.wiki.ia.preload.description": "Defines the page content to preload the page with if a given subpage does not exist yet. This should be an existing page on-wiki. Leave blank to avoid using a preload entirely.",
-    "deputy.setting.wiki.ia.listingWikitext": "Listing wikitext",
+    "deputy.setting.wiki.ia.listingWikitext.name": "Listing wikitext",
     "deputy.setting.wiki.ia.listingWikitext.description": "Defines the wikitext that will be used when adding listings to a noticeboard page. You may use \"$1\" to denote the page being reported, and \"$2\" for user comments (which shouldn't contain the signature).",
     "deputy.setting.wiki.ia.listingWikitextMatch.name": "Regular expression for listings",
     "deputy.setting.wiki.ia.listingWikitextMatch.description": "A regular expression that will be used to parse and detect listings on a given noticeboard page. Since its usage is rather technical, this value should be edited by someone with technical knowledge of regular expressions. This regular expression must provide three captured groups: group \"$1\" will catch any bullet point, space, or prefix, \"$2\" will catch the page title ONLY if the given page matches \"{{int:deputy.setting.wiki.ia.listingWikitext.name}}\" or \"{{int:deputy.setting.wiki.ia.batchListingWikitext.name}}\", and \"$3\" will catch the page title ONLY IF the page wasn't caught in \"$2\" (such as in cases where there is only a bare link to the page).",

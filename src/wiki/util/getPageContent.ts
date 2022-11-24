@@ -27,9 +27,18 @@ export default function (
 		rvlimit: '1',
 		...extraOptions
 	} ).then( ( data ) => {
+		const fallbackText = extraOptions.fallbacktext;
+
 		if ( data.query.pages[ 0 ].revisions == null ) {
-			return null;
+			if ( fallbackText ) {
+				return Object.assign( fallbackText, {
+					page: data.query.pages[ 0 ]
+				} );
+			} else {
+				return null;
+			}
 		}
+
 		return Object.assign(
 			data.query.pages[ 0 ].revisions[ 0 ].slots.main.content,
 			{

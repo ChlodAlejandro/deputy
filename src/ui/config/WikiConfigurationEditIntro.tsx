@@ -1,39 +1,16 @@
 import unwrapWidget from '../../util/unwrapWidget';
 import { h } from 'tsx-dom';
 import WikiConfiguration from '../../config/WikiConfiguration';
-import swapElements from '../../util/swapElements';
 import { spawnConfigurationDialog } from './ConfigurationDialog';
 import normalizeTitle from '../../wiki/util/normalizeTitle';
+import DeputyMessageWidget from '../shared/DeputyMessageWidget';
 
 /**
- * @param config The current configuration
+ * @param config The current configuration (actively loaded, not the one being viewed)
  * @return An HTML element consisting of an OOUI MessageWidget
  */
 export default function WikiConfigurationEditIntro( config: WikiConfiguration ): JSX.Element {
-	const r = 'deputy-' + Math.random().toString().slice( 2 );
 	const current = config.onConfigurationPage();
-
-	const messageBox = new OO.ui.MessageWidget( {
-		classes: [
-			'deputy', 'dp-mb'
-		],
-		type: 'info',
-		label: new OO.ui.HtmlSnippet( ( <span>
-			<b>{
-				mw.msg( 'deputy.settings.wikiEditIntro.title' )
-			}</b><br/>{
-				current ?
-					mw.msg( 'deputy.settings.wikiEditIntro.current' ) :
-					<span dangerouslySetInnerHTML={
-						mw.message(
-							'deputy.settings.wikiEditIntro.other',
-							config.sourcePage.getPrefixedText()
-						).parse()
-					} />
-			}<br/>
-			<span id={r}></span>
-		</span> ).innerHTML )
-	} );
 
 	let buttons: any[];
 	if ( current ) {
@@ -52,7 +29,7 @@ export default function WikiConfigurationEditIntro( config: WikiConfiguration ):
 		const editCurrent = new OO.ui.ButtonWidget( {
 			flags: [ 'progressive', 'primary' ],
 			label: mw.msg( 'deputy.settings.wikiEditIntro.edit.otherCurrent' ),
-			disabled: config.editable,
+			disabled: !config.editable,
 			title: config.editable ?
 				undefined : mw.msg( 'deputy.settings.wikiEditIntro.edit.protected' )
 		} );
@@ -72,10 +49,24 @@ export default function WikiConfigurationEditIntro( config: WikiConfiguration ):
 		buttons = [ editCurrent, editOther ];
 	}
 
+	const messageBox = DeputyMessageWidget( {
+		classes: [
+			'deputy', 'dp-mb'
+		],
+		type: 'info',
+		title: mw.msg( 'deputy.settings.wikiEditIntro.title' ),
+		message: current ?
+			mw.msg( 'deputy.settings.wikiEditIntro.current' ) :
+			<span dangerouslySetInnerHTML={
+				mw.message(
+					'deputy.settings.wikiEditIntro.other',
+					config.sourcePage.getPrefixedText()
+				).parse()
+			} />,
+		actions: buttons
+	} );
+
 	const box = unwrapWidget( messageBox );
-	swapElements( box.querySelector( `#${r}` ), <span>
-		{ buttons.map( b => unwrapWidget( b ) ) }
-	</span> );
 
 	box.classList.add( 'deputy', 'deputy-wikiConfig-intro' );
 

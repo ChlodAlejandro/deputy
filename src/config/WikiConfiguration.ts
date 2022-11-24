@@ -71,7 +71,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 
 		if ( configPage ) {
 			return new WikiConfiguration(
-				configPage.title,
+				new mw.Title( configPage.title.title, configPage.title.namespace ),
 				JSON.parse( configPage.wt ),
 				configPage.editable
 			);
@@ -91,7 +91,8 @@ export default class WikiConfiguration extends ConfigurationBase {
 			...await ( async () => {
 				const content = await getPageContent( sourcePage, {
 					prop: 'revisions|info',
-					intestactions: 'edit'
+					intestactions: 'edit',
+					fallbacktext: '{}'
 				} );
 
 				return {
@@ -203,7 +204,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 			displayOptions: { type: 'checkbox' }
 		} ),
 		rootPage: new Setting<string, mw.Title>( {
-			serialize: ( v ) => v.getPrefixedText(),
+			serialize: ( v ) => v?.getPrefixedText(),
 			deserialize: ( v ) => new mw.Title( v ),
 			defaultValue: null,
 			displayOptions: { type: 'page' }
@@ -231,7 +232,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 			displayOptions: { type: 'checkbox' }
 		} ),
 		rootPage: new Setting<string, mw.Title>( {
-			serialize: ( v ) => v.getPrefixedText(),
+			serialize: ( v ) => v?.getPrefixedText(),
 			deserialize: ( v ) => new mw.Title( v ),
 			defaultValue: null,
 			displayOptions: { type: 'page' }
@@ -241,7 +242,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 			displayOptions: { type: 'text' }
 		} ),
 		preload: new Setting<string, string>( {
-			serialize: ( v ) => v.trim().length === 0 ? null : v.trim(),
+			serialize: ( v ) => ( v?.trim()?.length ?? 0 ) === 0 ? null : v.trim(),
 			defaultValue: null,
 			displayOptions: { type: 'page' }
 		} ),
