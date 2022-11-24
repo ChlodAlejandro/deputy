@@ -98,6 +98,10 @@
     "deputy.setting.user.ia.onBatchSubmit.nothing": "Do nothing",
     "deputy.setting.user.ia.onBatchSubmit.reload": "Reload the noticeboard page",
 
+    "deputy.setting.wiki.core": "Core",
+    "deputy.setting.wiki.core.dispatchRoot.name": "Deputy Dispatch root URL",
+    "deputy.setting.wiki.core.dispatchRoot.description": "The URL to a Deputy Dispatch instance that can handle this wiki. Deputy Dispatch is a webserver responsible for centralizing and optimizing data used by Deputy, and can be used to reduce load on wikis. More information can be found at https://github.com/ChlodAlejandro/deputy-dispatch.",
+
     "deputy.setting.wiki.cci": "CCI",
 
     "deputy.setting.wiki.cci.enabled.name": "Enable contributor copyright investigations assistant",
@@ -108,6 +112,8 @@
     "deputy.setting.wiki.cci.collapseTop.description": "Placed just below a section heading when closing a contributor survey section. Use \"$1\" to denote user comments and signature. On the English Wikipedia, this is {{collapse top}}. Other wikis may have an equivalent template. This should go hand in hand with \"{{int:deputy.setting.wiki.cci.collapseBottom.name}}\", as they are used as a pair.",
     "deputy.setting.wiki.cci.collapseBottom.name": "Collapsible wikitext (bottom)",
     "deputy.setting.wiki.cci.collapseBottom.description": "Placed at the end of a section when closing a contributor survey section. On the English Wikipedia, this is {{collapse bottom}}. Other wikis may have an equivalent template.",
+    "deputy.setting.wiki.cci.earwigRoot.name": "Earwig's Copyvio Detector root URL",
+    "deputy.setting.wiki.cci.earwigRoot.description": "The URL to an instance of Earwig's Copyvio Detector that can handle this wiki. The official copyvio detector (copyvios.toolforge.org) can only handle Wikimedia wikis — you may change this behavior by specifying a custom instance that can process this wiki here.",
 
     "deputy.setting.wiki.ante": "ANTE",
 

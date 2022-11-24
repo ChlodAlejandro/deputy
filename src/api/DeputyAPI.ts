@@ -36,6 +36,23 @@ export default class DeputyAPI {
 	}
 
 	/**
+	 * Returns a fully-formed HTTP URL from a given endpoint. This uses the wiki's
+	 * set Dispatch endpoint and a given target (such as `/v1/revisions`) to get
+	 * the full URL.
+	 *
+	 * @param endpoint The endpoint to get
+	 */
+	async getEndpoint( endpoint: string ): Promise<string> {
+		return `${
+			( await window.deputy.getWikiConfig() ).core.dispatchRoot.get()
+				.href
+				.replace( /\/+$/, '' )
+		}/${
+			endpoint.replace( /^\/+/, '' )
+		}`;
+	}
+
+	/**
 	 * Gets expanded revision data from the API. This returns a response similar to the
 	 * `revisions` object provided by action=query, but also includes additional information
 	 * relevant (such as the parsed (HTML) comment, diff size, etc.)
@@ -47,9 +64,7 @@ export default class DeputyAPI {
 		revisions: number[]
 	): Promise<Record<number, ExpandedRevisionData>> {
 		return Requester.fetch(
-			`https://zoomiebot.toolforge.org/bot/api/deputy/v1/revisions/${
-				mw.config.get( 'wgWikiID' )
-			}`,
+			await this.getEndpoint( `v1/revisions/${mw.config.get( 'wgWikiID' )} ` ),
 			{
 				method: 'POST',
 				headers: {

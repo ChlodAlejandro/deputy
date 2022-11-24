@@ -195,6 +195,13 @@ export default class WikiConfiguration extends ConfigurationBase {
 			defaultValue: WikiConfiguration.configVersion,
 			displayOptions: { hidden: true },
 			alwaysSave: true
+		} ),
+		dispatchRoot: new Setting<string, URL>( {
+			serialize: ( v ) => v.href,
+			deserialize: ( v ) => new URL( v ),
+			defaultValue: new URL( 'https://zoomiebot.toolforge.org/bot/api/deputy/' ),
+			displayOptions: { type: 'text' },
+			alwaysSave: true
 		} )
 	};
 
@@ -216,6 +223,13 @@ export default class WikiConfiguration extends ConfigurationBase {
 		collapseBottom: new Setting<string, string>( {
 			defaultValue: collapseBottom,
 			displayOptions: { type: 'code' }
+		} ),
+		earwigRoot: new Setting<string, URL>( {
+			serialize: ( v ) => v.href,
+			deserialize: ( v ) => new URL( v ),
+			defaultValue: new URL( 'https://copyvios.toolforge.org/' ),
+			displayOptions: { type: 'text' },
+			alwaysSave: true
 		} )
 	};
 
@@ -290,7 +304,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 		} )
 	};
 
-	public readonly all = { cci: this.cci, ante: this.ante, ia: this.ia };
+	public readonly all = { core: this.core, cci: this.cci, ante: this.ante, ia: this.ia };
 
 	/**
 	 * Set to true when this configuration is outdated based on latest data. Usually adds banners

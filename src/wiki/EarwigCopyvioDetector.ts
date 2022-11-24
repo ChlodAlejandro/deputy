@@ -56,7 +56,9 @@ export default class EarwigCopyvioDetector {
 		}
 
 		const sites = await fetch(
-			'https://copyvios.toolforge.org/api.json?action=sites&version=1'
+			`${
+				( await window.deputy.getWikiConfig() ).cci.earwigRoot.get()
+			}/api.json?action=sites&version=1`
 		)
 			.then( ( r ) => r.json() );
 
@@ -107,7 +109,9 @@ export default class EarwigCopyvioDetector {
 
 		const { project, language } = this.guessProject( options.project, options.language );
 
-		return `https://copyvios.toolforge.org/?action=search&lang=${
+		return `${
+			( await window.deputy.getWikiConfig() ).cci.earwigRoot.get()
+		}?action=search&lang=${
 			language
 		}&project=${
 			project
