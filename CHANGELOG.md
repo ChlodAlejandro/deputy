@@ -1,11 +1,36 @@
 # Unreleased
 ヾ(•ω•`)o hai!
 
-## Bugs
-- [[`0d3524d`](../../commit/0d3524d)] Fixed the banner for tabs with active cases on another tab being missing
-- [[`e3a028f`](../../commit/e3a028f)] Fixed the start and continue links using serifs
+# [v0.3.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.3.0) - 2022-11-24
+Sweeping bugsquashes and improved compatibility for historical cases. Also added
+options to decentralize APIs, especially with [Dispatch](https://github.com/ChlodAlejandro/deputy-dispatch)
+on the way.
 
-# [v0.2.2](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.2.1) - 2022-11-04
+## Added
+* [[`51dd560`](../../commit/51dd560)] Added specific version data (commit, branch, date) to about page
+* [[`f236b2e`](../../commit/f236b2e)] Added option to configure session continuation behavior
+* [[`bd2b9c7`](../../commit/bd2b9c7)] Added option to customize Deputy Dispatch (Deputy API) root endpoint
+* [[`bd2b9c7`](../../commit/bd2b9c7)] Added option to customize Earwig's Copyvio Tool root endpoint
+
+## Modified
+* [[`def323f`](../../commit/def323f)] Fully moved versioning to package.json
+* [[`f236b2e`](../../commit/f236b2e)] Changed session continuation to avoid loading past active sessions by default
+* [[`211fdd2`](../../commit/211fdd2)] (dev) Started using section anchor ID instead of name for case page caching
+* [[`6a12e09`](../../commit/6a12e09)] Improved handling of wiki-wide configuration dialog
+
+## Bugs
+* [[`0d3524d`](../../commit/0d3524d)] Fixed the banner for tabs with active cases on another tab being missing
+* [[`e3a028f`](../../commit/e3a028f)] Fixed the start and continue links using serifs
+* [[`266f0c8`](../../commit/266f0c8)] Fixed section loading rows of other sections of the same name
+* [[`5e2b60f`](../../commit/5e2b60f)] Fixed sections of the same name all activating on startup
+* [[`11e1c60`](../../commit/11e1c60)] Fixed ContributionSurveyRow attempting to reply to row requests when errored
+* [[`58322f8`](../../commit/58322f8)] Fixed wrong list element being appended post-section close
+* [[`965a093`](../../commit/965a093)] Fixed section heading getting replaced post-save (destroys anchor ID)
+* [[`29a42ea`](../../commit/29a42ea)] Fixed incorrect revision sorting due to historical surveyor differences
+
+For a granular list of changes, see [v0.2.2...v0.3.0](https://github.com/ChlodAlejandro/deputy/compare/v0.2.2...v0.3.0).
+
+# [v0.2.2](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.2.2) - 2022-11-04
 Very small update with one bugfix and one quality-of-life feature.
 
 ## Added
@@ -17,7 +42,7 @@ Very small update with one bugfix and one quality-of-life feature.
 ## Bugs
 * [[`8f4f29b`](../../commit/8f4f29b)] Fixed section archive warning not updating when all revisions checked post-open
 
-For a full list of changes, see [v0.2.1...v0.2.2](https://github.com/ChlodAlejandro/deputy/compare/v0.2.1...v0.2.2).
+For a granular list of changes, see [v0.2.1...v0.2.2](https://github.com/ChlodAlejandro/deputy/compare/v0.2.1...v0.2.2).
 
 # [v0.2.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.2.1) - 2022-11-01
 ~~Halloween update! (I'm late)~~ Small quality of life changes and significant bugfixes.
@@ -30,7 +55,7 @@ For a full list of changes, see [v0.2.1...v0.2.2](https://github.com/ChlodAlejan
 * [[`d321ad5`](../../commit/d321ad5)] Fixed Deputy running over edit conflicts
 * [[`d321ad5`](../../commit/d321ad5)] Fixed section lockup after saving
 
-For a full list of changes, see [v0.2.0...v0.2.1](https://github.com/ChlodAlejandro/deputy/compare/v0.2.0...v0.2.1).
+For a granular list of changes, see [v0.2.0...v0.2.1](https://github.com/ChlodAlejandro/deputy/compare/v0.2.0...v0.2.1).
 
 # [v0.2.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.2.0) - 2022-10-20
 Small number of changes but relatively large in size; the contribution survey row detection now relies on a dedicated parser instead of regular expressions. This hopefully decreases the amount of false positive matches on contribution survey rows. In addition, support for the Dawkeye case, which has a different format from other CCI casepages, has been added. Also includes bugfixes.
@@ -54,7 +79,7 @@ Small number of changes but relatively large in size; the contribution survey ro
 * [[`b054845`](../../commit/b054845)] Fixed contribution survey rows responding even if in an invalid/errored state
 * [[`e0fb84d`](../../commit/e0fb84d)] Fixed contribution survey row regular expression (superseded by [[`2dc0405`](../../commit/2dc0405)])
 
-For a full list of changes, see [v0.1.1...v0.2.0](https://github.com/ChlodAlejandro/deputy/compare/v0.1.1...v0.2.0).
+For a granular list of changes, see [v0.1.1...v0.2.0](https://github.com/ChlodAlejandro/deputy/compare/v0.1.1...v0.2.0).
 
 # [v0.1.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.1.1) - 2022-10-02
 Minor bugfixes and improvements post-release.
@@ -69,7 +94,7 @@ Minor bugfixes and improvements post-release.
 ## Bugs
 * [[`fbe5826`](../../commit/fbe5826)] Fixed section header regular expression for contribution survey sections
 
-For a full list of changes, see [v0.1.0...v0.1.1](https://github.com/ChlodAlejandro/deputy/compare/v0.1.0...v0.1.1).
+For a granular list of changes, see [v0.1.0...v0.1.1](https://github.com/ChlodAlejandro/deputy/compare/v0.1.0...v0.1.1).
 
 # [v0.1.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.1.0) - 2022-09-30
 First public beta release of Deputy. First version to be published on the English Wikipedia.
@@ -99,7 +124,7 @@ First public beta release of Deputy. First version to be published on the Englis
 * [[`5c502c9`](../../commit/5c502c9)] Fixed {{translated page}} linking to the Russian Wikipedia all the time
 * [[`3edf684`](../../commit/3edf684)] Fixed IA not releasing the page navigation block
 
-For a full list of changes, see [v0.0.5...v0.1.0](https://github.com/ChlodAlejandro/deputy/compare/v0.0.5...v0.1.0).
+For a granular list of changes, see [v0.0.5...v0.1.0](https://github.com/ChlodAlejandro/deputy/compare/v0.0.5...v0.1.0).
 
 # [v0.0.5](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.0.5) - 2022-08-31
 This version includes a complete version of the reimplementation for the Infringement Assistant (IA). IA also comes with a standalone mode, which does not require Deputy to work. This reimplementation focuses on abstraction and UI changes, making it easier for users to submit listings to copyright problems noticeboards. In addition, it has a heavy focus on clerking, and now includes features that make it easy for noticeboard clerks to leave responses on listings.
@@ -119,7 +144,7 @@ This version includes a complete version of the reimplementation for the Infring
 ## Bugs
 * [[`8e086e1`](../../commit/8e086e1)] Fixed TemplateMerger recursion
 
-For a full list of changes, see [v0.0.4...v0.0.5](https://github.com/ChlodAlejandro/deputy/compare/v0.0.4...v0.0.5).
+For a granular list of changes, see [v0.0.4...v0.0.5](https://github.com/ChlodAlejandro/deputy/compare/v0.0.4...v0.0.5).
 
 # [v0.0.4](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.0.4) - 2022-08-08
 This version includes a complete version of the reimplementation for the {{copied}} Template Editor (CTE), now named the Attribution Notice Template Editor (ANTE). This includes support for all attribution notices that are most used on the English Wikipedia: {{split article}}, {{merged-to}}, {{merged-from}}, {{backwards copy}}, and {{translated page}}. Like before, ANTE also comes with a standalone mode, which does not require Deputy to work.
@@ -144,7 +169,7 @@ This version includes a complete version of the reimplementation for the {{copie
 ## Bugs
 * [[`8e086e1`](../../commit/8e086e1)] Fixed TemplateMerger recursion
 
-For a full list of changes, see [v0.0.3...v0.0.4](https://github.com/ChlodAlejandro/deputy/compare/v0.0.3...v0.0.4).
+For a granular list of changes, see [v0.0.3...v0.0.4](https://github.com/ChlodAlejandro/deputy/compare/v0.0.3...v0.0.4).
 
 # [v0.0.3](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.0.3) - 2022-07-23
 This version includes all features of the last pre-alpha and a reimplementation of the Copied Template Editor (CTE). The new reimplementation uses an improved version of ParsoidDocument, a library for easily accessing and modifying the Parsoid DOM from a browser context. This reimplementation paves (half of) the way towards support for other attribution notice templates. CTE is expected to be renamed to Attribution Notice Editor once support for other templates have been added. CTE also comes with a standalone mode, which does not require Deputy to work.
@@ -159,7 +184,7 @@ This version includes all features of the last pre-alpha and a reimplementation 
 ## Modified
 * [[`ccaa572`](../../commit/ccaa572)] (dev) Converted OOUI ProcessDialog `OO.extendClass` to ES `extends`.
 
-For a full list of changes, see [v0.0.2...v0.0.3](https://github.com/ChlodAlejandro/deputy/compare/v0.0.2...v0.0.3).
+For a granular list of changes, see [v0.0.2...v0.0.3](https://github.com/ChlodAlejandro/deputy/compare/v0.0.2...v0.0.3).
 
 # [v0.0.2](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.0.2) - 2022-07-13
 This version includes adds an "analysis" button on the page toolbar which has a few page analysis options (as of now, links to Earwig's Copyvio Detector runs for the current page revision and the revision being viewed).
@@ -169,9 +194,9 @@ This version includes adds an "analysis" button on the page toolbar which has a 
 * [[`6db4dc3`](../../commit/6db4dc3)] Added button for force-stopping an active session (on a different case page)
 * [[`ca726f0`](../../commit/ca726f0)] Added analysis options on the page toolbar
 
-For a full list of changes, see [v0.0.1...v0.0.2](https://github.com/ChlodAlejandro/deputy/compare/v0.0.1...v0.0.2).
+For a granular list of changes, see [v0.0.1...v0.0.2](https://github.com/ChlodAlejandro/deputy/compare/v0.0.1...v0.0.2).
 
 # [v0.0.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.0.1) - 2022-07-11
 First technical demonstration for Deputy. This version includes processing for case page sections and pages, including a toolbar on subject pages of an investigation that synchronize with the tab running Deputy.
 
-For a full list of changes, see [v0.0.0...v0.0.1](https://github.com/ChlodAlejandro/deputy/compare/v0.0.0...v0.0.1).
+For a granular list of changes, see [v0.0.0...v0.0.1](https://github.com/ChlodAlejandro/deputy/compare/v0.0.0...v0.0.1).
