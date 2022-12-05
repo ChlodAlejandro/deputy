@@ -1,6 +1,9 @@
 # Unreleased
 ヾ(•ω•`)o hai!
 
+## Bugs
+* [[`0dd03d9`](../../commit/0dd03d9)] Fixed sections not being parsed properly when the section name has numbers
+
 # [v0.3.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.3.0) - 2022-11-24
 Sweeping bugsquashes and improved compatibility for historical cases. Also added
 options to decentralize APIs, especially with [Dispatch](https://github.com/ChlodAlejandro/deputy-dispatch)
