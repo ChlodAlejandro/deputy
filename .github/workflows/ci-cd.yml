@@ -7,6 +7,8 @@ on:
       - tests/**
       - i18n/**
       - .github/workflows/ci-cd.yml
+      - package.json
+      - package-lock.json
   pull_request:
 
 jobs:
