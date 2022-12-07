@@ -51,7 +51,7 @@ export default class DiffPage {
 		swapElements( contentText, newContentText );
 
 		document.querySelectorAll( '#ca-edit a, #ca-ve-edit a' ).forEach( ( e ) => {
-			const newEditUrl = new URL( e.getAttribute( 'href' ) );
+			const newEditUrl = new URL( e.getAttribute( 'href' ), window.location.href );
 			newEditUrl.searchParams.set( 'oldid', `${diff}` );
 			e.setAttribute( 'href', newEditUrl.href );
 		} );
