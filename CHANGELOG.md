@@ -3,6 +3,7 @@
 
 ## Bugs
 * [[`0dd03d9`](../../commit/0dd03d9)] Fixed sections not being parsed properly when the section name has numbers
+* [[`efac058`](../../commit/efac058)] Fixed improper revision navigation with the revision toolbar
 
 # [v0.3.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.3.0) - 2022-11-24
 Sweeping bugsquashes and improved compatibility for historical cases. Also added
