@@ -50,7 +50,7 @@
         "eslint": "8.22.0",
         "eslint-config-wikimedia": "^0.23.0",
         "eslint-plugin-compat": "^4.0.2",
-        "eslint-plugin-jsdoc": "^39.3.3",
+        "eslint-plugin-jsdoc": "^39.6.4",
         "expect-puppeteer": "^6.1.0",
         "jest": "^28.1.1",
         "jest-environment-puppeteer": "^6.1.1",
