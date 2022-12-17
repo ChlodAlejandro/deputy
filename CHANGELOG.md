@@ -1,8 +1,7 @@
 # Unreleased
-ヾ(•ω•`)o hai!
+``ヾ(•ω•`)o hai!``
 
-These are changes that may or may not have been deployed to wikis, but are not yet considered as part of
-any release.
+These are changes that may or may not have been deployed to wikis, but are not yet considered as part of any release.
 
 # [v0.3.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.3.1) - 2022-12-17
 General bugfix and quality-of-life fixes.
@@ -20,9 +19,7 @@ General bugfix and quality-of-life fixes.
 For a granular list of changes, see [v0.3.0...v0.3.1](https://github.com/ChlodAlejandro/deputy/compare/v0.3.0...v0.3.1).
 
 # [v0.3.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.3.0) - 2022-11-24
-Sweeping bugsquashes and improved compatibility for historical cases. Also added
-options to decentralize APIs, especially with [Dispatch](https://github.com/ChlodAlejandro/deputy-dispatch)
-on the way.
+Sweeping bugsquashes and improved compatibility for historical cases. Also added options to decentralize APIs, especially with [Dispatch](https://github.com/ChlodAlejandro/deputy-dispatch) on the way.
 
 ## Added
 * [[`51dd560`](../../commit/51dd560)] Added specific version data (commit, branch, date) to about page
