@@ -555,7 +555,7 @@ function initSinglePageWorkflowDialog() {
 				}
 				process.next( () => {
 					mw.notify(
-						this.shadow ?
+						!this.shadow ?
 							mw.msg( 'deputy.ia.report.success.report' ) :
 							( action === 'hide' ?
 								mw.msg( 'deputy.ia.report.success.hide' ) :
