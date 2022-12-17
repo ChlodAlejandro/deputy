@@ -157,11 +157,12 @@ export default class CopyrightProblemsPage {
 
 		const config = await window.InfringementAssistant.getWikiConfig();
 		const preloadText = config.ia.preload.get() ? `{{subst:${
-			config.ia.preload.get()
-		}}}` : '';
+			// Only trim last newline, if any.
+			config.ia.preload.get().replace( /\n$/, '' )
+		}}}\n` : '';
 
 		const textParameters = appendMode ? {
-			appendtext: content,
+			appendtext: '\n' + content,
 			nocreate: true
 		} : {
 			text: preloadText + content,
