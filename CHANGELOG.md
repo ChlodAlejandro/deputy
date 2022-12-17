@@ -1,9 +1,23 @@
 # Unreleased
 ヾ(•ω•`)o hai!
 
+These are changes that may or may not have been deployed to wikis, but are not yet considered as part of
+any release.
+
+# [v0.3.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.3.1) - 2022-12-17
+General bugfix and quality-of-life fixes.
+
+## Modified
+* [[`5c56c26`](../../commit/5c56c26)] Began purging the main copyright problems listing page after listing post
+* [[`64333e4`](../../commit/64333e4)] Tweaked listing detection to avoid "edit section" links
+
 ## Bugs
 * [[`0dd03d9`](../../commit/0dd03d9)] Fixed sections not being parsed properly when the section name has numbers
 * [[`efac058`](../../commit/efac058)] Fixed improper revision navigation with the revision toolbar
+* [[`360221a`](../../commit/360221a)] Fixed newlines not being inserted when posting listings
+* [[`e3df95c`](../../commit/e3df95c)] Fixed wrong notify message being sent for listing-only reports
+
+For a granular list of changes, see [v0.3.0...v0.3.1](https://github.com/ChlodAlejandro/deputy/compare/v0.3.0...v0.3.1).
 
 # [v0.3.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.3.0) - 2022-11-24
 Sweeping bugsquashes and improved compatibility for historical cases. Also added
