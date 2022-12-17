@@ -177,10 +177,10 @@ export default class CopyrightProblemsPage {
 			...textParameters,
 			summary
 		} ).then( () => {
-			// Purge the main listing page, but don't wait for it.
-			MwApi.action.post( {
+			// Purge the main listing page.
+			return MwApi.action.post( {
 				action: 'purge',
-				titles: listingPage.getPrefixedText()
+				titles: CopyrightProblemsPage.rootPage.getPrefixedText()
 			} );
 		} ).catch( ( code ) => {
 			if ( code === 'articleexists' ) {
