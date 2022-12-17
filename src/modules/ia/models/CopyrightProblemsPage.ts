@@ -176,6 +176,12 @@ export default class CopyrightProblemsPage {
 			title: listingPage.getPrefixedText(),
 			...textParameters,
 			summary
+		} ).then( () => {
+			// Purge the main listing page, but don't wait for it.
+			MwApi.action.post( {
+				action: 'purge',
+				titles: listingPage.getPrefixedText()
+			} );
 		} ).catch( ( code ) => {
 			if ( code === 'articleexists' ) {
 				// Article exists on non-append mode. Attempt a normal append.
