@@ -134,7 +134,7 @@ export default class CopyrightProblemsListing {
 			const prefixedDb = anchor.getAttribute( 'id' );
 			const title = anchorToTitle( el as HTMLAnchorElement );
 
-			if ( title === false ) {
+			if ( title === false || prefixedDb == null ) {
 				// Not a valid link.
 				return false;
 			} else if ( title.getPrefixedText() !== new mw.Title( prefixedDb ).getPrefixedText() ) {
