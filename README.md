@@ -2,7 +2,7 @@
 
 <img align="right" width="70" height="70" src="https://upload.wikimedia.org/wikipedia/commons/2/2b/Deputy_logo.svg">
 
-Deputy is
+[Deputy](https://w.wiki/5k$q) is
 a [contributor copyright investigation](https://en.wikipedia.org/wiki/Wikipedia:Contributor_copyright_investigations) (CCI) and copyright cleanup assistance tool for Wikipedia. Its goal is to streamline the workflow for CCI case pages, making it easier to
 process and go through each case. As of now, it is in an extreme in-development phase, meaning most of the targeted
 features are not yet ready. Progress is done every day to accomplish the goals originally set.
@@ -13,6 +13,9 @@ at [chlodalejandro.github.io/deputy](https://chlodalejandro.github.io/deputy/cla
 Deputy relies on modules from [Zoomiebot](https://github.com/ChlodAlejandro/zoomiebot/tree/master/bot/api/deputy/v1) to
 perform bulk data operations. Zoomiebot is hosted on Wikimedia Toolforge, more information can be
 found [here](https://github.com/ChlodAlejandro/zoomiebot#README).
+
+## Installation
+See [User:Chlod/Scripts/Deputy § Installation](https://en.wikipedia.org/wiki/User:Chlod/Scripts/Deputy#Installation) on the Englsih Wikipedia for more information.
 
 ## Developing
 
@@ -99,4 +102,4 @@ Apache License 2.0. The userscript, in particular, bundles with the following li
 
 ## Funding
 
-The initial development of Deputy is covered by a [Wikimedia Foundation Rapid Grant](https://w.wiki/4xk$).
+The initial development of Deputy was covered by a [Wikimedia Foundation Rapid Grant](https://w.wiki/4xk$). Deputy is now being maintained through volunteer effort without compensation.
