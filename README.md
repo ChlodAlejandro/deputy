@@ -1,6 +1,6 @@
 # Deputy
 
-<img align="right" width="70" height="70" src="https://upload.wikimedia.org/wikipedia/commons/2/2b/Deputy_logo.svg">
+<img align="right" width="70" height="70" alt="Deputy logo" src="https://upload.wikimedia.org/wikipedia/commons/2/2b/Deputy_logo.svg">
 
 [Deputy](https://w.wiki/5k$q) is
 a [contributor copyright investigation](https://en.wikipedia.org/wiki/Wikipedia:Contributor_copyright_investigations) (CCI) and copyright cleanup assistance tool for Wikipedia. Its goal is to streamline the workflow for CCI case pages, making it easier to
@@ -15,7 +15,7 @@ perform bulk data operations. Zoomiebot is hosted on Wikimedia Toolforge, more i
 found [here](https://github.com/ChlodAlejandro/zoomiebot#README).
 
 ## Installation
-See [User:Chlod/Scripts/Deputy § Installation](https://en.wikipedia.org/wiki/User:Chlod/Scripts/Deputy#Installation) on the Englsih Wikipedia for more information.
+See [User:Chlod/Scripts/Deputy § Installation](https://en.wikipedia.org/wiki/User:Chlod/Scripts/Deputy#Installation) on the English Wikipedia for more information.
 
 ## Developing
 

@@ -1,26 +1,45 @@
 /* eslint-disable */
 /**
  * Counts the number of instances of {{CPC}} transclusions in the Wikipedia:Copyright problems pagespace.
- * ================================================================================================
- * Copyright © 2022 Chlod Aidan Alejandro
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
- * and associated documentation files (the “Software”), to deal in the Software without restriction,
- * including without limitation the rights to use, copy, modify, merge, publish, distribute,
- * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies or
- * substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
- * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * @license MIT
  */
 const axios = require( 'axios' );
+
+/**
+ * The revision number of {{cpc}} at the time of writing. This is checked
+ * later on and will cause the script to fail if the version does not
+ * match the latest (so that changes to text are properly accounted for).
+ *
+ * @type {number}
+ */
+const cpcVersion = 1112515158;
+
 ( async () => {
+
+	console.log("Checking if CPC template has changed...");
+
+	const isOutdated = axios.post(
+		"https://en.wikipedia.org/w/api.php",
+		new URLSearchParams( {
+			action: "query",
+			format: "json",
+			formatversion: "2",
+			titles: "Template:CPC",
+			prop: "revisions",
+			rvprop: "ids"
+		} ),
+		{ responseType: "json" }
+	).then( v => v.data.query.pages[0].revisions[0].revid !== cpcVersion);
+
+	if ( await isOutdated ) {
+		console.error( " CPC template has changed. Please update the script." );
+		process.exit( 1 );
+	} else {
+		console.log(" CPC template up to date!");
+	}
+
+	console.log("Conducting search of CPC templates...");
 
 	// Tags where there shouldn't be a -1.
 	const nonClosingTags = [ 'deferred', 'OTRS', 'unverified', 'viable' ];
@@ -113,7 +132,7 @@ const axios = require( 'axios' );
 		"User was not notified, relisted under today": "user"
 	};
 
-	// Reverse queries. Overwrite with latest occurrence.
+	// Reverse queries. Overwrite with the latest occurrence.
 	const templates = {};
 	for ( const [ query, key ] of Object.entries( queries ) ) {
 		templates[ key ] = query;
@@ -134,14 +153,24 @@ const axios = require( 'axios' );
 			srprop: ''
 		} ), { responseType: 'json' } );
 
-		console.log( query + ': ' + req.data.query[ 'searchinfo' ][ 'totalhits' ] );
+		console.log( ` [${req.data.query[ 'searchinfo' ][ 'totalhits' ]}] "${ query }"` );
 		counts[ key ] = ( counts[ key ] || 0 ) + req.data.query[ 'searchinfo' ][ 'totalhits' ];
 	}
 
-	console.log( '\nSORTING...\n' );
+	console.log( '\nSorting...\n' );
 
 	const sortedCounts = Object.entries( counts )
 		.sort( ( a, b ) => b[ 1 ] - a[ 1 ] );
+
+	const longestValue = sortedCounts[0][1].toString().length;
+	for ( const [ key, count ] of sortedCounts ) {
+		const n = `${count}`;
+		console.log( ` [ ${
+			' '.repeat(Math.max(0, longestValue - n.length))
+		}${n} ] ${key}` );
+	}
+
+	console.log(); // extra newline
 
 	const out = [];
 	for ( const [ key ] of sortedCounts ) {
@@ -154,3 +183,21 @@ const axios = require( 'axios' );
 	console.log( JSON.stringify( out, null, 4 ) );
 
 } )();
+/*!
+* Copyright © 2022 Chlod Aidan Alejandro
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+* and associated documentation files (the “Software”), to deal in the Software without restriction,
+* including without limitation the rights to use, copy, modify, merge, publish, distribute,
+* sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in all copies or
+* substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+* NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+* NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+* DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT
+* OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
