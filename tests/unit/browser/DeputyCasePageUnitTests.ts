@@ -1,5 +1,5 @@
-import { jest } from '@jest/globals';
 import '../../../src/types';
+import 'types-mediawiki';
 import BrowserHelper from '../../util/BrowserHelper';
 
 describe( 'DeputyCasePage static unit tests', () => {
@@ -10,9 +10,7 @@ describe( 'DeputyCasePage static unit tests', () => {
 		page = await BrowserHelper.build()
 			.then( p => p.loadWikipediaPage( 'Wikipedia:Sandbox' ) )
 			.then( p => p.loadDeputyScript() );
-
-		jest.setTimeout( 10e3 );
-	}, 180e3 );
+	} );
 
 	afterAll( async () => {
 		await page.close();
@@ -127,9 +125,7 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 				);
 			} );
 		} );
-
-		jest.setTimeout( 10e3 );
-	}, 180e3 );
+	} );
 
 	afterAll( async () => {
 		await page.close();

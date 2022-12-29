@@ -1,6 +1,6 @@
 import '../../../src/types';
+import 'types-mediawiki';
 import BrowserHelper from '../../util/BrowserHelper';
-import { jest } from '@jest/globals';
 
 describe( 'Utility function tests', () => {
 
@@ -10,9 +10,7 @@ describe( 'Utility function tests', () => {
 		page = await BrowserHelper.build()
 			.then( p => p.loadWikipediaPage( 'Wikipedia:Sandbox' ) )
 			.then( p => p.loadDeputyScript() );
-
-		jest.setTimeout( 10e3 );
-	}, 30e3 );
+	} );
 
 	afterAll( async () => {
 		await page.close();

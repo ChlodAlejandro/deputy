@@ -1,4 +1,5 @@
 import '../../src/types';
+import 'types-mediawiki';
 import BrowserHelper from '../util/BrowserHelper';
 
 describe( 'ContributionSurveyRowParser integration tests', () => {
@@ -11,7 +12,6 @@ describe( 'ContributionSurveyRowParser integration tests', () => {
 	describe( 'Live parsing tests on open cases', () => {
 
 		for ( const caseName of cases ) {
-			jest.setTimeout( 300e3 );
 			test( 'enwiki:' + caseName, async () => {
 				const caseTitle = 'Wikipedia:Contributor copyright investigations/' + caseName;
 

@@ -1,9 +1,8 @@
 import '../../src/types';
+import 'types-mediawiki';
 import BrowserHelper from '../util/BrowserHelper';
 
 describe( 'Browser load tests', () => {
-
-	jest.setTimeout( 20e3 );
 
 	let page: BrowserHelper;
 
@@ -25,7 +24,7 @@ describe( 'Browser load tests', () => {
 				} );
 			} );
 		} );
-	}, 60e3 );
+	} );
 
 	afterAll( async () => {
 		await page.close();

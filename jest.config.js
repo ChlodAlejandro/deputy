@@ -10,6 +10,7 @@ module.exports = {
 		'ts-jest': {
 			tsconfig: '<rootDir>/tsconfig.tests.json'
 		}
-	}
+	},
+	testTimeout: 600e3
 
 };

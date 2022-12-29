@@ -1,7 +1,8 @@
-import webdriver, { error } from 'selenium-webdriver';
+import * as webdriver from 'selenium-webdriver';
+import { error } from 'selenium-webdriver';
 import type { Executor } from 'selenium-webdriver/lib/command';
-import chrome from 'selenium-webdriver/chrome';
-import firefox from 'selenium-webdriver/firefox';
+import * as chrome from 'selenium-webdriver/chrome';
+import * as firefox from 'selenium-webdriver/firefox';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { PromiseOrNot } from '../../src/types';
