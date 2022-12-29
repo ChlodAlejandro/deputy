@@ -10,6 +10,7 @@ import getObjectValues from '../../../util/getObjectValues';
 import { CompletionAction } from '../../shared/CompletionAction';
 import purge from '../../../wiki/util/purge';
 import { blockExit, unblockExit } from '../../../util/blockExit';
+import CCICaseInputWidget from './CCICaseInputWidget';
 
 /**
  *
@@ -101,6 +102,16 @@ function NewCopyrightProblemsBatchListingPanel( props: { button: any } ) {
 			validateTitle: true,
 			excludeDynamicNamespaces: true
 		} ),
+		presumptive: new OO.ui.CheckboxInputWidget( {
+			selected: false
+		} ),
+		presumptiveCase: CCICaseInputWidget( {
+			allowArbitrary: false,
+			required: true,
+			showMissing: false,
+			validateTitle: true,
+			excludeDynamicNamespaces: true
+		} ),
 		comments: new OO.ui.TextInputWidget( {
 			placeholder: mw.msg( 'deputy.ia.listing.new.comments.placeholder' )
 		} )
@@ -126,6 +137,22 @@ function NewCopyrightProblemsBatchListingPanel( props: { button: any } ) {
 				align: 'top',
 				label: mw.msg( 'deputy.ia.listing.new.comments.label' )
 			}
+		),
+		presumptive: new OO.ui.FieldLayout(
+			inputs.presumptive,
+			{
+				align: 'inline',
+				label: mw.msg( 'deputy.ia.listing.new.presumptive.label' ),
+				help: mw.msg( 'deputy.ia.listing.new.presumptive.help' )
+			}
+		),
+		presumptiveCase: new OO.ui.FieldLayout(
+			inputs.presumptiveCase,
+			{
+				align: 'top',
+				label: mw.msg( 'deputy.ia.listing.new.presumptiveCase.label' ),
+				help: mw.msg( 'deputy.ia.listing.new.presumptiveCase.help' )
+			}
 		)
 	};
 
@@ -136,10 +163,20 @@ function NewCopyrightProblemsBatchListingPanel( props: { button: any } ) {
 					( v : {data: string} ) => new mw.Title( v.data )
 				),
 				inputs.title.getValue(),
-				inputs.comments.getValue()
+				inputs.presumptive.getValue() ?
+					mw.msg(
+						'deputy.ia.content.batchListingComment.pd',
+						window.InfringementAssistant.wikiConfig
+							.cci.rootPage.get().getPrefixedText(),
+						inputs.presumptiveCase.getValue(),
+						inputs.comments.getValue()
+					) :
+					inputs.comments.getValue()
 			),
 			summary: mw.msg(
-				'deputy.ia.content.batchListing',
+				inputs.presumptive.getValue() ?
+					'deputy.ia.content.batchListing.pd' :
+					'deputy.ia.content.batchListing',
 				listingPage.title.getPrefixedText(),
 				delink( inputs.title.getValue() )
 			)

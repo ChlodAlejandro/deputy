@@ -208,15 +208,18 @@ export default class CopyrightProblemsPage {
 	 *
 	 * @param page
 	 * @param comments
+	 * @param presumptive
 	 */
-	async postListing( page: mw.Title, comments?: string ): Promise<void> {
+	async postListing( page: mw.Title, comments?: string, presumptive?: boolean ): Promise<void> {
 		const listingPage = this.main ? CopyrightProblemsPage.getCurrentListingPage() : this.title;
 
 		await this.tryListingAppend(
 			this.getListingWikitext( page, comments ),
 			decorateEditSummary(
 				mw.msg(
-					'deputy.ia.content.listing',
+					presumptive ?
+						'deputy.ia.content.listing.pd' :
+						'deputy.ia.content.listing',
 					listingPage.getPrefixedText(),
 					page.getPrefixedText()
 				)
@@ -253,15 +256,23 @@ export default class CopyrightProblemsPage {
 	 * @param page
 	 * @param title
 	 * @param comments
+	 * @param presumptive
 	 */
-	async postListings( page: mw.Title[], title: string, comments?: string ): Promise<void> {
+	async postListings(
+		page: mw.Title[],
+		title: string,
+		comments?: string,
+		presumptive?: boolean
+	): Promise<void> {
 		const listingPage = this.main ? CopyrightProblemsPage.getCurrentListingPage() : this.title;
 
 		await this.tryListingAppend(
 			this.getBatchListingWikitext( page, title, comments ),
 			decorateEditSummary(
 				mw.msg(
-					'deputy.ia.content.batchListing',
+					presumptive ?
+						'deputy.ia.content.batchListing.pd' :
+						'deputy.ia.content.batchListing',
 					listingPage.getPrefixedText(), title
 				)
 			)

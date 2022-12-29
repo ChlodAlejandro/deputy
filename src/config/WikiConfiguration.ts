@@ -260,6 +260,10 @@ export default class WikiConfiguration extends ConfigurationBase {
 			defaultValue: null,
 			displayOptions: { type: 'page' }
 		} ),
+		allowPresumptive: new Setting<boolean, boolean>( {
+			defaultValue: true,
+			displayOptions: { type: 'checkbox' }
+		} ),
 		listingWikitext: new Setting<string, string>( {
 			defaultValue: listingWikitext,
 			displayOptions: { type: 'code' }

@@ -10,6 +10,8 @@ import decorateEditSummary from '../../../wiki/util/decorateEditSummary';
 import { TripleCompletionAction } from '../../shared/CompletionAction';
 import equalTitle from '../../../util/equalTitle';
 import msgEval from '../../../wiki/util/msgEval';
+import WikiConfiguration from '../../../config/WikiConfiguration';
+import CCICaseInputWidget from './CCICaseInputWidget';
 
 export interface SinglePageWorkflowDialogData {
 	page: TitleLike;
@@ -49,6 +51,13 @@ interface SinglePageWorkflowDialogResponseData {
 	endSection?: Section;
 	startOffset?: number;
 	endOffset?: number;
+
+	/**
+	 * Determines whether sources are used entirely. If true, sources are NOT
+	 * used. If false, sources are used. This also changes used content strings.
+	 */
+	presumptive: boolean;
+	presumptiveCase: string;
 
 	/**
 	 * Determines which source mode to use. If `fromUrls` is true, `sourceUrls` will be
@@ -227,6 +236,16 @@ function initSinglePageWorkflowDialog() {
 					disabled: entirePageByDefault,
 					placeholder: mw.msg( 'deputy.ia.report.endSection.placeholder' )
 				} ),
+				presumptive: new OO.ui.CheckboxInputWidget( {
+					selected: false
+				} ),
+				presumptiveCase: CCICaseInputWidget( {
+					allowArbitrary: false,
+					required: true,
+					showMissing: false,
+					validateTitle: true,
+					excludeDynamicNamespaces: true
+				} ),
 				fromUrls: new OO.ui.CheckboxInputWidget( {
 					selected: this.data.fromUrls
 				} ),
@@ -247,7 +266,7 @@ function initSinglePageWorkflowDialog() {
 					maxRows: 2,
 					placeholder: mw.msg( 'deputy.ia.report.additionalNotes.placeholder' )
 				} )
-			};
+			} as const;
 
 			const fields = {
 				entirePage: new OO.ui.FieldLayout( this.inputs.entirePage, {
@@ -263,6 +282,16 @@ function initSinglePageWorkflowDialog() {
 					align: 'top',
 					label: mw.msg( 'deputy.ia.report.endSection.label' ),
 					help: mw.msg( 'deputy.ia.report.endSection.help' )
+				} ),
+				presumptive: new OO.ui.FieldLayout( this.inputs.presumptive, {
+					align: 'inline',
+					label: mw.msg( 'deputy.ia.report.presumptive.label' ),
+					help: mw.msg( 'deputy.ia.report.presumptive.help' )
+				} ),
+				presumptiveCase: new OO.ui.FieldLayout( this.inputs.presumptiveCase, {
+					align: 'top',
+					label: mw.msg( 'deputy.ia.report.presumptiveCase.label' ),
+					help: mw.msg( 'deputy.ia.report.presumptiveCase.help' )
 				} ),
 				fromUrls: new OO.ui.FieldLayout( this.inputs.fromUrls, {
 					align: 'inline',
@@ -281,7 +310,7 @@ function initSinglePageWorkflowDialog() {
 					align: 'top',
 					label: mw.msg( 'deputy.ia.report.additionalNotes.label' )
 				} )
-			};
+			} as const;
 
 			this.inputs.entirePage.on( 'change', ( selected: boolean ) => {
 				if ( selected === undefined ) {
@@ -355,6 +384,39 @@ function initSinglePageWorkflowDialog() {
 				entirePageHiddenCheck();
 			} );
 
+			const enablePresumptive =
+				window.InfringementAssistant.wikiConfig.ia.allowPresumptive.get() &&
+				!!window.InfringementAssistant.wikiConfig.cci.rootPage.get();
+			fields.presumptive.toggle( enablePresumptive );
+			fields.presumptiveCase.toggle( false );
+			this.inputs.presumptive.on( 'change', ( selected: boolean ) => {
+				this.data.presumptive = selected;
+
+				fields.presumptiveCase.toggle( selected );
+				fields.fromUrls.toggle( !selected );
+				if ( !selected ) {
+					if (
+						this.data.fromUrls ??
+						window.InfringementAssistant.config.ia.defaultFromUrls.get()
+					) {
+						fields.sourceUrls.toggle( true );
+						// No need to toggle sourceText, assume it is already hidden.
+					} else {
+						fields.sourceText.toggle( true );
+						// No need to toggle sourceText, assume it is already hidden.
+					}
+				} else {
+					fields.sourceUrls.toggle( false );
+					fields.sourceText.toggle( false );
+				}
+			} );
+			this.inputs.presumptiveCase.on( 'change', ( text: string ) => {
+				this.data.presumptiveCase = text.replace(
+					window.InfringementAssistant.wikiConfig.cci.rootPage.get().getPrefixedText(),
+					''
+				);
+			} );
+
 			this.inputs.fromUrls.on( 'change', ( selected: boolean = this.data.fromUrls ) => {
 				if ( selected === undefined ) {
 					// Bad firing.
@@ -373,6 +435,7 @@ function initSinglePageWorkflowDialog() {
 				this.data.sourceText = text.replace( /\.\s*$/, '' );
 			} );
 
+			// Presumptive deletion is default false, so no need to check for its state here.
 			if ( window.InfringementAssistant.config.ia.defaultFromUrls.get() ) {
 				fields.sourceText.toggle( false );
 			} else {
@@ -384,6 +447,7 @@ function initSinglePageWorkflowDialog() {
 			} );
 
 			return this.shadow ? getObjectValues( fields ) : [
+				fields.presumptive, fields.presumptiveCase,
 				fields.fromUrls, fields.sourceUrls, fields.sourceText,
 				fields.additionalNotes
 			];
@@ -502,15 +566,30 @@ function initSinglePageWorkflowDialog() {
 				summary: decorateEditSummary(
 					this.data.entirePage ?
 						mw.msg(
-							'deputy.ia.content.hideAll'
+							this.data.presumptive ?
+								'deputy.ia.content.hideAll.pd' :
+								'deputy.ia.content.hideAll',
+							// Only ever used if presumptive is set.
+							...( this.data.presumptive ? [
+								window.InfringementAssistant.wikiConfig
+									.cci.rootPage.get().getPrefixedText(),
+								this.data.presumptiveCase
+							] : [] )
 						) :
 						mw.msg(
-							'deputy.ia.content.hide',
+							this.data.presumptive ?
+								'deputy.ia.content.hideAll.pd' :
+								'deputy.ia.content.hide',
 							this.page.getPrefixedText(),
 							this.data.startSection?.anchor,
 							this.data.startSection?.line,
 							this.data.endSection?.anchor,
-							this.data.endSection?.line
+							this.data.endSection?.line,
+							...( this.data.presumptive ? [
+								window.InfringementAssistant.wikiConfig
+									.cci.rootPage.get().getPrefixedText(),
+								this.data.presumptiveCase
+							] : [] )
 						)
 				)
 			} );
@@ -531,12 +610,22 @@ function initSinglePageWorkflowDialog() {
 								' '
 						) :
 					this.data.sourceText;
-			const comments = ( from || '' ).trim().length !== 0 ?
-				mw.format( mw.msg( 'deputy.ia.content.listingComment', from, this.data.notes ) ) :
+			const comments = ( from || '' ).trim().length !== 0 || this.data.presumptive ?
+				mw.format( mw.msg(
+					this.data.presumptive ?
+						'deputy.ia.content.listingComment.pd' :
+						'deputy.ia.content.listingComment',
+					...( this.data.presumptive ? [
+						window.InfringementAssistant.wikiConfig
+							.cci.rootPage.get().getPrefixedText(),
+						this.data.presumptiveCase
+					] : [ from ] ),
+					this.data.notes
+				) ) :
 				this.data.notes ?? '';
 
 			await CopyrightProblemsPage.getCurrent()
-				.postListing( this.page, comments );
+				.postListing( this.page, comments, this.data.presumptive );
 		}
 
 		/**

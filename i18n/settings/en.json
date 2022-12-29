@@ -130,6 +130,8 @@
     "deputy.setting.wiki.ia.subpageFormat.description": "The format to use for subpages of the root page. This is a moment.js format string.",
     "deputy.setting.wiki.ia.preload.name": "Preload",
     "deputy.setting.wiki.ia.preload.description": "Defines the page content to preload the page with if a given subpage does not exist yet. This should be an existing page on-wiki. Leave blank to avoid using a preload entirely.",
+    "deputy.setting.wiki.ia.allowPresumptive.name": "Allow presumptive deletions",
+    "deputy.setting.wiki.ia.allowPresumptive.description": "Allows users to file listings for presumptive deletions. Note that the CCI setting \"Root page\" must be set for this to work, even if the \"CCI\" module is disabled entirely.",
     "deputy.setting.wiki.ia.listingWikitext.name": "Listing wikitext",
     "deputy.setting.wiki.ia.listingWikitext.description": "Defines the wikitext that will be used when adding listings to a noticeboard page. You may use \"$1\" to denote the page being reported, and \"$2\" for user comments (which shouldn't contain the signature).",
     "deputy.setting.wiki.ia.listingWikitextMatch.name": "Regular expression for listings",

@@ -7,6 +7,7 @@ import deputyVersion, {
 	gitBranch,
 	gitVersion
 } from '../../DeputyVersion';
+import WikiConfiguration from '../../config/WikiConfiguration';
 
 let InternalConfigurationGroupTabPanel: any;
 

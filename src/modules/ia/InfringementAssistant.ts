@@ -28,7 +28,8 @@ export default class InfringementAssistant extends DeputyModule {
 		'oojs-ui-windows',
 		'mediawiki.util',
 		'mediawiki.api',
-		'mediawiki.Title'
+		'mediawiki.Title',
+		'mediawiki.widgets'
 	];
 
 	readonly static = InfringementAssistant;
