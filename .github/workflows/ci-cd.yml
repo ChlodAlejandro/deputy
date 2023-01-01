@@ -123,7 +123,7 @@ jobs:
     name: Draft release
     needs: tests
     runs-on: ubuntu-latest
-    if: startsWith( github.ref, 'refs/tags/v' ) && github.ref_protected
+    if: ${{ startsWith( github.ref, 'refs/tags/v' ) && github.ref_protected }}
     steps:
       - name: Checkout code
         if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
@@ -156,7 +156,7 @@ jobs:
           path: ./CHANGELOG_EXTRACT.md
 
       - name: Check if CHANGELOG is formed
-        if: !contains( steps.changelog.outputs.content, 'deputy/compare/' )
+        if: ${{ !contains( steps.changelog.outputs.content, 'deputy/compare/' ) }}
         uses: actions/github-script@v3
         with:
           script: |
