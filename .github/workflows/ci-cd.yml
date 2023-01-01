@@ -118,3 +118,61 @@ jobs:
         with:
           name: test-artifacts--${{ matrix.os }}-${{ matrix.browser.product }}-${{ matrix.browser.version }}
           path: tests/artifacts/*
+
+  release:
+    name: Draft release
+    needs: tests
+    runs-on: ubuntu-latest
+    if: startsWith( github.ref, 'refs/tags/v' ) && github.ref_protected
+    steps:
+      - name: Checkout code
+        if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
+        uses: actions/checkout@v3
+        with:
+          path: repo/
+
+      - name: Download transpiled code
+        if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
+        uses: actions/download-artifact@v3
+        with:
+          name: builds
+          path: artifacts/
+
+      - name: Download sourcemaps
+        if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
+        uses: actions/download-artifact@v3
+        with:
+          name: sourcemaps
+          path: artifacts/
+
+      - name: Extract CHANGELOG section
+        run: |
+          cat repo/CHANGELOG.md | node -p "require('fs').readFileSync(0).toString('utf-8').match(/## [\s\S]+?(?=\s#\s)/)[0].trim()" > CHANGELOG_EXTRACT.md
+
+      - name: Read CHANGELOG extract
+        id: changelog
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: ./CHANGELOG_EXTRACT.md
+
+      - name: Check if CHANGELOG is formed
+        if: !contains( steps.changelog.outputs.content, 'deputy/compare/' )
+        uses: actions/github-script@v3
+        with:
+          script: |
+            core.setFailed('CHANGELOG.md does not have a comparison link. Are there still parts in Unreleased?')
+
+      - name: Draft release
+        id: draft_release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: ${{ github.ref_name }}
+          prerelease: ${{ contains( github.ref_name, '-rc' ) }}
+          makeLatest: ${{ !contains( github.ref_name, '-rc' ) }}
+          draft: true
+          body: |
+            ''Add release description here.''
+            
+            ${{ steps.changelog.outputs.content }}
+          artifacts: "artifacts/*"
