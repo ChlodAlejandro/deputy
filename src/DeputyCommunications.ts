@@ -117,6 +117,11 @@ export interface DeputyPageStatusResponseMessage {
 	 */
 	revisionStatus: boolean;
 	/**
+	 * An echo of the requested revision ID. Only enabled if the `revision`
+	 * parameter was supplied in the request.
+	 */
+	revision: number;
+	/**
 	 * The first unassessed revision of the page. Returns `false` if all revisions for
 	 * the page have been assessed.
 	 */

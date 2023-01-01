@@ -1,5 +1,4 @@
 import '../../../types';
-import 'types-mediawiki';
 
 let InternalCCICaseInputWidget: any;
 

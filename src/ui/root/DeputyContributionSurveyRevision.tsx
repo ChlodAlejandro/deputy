@@ -166,7 +166,8 @@ export default class DeputyContributionSurveyRevision
 				revision: this.revision.revid,
 				status: checked,
 				nextRevision: this.uiRow.revisions?.find(
-					( revision ) => !revision.completed
+					( revision ) => !revision.completed &&
+						revision.revision.revid !== this.revision.revid
 				)?.revision.revid ?? null
 			} );
 			this.statusAutosaveFunction();

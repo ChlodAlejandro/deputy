@@ -872,10 +872,7 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 		const rev = this.revisions?.find(
 			( r ) => r.revision.revid === event.data.revision
 		);
-		if (
-			event.data.page === this.row.title.getPrefixedText() &&
-			( event.data.page !== this.row.title.getPrefixedText() || !!rev )
-		) {
+		if ( event.data.page === this.row.title.getPrefixedText() ) {
 			window.deputy.comms.reply(
 				event.data, {
 					type: 'pageStatusResponse',
@@ -885,8 +882,10 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 					status: this.status,
 					enabledStatuses: this.statusDropdown.getEnabledOptions(),
 					revisionStatus: rev ? rev.completed : undefined,
+					revision: event.data.revision,
 					nextRevision: this.revisions?.find(
-						( revision ) => !revision.completed
+						( revision ) => !revision.completed &&
+							revision.revision.revid !== event.data.revision
 					)?.revision.revid ?? null
 				}
 			);

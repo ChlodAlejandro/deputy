@@ -26,6 +26,11 @@ export interface DeputyPageToolbarOptions extends Omit<DeputyPageStatusResponseM
 	 * accessible, but the revision completion checkbox will not be shown.
 	 */
 	forceRevision?: boolean;
+	/**
+	 * The revision to use. Helpful when overriding the revision being previewed, such as when
+	 * the revision that the case targets is on the left side of the page.
+	 */
+	revision: number;
 }
 
 /**
@@ -63,7 +68,7 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 		this.options = options;
 
 		if ( options.revisionStatus != null ) {
-			this.revision = mw.config.get( 'wgRevisionId' );
+			this.revision = options.revision ?? mw.config.get( 'wgRevisionId' );
 		}
 
 		this.runAsyncJobs();
@@ -144,8 +149,11 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 		} );
 
 		let lastStatus = this.revisionCheckbox.isSelected();
+
+		// State variables
 		let processing = false;
 		let incommunicable = false;
+
 		this.revisionCheckbox.on( 'change', async ( selected: boolean ) => {
 			if ( incommunicable ) {
 				incommunicable = false;
@@ -243,7 +251,8 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 			invisibleLabel: true,
 			label: mw.msg( 'deputy.session.page.diff.next' ),
 			title: mw.msg( 'deputy.session.page.diff.next' ),
-			icon: this.revision == null ? 'play' : 'next'
+			icon: this.revision == null ? 'play' : 'next',
+			disabled: this.options.nextRevision == null
 		} );
 
 		this.nextRevisionButton.on( 'click', async () => {
@@ -281,10 +290,6 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 				this.setDisabled( false );
 			}
 		} );
-
-		if ( this.options.nextRevision == null ) {
-			this.nextRevisionButton.setDisabled( true );
-		}
 
 		return <div class="dp-pt-section">
 			<div class="dp-pt-section-content">

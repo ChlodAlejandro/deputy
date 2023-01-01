@@ -49,41 +49,63 @@ export default class DeputyPageSession {
 			mw.loader.using( [
 				'oojs-ui-core',
 				'oojs-ui-windows',
+				'oojs-ui-widgets',
 				'oojs-ui.styles.icons-interactions',
 				'oojs-ui.styles.icons-movement',
 				'oojs-ui.styles.icons-moderation',
 				'oojs-ui.styles.icons-media',
+				'oojs-ui.styles.icons-editing-advanced',
 				'oojs-ui.styles.icons-editing-citation'
 			], () => {
-				mw.hook( 'wikipage.diff' ).add( async () => {
-					// Attempt to get new revision data *with revision ID*.
-					data = await DeputyPageSession.getPageDetails(
-						mw.config.get( 'wgDiffNewId' ) ||
-						mw.config.get( 'wgRevisionId' )
-					);
-
-					const openPromise = this.appendToolbar( {
-						...data,
-						forceRevision: this.toolbar != null ||
-							// Is a diff page.
-							mw.config.get( 'wgDiffNewId' ) != null
+				if ( mw.config.get( 'wgDiffNewId' ) === null ) {
+					// Not on a diff page, but wgRevisionId is populated nonetheless.
+					this.initInterface( data );
+				} else {
+					mw.hook( 'wikipage.diff' ).add( async () => {
+						await this.initInterface( data );
 					} );
-
-					if (
-						this.toolbar &&
-						this.toolbar.revision !== mw.config.get( 'wgRevisionId' )
-					) {
-						const oldToolbar = this.toolbar;
-						openPromise.then( () => {
-							oldToolbar.close();
-						} );
-
-					}
-
-					this.toolbar = await openPromise;
-				} );
+				}
 			} );
 		}
+	}
+
+	/**
+	 * Initialize the interface.
+	 *
+	 * @param data
+	 */
+	async initInterface( data: DeputyPageStatusResponseMessage ) {
+		// Attempt to get new revision data *with revision ID*.
+		const isCurrentDiff = /[?&]diff=0+(\D|$)/.test( window.location.search );
+		data = await DeputyPageSession.getPageDetails(
+			( isCurrentDiff ?
+				// On a "cur" diff page
+				mw.config.get( 'wgDiffOldId' ) :
+				// On a "prev" diff page
+				mw.config.get( 'wgDiffNewId' ) ) ||
+			mw.config.get( 'wgRevisionId' )
+		);
+
+		const openPromise = this.appendToolbar( {
+			...data,
+			forceRevision: this.toolbar != null ||
+				// Is a diff page.
+				mw.config.get( 'wgDiffNewId' ) != null
+		} );
+
+		if (
+			// Previous toolbar exists. Close it before moving on.
+			this.toolbar &&
+			this.toolbar.revision !== mw.config.get( 'wgRevisionId' )
+		) {
+			const oldToolbar = this.toolbar;
+			openPromise.then( () => {
+				oldToolbar.close();
+			} );
+
+		}
+
+		this.toolbar = await openPromise;
 	}
 
 	/**

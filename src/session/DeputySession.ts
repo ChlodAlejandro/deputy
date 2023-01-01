@@ -26,6 +26,7 @@ export interface SessionInformation {
 export default class DeputySession {
 
 	readonly DeputyRootSession = DeputyRootSession;
+	readonly DeputyPageSession = DeputyPageSession;
 
 	/**
 	 * The DeputyRootSession handles session functions for the root tab. The
@@ -132,10 +133,7 @@ export default class DeputySession {
 	async normalPageInitialization(): Promise<boolean> {
 		// Normal page. Determine if this is being worked on, and then
 		// start a new session if it is.
-		const pageSession = await DeputyPageSession.getPageDetails(
-			mw.config.get( 'wgDiffNewId' ) ||
-			mw.config.get( 'wgRevisionId' )
-		);
+		const pageSession = await DeputyPageSession.getPageDetails();
 
 		if ( pageSession ) {
 			// This page is being worked on, create a session.
