@@ -30,7 +30,7 @@ export default class TemplateFactory {
 		return WikiAttributionNotices.attributionNoticeTemplates[ type ].getNamespaceId() ===
 			nsId( 'template' ) ?
 			// If in the "Template" namespace, "Copied"
-			WikiAttributionNotices.attributionNoticeTemplates[ type ].getNameText() :
+			WikiAttributionNotices.attributionNoticeTemplates[ type ].getMainText() :
 			// If not in the "Template" namespace, "Namespace:Copied"
 			WikiAttributionNotices.attributionNoticeTemplates[ type ].getPrefixedText();
 	}
