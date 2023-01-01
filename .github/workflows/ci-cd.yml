@@ -126,20 +126,17 @@ jobs:
     if: ${{ startsWith( github.ref, 'refs/tags/v' ) && github.ref_protected }}
     steps:
       - name: Checkout code
-        if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
         uses: actions/checkout@v3
         with:
           path: repo/
 
       - name: Download transpiled code
-        if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
         uses: actions/download-artifact@v3
         with:
           name: builds
           path: artifacts/
 
       - name: Download sourcemaps
-        if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
         uses: actions/download-artifact@v3
         with:
           name: sourcemaps
@@ -163,7 +160,6 @@ jobs:
             core.setFailed('CHANGELOG.md does not have a comparison link. Are there still parts in Unreleased?')
 
       - name: Draft release
-        id: draft_release
         uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
