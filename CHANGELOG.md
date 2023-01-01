@@ -3,6 +3,17 @@
 
 These are changes that may or may not have been deployed to wikis, but are not yet considered as part of any release.
 
+## Added
+* [[`480d81f`](../../commit/480d81f)] Added fields for presumptive deletion in IA single page workflow dialog
+
+## Modified
+* [[`03a9505`](../../commit/03a9505)] Improved revision switching in page toolbar
+* [[`03a9505`](../../commit/03a9505)] Began showing page toolbar regardless of diff view
+
+## Bugs
+* [[`ab937d9`](../../commit/ab937d9)] (dev) Fixed `mw` typing being missing from tests
+* [[`13892d7`](../../commit/13892d7)] Fixed accidental use of `getNameText` instead of `getMainText`
+
 # [v0.3.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.3.1) - 2022-12-17
 General bugfix and quality-of-life fixes.
 
