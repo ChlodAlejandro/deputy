@@ -323,9 +323,16 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			let rowElement;
 			try {
 				const csr = new ContributionSurveyRow( this.casePage, line );
-				rowElement = new DeputyContributionSurveyRow(
-					csr, rowElements[ csr.title.getPrefixedText() ], line, this
-				);
+				const originalElement = rowElements[ csr.title.getPrefixedText() ];
+
+				if ( originalElement ) {
+					rowElement = new DeputyContributionSurveyRow(
+						csr, originalElement, line, this
+					);
+				} else {
+					// Element somehow not in list. Just keep line as-is.
+					rowElement = line;
+				}
 			} catch ( e ) {
 				// Only trigger on actual bulleted lists.
 				if ( /^\*[^*]+/.test( line ) ) {
