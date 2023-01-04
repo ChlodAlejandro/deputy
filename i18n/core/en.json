@@ -50,6 +50,7 @@
     "deputy.session.row.history": "Open page history",
     "deputy.session.row.checkAll": "Mark all revisions as finished",
     "deputy.session.row.checkAll.confirm": "Mark all revisions as finished?",
+    "deputy.session.row.additionalComments": "Discussion",
     "deputy.session.row.closeComments": "Closing comments",
     "deputy.session.row.close.sigFound": "The closing comment had a signature. It will not be automatically removed when saved.",
     "deputy.session.row.close.sigFound.maybe": "The closing comment might have had a signature. It will not be automatically removed when saved.",

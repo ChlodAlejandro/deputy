@@ -350,7 +350,7 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 		} );
 	} );
 
-	test( 'edge: comment after diffs', () => {
+	test( 'edge: comment after diffs (unfinished, has comment)', () => {
 		const parser = new ContributionSurveyRowParser(
 			'* [[:Example]]: (1 edit, 1 major, +173) [[Special:Diff/123456|(+173)]] muy bien'
 		);

@@ -72,6 +72,10 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 	 */
 	originalElement?: HTMLLIElement;
 	/**
+	 * Additional comments that may have been left by other editors.
+	 */
+	additionalComments: Element[];
+	/**
 	 * Original wikitext of this element.
 	 */
 	originalWikitext: string;
@@ -357,8 +361,83 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 		super();
 		this.row = row;
 		this.originalElement = originalElement;
+		this.additionalComments = this.extractAdditionalComments();
 		this.originalWikitext = originalWikitext;
 		this.section = section;
+	}
+
+	/**
+	 * Extracts HTML elements which may be additional comments left by others.
+	 * The general qualification for this is that it has to be a list block
+	 * element that comes after the main line (in this case, it's detected after
+	 * the last .
+	 * This appears in the following form in wikitext:
+	 *
+	 * ```
+	 * * [[Page]] (...) [[Special:Diff/...|...]]
+	 * *: Hello!                                                 <-- definition list block
+	 * ** What!?                                                 <-- sub ul
+	 * *# Yes.                                                   <-- sub ol
+	 * * [[Page]] (...) [[Special:Diff/...|...]]<div>...</div>   <-- inline div
+	 * ```
+	 *
+	 * Everything else (`*<div>...`, `*'''...`, `*<span>`, etc.) is considered
+	 * not to be an additional comment.
+	 *
+	 * If no elements were found, this returns an empty array.
+	 *
+	 * @return An array of HTMLElements
+	 */
+	extractAdditionalComments(): Element[] {
+		// COMPAT: Specific to MER-C contribution surveyor
+		// Initialize to first successive diff link.
+		let lastSuccessiveDiffLink = this.originalElement.querySelector(
+			'a[href^="/wiki/Special:Diff/"]'
+		);
+
+		const elements: Element[] = [];
+		if ( !lastSuccessiveDiffLink ) {
+			// No diff links. Get last element, check if block element, and crawl backwards.
+			let nextDiscussionElement = this.originalElement.lastElementChild;
+			while (
+				nextDiscussionElement &&
+				window.getComputedStyle( nextDiscussionElement, '' ).display === 'block'
+			) {
+				elements.push( nextDiscussionElement );
+
+				nextDiscussionElement = nextDiscussionElement.previousElementSibling;
+			}
+		} else {
+			while (
+				lastSuccessiveDiffLink.nextElementSibling &&
+				lastSuccessiveDiffLink.nextElementSibling.tagName === 'A' &&
+				lastSuccessiveDiffLink
+					.nextElementSibling
+					.getAttribute( 'href' )
+					.startsWith( '/wiki/Special:Diff' )
+			) {
+				lastSuccessiveDiffLink = lastSuccessiveDiffLink.nextElementSibling;
+			}
+			// The first block element after `lastSuccessiveDiffLink` is likely discussion,
+			// and everything after it is likely part of such discussion.
+			let pushing = false;
+			let nextDiscussionElement = lastSuccessiveDiffLink.nextElementSibling;
+			while ( nextDiscussionElement != null ) {
+				if (
+					!pushing &&
+					window.getComputedStyle( nextDiscussionElement ).display === 'block'
+				) {
+					pushing = true;
+					elements.push( nextDiscussionElement );
+				} else if ( pushing ) {
+					elements.push( nextDiscussionElement );
+				}
+
+				nextDiscussionElement = nextDiscussionElement.nextElementSibling;
+			}
+		}
+
+		return elements;
 	}
 
 	/**
@@ -475,7 +554,7 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 		this.commentsTextInput = new OO.ui.MultilineTextInputWidget( {
 			classes: [ 'dp-cs-row-closeComments' ],
 			placeholder: mw.msg( 'deputy.session.row.closeComments' ),
-			value: value,
+			value: value ?? '',
 			autosize: true,
 			rows: 1
 		} );
@@ -535,7 +614,7 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 		revisionList.appendChild( unwrapWidget( this.unfinishedMessageBox ) );
 
 		revisionList.appendChild( unwrapWidget(
-			this.renderCommentsTextInput()
+			this.renderCommentsTextInput( this.row.comment )
 		) );
 
 		for ( const revision of diffs.values() ) {
@@ -792,6 +871,27 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 	}
 
 	/**
+	 * Renders additional comments that became part of this row.
+	 *
+	 * @return An HTML element.
+	 */
+	renderAdditionalComments(): JSX.Element {
+		const additionalComments = <div class="dp-cs-row-comments">
+			<b>{ mw.msg( 'deputy.session.row.additionalComments' ) }</b>
+			<hr/>
+			<div class="dp-cs-row-comments-content" dangerouslySetInnerHTML={
+				this.additionalComments.map( e => e.innerHTML ).join( '' )
+			} />
+		</div>;
+
+		// Open all links in new tabs.
+		additionalComments.querySelectorAll( '.dp-cs-row-comments-content a' )
+			.forEach( a => a.setAttribute( 'target', '_blank' ) );
+
+		return additionalComments;
+	}
+
+	/**
 	 *
 	 * @param diffs
 	 * @param content
@@ -810,6 +910,7 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 		this.element = swapElements(
 			this.element, <div>
 				{ this.renderHead( diffs, contentContainer ) }
+				{ this.additionalComments?.length > 0 && this.renderAdditionalComments() }
 				{ contentContainer }
 			</div>
 		) as HTMLElement;

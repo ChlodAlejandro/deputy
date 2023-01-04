@@ -206,6 +206,23 @@ p.dp-messageWidget-message {
 	vertical-align: middle;
 }
 
+.dp-cs-row-comments {
+	padding: 16px;
+	background-color: rgba(0, 159, 255, 10%);
+	margin: 4px 0;
+}
+
+.dp-cs-row-comments > b {
+	letter-spacing: 0.1em;
+	font-weight: bold;
+	text-transform: uppercase;
+	color: rgba(0, 0, 0, 0.5);
+}
+
+.dp-cs-row-comments hr {
+	border-color: rgb(0, 31, 51);
+}
+
 body.mediawiki.ltr .dp-cs-row-head > :not(:first-child):not(:last-child),
 body.mediawiki.ltr .dp-cs-row-head > :not(:first-child):not(:last-child) {
 	margin-right: 16px;
@@ -255,7 +272,7 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
 
 .dp-cs-row-content {
 	padding: 16px;
-	background-color: rgba(0, 0, 0, 4%);
+	background-color: rgba(0, 0, 0, 6%);
 	margin: 4px 0;
 }
 

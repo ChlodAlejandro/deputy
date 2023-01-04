@@ -294,7 +294,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			return false;
 		}
 
-		this.originalList = firstList.parentElement.removeChild( firstList ) as HTMLElement;
+		this.originalList = firstList as HTMLElement;
 
 		const rowElements: Record<string, HTMLLIElement> = {};
 		for ( let i = 0; i < this.originalList.children.length; i++ ) {
@@ -342,6 +342,9 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			}
 			this.wikitextLines.push( rowElement );
 		}
+
+		// Remove last, this is to preserve as much state as possible
+		firstList.parentElement.removeChild( firstList );
 
 		return true;
 	}

@@ -2,7 +2,7 @@ import '../../../src/types';
 import 'types-mediawiki';
 import BrowserHelper from '../../util/BrowserHelper';
 
-describe( 'Utility function tests', () => {
+describe( 'Utility (on-browser) function tests', () => {
 
 	let page: BrowserHelper;
 
