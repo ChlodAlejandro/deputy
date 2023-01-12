@@ -19,7 +19,7 @@ function initCCICaseInputWidget() {
 					const prefix = window.InfringementAssistant.wikiConfig
 						.cci.rootPage.get().getPrefixedText() + '/';
 					// Simple replace, only 1 replacement made anyway.
-					const trimmed = value.replace( prefix, '' ).trim();
+					const trimmed = value.replace( prefix, '' ).trimStart();
 
 					if ( config.inputFilter ) {
 						return config.inputFilter( trimmed );
@@ -32,7 +32,7 @@ function initCCICaseInputWidget() {
 
 		getQueryValue = function () {
 			return `${ window.InfringementAssistant.wikiConfig.cci.rootPage.get()
-				.getPrefixedText() }/${ this.getValue() }`;
+				.getPrefixedText() }/${ this.getValue().trimEnd() }`;
 		};
 
 	};

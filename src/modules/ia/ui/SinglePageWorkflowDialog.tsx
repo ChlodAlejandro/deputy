@@ -10,7 +10,6 @@ import decorateEditSummary from '../../../wiki/util/decorateEditSummary';
 import { TripleCompletionAction } from '../../shared/CompletionAction';
 import equalTitle from '../../../util/equalTitle';
 import msgEval from '../../../wiki/util/msgEval';
-import WikiConfiguration from '../../../config/WikiConfiguration';
 import CCICaseInputWidget from './CCICaseInputWidget';
 
 export interface SinglePageWorkflowDialogData {
@@ -542,9 +541,22 @@ function initSinglePageWorkflowDialog() {
 
 			const copyvioWikitext = msgEval(
 				wikiConfig.hideTemplate.get(),
-				this.data.fromUrls ?
-					( this.data.sourceUrls ?? [] )[ 0 ] ?? '' :
-					this.data.sourceText,
+				{
+					presumptive: this.data.presumptive ? 'true' : '',
+					presumptiveCase: this.data.presumptiveCase ? 'true' : '',
+					fromUrls: this.data.fromUrls ? 'true' : '',
+					sourceUrls: this.data.sourceUrls ? 'true' : '',
+					sourceText: this.data.sourceText ? 'true' : '',
+					entirePage: this.data.entirePage ? 'true' : ''
+				},
+				this.data.presumptive ?
+					`[[${
+						window.deputy.wikiConfig.cci.rootPage.get().getPrefixedText()
+					}/${this.data.presumptiveCase}]]` : (
+						this.data.fromUrls ?
+							( this.data.sourceUrls ?? [] )[ 0 ] ?? '' :
+							this.data.sourceText
+					),
 				this.data.entirePage ? 'true' : 'false'
 			).text();
 

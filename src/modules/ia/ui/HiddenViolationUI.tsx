@@ -60,6 +60,7 @@ export default class HiddenViolationUI {
 			button.setIcon(
 				shown ? 'eyeClosed' : 'eye'
 			);
+			this.vioElement.appendChild( <div style="clear: both;"/> );
 			this.vioElement.classList.toggle( 'deputy-show', shown );
 		} );
 

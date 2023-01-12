@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /*
  * Replacement polyfills for wikis that have no configured templates.
  * Used in WikiConfiguration, to permit a seamless OOB experience.
@@ -37,6 +38,7 @@ export const batchListingPageWikitext = '* [[$1]]\n';
 export const copyvioTop = `<div style="padding: 8px; border: 4px solid #0298b1;">
 <div style="font-size: 1.2rem"><b>{{int:deputy.ia.content.copyvio}}</b></div>
 <div>{{int:deputy.ia.content.copyvio.help}}</div>
+{{if:$1|<div>{{if:$presumptive|{{int:deputy.ia.content.copyvio.from.pd}} $1|{{int:deputy.ia.content.copyvio.from}} $1}}</div>}}
 </div>
 <!-- {{int:deputy.ia.content.copyvio.content}} -->
 <div class="copyvio" style="display: none">`;

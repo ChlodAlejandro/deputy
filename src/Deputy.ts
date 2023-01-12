@@ -26,6 +26,7 @@ import UserConfiguration from './config/UserConfiguration';
 import { attachConfigurationDialogPortletLink } from './ui/config/ConfigurationDialog';
 import WikiConfiguration from './config/WikiConfiguration';
 import Recents from './wiki/Recents';
+import msgEval from './wiki/util/msgEval';
 
 /**
  * The main class for Deputy. Entry point for execution.
@@ -55,7 +56,8 @@ class Deputy {
 		cloneRegex: cloneRegex,
 		getPageContent: getPageContent,
 		normalizeTitle: normalizeTitle,
-		sectionHeadingName: sectionHeadingName
+		sectionHeadingName: sectionHeadingName,
+		msgEval: msgEval
 	};
 	readonly modules = {
 		CopiedTemplateEditor: CopiedTemplateEditor,

@@ -14,6 +14,8 @@
     "deputy.ia.content.hide.pd": "Hiding sections [[$1#$2|$3]] to [[$1#$4|$5]] for presumptive deletion; see [[$6/$7]]",
     "deputy.ia.content.copyvio": "⛔ Content on this page has been temporarily hidden due to a suspected copyright violation",
     "deputy.ia.content.copyvio.help": "Please see this wiki's noticeboard for copyright problems for more information.",
+    "deputy.ia.content.copyvio.from": "The following reason/source was provided:",
+    "deputy.ia.content.copyvio.from.pd": "The content was presumptively removed based on the following contributor copyright investigation:",
     "deputy.ia.content.copyvio.content": "The following content may be a copyright violation. Please do not unhide it unless you have determined that it is compatible with this wiki's copyright license.",
 
     "deputy.ia.listing.new": "New listing",
@@ -55,7 +57,7 @@
     "deputy.ia.listing.re.user": "User was not notified, relisting under today's entry.",
     "deputy.ia.listing.re.where": "No vio found, claim cannot be validated. Tag removed from article.",
     "deputy.ia.listing.re.unsure": "No source found; copy-paste tag removed and cv-unsure tag placed at article talk.",
-    "deputy.ia.listing.re.deletedcup": "Copyright concerns remain. Article deleted, left {{Cup}} notice.",
+    "deputy.ia.listing.re.deletedcup": "Copyright concerns remain. Article deleted, left {{Template:Cup}} notice.",
     "deputy.ia.listing.re.relist": "Permission plausible. Article relisted under today.",
     "deputy.ia.listing.re.resolved": "Issue resolved.",
     "deputy.ia.listing.re.redirect": "Article redirected to a non-infringing target.",
@@ -99,14 +101,14 @@
 
     "deputy.ia.report.submit": "Submit",
     "deputy.ia.report.hide": "Hide content only",
-    "deputy.ia.report.hide.confirm": "This will insert the {{copyvio}} template and hide page content as set, but will not post a listing for this page on the noticeboard. Are you sure you don't want to list this page on the noticeboard?",
+    "deputy.ia.report.hide.confirm": "This will insert the {{Template:copyvio}} template and hide page content as set, but will not post a listing for this page on the noticeboard. Are you sure you don't want to list this page on the noticeboard?",
     "deputy.ia.report.success": "Page content hidden and reported",
     "deputy.ia.report.success.hide": "Page content hidden",
     "deputy.ia.report.success.report": "Page reported",
     "deputy.ia.report.error.report": "An error occurred while trying to save the entry to today's noticeboard listings. Please visit the noticeboard page and select \"Add listing\" or file the listing manually.",
-    "deputy.ia.report.error.shadow": "An error occurred while trying to append the {{copyvio}} template on the page. Please manually insert the template.",
+    "deputy.ia.report.error.shadow": "An error occurred while trying to append the {{Template:copyvio}} template on the page. Please manually insert the template.",
 
     "deputy.ia.hiddenVio": "A user has marked content on this page as a suspected copyright violation. It is currently hidden from normal viewers of this page while awaiting further action.",
-    "deputy.ia.hiddenVio.show": "Show hidden copyright violation",
-    "deputy.ia.hiddenVio.hide": "Hide hidden copyright violation"
+    "deputy.ia.hiddenVio.show": "Show hidden content",
+    "deputy.ia.hiddenVio.hide": "Hide hidden content"
 }

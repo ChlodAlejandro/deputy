@@ -109,9 +109,9 @@
     "deputy.setting.wiki.cci.rootPage.name": "Root page",
     "deputy.setting.wiki.cci.rootPage.description": "The main page that holds all subpages containing valid contribution copyright investigation cases.",
     "deputy.setting.wiki.cci.collapseTop.name": "Collapsible wikitext (top)",
-    "deputy.setting.wiki.cci.collapseTop.description": "Placed just below a section heading when closing a contributor survey section. Use \"$1\" to denote user comments and signature. On the English Wikipedia, this is {{collapse top}}. Other wikis may have an equivalent template. This should go hand in hand with \"{{int:deputy.setting.wiki.cci.collapseBottom.name}}\", as they are used as a pair.",
+    "deputy.setting.wiki.cci.collapseTop.description": "Placed just below a section heading when closing a contributor survey section. Use \"$1\" to denote user comments and signature. On the English Wikipedia, this is {{Template:collapse top}}. Other wikis may have an equivalent template. This should go hand in hand with \"{{int:deputy.setting.wiki.cci.collapseBottom.name}}\", as they are used as a pair.",
     "deputy.setting.wiki.cci.collapseBottom.name": "Collapsible wikitext (bottom)",
-    "deputy.setting.wiki.cci.collapseBottom.description": "Placed at the end of a section when closing a contributor survey section. On the English Wikipedia, this is {{collapse bottom}}. Other wikis may have an equivalent template.",
+    "deputy.setting.wiki.cci.collapseBottom.description": "Placed at the end of a section when closing a contributor survey section. On the English Wikipedia, this is {{Template:collapse bottom}}. Other wikis may have an equivalent template.",
     "deputy.setting.wiki.cci.earwigRoot.name": "Earwig's Copyvio Detector root URL",
     "deputy.setting.wiki.cci.earwigRoot.description": "The URL to an instance of Earwig's Copyvio Detector that can handle this wiki. The official copyvio detector (copyvios.toolforge.org) can only handle Wikimedia wikis — you may change this behavior by specifying a custom instance that can process this wiki here.",
 
@@ -141,9 +141,9 @@
     "deputy.setting.wiki.ia.batchListingPageWikitext.name": "Batch listing page wikitext",
     "deputy.setting.wiki.ia.batchListingPageWikitext.description": "Wikitext to use for every row of text in \"{{int:deputy.setting.wiki.ia.batchListingWikitext.name}}\". No line breaks are automatically added; these must be added into this string.",
     "deputy.setting.wiki.ia.hideTemplate.name": "Content hiding wikitext (top)",
-    "deputy.setting.wiki.ia.hideTemplate.description": "Wikitext to hide offending content with. On the English Wikipedia, this is a usage of {{copyvio}}. Other wikis may have an equivalent template. This should go hand in hand with \"{{int:deputy.setting.wiki.ia.hideTemplateBottom.name}}\", as they are used as a pair.",
+    "deputy.setting.wiki.ia.hideTemplate.description": "Wikitext to hide offending content with. On the English Wikipedia, this is a usage of {{Template:copyvio}}. Other wikis may have an equivalent template. This should go hand in hand with \"{{int:deputy.setting.wiki.ia.hideTemplateBottom.name}}\", as they are used as a pair.",
     "deputy.setting.wiki.ia.hideTemplateBottom.name": "Content hiding wikitext (bottom)",
-    "deputy.setting.wiki.ia.hideTemplateBottom.description": "Placed at the end of hidden content to hide only part of a page. On the English Wikipedia, this is {{copyvio/bottom}}. Other wikis may have an equivalent template.",
+    "deputy.setting.wiki.ia.hideTemplateBottom.description": "Placed at the end of hidden content to hide only part of a page. On the English Wikipedia, this is {{Template:copyvio/bottom}}. Other wikis may have an equivalent template.",
     "deputy.setting.wiki.ia.responses.name": "Responses",
     "deputy.setting.wiki.ia.responses.description": "Quick responses for copyright problems listings. Used by clerks to resolve specific listings or provide more information about the progress of a given listing."
 }
