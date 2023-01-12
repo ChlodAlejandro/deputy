@@ -16,6 +16,12 @@ import {
 } from '../wiki/TemplatePolyfills';
 import ConfigurationReloadBanner from '../ui/config/ConfigurationReloadBanner';
 
+export type WikiPageConfiguration = {
+	title: mw.Title,
+	wt: string,
+	editable: boolean
+};
+
 /**
  * Wiki-wide configuration. This is applied to all users of the wiki, and has
  * the potential to break things for EVERYONE if not set to proper values.
@@ -29,7 +35,7 @@ import ConfigurationReloadBanner from '../ui/config/ConfigurationReloadBanner';
  */
 export default class WikiConfiguration extends ConfigurationBase {
 
-	// uUed to avoid circular dependencies.
+	// Used to avoid circular dependencies.
 	static = WikiConfiguration;
 
 	static readonly configVersion = 1;
@@ -132,11 +138,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 	 *
 	 * @return The string text of the raw configuration, or `null` if a configuration was not found.
 	 */
-	static async loadConfigurationWikitext(): Promise<{
-		title: mw.Title,
-		wt: string,
-		editable: boolean
-	}> {
+	static async loadConfigurationWikitext(): Promise<WikiPageConfiguration> {
 		const response = await MwApi.action.get( {
 			action: 'query',
 			prop: 'revisions|info',
@@ -194,6 +196,11 @@ export default class WikiConfiguration extends ConfigurationBase {
 		configVersion: new Setting<number, number>( {
 			defaultValue: WikiConfiguration.configVersion,
 			displayOptions: { hidden: true },
+			alwaysSave: true
+		} ),
+		lastEdited: new Setting<number, number>( {
+			defaultValue: 0,
+			displayOptions: { type: 'number', readOnly: true },
 			alwaysSave: true
 		} ),
 		dispatchRoot: new Setting<string, URL>( {
@@ -308,6 +315,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 		} )
 	};
 
+	readonly type = <const> 'wiki';
 	public readonly all = { core: this.core, cci: this.cci, ante: this.ante, ia: this.ia };
 
 	/**
@@ -334,45 +342,89 @@ export default class WikiConfiguration extends ConfigurationBase {
 		if ( serializedData ) {
 			this.deserialize( serializedData );
 		}
+
+		if ( window.deputy?.comms ) {
+			// Communications is available. Register a listener.
+			window.deputy.comms.addEventListener( 'configUpdate', ( e ) => {
+				this.update( Object.assign( {}, e.data.config, {
+					title: normalizeTitle( e.data.config.title )
+				} ) );
+			} );
+		}
 	}
 
 	/**
 	 * Check for local updates, and update the local configuration as needed.
+	 *
+	 * @param sourceConfig A serialized version of the configuration based on a wiki
+	 * page configuration load.
 	 */
-	async update(): Promise<void> {
+	async update( sourceConfig?: WikiPageConfiguration ): Promise<void> {
 		// Asynchronously load from the wiki.
-		const fromWiki = await WikiConfiguration.loadConfigurationWikitext();
+		let fromWiki: WikiPageConfiguration;
+		if ( sourceConfig ) {
+			fromWiki = sourceConfig;
+		} else {
+			// Asynchronously load from the wiki.
+			fromWiki = await WikiConfiguration.loadConfigurationWikitext();
 
-		if ( fromWiki == null ) {
-			// No configuration found on the wiki.
-			return;
+			if ( fromWiki == null ) {
+				// No configuration found on the wiki.
+				return;
+			}
 		}
-		const liveWikiConfig = JSON.stringify( JSON.parse( fromWiki.wt ) );
+		const liveWikiConfig = JSON.parse( fromWiki.wt );
 
 		// Attempt save if on-wiki config found and doesn't match local.
 		// Doesn't need to be from the same config page, since this usually means a new config
 		// page was made, and we need to switch to it.
-		if ( JSON.stringify( this.serializedData ) !== liveWikiConfig ) {
-			MwApi.action.saveOption(
-				WikiConfiguration.optionKey,
-				// Use `liveWikiConfig`, since this contains the compressed version and is more
-				// bandwidth-friendly.
-				JSON.stringify( {
-					title: fromWiki.title,
-					editable: fromWiki.editable,
-					wt: liveWikiConfig
-				} )
-			).then( () => {
+		if ( this.core.lastEdited < liveWikiConfig.lastEdited ) {
+			const onSuccess = () => {
 				// Only mark outdated after saving, so we don't indirectly cause a save operation
 				// to cancel.
 				this.outdated = true;
 
 				// Attempt to add site notice.
-				document.getElementById( 'siteNotice' )?.insertAdjacentElement(
-					'afterend',
-					ConfigurationReloadBanner()
-				);
-			}, () => { /* silent fail */ } );
+				if ( document.querySelector( '.dp-wikiConfigUpdateMessage' ) == null ) {
+					document.getElementById( 'siteNotice' )?.insertAdjacentElement(
+						'afterend',
+						ConfigurationReloadBanner()
+					);
+				}
+			};
+
+			// If updated from a source config (other Deputy tab), do not attempt to save
+			// to MediaWiki settings. This is most likely already saved by the original tab
+			// that sent the comms message.
+			if ( !sourceConfig ) {
+				MwApi.action.saveOption(
+					WikiConfiguration.optionKey,
+					// Use `liveWikiConfig`, since this contains the compressed version and is more
+					// bandwidth-friendly.
+					JSON.stringify( {
+						title: fromWiki.title,
+						editable: fromWiki.editable,
+						wt: liveWikiConfig
+					} )
+				).then( () => {
+					if ( window.deputy?.comms ) {
+						// Broadcast the update to other tabs.
+						window.deputy.comms.send( {
+							type: 'configUpdate',
+							config: {
+								title: fromWiki.title.getPrefixedText(),
+								editable: fromWiki.editable,
+								wt: liveWikiConfig
+							}
+						} );
+					}
+					onSuccess();
+				} ).catch( () => {
+					// silently fail
+				} );
+			} else {
+				onSuccess();
+			}
 		}
 	}
 
@@ -380,6 +432,8 @@ export default class WikiConfiguration extends ConfigurationBase {
 	 * Saves the configuration on-wiki. Does not automatically generate overrides.
 	 */
 	async save(): Promise<void> {
+		// Update last edited number
+		this.core.lastEdited.set( Date.now() );
 		await MwApi.action.postWithEditToken( {
 			action: 'edit',
 			title: this.sourcePage.getPrefixedText(),

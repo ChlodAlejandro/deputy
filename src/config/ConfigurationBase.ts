@@ -1,5 +1,6 @@
 import Setting from './Setting';
 import { PromiseOrNot } from '../types';
+import { ConfigurationType } from './Configuration';
 
 /**
  * A configuration. Defines settings and setting groups.
@@ -16,6 +17,7 @@ export default abstract class ConfigurationBase {
 		throw new Error( 'Unimplemented method.' );
 	}
 
+	abstract readonly type: ConfigurationType;
 	abstract readonly all: Record<string, Record<string, Setting<any, any>>>;
 
 	/**

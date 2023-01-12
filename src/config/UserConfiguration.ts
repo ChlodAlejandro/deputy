@@ -166,6 +166,7 @@ export default class UserConfiguration extends ConfigurationBase {
 			) )
 	};
 
+	readonly type = <const>'user';
 	public readonly all = { core: this.core, cci: this.cci, ante: this.ante, ia: this.ia };
 
 	/**

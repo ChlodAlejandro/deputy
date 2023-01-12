@@ -25,6 +25,10 @@ interface DisplayOptionsBase {
 	 * Whether an option should be disabled or not.
 	 */
 	disabled?: boolean | string | ( ( config: UserConfiguration ) => boolean | string );
+	/**
+	 * Whether the value is read-only or not.
+	 */
+	readOnly?: boolean;
 
 }
 

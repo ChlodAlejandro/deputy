@@ -265,6 +265,7 @@ function initConfigurationGroupTabPanel() {
 			);
 
 			const field = new OO.ui.RadioSelectWidget( {
+				readOnly: setting.displayOptions.readOnly ?? false,
 				disabled: isDisabled !== undefined && isDisabled !== false,
 				items: this.getAllowedValuesArray( settingKey, setting.allowedValues )
 					.map( ( [ key, label ] ) =>
@@ -322,6 +323,7 @@ function initConfigurationGroupTabPanel() {
 			);
 
 			const field = new FieldClass( {
+				readOnly: setting.displayOptions.readOnly ?? false,
 				value: setting.serialize?.( setting.get() ) ?? setting.get(),
 				disabled: isDisabled !== undefined && isDisabled !== false,
 				...extraFieldOptions

@@ -1,6 +1,7 @@
 import 'broadcastchannel-polyfill';
 import { ContributionSurveyRowStatus } from './models/ContributionSurveyRow';
 import generateId from './util/generateId';
+import { WikiPageConfiguration } from './config/WikiConfiguration';
 
 /**
  * Generic message used to acknowledge an action. This is usually required by
@@ -175,6 +176,14 @@ export interface DeputyPageNextRevisionResponse {
 	revid: number;
 }
 
+export interface DeputyConfigurationUpdate {
+	type: 'configUpdate';
+	/**
+	 * The new configuration.
+	 */
+	config: Omit<WikiPageConfiguration, 'title'> & { title: string };
+}
+
 /**
  * A constant map of specific one-way Deputy message types and their respective
  * response messages.
@@ -188,7 +197,8 @@ const OneWayDeputyMessageMap = <const>{
 	pageStatusUpdate: 'acknowledge',
 	revisionStatusUpdate: 'acknowledge',
 	pageNextRevisionRequest: 'pageNextRevisionResponse',
-	pageNextRevisionResponse: 'pageNextRevisionRequest'
+	pageNextRevisionResponse: 'pageNextRevisionRequest',
+	configUpdate: 'configUpdate'
 };
 
 export type DeputyRequestMessage = DeputySessionRequestMessage;
@@ -206,7 +216,8 @@ export type DeputyMessage =
 	| DeputyPageStatusUpdateMessage
 	| DeputyRevisionStatusUpdateMessage
 	| DeputyPageNextRevisionRequest
-	| DeputyPageNextRevisionResponse;
+	| DeputyPageNextRevisionResponse
+	| DeputyConfigurationUpdate;
 export type LowLevelDeputyMessage = DeputyMessage & {
 	_deputy: true;
 	_deputyMessageId: string;

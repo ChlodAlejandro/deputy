@@ -13,7 +13,7 @@ export default function ConfigurationReloadBanner(): JSX.Element {
 	} );
 	const messageBox = DeputyMessageWidget( {
 		classes: [
-			'deputy', 'dp-mb'
+			'deputy', 'dp-mb', 'dp-wikiConfigUpdateMessage'
 		],
 		type: 'info',
 		title: mw.msg( 'deputy.settings.wikiOutdated' ),

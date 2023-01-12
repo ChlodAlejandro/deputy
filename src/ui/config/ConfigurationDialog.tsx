@@ -9,9 +9,10 @@ import deputySettingsEnglish from '../../../i18n/settings/en.json';
 import DeputyLanguage from '../../DeputyLanguage';
 import ConfigurationBase from '../../config/ConfigurationBase';
 import ConfigurationAboutTabPanel from './ConfigurationAboutTabPanel';
+import type { Configuration } from '../../config/Configuration';
 
 interface ConfigurationDialogData {
-	config: ConfigurationBase;
+	config: Configuration;
 }
 
 let InternalConfigurationDialog: any;
@@ -44,7 +45,7 @@ function initConfigurationDialog() {
 		};
 
 		data: any;
-		config: ConfigurationBase;
+		config: Configuration;
 
 		/**
 		 *
@@ -104,10 +105,25 @@ function initConfigurationDialog() {
 					mw.notify( mw.msg( 'deputy.settings.saved' ), {
 						type: 'success'
 					} );
-					if ( this.config instanceof UserConfiguration ) {
+					if ( this.config.type === 'user' ) {
 						// Override local Deputy option, just in case the user wishes to
 						// change the configuration again.
 						mw.user.options.set( UserConfiguration.optionKey, this.config.serialize() );
+					} else if ( this.config.type === 'wiki' ) {
+						// We know it is a WikiConfiguration, the instanceof check here
+						// is just for type safety.
+						if ( window.deputy?.comms ) {
+							window.deputy.comms.send( {
+								type: 'configUpdate',
+								config: {
+									title: this.config.sourcePage.getPrefixedText(),
+									editable: this.config.editable,
+									wt: this.config.serialize()
+								}
+							} );
+						}
+						// Reload the page.
+						window.location.reload();
 					}
 				} );
 			}
