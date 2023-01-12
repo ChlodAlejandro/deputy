@@ -27,6 +27,8 @@ Aside from that, this update brings a few needed bugfixes.
 * [[`13892d7`](../../commit/13892d7)] Fixed accidental use of `getNameText` instead of `getMainText`
 * [[`d556250`](../../commit/d08d091)] Fixed {{copyvio}} templates bearing "$1" instead of the reported URL
 
+For a granular list of changes, see [v0.3.1...v0.4.0](https://github.com/ChlodAlejandro/deputy/compare/v0.3.1...v0.4.0).
+
 # [v0.3.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.3.1) - 2022-12-17
 General bugfix and quality-of-life fixes.
 

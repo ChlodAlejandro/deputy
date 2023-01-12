@@ -79,7 +79,7 @@ jobs:
 
       - name: Install geckodriver
         if: matrix.browser.product == 'firefox' && matrix.os != 'windows-latest'
-        uses: ChlodAlejandro/setup-geckodriver@latest
+        uses: browser-actions/setup-geckodriver@latest
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -123,7 +123,7 @@ jobs:
     name: Draft release
     needs: tests
     runs-on: ubuntu-latest
-    if: ${{ startsWith( github.ref, 'refs/tags/v' ) && github.ref_protected }}
+    if: ${{ startsWith( github.ref, 'refs/tags/v' ) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -144,7 +144,7 @@ jobs:
 
       - name: Extract CHANGELOG section
         run: |
-          cat repo/CHANGELOG.md | node -p "require('fs').readFileSync(0).toString('utf-8').match(/## [\s\S]+?(?=\s#\s)/)[0].trim()" > CHANGELOG_EXTRACT.md
+          cat repo/CHANGELOG.md | node -p "require('fs').readFileSync(0).toString('utf-8').match(/# [\s\S]+?(?=\s#\s)/g)[1].trim().split('\n').slice(1).join('\n')" > CHANGELOG_EXTRACT.md
 
       - name: Read CHANGELOG extract
         id: changelog
@@ -167,8 +167,5 @@ jobs:
           prerelease: ${{ contains( github.ref_name, '-rc' ) }}
           makeLatest: ${{ !contains( github.ref_name, '-rc' ) }}
           draft: true
-          body: |
-            ''Add release description here.''
-            
-            ${{ steps.changelog.outputs.content }}
+          body: ${{ steps.changelog.outputs.content }}
           artifacts: "artifacts/*"
