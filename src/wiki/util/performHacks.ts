@@ -44,7 +44,10 @@ export default function (): void {
 	 * @return {{text}}
 	 */
 	( mw as any ).jqueryMsg.HtmlEmitter.prototype.subst = function ( nodes: string[] ) {
-		return `{{subst:${nodes.join( '|' )}}}`;
+		return `{{subst:${
+			nodes.map( ( v: string | JQuery ) =>
+				typeof v === 'string' ? v : v.text() ).join( '|' )
+		}}}`;
 	};
 
 	/**
