@@ -37,6 +37,15 @@ export default function (): void {
 	( mw as any ).jqueryMsg.HtmlEmitter.prototype.template = function ( nodes: string[] ) {
 		return `{{${nodes.join( '|' )}}}`;
 	};
+	/**
+	 * Allows `{{subst:...}}` to work. Does not actually change anything.
+	 *
+	 * @param nodes
+	 * @return {{text}}
+	 */
+	( mw as any ).jqueryMsg.HtmlEmitter.prototype.subst = function ( nodes: string[] ) {
+		return `{{subst:${nodes.join( '|' )}}}`;
+	};
 
 	/**
 	 * Works exactly like the localurl magic word. Returns the local href to a page.
