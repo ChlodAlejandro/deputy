@@ -109,6 +109,12 @@ function initConfigurationDialog() {
 						// Override local Deputy option, just in case the user wishes to
 						// change the configuration again.
 						mw.user.options.set( UserConfiguration.optionKey, this.config.serialize() );
+						if ( window.deputy?.comms ) {
+							window.deputy.comms.send( {
+								type: 'userConfigUpdate',
+								config: this.config.serialize()
+							} );
+						}
 					} else if ( this.config.type === 'wiki' ) {
 						// We know it is a WikiConfiguration, the instanceof check here
 						// is just for type safety.

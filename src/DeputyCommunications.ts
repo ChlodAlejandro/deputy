@@ -176,7 +176,15 @@ export interface DeputyPageNextRevisionResponse {
 	revid: number;
 }
 
-export interface DeputyConfigurationUpdate {
+export interface DeputyUserConfigurationUpdate {
+	type: 'userConfigUpdate';
+	/**
+	 * The new configuration.
+	 */
+	config: any;
+}
+
+export interface DeputyWikiConfigurationUpdate {
 	type: 'wikiConfigUpdate';
 	/**
 	 * The new configuration.
@@ -198,7 +206,8 @@ const OneWayDeputyMessageMap = <const>{
 	revisionStatusUpdate: 'acknowledge',
 	pageNextRevisionRequest: 'pageNextRevisionResponse',
 	pageNextRevisionResponse: 'pageNextRevisionRequest',
-	configUpdate: 'wikiConfigUpdate'
+	userConfigUpdate: 'userConfigUpdate',
+	wikiConfigUpdate: 'wikiConfigUpdate'
 };
 
 export type DeputyRequestMessage = DeputySessionRequestMessage;
@@ -217,7 +226,8 @@ export type DeputyMessage =
 	| DeputyRevisionStatusUpdateMessage
 	| DeputyPageNextRevisionRequest
 	| DeputyPageNextRevisionResponse
-	| DeputyConfigurationUpdate;
+	| DeputyUserConfigurationUpdate
+	| DeputyWikiConfigurationUpdate;
 export type LowLevelDeputyMessage = DeputyMessage & {
 	_deputy: true;
 	_deputyMessageId: string;

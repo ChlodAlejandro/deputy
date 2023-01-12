@@ -184,8 +184,16 @@ export default class UserConfiguration extends ConfigurationBase {
 		if ( mw.storage.get( `mw-${UserConfiguration.optionKey}-lastVersion` ) !== DeputyVersion ) {
 			// Version change detected.
 			// Do nothing... for now.
+			// HINT: Update configuration
 		}
 		mw.storage.set( `mw-${UserConfiguration.optionKey}-lastVersion`, DeputyVersion );
+
+		if ( window.deputy?.comms ) {
+			window.deputy.comms.addEventListener( 'userConfigUpdate', ( e ) => {
+				// Update the configuration based on another tab's message.
+				this.deserialize( e.data.config );
+			} );
+		}
 	}
 
 	/**
