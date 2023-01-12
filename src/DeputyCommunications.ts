@@ -177,7 +177,7 @@ export interface DeputyPageNextRevisionResponse {
 }
 
 export interface DeputyConfigurationUpdate {
-	type: 'configUpdate';
+	type: 'wikiConfigUpdate';
 	/**
 	 * The new configuration.
 	 */
@@ -198,7 +198,7 @@ const OneWayDeputyMessageMap = <const>{
 	revisionStatusUpdate: 'acknowledge',
 	pageNextRevisionRequest: 'pageNextRevisionResponse',
 	pageNextRevisionResponse: 'pageNextRevisionRequest',
-	configUpdate: 'configUpdate'
+	configUpdate: 'wikiConfigUpdate'
 };
 
 export type DeputyRequestMessage = DeputySessionRequestMessage;

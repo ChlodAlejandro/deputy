@@ -345,7 +345,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 
 		if ( window.deputy?.comms ) {
 			// Communications is available. Register a listener.
-			window.deputy.comms.addEventListener( 'configUpdate', ( e ) => {
+			window.deputy.comms.addEventListener( 'wikiConfigUpdate', ( e ) => {
 				this.update( Object.assign( {}, e.data.config, {
 					title: normalizeTitle( e.data.config.title )
 				} ) );
@@ -410,7 +410,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 					if ( window.deputy?.comms ) {
 						// Broadcast the update to other tabs.
 						window.deputy.comms.send( {
-							type: 'configUpdate',
+							type: 'wikiConfigUpdate',
 							config: {
 								title: fromWiki.title.getPrefixedText(),
 								editable: fromWiki.editable,

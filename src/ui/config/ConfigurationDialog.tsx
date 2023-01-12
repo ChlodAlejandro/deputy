@@ -114,7 +114,7 @@ function initConfigurationDialog() {
 						// is just for type safety.
 						if ( window.deputy?.comms ) {
 							window.deputy.comms.send( {
-								type: 'configUpdate',
+								type: 'wikiConfigUpdate',
 								config: {
 									title: this.config.sourcePage.getPrefixedText(),
 									editable: this.config.editable,
