@@ -3,6 +3,13 @@
 
 These are changes that may or may not have been deployed to wikis, but are not yet considered as part of any release.
 
+# [v0.4.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.4.0) - 2023-01-12
+A few significant changes and bugfixes. Most notably, a new "presumptive deletion" option for Infringement Assistant has been added for wikis with a CCI process. This allows users to report pages with presumptive deletions on-wiki. This requires wiki-wide enabling, and can be toggled by administrators on other wikis.
+
+Changes and updates on user and wiki configurations have been streamlined. Now, Deputy will updated your user configuration on ALL tabs once you change it on one tab. No need to reload to apply changes. As for changes to the wiki configuration, Deputy now stores the time a configuration was last edited within the script. When a change is detected (on page load), a message is automatically sent to invalidate all outdated configurations, and the appropriate notices are shown. Note that this will only work with Deputy, and not standalone modules (which do not ship inter-tab communication features).
+
+Aside from that, this update brings a few needed bugfixes.
+
 ## Added
 * [[`480d81f`](../../commit/480d81f)] Added fields for presumptive deletion in IA single page workflow dialog
 * [[`0268848`](../../commit/0268848)] Added panel for additional editor comments on unfinished rows
@@ -13,6 +20,7 @@ These are changes that may or may not have been deployed to wikis, but are not y
 * [[`03a9505`](../../commit/03a9505)] Began showing page toolbar regardless of diff view
 * [[`f5a29d2`](../../commit/f5a29d2)] Stopped parsing rows that weren't found as an HTML element
 * [[`31d621a`](../../commit/31d621a)] Improved i18n-related functions
+* [[`214180e`](../../commit/214180e)] Began applying user configuration changes on all tabs when changed
 
 ## Bugs
 * [[`ab937d9`](../../commit/ab937d9)] (dev) Fixed `mw` typing being missing from tests
