@@ -5,14 +5,19 @@ These are changes that may or may not have been deployed to wikis, but are not y
 
 ## Added
 * [[`480d81f`](../../commit/480d81f)] Added fields for presumptive deletion in IA single page workflow dialog
+* [[`0268848`](../../commit/0268848)] Added panel for additional editor comments on unfinished rows
+* [[`3010f8d`](../../commit/3010f8d)] Added alerts for outdated wiki-wide configurations
 
 ## Modified
 * [[`03a9505`](../../commit/03a9505)] Improved revision switching in page toolbar
 * [[`03a9505`](../../commit/03a9505)] Began showing page toolbar regardless of diff view
+* [[`f5a29d2`](../../commit/f5a29d2)] Stopped parsing rows that weren't found as an HTML element
+* [[`31d621a`](../../commit/31d621a)] Improved i18n-related functions
 
 ## Bugs
 * [[`ab937d9`](../../commit/ab937d9)] (dev) Fixed `mw` typing being missing from tests
 * [[`13892d7`](../../commit/13892d7)] Fixed accidental use of `getNameText` instead of `getMainText`
+* [[`d556250`](../../commit/d08d091)] Fixed {{copyvio}} templates bearing "$1" instead of the reported URL
 
 # [v0.3.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.3.1) - 2022-12-17
 General bugfix and quality-of-life fixes.
