@@ -139,8 +139,11 @@ export default class DeputyCasePage extends DeputyCase {
 	isContributionSurveyHeading( el: HTMLElement ): el is ContributionSurveyHeading {
 		// All headings (h1, h2, h3, h4, h5, h6)
 		// TODO: l10n
-		const headlineElement = this.parsoid ? el : el.querySelector<HTMLElement>( '.mw-headline' );
-		return /^H\d$/.test( el.tagName ) &&
+		const headlineElement = this.parsoid ?
+			el :
+			el.querySelector<HTMLElement>( '.mw-headline' );
+		// Handle DiscussionTools case (.mw-heading)
+		return ( el.classList.contains( 'mw-heading' ) || /^H\d$/.test( el.tagName ) ) &&
 			headlineElement != null &&
 			/(Page|Article|Local file|File)s? \d+ (to|through) \d+$/.test( headlineElement.innerText );
 	}
@@ -222,6 +225,10 @@ export default class DeputyCasePage extends DeputyCase {
 			} else {
 				sectionHeading = sectionHeading.parentElement;
 			}
+		}
+		// When DiscussionTools is being used, the header is wrapped in a div.
+		if ( sectionHeading.parentElement.classList.contains( 'mw-heading' ) ) {
+			sectionHeading = sectionHeading.parentElement;
 		}
 
 		const sectionMembers: HTMLElement[] = [];

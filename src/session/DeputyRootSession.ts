@@ -569,7 +569,11 @@ export default class DeputyRootSession {
 		}
 		await casePage.addActiveSection( sectionId );
 
-		heading.insertAdjacentElement( 'afterend', el.render() );
+		if ( heading.parentElement.classList.contains( 'mw-heading' ) ) {
+			heading.parentElement.insertAdjacentElement( 'afterend', el.render() );
+		} else {
+			heading.insertAdjacentElement( 'afterend', el.render() );
+		}
 		await el.loadData();
 		mw.hook( 'deputy.load.cci.session' ).fire();
 

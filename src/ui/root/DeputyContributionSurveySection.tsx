@@ -300,7 +300,8 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		for ( let i = 0; i < this.originalList.children.length; i++ ) {
 			const li = this.originalList.children.item( i );
 			if ( li.tagName !== 'LI' ) {
-				return false;
+				// Skip this element.
+				continue;
 			}
 			const anchor: HTMLElement = li.querySelector( 'a:first-of-type' );
 			// Avoid enlisting if the anchor can't be found (invalid row).
@@ -559,7 +560,17 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 						this._section = null;
 						await this.getSection( Object.assign( wikitext, { revid } ) );
 						await this.prepare();
-						heading.insertAdjacentElement( 'afterend', this.render() );
+						if ( heading.parentElement.classList.contains( 'mw-heading' ) ) {
+							// Intentional recursive call
+							heading.parentElement.insertAdjacentElement(
+								'afterend', this.render()
+							);
+						} else {
+							// Intentional recursive call
+							heading.insertAdjacentElement(
+								'afterend', this.render()
+							);
+						}
 						// Run this asynchronously.
 						setTimeout( this.loadData.bind( this ), 0 );
 					}
