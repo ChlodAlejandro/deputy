@@ -3,6 +3,19 @@
 
 These are changes that may or may not have been deployed to wikis, but are not yet considered as part of any release.
 
+# [v0.4.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.4.1) - 2023-01-18
+
+Small patch, big leap. This patch switches Deputy over to using the dedicated [Deputy Dispatch tool](https://deputy.toolforge.org/) instead of the Zoomiebot Deputy module. For more information about Dispatch, see its [GitHub repository](https://github.com/ChlodAlejandro/deputy-dispatch).
+
+## Modified
+* [[`c7b4f5f`](../../commit/c7b4f5f)] Changed default Dispatch endpoint to dedicated tool
+* [[`c423d23`](../../commit/c423d23)] (dev) Changed API class name to "DeputyDispatch"
+
+## Bugs
+* [[`c08f1c0`](../../commit/c08f1c0)] Fixed bad cleanup due to DiscussionTools parser HTML changes
+
+For a granular list of changes, see [v0.4.0...v0.4.1](https://github.com/ChlodAlejandro/deputy/compare/v0.4.0...v0.4.1).
+
 # [v0.4.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.4.0) - 2023-01-12
 A few significant changes and bugfixes. Most notably, a new "presumptive deletion" option for Infringement Assistant has been added for wikis with a CCI process. This allows users to report pages with presumptive deletions on-wiki. This requires wiki-wide enabling, and can be toggled by administrators on other wikis.
 
