@@ -313,7 +313,7 @@ export default class ContributionSurveyRow {
 			}
 		}
 		if ( toCache.length > 0 ) {
-			const expandedData = await window.deputy.api.getExpandedRevisionData( toCache );
+			const expandedData = await window.deputy.dispatch.getExpandedRevisionData( toCache );
 			for ( const revisionID in expandedData ) {
 				revisionData.set(
 					+revisionID,
@@ -355,10 +355,11 @@ export default class ContributionSurveyRow {
 	 *
 	 * @return The comment with the status indicator removed.
 	 */
-	getActualComment() {
+	getActualComment(): string {
 		if ( this.originalStatus === ContributionSurveyRowStatus.Unfinished ) {
 			return '';
-		} else if ( this.statusIsolated === false ||
+		} else if (
+			this.statusIsolated === false ||
 			this.originalStatus === ContributionSurveyRowStatus.Unknown
 		) {
 			return this.comment;
@@ -377,6 +378,7 @@ export default class ContributionSurveyRow {
 				''
 			).trim();
 		}
+		return '';
 	}
 
 }

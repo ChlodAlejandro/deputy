@@ -4,7 +4,7 @@ import Requester from '../util/Requester';
 /**
  * API communication class
  */
-export default class DeputyAPI {
+export default class DeputyDispatch {
 
 	/**
 	 * Token used for authentication on the server side. Allows access to deleted
