@@ -206,7 +206,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 		dispatchRoot: new Setting<string, URL>( {
 			serialize: ( v ) => v.href,
 			deserialize: ( v ) => new URL( v ),
-			defaultValue: new URL( 'https://deputy.toolforge.org/v1/' ),
+			defaultValue: new URL( 'https://deputy.toolforge.org/' ),
 			displayOptions: { type: 'text' },
 			alwaysSave: true
 		} )
