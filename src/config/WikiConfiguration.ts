@@ -200,7 +200,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 		} ),
 		lastEdited: new Setting<number, number>( {
 			defaultValue: 0,
-			displayOptions: { type: 'number', readOnly: true },
+			displayOptions: { hidden: true },
 			alwaysSave: true
 		} ),
 		dispatchRoot: new Setting<string, URL>( {
