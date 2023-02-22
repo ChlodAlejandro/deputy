@@ -1,3 +1,4 @@
+import jscc from 'rollup-plugin-jscc';
 import typescript from 'rollup-plugin-typescript2';
 import visualizer from 'rollup-plugin-visualizer';
 import sourcemaps from 'rollup-plugin-sourcemaps';
@@ -88,6 +89,11 @@ function getPlugins() {
 		license(),
 		// Inserts sourcemaps
 		!production && sourcemaps(),
+		// Remove development-only code branches
+		jscc( {
+			values: { _DEV: process.env.NODE_ENV === 'development' },
+			asloader: false
+		} ),
 		// Makes Common.js imports possible
 		commonjs(),
 		// Handles Node-like resolution
