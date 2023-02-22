@@ -3,12 +3,8 @@ import DeputyStorage from './DeputyStorage';
 import DeputyCommunications from './DeputyCommunications';
 import DeputySession from './session/DeputySession';
 import DeputyCasePage from './wiki/DeputyCasePage';
-import normalizeTitle from './wiki/util/normalizeTitle';
 import DeputyDispatch from './api/DeputyDispatch';
-import sectionHeadingName from './wiki/util/sectionHeadingName';
 import ContributionSurveyRow from './models/ContributionSurveyRow';
-import getPageContent from './wiki/util/getPageContent';
-import cloneRegex from './util/cloneRegex';
 import { DeputyPreferences } from './DeputyPreferences';
 import performHacks from './wiki/util/performHacks';
 import DeputyCase from './wiki/DeputyCase';
@@ -26,7 +22,8 @@ import UserConfiguration from './config/UserConfiguration';
 import { attachConfigurationDialogPortletLink } from './ui/config/ConfigurationDialog';
 import WikiConfiguration from './config/WikiConfiguration';
 import Recents from './wiki/Recents';
-import msgEval from './wiki/util/msgEval';
+import util from './util';
+import wikiUtil from './wiki/util';
 
 /**
  * The main class for Deputy. Entry point for execution.
@@ -52,13 +49,8 @@ class Deputy {
 	readonly models = {
 		ContributionSurveyRow: ContributionSurveyRow
 	};
-	readonly util = {
-		cloneRegex: cloneRegex,
-		getPageContent: getPageContent,
-		normalizeTitle: normalizeTitle,
-		sectionHeadingName: sectionHeadingName,
-		msgEval: msgEval
-	};
+	readonly util = util;
+	readonly wikiUtil = wikiUtil;
 	readonly modules = {
 		CopiedTemplateEditor: CopiedTemplateEditor,
 		InfringementAssistant: InfringementAssistant

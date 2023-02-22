@@ -68,10 +68,11 @@ export default class WikiConfiguration extends ConfigurationBase {
 	static async loadFromLocal(): Promise<WikiConfiguration> {
 		let configPage;
 		try {
-			configPage = JSON.parse( mw.user.options.get( WikiConfiguration.optionKey ) );
+			// If `mw.storage.get` returns `false` or `null`, it'll be thrown up.
+			configPage = JSON.parse( mw.storage.get( WikiConfiguration.optionKey ) as string );
 		} catch ( e ) {
 			// Bad local! Switch to non-local.
-			console.error( e );
+			console.error( 'Failed to get Deputy wiki configuration', e );
 			return this.loadFromWiki();
 		}
 
@@ -110,9 +111,9 @@ export default class WikiConfiguration extends ConfigurationBase {
 		try {
 			// Attempt save of configuration to local options (if not explicitly loaded)
 			if ( sourcePage == null ) {
-				MwApi.action.saveOption(
+				mw.storage.set(
 					WikiConfiguration.optionKey, JSON.stringify( configPage )
-				).catch( () => { /* silent fail */ } );
+				);
 			}
 
 			return new WikiConfiguration(
@@ -200,7 +201,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 		} ),
 		lastEdited: new Setting<number, number>( {
 			defaultValue: 0,
-			displayOptions: { type: 'number', readOnly: true },
+			displayOptions: { hidden: true },
 			alwaysSave: true
 		} ),
 		dispatchRoot: new Setting<string, URL>( {
