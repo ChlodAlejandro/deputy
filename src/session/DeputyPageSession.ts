@@ -18,16 +18,18 @@ export default class DeputyPageSession {
 	 *  this value should be set to null. This ensures that a generic toolbar is
 	 *  used instead of the revision-specific toolbar.
 	 * @param title The title of the page to get information for. Defaults to current.
+	 * @param timeout Timeout for the page detail request.
 	 */
 	static async getPageDetails(
 		revision?: number,
-		title: mw.Title = window.deputy.currentPage
+		title: mw.Title = window.deputy.currentPage,
+		timeout = 500
 	): Promise<DeputyPageStatusResponseMessage | null> {
 		return window.deputy.comms.sendAndWait( {
 			type: 'pageStatusRequest',
 			page: title.getPrefixedText(),
 			revision: revision
-		} );
+		}, timeout );
 	}
 
 	/**
@@ -83,7 +85,10 @@ export default class DeputyPageSession {
 				mw.config.get( 'wgDiffOldId' ) :
 				// On a "prev" diff page
 				mw.config.get( 'wgDiffNewId' ) ) ||
-			mw.config.get( 'wgRevisionId' )
+			mw.config.get( 'wgRevisionId' ),
+			window.deputy.currentPage,
+			// Relatively low-stakes branch, we can handle a bit of a delay.
+			2000
 		);
 
 		const openPromise = this.appendToolbar( {
