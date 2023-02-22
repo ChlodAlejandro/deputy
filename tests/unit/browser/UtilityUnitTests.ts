@@ -2,7 +2,7 @@ import '../../../src/types';
 import 'types-mediawiki';
 import BrowserHelper from '../../util/BrowserHelper';
 
-describe( 'Utility (on-browser) function tests', () => {
+describe( 'wikiUtility (on-browser) function tests', () => {
 
 	let page: BrowserHelper;
 
@@ -21,7 +21,7 @@ describe( 'Utility (on-browser) function tests', () => {
 			// Default test
 			expect(
 				page.evaluate( () => {
-					return { ...window.deputy.util.normalizeTitle() };
+					return { ...window.deputy.wikiUtil.normalizeTitle() };
 				} )
 			).resolves.toEqual( {
 				fragment: null, namespace: 4, title: 'Sandbox'
@@ -30,7 +30,7 @@ describe( 'Utility (on-browser) function tests', () => {
 			// String parse test (mainspace)
 			expect(
 				page.evaluate( () => {
-					return { ...window.deputy.util.normalizeTitle(
+					return { ...window.deputy.wikiUtil.normalizeTitle(
 						'Main Page'
 					) };
 				} )
@@ -41,7 +41,7 @@ describe( 'Utility (on-browser) function tests', () => {
 			// String parse test (project space)
 			expect(
 				page.evaluate( () => {
-					return { ...window.deputy.util.normalizeTitle(
+					return { ...window.deputy.wikiUtil.normalizeTitle(
 						'Wikipedia:Contributor copyright investigations'
 					) };
 				} )
@@ -52,7 +52,7 @@ describe( 'Utility (on-browser) function tests', () => {
 			// String parse test (subpage)
 			expect(
 				page.evaluate( () => {
-					return { ...window.deputy.util.normalizeTitle(
+					return { ...window.deputy.wikiUtil.normalizeTitle(
 						'Wikipedia:Contributor copyright investigations/Example'
 					) };
 				} )
@@ -63,7 +63,7 @@ describe( 'Utility (on-browser) function tests', () => {
 			// String parse test (fragment)
 			expect(
 				page.evaluate( () => {
-					return { ...window.deputy.util.normalizeTitle(
+					return { ...window.deputy.wikiUtil.normalizeTitle(
 						'Wikipedia:Contributor copyright investigations#Requests'
 					) };
 				} )
@@ -74,7 +74,7 @@ describe( 'Utility (on-browser) function tests', () => {
 			// mw.Title test
 			expect(
 				page.evaluate( () => {
-					return { ...window.deputy.util.normalizeTitle(
+					return { ...window.deputy.wikiUtil.normalizeTitle(
 						new mw.Title( 'Main Page' )
 					) };
 				} )
