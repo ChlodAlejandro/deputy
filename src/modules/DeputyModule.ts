@@ -89,6 +89,16 @@ export default abstract class DeputyModule {
 	abstract getName(): string;
 
 	/**
+	 * Get the module key for this module. Allows modules to be identified with a different
+	 * configuration key.
+	 *
+	 * @return The module key. the module name by default.
+	 */
+	getModuleKey(): string {
+		return this.getName();
+	}
+
+	/**
 	 * Load the language pack for this module, with a fallback in case one could not be
 	 * loaded.
 	 *
@@ -111,7 +121,9 @@ export default abstract class DeputyModule {
 	async preInit( languageFallback: Record<string, string> ): Promise<boolean> {
 		await this.getWikiConfig();
 
-		if ( this.wikiConfig[ this.getName() as 'ia' | 'ante' ]?.enabled.get() !== true ) {
+		if ( this.wikiConfig[
+			this.getModuleKey() as 'cci' | 'ia' | 'ante'
+		]?.enabled.get() !== true ) {
 			// Stop loading here.
 			warn( `Preinit for ${
 				this.getName()
