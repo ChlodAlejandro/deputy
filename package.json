@@ -9,15 +9,20 @@
         "test:clean": "shx rm -rf tests/artifacts/ && shx mkdir -p tests/artifacts/",
         "test:jest": "jest",
         "clean": "shx rm -rf build .rollup.cache",
-        "prebuild": "shx mkdir -p build/i18n/ && shx cp -Rf i18n/* build/i18n/",
-        "build": "npm run prebuild && rollup -c",
+        "index": "node scripts/genUtilIndices.js",
+        "prebuild": "npm run index && shx mkdir -p build/i18n/ && shx cp -Rf i18n/* build/i18n/",
+        "build": "rollup -c",
         "build:deputy": "npm run prebuild && cross-env DEPUTY_ONLY=deputy rollup -c",
         "build:ante": "npm run prebuild && cross-env DEPUTY_ONLY=ante rollup -c",
         "build:ia": "npm run prebuild && cross-env DEPUTY_ONLY=ia rollup -c",
+        "build:ccrf": "npm run prebuild && cross-env DEPUTY_ONLY=ccrf rollup -c",
+        "build:ccrf-loader": "npm run prebuild && cross-env DEPUTY_ONLY=ccrf-loader rollup -c",
         "dev": "cross-env DEPUTY_DEV=true rollup -c --watch",
         "dev:deputy": "cross-env DEPUTY_ONLY=deputy npm run dev",
         "dev:ante": "cross-env DEPUTY_ONLY=ante npm run dev",
-        "dev:ia": "cross-env DEPUTY_ONLY=ia npm run dev"
+        "dev:ia": "cross-env DEPUTY_ONLY=ia npm run dev",
+        "dev:ccrf": "cross-env DEPUTY_ONLY=ccrf npm run dev",
+        "dev:ccrf-loader": "cross-env DEPUTY_ONLY=ccrf-loader npm run dev"
     },
     "repository": {
         "type": "git",

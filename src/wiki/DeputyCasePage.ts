@@ -3,6 +3,7 @@ import sectionHeadingName from './util/sectionHeadingName';
 import getPageTitle from './util/getPageTitle';
 import DeputyCase from './DeputyCase';
 import sectionHeadingId from './util/sectionHeadingId';
+import getSectionElements from './util/getSectionElements';
 
 export type ContributionSurveyHeading = HTMLHeadingElement;
 
@@ -218,28 +219,7 @@ export default class DeputyCasePage extends DeputyCase {
 	 * @return An array of all HTMLElements covered by the section
 	 */
 	getContributionSurveySection( sectionHeading: HTMLElement ): HTMLElement[] {
-		// Normalize "sectionHeading" to use the h* element and not the .mw-heading span.
-		if ( !this.isContributionSurveyHeading( sectionHeading ) ) {
-			if ( !this.isContributionSurveyHeading( sectionHeading.parentElement ) ) {
-				throw new Error( 'Provided section heading is not a valid section heading.' );
-			} else {
-				sectionHeading = sectionHeading.parentElement;
-			}
-		}
-		// When DiscussionTools is being used, the header is wrapped in a div.
-		if ( sectionHeading.parentElement.classList.contains( 'mw-heading' ) ) {
-			sectionHeading = sectionHeading.parentElement;
-		}
-
-		const sectionMembers: HTMLElement[] = [];
-
-		let nextSibling = sectionHeading.nextElementSibling as HTMLElement;
-		while ( nextSibling != null && !this.isContributionSurveyHeading( nextSibling ) ) {
-			sectionMembers.push( nextSibling );
-			nextSibling = nextSibling.nextElementSibling as HTMLElement;
-		}
-
-		return sectionMembers;
+		return getSectionElements( sectionHeading, this.isContributionSurveyHeading );
 	}
 
 	/**

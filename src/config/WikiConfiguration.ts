@@ -15,6 +15,7 @@ import {
 	listingWikitext
 } from '../wiki/TemplatePolyfills';
 import ConfigurationReloadBanner from '../ui/config/ConfigurationReloadBanner';
+import WikiConfigurationLocations from './WikiConfigurationLocations';
 import changeTag from './changeTag';
 
 export type WikiPageConfiguration = {
@@ -41,12 +42,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 
 	static readonly configVersion = 1;
 	static readonly optionKey = 'userjs-deputy-wiki';
-	static readonly configLocations = [
-		'MediaWiki:Deputy-config.json',
-		// Prioritize interface protected page over Project namespace
-		'User:Chlod/Scripts/Deputy/configuration.json',
-		'Project:Deputy/configuration.json'
-	];
+	static readonly configLocations = WikiConfigurationLocations;
 
 	/**
 	 * Loads the configuration from a set of possible sources.
@@ -258,6 +254,14 @@ export default class WikiConfiguration extends ConfigurationBase {
 		} ),
 		collapseBottom: new Setting<string, string>( {
 			defaultValue: collapseBottom,
+			displayOptions: { type: 'code' }
+		} ),
+		requestsHeader: new Setting<string, string>( {
+			defaultValue: null,
+			displayOptions: { type: 'text' }
+		} ),
+		requestsTemplate: new Setting<string, string>( {
+			defaultValue: null,
 			displayOptions: { type: 'code' }
 		} ),
 		earwigRoot: new Setting<string, URL>( {

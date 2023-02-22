@@ -2,12 +2,15 @@ import anchorToTitle from './anchorToTitle';
 import decorateEditSummary from './decorateEditSummary';
 import delink from './delink';
 import errorToOO from './errorToOO';
+import findSectionHeading from './findSectionHeading';
 import getNativeRange from './getNativeRange';
 import getPageContent from './getPageContent';
+import getPageExists from './getPageExists';
 import getPageTitle from './getPageTitle';
 import getRevisionContent from './getRevisionContent';
 import getRevisionDiffURL from './getRevisionDiffURL';
 import getRevisionURL from './getRevisionURL';
+import getSectionElements from './getSectionElements';
 import getSectionHTML from './getSectionHTML';
 import getSectionId from './getSectionId';
 import guessAuthor from './guessAuthor';
@@ -27,12 +30,15 @@ export default {
 	decorateEditSummary: decorateEditSummary,
 	delink: delink,
 	errorToOO: errorToOO,
+	findSectionHeading: findSectionHeading,
 	getNativeRange: getNativeRange,
 	getPageContent: getPageContent,
+	getPageExists: getPageExists,
 	getPageTitle: getPageTitle,
 	getRevisionContent: getRevisionContent,
 	getRevisionDiffURL: getRevisionDiffURL,
 	getRevisionURL: getRevisionURL,
+	getSectionElements: getSectionElements,
 	getSectionHTML: getSectionHTML,
 	getSectionId: getSectionId,
 	guessAuthor: guessAuthor,

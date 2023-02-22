@@ -10,6 +10,12 @@
     "deputy.ante.short": "Attrib. Template Editor",
     "deputy.ante.acronym": "Deputy: ANTE",
 
+    "deputy.ccrf": "CCI Case Request Filer",
+    "deputy.ccrf.short": "Case Request Filer",
+    "deputy.ccrf.acronym": "Deputy: CCRF",
+
+    "deputy.module.loadFailure": "The requested module couldn't be loaded ($1).",
+
     "deputy.cancel": "Cancel",
     "deputy.review": "Review",
     "deputy.save": "Save",
