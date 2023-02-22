@@ -321,6 +321,7 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
 	position: fixed;
 	bottom: 8px;
 	left: 8px;
+	z-index: 100;
 
 	padding: 8px;
 	background-color: #fff;
