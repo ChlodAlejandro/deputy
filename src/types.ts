@@ -10,6 +10,7 @@ declare global {
 	interface Window {
 		deputy: Deputy;
 		deputyLang?: string;
+		deputyWikiConfigOverride: Record<string, any>;
 		moment: moment.Moment;
 	}
 }

@@ -17,6 +17,7 @@ import {
 import ConfigurationReloadBanner from '../ui/config/ConfigurationReloadBanner';
 import WikiConfigurationLocations from './WikiConfigurationLocations';
 import changeTag from './changeTag';
+import applyOverrides from '../util/applyOverrides';
 
 export type WikiPageConfiguration = {
 	title: mw.Title,
@@ -373,6 +374,26 @@ export default class WikiConfiguration extends ConfigurationBase {
 	) {
 		super();
 		if ( serializedData ) {
+			// #if _DEV
+			if ( window.deputyWikiConfigOverride ) {
+				console.warn(
+					'[deputy] Configuration overrides found for Deputy. This may be bad!'
+				);
+				applyOverrides(
+					this.serializedData,
+					window.deputyWikiConfigOverride,
+					( key, oldVal, newVal ) => {
+
+						console.warn( `[deputy] ${key}: ${
+							JSON.stringify( oldVal )
+						} → ${
+							JSON.stringify( newVal )
+						}` );
+					}
+				);
+			}
+			// #endif
+
 			this.deserialize( serializedData );
 		}
 

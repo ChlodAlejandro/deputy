@@ -6,8 +6,13 @@ import iaStyles from './css/cci-case-request-filer.css';
 import DeputyLanguage from '../../DeputyLanguage';
 import deputySharedEnglish from '../../../i18n/shared/en.json';
 import CaseRequestFilingDialog from './ui/CaseRequestFilingDialog';
-import { appendEntrypointButtons } from './AppendEntrypointButtons';
+import { getEntrypointButton } from './getEntrypointButton';
 import findSectionHeading from '../../wiki/util/findSectionHeading';
+import unwrapWidget from '../../util/unwrapWidget';
+import last from '../../util/last';
+import getSectionElements from '../../wiki/util/getSectionElements';
+import equalTitle from '../../util/equalTitle';
+import normalizeTitle from '../../wiki/util/normalizeTitle';
 
 declare global {
 	interface Window {
@@ -70,12 +75,28 @@ export default class CCICaseRequestFiler extends DeputyModule {
 
 		mw.hook( 'ccrf.postload' ).fire();
 
-		if ( document.querySelector( '.deputy-ccrf-entrypoint' ) == null ) {
+		if ( !window.ccrfEntrypoint ) {
 			// No entrypoint buttons yet.
-			this.getWikiConfig().then( ( config ) => {
-				const requestsHeader = findSectionHeading( config.cci.requestsHeader.get() );
-				appendEntrypointButtons( requestsHeader );
-			} );
+			const entrypointButton = await getEntrypointButton();
+			const placeholder = document.querySelector(
+				'.mw-body-content .mw-parser-output .ccrf-placeholder'
+			);
+			if ( placeholder ) {
+				placeholder.replaceChildren( unwrapWidget( entrypointButton ) );
+			} else {
+				this.getWikiConfig().then( ( config ) => {
+					if ( !equalTitle( config.cci.rootPage.get(), normalizeTitle() ) ) {
+						// Not the right page.
+						return;
+					}
+
+					const requestsHeader = findSectionHeading( config.cci.requestsHeader.get() );
+
+					last( getSectionElements( requestsHeader ) ).insertAdjacentElement(
+						'afterend', unwrapWidget( entrypointButton )
+					);
+				} );
+			}
 		}
 
 		return true;

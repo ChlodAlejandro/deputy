@@ -1,18 +1,14 @@
 import dynamicModuleLoad from '../dynamicModuleLoad';
-import last from '../../util/last';
-import getSectionElements from '../../wiki/util/getSectionElements';
-import unwrapWidget from '../../util/unwrapWidget';
 // #if _DEV
 import dynamicDevModuleLoad from '../dynamicDevModuleLoad';
 // #endif _DEV
 
 /**
- * Appends CCRF entrypoint buttons to the DOM.
- *
- * @param requestsHeader The header of the requests section within rendered HTML.
+ * Gets the OOUI ButtonWidget which starts the filer's main workflow dialog. Can
+ * be used within a loader or standalone context.
  */
-export function appendEntrypointButtons( requestsHeader: HTMLElement ): void {
-	mw.loader.using( [
+export async function getEntrypointButton(): Promise<any> {
+	return new Promise( ( res ) => mw.loader.using( [
 		'oojs-ui-core',
 		'oojs-ui-windows',
 		'oojs-ui.styles.icons-content',
@@ -58,8 +54,6 @@ export function appendEntrypointButtons( requestsHeader: HTMLElement ): void {
 		} );
 
 		window.ccrfEntrypoint = appendEntrypointButton;
-		last( getSectionElements( requestsHeader ) ).insertAdjacentElement(
-			'afterend', unwrapWidget( appendEntrypointButton )
-		);
-	} );
+		res( appendEntrypointButton );
+	} ) );
 }
