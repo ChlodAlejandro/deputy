@@ -1,9 +1,7 @@
 import '../../../types';
 import 'types-mediawiki';
-
-export interface CaseRequestFilingDialogData {
-
-}
+import { blockExit, unblockExit } from '../../../util/blockExit';
+import { h } from 'tsx-dom';
 
 let InternalCaseRequestFilingDialog: any;
 
@@ -16,7 +14,7 @@ function initCaseRequestFilingDialog() {
 		// For dialogs. Remove if not a dialog.
 		static static = {
 			name: 'caseRequestFilingDialog',
-			title: mw.msg( 'deputy.caseRequestFilingDialog.title' ),
+			title: mw.msg( 'deputy.ccrf.caseRequestFilingDialog.title' ),
 			actions: [
 				{
 					action: 'close',
@@ -29,11 +27,73 @@ function initCaseRequestFilingDialog() {
 		data: any;
 
 		/**
-		 * @param config Configuration to be passed to the element.
 		 */
-		constructor( config: CaseRequestFilingDialogData ) {
+		constructor() {
 			super();
-			// Perform constructor actions.
+		}
+
+		/**
+		 * @return The body height of this dialog.
+		 */
+		getBodyHeight(): number {
+			return 500;
+		}
+
+		/**
+		 * Initializes the dialog.
+		 */
+		initialize() {
+			super.initialize();
+			this.$body.append( new OO.ui.PanelLayout( {
+				expanded: false,
+				framed: false,
+				padded: true,
+				content: [
+					// this.render()
+				]
+			} ).$element );
+		}
+
+		/**
+		 * @param data
+		 * @return An OOUI Process
+		 */
+		getSetupProcess( data: any ): any {
+			const process = super.getSetupProcess.call( this, data );
+
+			process.next( () => {
+				blockExit( 'ccrf-new' );
+			} );
+
+			return process;
+		}
+
+		/**
+		 * @param action
+		 * @return An OOUI Process
+		 */
+		getActionProcess( action: string ): any {
+			const process = super.getActionProcess.call( this, action );
+
+			process.next( function () {
+				unblockExit( 'ccrf-new' );
+				this.close( { action: action } );
+			}, this );
+
+			process.next( function () {
+				window.ccrfEntrypoint?.setDisabled( false );
+			} );
+
+			return process;
+		}
+
+		/**
+		 * @param data
+		 * @return An OOUI Process
+		 */
+		getTeardownProcess( data: any ): any {
+			/** @member any */
+			return super.getTeardownProcess.call( this, data );
 		}
 
 	};
@@ -42,12 +102,11 @@ function initCaseRequestFilingDialog() {
 /**
  * Creates a new CaseRequestFilingDialog.
  *
- * @param config Configuration to be passed to the element.
  * @return A CaseRequestFilingDialog object
  */
-export default function ( config: CaseRequestFilingDialogData = {} ) {
+export default function () {
 	if ( !InternalCaseRequestFilingDialog ) {
 		initCaseRequestFilingDialog();
 	}
-	return new InternalCaseRequestFilingDialog( config );
+	return new InternalCaseRequestFilingDialog();
 }

@@ -18,6 +18,9 @@ import ConfigurationReloadBanner from '../ui/config/ConfigurationReloadBanner';
 import WikiConfigurationLocations from './WikiConfigurationLocations';
 import changeTag from './changeTag';
 import applyOverrides from '../util/applyOverrides';
+import log from '../util/log';
+import warn from '../util/warn';
+import error from '../util/error';
 
 export type WikiPageConfiguration = {
 	title: mw.Title,
@@ -88,11 +91,11 @@ export default class WikiConfiguration extends ConfigurationBase {
 				configInfo = JSON.parse( rawConfigInfo as string );
 			} catch ( e ) {
 				// Bad local! Switch to non-local.
-				console.error( 'Failed to get Deputy wiki configuration', e );
+				error( 'Failed to get Deputy wiki configuration', e );
 				return this.loadFromWiki();
 			}
 		} else {
-			console.log( 'No locally-cached Deputy configuration, pulling from wiki.' );
+			log( 'No locally-cached Deputy configuration, pulling from wiki.' );
 			return this.loadFromWiki();
 		}
 
@@ -143,7 +146,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 				configPage.editable
 			);
 		} catch ( e ) {
-			console.error( e, configPage );
+			error( e, configPage );
 			mw.hook( 'deputy.i18nDone' ).add( function notifyConfigFailure() {
 				mw.notify( mw.msg( 'deputy.loadError.wikiConfig' ), {
 					type: 'error'
@@ -376,15 +379,15 @@ export default class WikiConfiguration extends ConfigurationBase {
 		if ( serializedData ) {
 			// #if _DEV
 			if ( window.deputyWikiConfigOverride ) {
-				console.warn(
-					'[deputy] Configuration overrides found for Deputy. This may be bad!'
+				warn(
+					'Configuration overrides found for Deputy. This may be bad!'
 				);
 				applyOverrides(
 					this.serializedData,
 					window.deputyWikiConfigOverride,
 					( key, oldVal, newVal ) => {
 
-						console.warn( `[deputy] ${key}: ${
+						warn( `${key}: ${
 							JSON.stringify( oldVal )
 						} → ${
 							JSON.stringify( newVal )

@@ -1,3 +1,5 @@
+import error from './error';
+
 /**
  * Unwraps an OOUI widget from its JQuery `$element` variable and returns it as an
  * HTML element.
@@ -7,7 +9,7 @@
  */
 export default function ( el: OO.ui.Element ): HTMLElement {
 	if ( el.$element == null ) {
-		console.error( el );
+		error( el );
 		throw new Error( 'Element is not an OOUI Element!' );
 	}
 	return el.$element[ 0 ];

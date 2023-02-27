@@ -1,5 +1,6 @@
 import { DeputyResources } from './DeputyResources';
 import cloneRegex from './util/cloneRegex';
+import error from './util/error';
 
 /**
  * Handles internationalization and localization for Deputy and sub-modules.
@@ -40,7 +41,7 @@ export default class DeputyLanguage {
 				mw.messages.set( key, langData[ key ] );
 			}
 		} catch ( e ) {
-			console.error( e );
+			error( e );
 			mw.notify(
 				// No languages to fall back on. Do not translate this string.
 				'Deputy: Requested language page is not a valid JSON file.',
@@ -136,7 +137,7 @@ export default class DeputyLanguage {
 			}
 		} catch ( e ) {
 			// Silent failure.
-			console.error( 'Deputy: Requested language page is not a valid JSON file.', e );
+			error( 'Deputy: Requested language page is not a valid JSON file.', e );
 		}
 	}
 

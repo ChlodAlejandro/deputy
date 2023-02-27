@@ -17,6 +17,7 @@ import EarwigCopyvioDetector from '../../wiki/EarwigCopyvioDetector';
 import DeputyPageMenu, { DeputyPageMenuOption } from './DeputyPageMenu';
 import deputyPageAnalysisOptions from './DeputyPageAnalysisOptions';
 import deputyPageTools from './DeputyPageTools';
+import error from '../../util/error';
 
 export interface DeputyPageToolbarOptions extends Omit<DeputyPageStatusResponseMessage, 'type'> {
 	/**
@@ -281,7 +282,7 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 							button.setDisabled( true );
 						}
 					} catch ( e ) {
-						console.error( e );
+						error( e );
 						this.setDisabled( false );
 					}
 				} else if ( this.options.nextRevision !== false ) {

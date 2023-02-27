@@ -5,6 +5,7 @@ import deputySharedEnglish from '../../i18n/shared/en.json';
 import UserConfiguration from '../config/UserConfiguration';
 import { attachConfigurationDialogPortletLink } from '../ui/config/ConfigurationDialog';
 import WikiConfiguration from '../config/WikiConfiguration';
+import { warn } from 'rollup-plugin-visualizer/dist/plugin/warn';
 
 /**
  * A Deputy module. Modules are parts of Deputy that can usually be removed
@@ -124,7 +125,7 @@ export default abstract class DeputyModule {
 			this.getModuleKey() as 'cci' | 'ia' | 'ante'
 		]?.enabled.get() !== true ) {
 			// Stop loading here.
-			console.warn( `[Deputy] Preinit for ${
+			warn( `[Deputy] Preinit for ${
 				this.getName()
 			} cancelled; module is disabled.` );
 			return false;

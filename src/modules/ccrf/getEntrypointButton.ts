@@ -1,3 +1,4 @@
+import log from '../../util/log';
 import dynamicModuleLoad from '../dynamicModuleLoad';
 // #if _DEV
 import dynamicDevModuleLoad from '../dynamicDevModuleLoad';
@@ -35,7 +36,7 @@ export async function getEntrypointButton(): Promise<any> {
 						} );
 					} )
 					.catch( ( e ) => {
-						console.log( e );
+						log( e );
 						OO.ui.alert( mw.msg( 'deputy.module.loadFailure', e.message ) );
 					} );
 				// #else
@@ -46,7 +47,7 @@ export async function getEntrypointButton(): Promise<any> {
 						} );
 					} )
 					.catch( ( e ) => {
-						console.log( e );
+						log( e );
 						OO.ui.alert( mw.msg( 'deputy.module.loadFailure', e.message ) );
 					} );
 				// #endif _DEV

@@ -22,6 +22,8 @@ import DeputyMessageWidget from '../shared/DeputyMessageWidget';
 import sectionHeadingN from '../../wiki/util/sectionHeadingN';
 import last from '../../util/last';
 import changeTag from '../../config/changeTag';
+import warn from '../../util/warn';
+import error from '../../util/error';
 
 /**
  * The contribution survey section UI element. This includes a list of revisions
@@ -352,7 +354,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			} catch ( e ) {
 				// Only trigger on actual bulleted lists.
 				if ( /^\*[^*:]+/.test( line ) ) {
-					console.warn( 'Could not parse row.', line, e );
+					warn( 'Could not parse row.', line, e );
 					// For debugging and tests.
 					mw.hook( 'deputy.errors.cciRowParse' ).fire( {
 						line, error: e.toString()
@@ -587,14 +589,14 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 						setTimeout( this.loadData.bind( this ), 0 );
 					}
 				}
-			}, ( error ) => {
+			}, ( err ) => {
 				OO.ui.alert(
 					error.message,
 					{
 						title: mw.msg( 'deputy.session.section.failed' )
 					}
 				);
-				console.error( error );
+				error( err );
 				saveContainer.classList.remove( 'active' );
 				this.setDisabled( false );
 			} );

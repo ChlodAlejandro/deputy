@@ -24,6 +24,7 @@ import WikiConfiguration from './config/WikiConfiguration';
 import Recents from './wiki/Recents';
 import util from './util';
 import wikiUtil from './wiki/util';
+import log from './util/log';
 import DeputyAnnouncements from './DeputyAnnouncements';
 
 /**
@@ -174,7 +175,7 @@ class Deputy {
 		}
 		await this.wikiConfig.prepareEditBanners();
 
-		console.log( 'Loaded!' );
+		log( 'Loaded!' );
 
 		mw.hook( 'deputy.load' ).fire( this );
 
