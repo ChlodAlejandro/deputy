@@ -1,3 +1,5 @@
+import warn from '../../util/warn';
+
 interface DiffInfo {
 	diff?: number | string;
 	oldid?: number | string;
@@ -81,7 +83,7 @@ export default function parseDiffUrl( url: URL | string ): DiffInfo {
 	try {
 		title = new mw.Title( title ).getPrefixedText();
 	} catch ( e ) {
-		console.warn( 'Failed to normalize page title during diff URL conversion.' );
+		warn( 'Failed to normalize page title during diff URL conversion.' );
 	}
 
 	return {

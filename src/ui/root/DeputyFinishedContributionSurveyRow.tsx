@@ -5,6 +5,7 @@ import guessAuthor from '../../wiki/util/guessAuthor';
 import nsId from '../../wiki/util/nsId';
 import type { Moment } from 'moment';
 import { guessTrace } from '../../models/DeputyTrace';
+import warn from '../../util/warn';
 
 /**
  * Displayed when a ContributionSurveyRow has no remaining diffs. Deputy is not able
@@ -59,7 +60,7 @@ export default class DeputyFinishedContributionSurveyRow {
 		try {
 			parsedComment = parser.parse( props.originalElement )?.commentItems?.[ 0 ];
 		} catch ( e ) {
-			console.warn( 'Failed to parse user signature.', e );
+			warn( 'Failed to parse user signature.', e );
 		}
 		if ( !parsedComment ) {
 			// See if the Deputy trace exists.

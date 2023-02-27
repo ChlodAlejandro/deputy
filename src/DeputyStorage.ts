@@ -2,6 +2,7 @@ import { openDB, DBSchema, IDBPDatabase } from 'idb';
 import { ExpandedRevisionData } from './api/ExpandedRevisionData';
 import { ContributionSurveyRowStatus } from './models/ContributionSurveyRow';
 import MwApi from './MwApi';
+import log from './util/log';
 
 /**
  * General key-value store. Used for storing single-variable data
@@ -122,8 +123,8 @@ export default class DeputyStorage {
 					};
 					while ( currentVersion < newVersion ) {
 						upgrader[ `${currentVersion}` ]();
-						console.log(
-							`[deputy] upgraded database from ${currentVersion} to ${
+						log(
+							`Upgraded database from ${currentVersion} to ${
 								currentVersion + 1
 							}`
 						);

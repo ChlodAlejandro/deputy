@@ -5,6 +5,7 @@ import deputySharedEnglish from '../../i18n/shared/en.json';
 import UserConfiguration from '../config/UserConfiguration';
 import { attachConfigurationDialogPortletLink } from '../ui/config/ConfigurationDialog';
 import WikiConfiguration from '../config/WikiConfiguration';
+import warn from '../util/warn';
 
 /**
  * A Deputy module. Modules are parts of Deputy that can usually be removed
@@ -112,7 +113,7 @@ export default abstract class DeputyModule {
 
 		if ( this.wikiConfig[ this.getName() as 'ia' | 'ante' ]?.enabled.get() !== true ) {
 			// Stop loading here.
-			console.warn( `[Deputy] Preinit for ${
+			warn( `Preinit for ${
 				this.getName()
 			} cancelled; module is disabled.` );
 			return false;

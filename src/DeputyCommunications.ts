@@ -2,6 +2,7 @@ import 'broadcastchannel-polyfill';
 import { ContributionSurveyRowStatus } from './models/ContributionSurveyRow';
 import generateId from './util/generateId';
 import { WikiPageConfiguration } from './config/WikiConfiguration';
+import log from './util/log';
 
 /**
  * Generic message used to acknowledge an action. This is usually required by
@@ -285,7 +286,7 @@ export default class DeputyCommunications extends EventTarget {
 
 		this.broadcastChannel.addEventListener( 'message', ( event ) => {
 			// TODO: debug
-			console.log( Date.now() - start, '[deputy comms]: in', event.data );
+			log( Date.now() - start, 'comms in: ', event.data );
 			if ( event.data && typeof event.data === 'object' && event.data._deputy ) {
 				this.dispatchEvent(
 					Object.assign( new Event( event.data.type ), {
@@ -309,7 +310,7 @@ export default class DeputyCommunications extends EventTarget {
 		);
 		this.broadcastChannel.postMessage( message );
 		// TODO: debug
-		console.log( Date.now() - start, '[deputy comms]: out', data );
+		log( Date.now() - start, 'comms out:', data );
 
 		return message;
 	}
@@ -355,7 +356,7 @@ export default class DeputyCommunications extends EventTarget {
 				}
 			};
 			handlers.listener = ( ( event: MessageEvent<InboundDeputyMessage> ) => {
-				console.log( event );
+				log( event );
 				if (
 					event.data._deputyRespondsTo === message._deputyMessageId &&
 					event.data.type === OneWayDeputyMessageMap[ data.type ]

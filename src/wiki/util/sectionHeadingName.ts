@@ -1,3 +1,5 @@
+import error from '../../util/error';
+
 /**
  * @param element The element to get the name of
  * @return the name of a section from its section heading.
@@ -14,7 +16,7 @@ export default function sectionHeadingName( element: HTMLHeadingElement ): strin
 			.trim();
 		return headlineDirectText || headlineElement?.innerText;
 	} catch ( e ) {
-		console.error( 'Error getting section name', e, element );
+		error( 'Error getting section name', e, element );
 		throw e;
 	}
 }

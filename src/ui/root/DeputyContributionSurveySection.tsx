@@ -20,6 +20,8 @@ import { generateTrace } from '../../models/DeputyTrace';
 import DeputyMessageWidget from '../shared/DeputyMessageWidget';
 import sectionHeadingN from '../../wiki/util/sectionHeadingN';
 import changeTag from '../../config/changeTag';
+import warn from '../../util/warn';
+import error from '../../util/error';
 import DeputyExtraneousElement from './DeputyExtraneousElement';
 import classMix from '../../util/classMix';
 import dangerModeConfirm from '../../util/dangerModeConfirm';
@@ -338,7 +340,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 				listElements = Array.from( collapsible.querySelectorAll( 'ul' ) );
 			} else {
 				// No collapsible found. Give up.
-				console.warn( 'Could not find valid ULs in CCI section.', targetSectionNodes );
+				warn( 'Could not find valid ULs in CCI section.', targetSectionNodes );
 				return false;
 			}
 		}
@@ -389,7 +391,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 
 				if ( /^\*[^*:]+/.test( line ) ) {
 					// Only trigger on actual bulleted lists.
-					console.warn( 'Could not parse row.', line, e );
+					warn( 'Could not parse row.', line, e );
 					// For debugging and tests.
 					mw.hook( 'deputy.errors.cciRowParse' ).fire( {
 						line, error: e.toString()
@@ -730,7 +732,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 						title: mw.msg( 'deputy.session.section.failed' )
 					}
 				);
-				console.error( err );
+				error( err );
 				saveContainer.classList.remove( 'active' );
 				this.setDisabled( false );
 			} );
