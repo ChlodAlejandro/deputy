@@ -14,6 +14,7 @@ import getSectionElements from './getSectionElements';
 import getSectionHTML from './getSectionHTML';
 import getSectionId from './getSectionId';
 import guessAuthor from './guessAuthor';
+import isSectionHeading from './isSectionHeading';
 import msgEval from './msgEval';
 import normalizeTitle from './normalizeTitle';
 import nsId from './nsId';
@@ -42,6 +43,7 @@ export default {
 	getSectionHTML: getSectionHTML,
 	getSectionId: getSectionId,
 	guessAuthor: guessAuthor,
+	isSectionHeading: isSectionHeading,
 	msgEval: msgEval,
 	normalizeTitle: normalizeTitle,
 	nsId: nsId,

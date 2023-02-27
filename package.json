@@ -22,7 +22,7 @@
         "dev:ante": "cross-env DEPUTY_ONLY=ante npm run dev",
         "dev:ia": "cross-env DEPUTY_ONLY=ia npm run dev",
         "dev:ccrf": "cross-env DEPUTY_ONLY=ccrf npm run dev",
-        "dev:ccrf-loader": "cross-env DEPUTY_ONLY=ccrf-loader npm run dev"
+        "dev:ccrf-loader": "cross-env DEPUTY_ONLY=ccrf,ccrf-loader npm run dev"
     },
     "repository": {
         "type": "git",

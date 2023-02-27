@@ -15,10 +15,12 @@ export function appendEntrypointButtons( requestsHeader: HTMLElement ): void {
 	mw.loader.using( [
 		'oojs-ui-core',
 		'oojs-ui-windows',
+		'oojs-ui.styles.icons-content',
 		'mediawiki.util',
 		'mediawiki.api'
 	], () => {
 		const appendEntrypointButton = new OO.ui.ButtonWidget( {
+			icon: 'articleAdd',
 			classes: [ 'deputy-ccrf-entrypoint' ],
 			label: mw.msg( 'deputy.ccrf.start' ),
 			flags: [ 'progressive' ]
@@ -27,10 +29,9 @@ export function appendEntrypointButtons( requestsHeader: HTMLElement ): void {
 		appendEntrypointButton.on( 'click', () => {
 			if ( window.CCICaseRequestFiler ) {
 				window.CCICaseRequestFiler.openWorkflowDialog();
-				// eslint-disable-next-line brace-style
-			}
-			// #if _DEV
-			else if ( process.env.NODE_ENV === 'development' ) {
+
+			} else {
+				// #if _DEV
 				dynamicDevModuleLoad( 'ccrf' )
 					.then( () => {
 						mw.hook( 'ccrf.postload' ).add( () => {
@@ -41,10 +42,7 @@ export function appendEntrypointButtons( requestsHeader: HTMLElement ): void {
 						console.log( e );
 						OO.ui.alert( mw.msg( 'deputy.module.loadFailure', e.message ) );
 					} );
-				// eslint-disable-next-line brace-style
-			}
-			// #endif _DEV
-			else {
+				// #else
 				dynamicModuleLoad( 'CCICaseRequestFiler' )
 					.then( () => {
 						mw.hook( 'ccrf.postload' ).add( () => {
@@ -55,6 +53,7 @@ export function appendEntrypointButtons( requestsHeader: HTMLElement ): void {
 						console.log( e );
 						OO.ui.alert( mw.msg( 'deputy.module.loadFailure', e.message ) );
 					} );
+				// #endif _DEV
 			}
 		} );
 

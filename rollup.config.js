@@ -85,6 +85,14 @@ function cssString( options = { minify: true } ) {
  */
 function getPlugins() {
 	return [
+		// Serving (if dev)
+		process.env.DEPUTY_DEV && serve( {
+			contentBase: [ 'build', 'i18n' ],
+			headers: {
+				'Access-Control-Allow-Origin': '*'
+			},
+			port: 45000
+		} ),
 		// Appends license information
 		license(),
 		// Inserts sourcemaps
@@ -116,14 +124,6 @@ function getPlugins() {
 			sourcemaps: true,
 			emitFile: true,
 			open: true
-		} ),
-		// Serving (if dev)
-		process.env.DEPUTY_DEV && serve( {
-			contentBase: [ 'build', 'i18n' ],
-			headers: {
-				'Access-Control-Allow-Origin': '*'
-			},
-			port: 45000
 		} )
 	].filter( ( v ) => !!v );
 }

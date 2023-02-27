@@ -5,6 +5,7 @@ import { appendEntrypointButtons } from './AppendEntrypointButtons';
 import findSectionHeading from '../../wiki/util/findSectionHeading';
 import DeputyLanguage from '../../DeputyLanguage';
 import deputySharedEnglish from '../../../i18n/shared/en.json';
+import deputyCcrfLoaderEnglish from '../../../i18n/ccrf-loader/en.json';
 
 /**
  * This function loads in the standalone version of the CCI Case Request Filer.
@@ -14,6 +15,7 @@ import deputySharedEnglish from '../../../i18n/shared/en.json';
  */
 ( async () => {
 	await DeputyLanguage.load( 'shared', deputySharedEnglish );
+	await DeputyLanguage.load( 'ccrf-loader', deputyCcrfLoaderEnglish );
 
 	const configLocations = await getPageExists( WikiConfigurationLocations );
 	if ( configLocations.length > 0 ) {

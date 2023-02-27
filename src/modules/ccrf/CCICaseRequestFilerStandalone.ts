@@ -11,10 +11,10 @@ import Recents from '../../wiki/Recents';
  *
  * @param window
  */
-( async ( window: Window & { CaseRequestFiler?: CCICaseRequestFiler } ) => {
+( async ( window: Window & { CCICaseRequestFiler?: CCICaseRequestFiler } ) => {
 
 	Recents.save();
-	window.CaseRequestFiler = new CCICaseRequestFiler();
-	await window.CaseRequestFiler.preInit();
+	window.CCICaseRequestFiler = new CCICaseRequestFiler();
+	await window.CCICaseRequestFiler.preInit();
 
 } )( window );

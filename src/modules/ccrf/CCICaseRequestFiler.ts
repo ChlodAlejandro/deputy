@@ -43,6 +43,13 @@ export default class CCICaseRequestFiler extends DeputyModule {
 	}
 
 	/**
+	 * @inheritDoc
+	 */
+	getModuleKey(): string {
+		return 'cci';
+	}
+
+	/**
 	 * Perform actions that run *before* IA starts (prior to execution). This involves
 	 * adding in necessary UI elements that serve as an entry point to IA.
 	 */

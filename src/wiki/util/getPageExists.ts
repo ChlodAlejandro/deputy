@@ -22,10 +22,10 @@ export default async function ( pages: ArrayOrNot<string | mw.Title> ): Promise<
 
 	const existingPages = [];
 
-	if ( pageRequest.query.pages.length > 0 ) {
+	if ( pageRequest.pages.length > 0 ) {
 		const redirects = toRedirectsObject( pageRequest.redirects, pageRequest.normalized );
 		const pageMap = Object.fromEntries(
-			pageRequest.query.pages.map(
+			pageRequest.pages.map(
 				( v: { title: string, missing?: boolean } ) => [ v.title, !v.missing ]
 			)
 		);
@@ -34,7 +34,7 @@ export default async function ( pages: ArrayOrNot<string | mw.Title> ): Promise<
 		for ( const loc of pageNames ) {
 			const actualLocation = redirects[ loc ] ?? loc;
 			if ( pageMap[ actualLocation ] ) {
-				existingPages.push( pageMap[ actualLocation ] );
+				existingPages.push( actualLocation );
 			}
 		}
 	}

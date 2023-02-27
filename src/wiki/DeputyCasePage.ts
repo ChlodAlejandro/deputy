@@ -4,6 +4,7 @@ import getPageTitle from './util/getPageTitle';
 import DeputyCase from './DeputyCase';
 import sectionHeadingId from './util/sectionHeadingId';
 import getSectionElements from './util/getSectionElements';
+import isSectionHeading from './util/isSectionHeading';
 
 export type ContributionSurveyHeading = HTMLHeadingElement;
 
@@ -138,14 +139,12 @@ export default class DeputyCasePage extends DeputyCase {
 	 * @return `true` if the given heading is a valid contribution survey heading.
 	 */
 	isContributionSurveyHeading( el: HTMLElement ): el is ContributionSurveyHeading {
-		// All headings (h1, h2, h3, h4, h5, h6)
-		// TODO: l10n
 		const headlineElement = this.parsoid ?
 			el :
 			el.querySelector<HTMLElement>( '.mw-headline' );
 		// Handle DiscussionTools case (.mw-heading)
-		return ( el.classList.contains( 'mw-heading' ) || /^H\d$/.test( el.tagName ) ) &&
-			headlineElement != null &&
+		// TODO: l10n
+		return isSectionHeading( el ) &&
 			/(Page|Article|Local file|File)s? \d+ (to|through) \d+$/.test( headlineElement.innerText );
 	}
 
@@ -219,7 +218,7 @@ export default class DeputyCasePage extends DeputyCase {
 	 * @return An array of all HTMLElements covered by the section
 	 */
 	getContributionSurveySection( sectionHeading: HTMLElement ): HTMLElement[] {
-		return getSectionElements( sectionHeading, this.isContributionSurveyHeading );
+		return getSectionElements( sectionHeading, this.isContributionSurveyHeading.bind( this ) );
 	}
 
 	/**

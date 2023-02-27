@@ -1,3 +1,5 @@
+import isSectionHeading from './isSectionHeading';
+
 /**
  * Finds section elements from a given section heading (and optionally a predicate)
  *
@@ -7,7 +9,7 @@
  */
 export default function getSectionElements(
 	sectionHeading: HTMLElement,
-	sectionHeadingPredicate?: ( el: HTMLElement ) => boolean
+	sectionHeadingPredicate: ( el: HTMLElement ) => boolean = isSectionHeading
 ): HTMLElement[] {
 	// Normalize "sectionHeading" to use the h* element and not the .mw-heading span.
 	if ( !sectionHeadingPredicate( sectionHeading ) ) {
