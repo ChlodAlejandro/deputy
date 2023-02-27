@@ -6,8 +6,6 @@ import DeputyModule from '../DeputyModule';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import cteStyles from './css/copied-template-editor.css';
-import DeputyLanguage from '../../DeputyLanguage';
-import deputySharedEnglish from '../../../i18n/shared/en.json';
 
 declare global {
 	interface Window {
@@ -191,7 +189,7 @@ export default class CopiedTemplateEditor extends DeputyModule {
 				} );
 				this.windowManager.addWindows( [ this.dialog ] );
 			}
-			this.windowManager.openWindow( this.dialog );
+			await this.windowManager.openWindow( this.dialog ).opened;
 		} );
 	}
 
