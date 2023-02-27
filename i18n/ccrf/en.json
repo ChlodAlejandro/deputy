@@ -1,3 +1,5 @@
 {
-    "deputy.ccrf.start": "File a new case request"
+    "deputy.ccrf.start": "File a new case request",
+
+    "deputy.ccrf.caseRequestFilingDialog.title": "CCI Case Request Filer"
 }
