@@ -191,7 +191,7 @@ export default class CopiedTemplateEditor extends DeputyModule {
 				} );
 				this.windowManager.addWindows( [ this.dialog ] );
 			}
-			this.windowManager.openWindow( this.dialog );
+			await this.windowManager.openWindow( this.dialog ).opened;
 		} );
 	}
 

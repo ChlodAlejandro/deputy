@@ -91,7 +91,7 @@ export default class CCICaseRequestFiler extends DeputyModule {
 				this.dialog = CaseRequestFilingDialog();
 				this.windowManager.addWindows( [ this.dialog ] );
 			}
-			await this.windowManager.openWindow( this.dialog );
+			await this.windowManager.openWindow( this.dialog ).opened;
 		} );
 	}
 

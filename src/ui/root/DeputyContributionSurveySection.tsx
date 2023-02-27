@@ -527,7 +527,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 				title: this.casePage.title
 			} );
 			window.deputy.windowManager.addWindows( [ reviewDialog ] );
-			window.deputy.windowManager.openWindow( reviewDialog );
+			await window.deputy.windowManager.openWindow( reviewDialog ).opened;
 		} );
 
 		this.saveButton.on( 'click', async () => {
