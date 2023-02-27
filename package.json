@@ -67,7 +67,7 @@
         "selenium-webdriver": "^4.5.0",
         "shx": "^0.3.4",
         "ts-jest": "^28.0.5",
-        "tslib": "^2.4.0",
+        "tslib": "^2.5.0",
         "typedoc": "^0.23.6",
         "typedoc-plugin-mdn-links": "^2.0.0",
         "typedoc-plugin-missing-exports": "^1.0.0",
