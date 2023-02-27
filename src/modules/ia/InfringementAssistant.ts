@@ -6,7 +6,6 @@ import CopyrightProblemsSession from './models/CopyrightProblemsSession';
 // @ts-ignore
 import iaStyles from './css/infringement-assistant.css';
 import DeputyLanguage from '../../DeputyLanguage';
-import deputySharedEnglish from '../../../i18n/shared/en.json';
 import SinglePageWorkflowDialog from './ui/SinglePageWorkflowDialog';
 import HiddenViolationUI from './ui/HiddenViolationUI';
 
@@ -59,11 +58,6 @@ export default class InfringementAssistant extends DeputyModule {
 			// Root page is invalid. Don't run.
 			return false;
 		}
-
-		await Promise.all( [
-			DeputyLanguage.load( 'shared', deputySharedEnglish ),
-			DeputyLanguage.loadMomentLocale()
-		] );
 
 		mw.hook( 'ia.preload' ).fire();
 		mw.util.addCSS( iaStyles );
@@ -155,6 +149,7 @@ export default class InfringementAssistant extends DeputyModule {
 	 */
 	async openWorkflowDialog(): Promise<void> {
 		return mw.loader.using( InfringementAssistant.dependencies, async () => {
+			await DeputyLanguage.loadMomentLocale();
 			if ( !this.dialog ) {
 				await DeputyLanguage.loadMomentLocale();
 				this.dialog = SinglePageWorkflowDialog( {

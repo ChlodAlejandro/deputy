@@ -6,6 +6,7 @@ import DeputyModule from '../DeputyModule';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import cteStyles from './css/copied-template-editor.css';
+import DeputyLanguage from '../../DeputyLanguage';
 
 declare global {
 	interface Window {
@@ -169,6 +170,7 @@ export default class CopiedTemplateEditor extends DeputyModule {
 	 */
 	openEditDialog() {
 		mw.loader.using( CopiedTemplateEditor.dependencies, async () => {
+			await DeputyLanguage.loadMomentLocale();
 			OO.ui.WindowManager.static.sizes.huge = {
 				width: 1100
 			};

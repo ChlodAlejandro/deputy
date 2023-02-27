@@ -1,6 +1,7 @@
 import { Deputy } from '../Deputy';
 import unwrapWidget from '../util/unwrapWidget';
 import DeputyLanguage from '../DeputyLanguage';
+import deputySharedEnglish from '../../i18n/shared/en.json';
 import UserConfiguration from '../config/UserConfiguration';
 import { attachConfigurationDialogPortletLink } from '../ui/config/ConfigurationDialog';
 import WikiConfiguration from '../config/WikiConfiguration';
@@ -95,6 +96,7 @@ export default abstract class DeputyModule {
 	async loadLanguages( fallback: Record<string, string> ): Promise<void> {
 		await Promise.all( [
 			DeputyLanguage.load( this.getName(), fallback ),
+			DeputyLanguage.load( 'shared', deputySharedEnglish ),
 			DeputyLanguage.loadMomentLocale()
 		] );
 	}
