@@ -6,6 +6,7 @@ import ContributionSurveyRowParser, {
 	RawContributionSurveyRow
 } from './ContributionSurveyRowParser';
 import { ContributionSurveyRowSort } from './ContributionSurveyRowSort';
+import DispatchRevisions from '../api/DispatchRevisions';
 
 export enum ContributionSurveyRowStatus {
 	// The row has not been processed yet.
@@ -319,7 +320,7 @@ export default class ContributionSurveyRow {
 			}
 		}
 		if ( toCache.length > 0 ) {
-			const expandedData = await window.deputy.dispatch.getExpandedRevisionData( toCache );
+			const expandedData = await DispatchRevisions.i.get( toCache );
 			for ( const revisionID in expandedData ) {
 				revisionData.set(
 					+revisionID,

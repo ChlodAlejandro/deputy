@@ -3,7 +3,7 @@ import DeputyStorage from './DeputyStorage';
 import DeputyCommunications from './DeputyCommunications';
 import DeputySession from './session/DeputySession';
 import DeputyCasePage from './wiki/DeputyCasePage';
-import DeputyDispatch from './api/DeputyDispatch';
+import Dispatch from './api/Dispatch';
 import ContributionSurveyRow from './models/ContributionSurveyRow';
 import performHacks from './wiki/util/performHacks';
 import DeputyCase from './wiki/DeputyCase';
@@ -40,7 +40,7 @@ class Deputy {
 	 * @private
 	 */
 	static instance: Deputy;
-	readonly DeputyDispatch = DeputyDispatch;
+	readonly DeputyDispatch = Dispatch;
 	readonly DeputyStorage = DeputyStorage;
 	readonly DeputySession = DeputySession;
 	readonly DeputyCommunications = DeputyCommunications;
@@ -71,7 +71,7 @@ class Deputy {
 
 	// Components
 
-	dispatch: DeputyDispatch;
+	dispatch: Dispatch;
 	storage: DeputyStorage;
 	comms: DeputyCommunications;
 	session: DeputySession;
@@ -150,7 +150,7 @@ class Deputy {
 		this.storage = new DeputyStorage();
 		await this.storage.init();
 		// Initialize the Deputy API interface
-		this.dispatch = new DeputyDispatch();
+		this.dispatch = Dispatch.i;
 		// Initialize communications
 		this.comms = new DeputyCommunications();
 		this.comms.init();
