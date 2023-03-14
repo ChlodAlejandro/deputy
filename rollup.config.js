@@ -163,12 +163,18 @@ function auto( key, options ) {
 	}
 }
 
+// GLOBALS
+const globals = {
+	external: [ 'types-mediawiki' ]
+};
+
 /**
  * @type {import('rollup').RollupOptions[]}
  */
 export default [
 	// Deputy core
 	auto( 'deputy', {
+		...globals,
 		input: 'src/Deputy.ts',
 		output: {
 			sourcemap: true,
@@ -183,6 +189,7 @@ export default [
 	} ),
 	// Standalone Attribution Notice Template Editor
 	auto( 'ante', {
+		...globals,
 		input: 'src/modules/ante/CopiedTemplateEditorStandalone.ts',
 		output: {
 			sourcemap: true,
@@ -197,6 +204,7 @@ export default [
 	} ),
 	// Standalone Infringement Assistant
 	auto( 'ia', {
+		...globals,
 		input: 'src/modules/ia/InfringementAssistantStandalone.ts',
 		output: {
 			sourcemap: true,
@@ -212,6 +220,7 @@ export default [
 
 	// Standalone CCI Case Request Filer
 	auto( 'ccrf', {
+		...globals,
 		input: 'src/modules/ccrf/CCICaseRequestFilerStandalone.ts',
 		output: {
 			sourcemap: true,
@@ -227,6 +236,7 @@ export default [
 
 	// Standalone Infringement Assistant
 	auto( 'ccrf-loader', {
+		...globals,
 		input: 'src/modules/ccrf/CCICaseRequestFilerLoader.ts',
 		output: {
 			sourcemap: true,
