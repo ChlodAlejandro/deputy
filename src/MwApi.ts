@@ -31,6 +31,11 @@ export default class MwApi {
 				errorformat: 'html',
 				errorlang: mw.config.get( 'wgUserLanguage' ),
 				errorsuselocal: true
+			},
+			ajax: {
+				headers: {
+					'Api-User-Agent': `Deputy/${deputyVersion} (${window.location.hostname})`
+				}
 			}
 		} ) );
 	}

@@ -1,0 +1,67 @@
+.cci-case-request-filer .oo-ui-window-frame {
+	width: 700px !important;
+}
+
+.cci-case-request-filer .wizard-background {
+	position: absolute;
+
+	bottom: 0;
+	right: 0;
+	width: 50vmin;
+	height: 50vmin;
+
+	opacity: 0.1;
+
+	background:
+			url('https://upload.wikimedia.org/wikipedia/commons/1/14/Deputy_logo_%28on_white%29.svg')
+			no-repeat 5vmin 5vmin;
+	background-size: 50vmin;
+}
+
+.cci-case-request-filer h1:first-child {
+	padding-top: 0;
+}
+
+.cci-case-request-filer .page-navigation {
+	margin-top: 1.2em;
+	display: flex;
+	justify-content: space-between;
+}
+
+.cci-case-request-filer .page-navigation--previous {
+	margin-right: auto;
+}
+
+.cci-case-request-filer .page-navigation--next {
+	margin-left: auto;
+}
+
+.cci-case-request-filer .oo-ui-pageLayout {
+	opacity: 0;
+	transition: opacity 0.1s ease-in-out;
+}
+
+.cci-case-request-filer .oo-ui-pageLayout.crfd-page--active {
+	opacity: 1;
+}
+
+.cci-case-request-filer .oo-ui-pageLayout > * {
+	transform: translateY( 1vmin );
+	transition: transform 0.1s ease-in-out;
+}
+
+.cci-case-request-filer .oo-ui-pageLayout.crfd-page--active > * {
+	transform: translateY( 0 );
+}
+
+.cci-case-request-filer .crfd-background-check {
+	margin: 1em 0;
+}
+
+.cci-case-request-filer .crfd-background-check--header {
+	margin-bottom: 0.4em;
+}
+
+.cci-case-request-filer .crfd-background-check--header > span:last-child {
+	margin-left: 0.4em;
+}

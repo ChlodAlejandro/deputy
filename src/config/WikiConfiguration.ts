@@ -21,6 +21,7 @@ import applyOverrides from '../util/applyOverrides';
 import log from '../util/log';
 import warn from '../util/warn';
 import error from '../util/error';
+import { StringFilterType } from './types';
 
 export type WikiPageConfiguration = {
 	title: mw.Title,
@@ -352,8 +353,38 @@ export default class WikiConfiguration extends ConfigurationBase {
 		} )
 	};
 
+	public readonly ccrf = {
+		introExtra: new Setting<string, string>( {
+			defaultValue: null,
+			displayOptions: { type: 'code' }
+		} ),
+		performPageChecks: new Setting<boolean, boolean>( {
+			defaultValue: true,
+			displayOptions: { type: 'checkbox' }
+		} ),
+		performRevisionChecks: new Setting<boolean, boolean>( {
+			defaultValue: true,
+			displayOptions: { type: 'checkbox' }
+		} ),
+		performWarningChecks: new Setting<boolean, boolean>( {
+			defaultValue: true,
+			displayOptions: { type: 'checkbox' }
+		} ),
+		warningFilters: new Setting<StringFilterType, StringFilterType>( {
+			...Setting.basicSerializers,
+			defaultValue: { source: '<!--\\s*Template:uw-(.+?)\\s*-->', flags: 'gi' },
+			displayOptions: { type: 'unimplemented' }
+		} )
+	};
+
 	readonly type = <const> 'wiki';
-	public readonly all = { core: this.core, cci: this.cci, ante: this.ante, ia: this.ia };
+	public readonly all = {
+		core: this.core,
+		cci: this.cci,
+		ante: this.ante,
+		ia: this.ia,
+		ccrf: this.ccrf
+	};
 
 	/**
 	 * Set to true when this configuration is outdated based on latest data. Usually adds banners

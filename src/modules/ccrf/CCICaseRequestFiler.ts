@@ -1,5 +1,5 @@
 import DeputyModule from '../DeputyModule';
-import deputyIaEnglish from '../../../i18n/ia/en.json';
+import deputyCcrfEnglish from '../../../i18n/ccrf/en.json';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import iaStyles from './css/cci-case-request-filer.css';
@@ -13,11 +13,12 @@ import last from '../../util/last';
 import getSectionElements from '../../wiki/util/getSectionElements';
 import equalTitle from '../../util/equalTitle';
 import normalizeTitle from '../../wiki/util/normalizeTitle';
+import classMix from '../../util/classMix';
 
 declare global {
 	interface Window {
 		CCICaseRequestFiler?: CCICaseRequestFiler;
-		ccrfEntrypoint: any;
+		ccrfEntrypoint?: any;
 	}
 }
 
@@ -30,10 +31,13 @@ export default class CCICaseRequestFiler extends DeputyModule {
 		'oojs-ui-core',
 		'oojs-ui-widgets',
 		'oojs-ui-windows',
+		'oojs-ui.styles.icons-movement',
+		'oojs-ui.styles.icons-interactions',
 		'mediawiki.util',
 		'mediawiki.api',
 		'mediawiki.Title',
-		'mediawiki.widgets'
+		'mediawiki.widgets',
+		'mediawiki.widgets.UserInputWidget'
 	];
 
 	readonly static = CCICaseRequestFiler;
@@ -59,7 +63,7 @@ export default class CCICaseRequestFiler extends DeputyModule {
 	 * adding in necessary UI elements that serve as an entry point to IA.
 	 */
 	async preInit(): Promise<boolean> {
-		if ( !await super.preInit( deputyIaEnglish ) ) {
+		if ( !await super.preInit( deputyCcrfEnglish ) ) {
 			return false;
 		}
 
@@ -109,7 +113,16 @@ export default class CCICaseRequestFiler extends DeputyModule {
 		window.ccrfEntrypoint.setDisabled( true );
 		return mw.loader.using( CCICaseRequestFiler.dependencies, async () => {
 			if ( !this.dialog ) {
-				this.dialog = CaseRequestFilingDialog();
+				// The following classes are used here:
+				// * deputy
+				// * cci-case-request-filer
+				this.dialog = CaseRequestFilingDialog( {
+					classes: classMix(
+						// Attach "deputy" class if Deputy.
+						this.deputy ? 'deputy' : null,
+						'cci-case-request-filer'
+					).split( ' ' )
+				} );
 				this.windowManager.addWindows( [ this.dialog ] );
 			}
 			await this.windowManager.openWindow( this.dialog ).opened;

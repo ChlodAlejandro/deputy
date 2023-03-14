@@ -12,7 +12,6 @@ import getSectionElements from '../../wiki/util/getSectionElements';
 import equalTitle from '../../util/equalTitle';
 import normalizeTitle from '../../wiki/util/normalizeTitle';
 import applyOverrides from '../../util/applyOverrides';
-import { warn } from 'rollup-plugin-visualizer/dist/plugin/warn';
 
 /**
  * This function loads in the standalone version of the CCI Case Request Filer.
@@ -44,14 +43,14 @@ import { warn } from 'rollup-plugin-visualizer/dist/plugin/warn';
 			}
 			// #if _DEV
 			if ( window.deputyWikiConfigOverride ) {
-				warn(
+				console.warn(
 					'Configuration overrides found for Deputy. This may be bad!'
 				);
 				applyOverrides(
 					config,
 					window.deputyWikiConfigOverride,
 					( key, oldVal, newVal ) => {
-						warn( `${key}: ${
+						console.warn( `${key}: ${
 							JSON.stringify( oldVal )
 						} → ${
 							JSON.stringify( newVal )
