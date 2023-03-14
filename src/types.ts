@@ -1,5 +1,6 @@
 import { Deputy } from './Deputy';
 import moment from 'moment';
+import 'types-mediawiki';
 
 export type PromiseOrNot<T> = Promise<T> | T;
 export type JQueryPromiseOrPromise<T> = JQuery.Promise<T> | Promise<T>;
