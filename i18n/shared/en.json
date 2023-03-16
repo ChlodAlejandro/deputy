@@ -23,6 +23,18 @@
     "deputy.moreInfo": "More information",
     "deputy.dismiss": "Dismiss",
 
+    "deputy.revision.cur": "cur",
+    "deputy.revision.prev": "prev",
+    "deputy.revision.cur.tooltip": "Difference with latest revision",
+    "deputy.revision.prev.tooltip": "Difference with preceding revision",
+    "deputy.revision.talk": "talk",
+    "deputy.revision.contribs": "contribs",
+    "deputy.revision.bytes": "{{FORMATNUM:$1}} bytes",
+    "deputy.revision.byteChange": "{{FORMATNUM:$1}} bytes after change of this size",
+    "deputy.revision.tags": "{{PLURAL:$1|Tag|Tags}}:",
+    "deputy.revision.new": "N",
+    "deputy.revision.new.tooltip": "This edit created a new page.",
+
     "deputy.comma-separator": ", ",
 
     "deputy.diff": "Review your changes",
