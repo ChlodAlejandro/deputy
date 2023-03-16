@@ -11,7 +11,7 @@ import {
 	ChangesListTags, ChangesListTime,
 	ChangesListUser,
 	NewPageIndicator
-} from './DeputyChangesListElements';
+} from '../shared/ChangesList';
 import unwrapElement from '../../util/unwrapElement';
 import DeputyLoadingDots from './DeputyLoadingDots';
 import MwApi from '../../MwApi';

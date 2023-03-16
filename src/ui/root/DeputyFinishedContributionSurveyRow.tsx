@@ -100,13 +100,13 @@ export default class DeputyFinishedContributionSurveyRow {
 							target="_blank"
 							rel="noopener" href={ mw.util.getUrl( talkPage.getPrefixedDb() ) }
 							title={ talkPage.getPrefixedText() }
-						>{ mw.msg( 'deputy.session.revision.talk' ) }</a></span>
+						>{ mw.msg( 'deputy.revision.talk' ) }</a></span>
 						<span><a
 							class="mw-usertoollinks-contribs"
 							target="_blank"
 							rel="noopener" href={ mw.util.getUrl( contribsPage.getPrefixedDb() ) }
 							title={ contribsPage.getPrefixedText() }
-						>{ mw.msg( 'deputy.session.revision.contribs' ) }</a></span>
+						>{ mw.msg( 'deputy.revision.contribs' ) }</a></span>
 					</span>
 				</span> ).outerHTML
 			];

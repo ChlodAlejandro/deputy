@@ -1,9 +1,9 @@
 import '../../types';
-import { h } from 'tsx-dom';
-import { ContributionSurveyRevision } from '../../models/ContributionSurveyRevision';
 import getRevisionURL from '../../wiki/util/getRevisionURL';
 import getRevisionDiffURL from '../../wiki/util/getRevisionDiffURL';
 import nsId from '../../wiki/util/nsId';
+import type { ExpandedRevisionData } from '../../api/ExpandedRevisionData';
+import { h } from 'tsx-dom';
 
 /**
  * @param root0
@@ -45,7 +45,7 @@ export function ChangesListLinks(
 			href={ cur }
 			title={ mw.msg( 'deputy.session.revision.cur.tooltip' ) }
 			target="_blank"
-		>{ mw.msg( 'deputy.session.revision.cur' ) }</a></span>
+		>{ mw.msg( 'deputy.revision.cur' ) }</a></span>
 		<span>{
 			( !_parentid && !missing ) ?
 				mw.msg( 'deputy.session.revision.prev' ) :
@@ -54,7 +54,7 @@ export function ChangesListLinks(
 					href={ prev }
 					title={ mw.msg( 'deputy.session.revision.prev.tooltip' ) }
 					target="_blank"
-				>{ mw.msg( 'deputy.session.revision.prev' ) }</a>
+				>{ mw.msg( 'deputy.revision.prev' ) }</a>
 		}</span>
 		{
 			!!window.deputy.config.cci.showCvLink &&
@@ -77,8 +77,8 @@ export function ChangesListLinks(
 export function NewPageIndicator(): JSX.Element {
 	return <abbr
 		class="newpage"
-		title={ mw.msg( 'deputy.session.revision.new.tooltip' ) }
-	>{ mw.msg( 'deputy.session.revision.new' ) }</abbr>;
+		title={ mw.msg( 'deputy.revision.new.tooltip' ) }
+	>{ mw.msg( 'deputy.revision.new' ) }</abbr>;
 }
 /**
  * @param root0
@@ -100,10 +100,12 @@ export function ChangesListTime(
 /**
  * @param root0
  * @param root0.revision
+ * @param root0.link
  * @return HTML element
  */
 export function ChangesListDate(
-	{ revision }: { revision: ContributionSurveyRevision }
+	{ revision, link }: { revision: ExpandedRevisionData, link?: boolean } |
+		{ revision: { timestamp: string }, link: false }
 ): JSX.Element {
 	const time = new Date( revision.timestamp );
 	let now = window.moment( time );
@@ -125,9 +127,11 @@ export function ChangesListDate(
 
 	const comma = mw.msg( 'comma-separator' );
 
-	return <a class="mw-changeslist-date" href={
-		getRevisionURL( revision.revid, revision.page.title )
-	}>{ formattedTime }{ comma }{ formattedDate }</a>;
+	return link !== false ?
+		<a class="mw-changeslist-date" href={
+			getRevisionURL( revision.revid, revision.page.title )
+		}>{ formattedTime }{ comma }{ formattedDate }</a> :
+		<span>{ formattedTime }{ comma }{ formattedDate }</span>;
 }
 
 /**
@@ -161,7 +165,7 @@ export function ChangesListUser( { user }: { user: string } ) {
 					userTalkPage.getPrefixedDb()
 				)}
 				title={ userTalkPage.getPrefixedText() }
-			>{ mw.msg( 'deputy.session.revision.talk' ) }</a></span> <span><a
+			>{ mw.msg( 'deputy.revision.talk' ) }</a></span> <span><a
 				class="mw-usertoollinks-contribs"
 				target="_blank"
 				rel="noopener"
@@ -170,7 +174,7 @@ export function ChangesListUser( { user }: { user: string } ) {
 					userContribsPage.getPrefixedDb()
 				)}
 				title={ userContribsPage.getPrefixedText() }
-			>{ mw.msg( 'deputy.session.revision.contribs' ) }</a></span>
+			>{ mw.msg( 'deputy.revision.contribs' ) }</a></span>
 		</span>
 	</span>;
 }
@@ -184,7 +188,7 @@ export function ChangesListBytes( { size }: { size: number } ): JSX.Element {
 	return <span
 		class="history-size mw-diff-bytes"
 		data-mw-bytes={ size }
-	>{ mw.message( 'deputy.session.revision.bytes', size.toString() ).text() }</span>;
+	>{ mw.message( 'deputy.revision.bytes', size.toString() ).text() }</span>;
 }
 
 /**
@@ -207,7 +211,7 @@ export function ChangesListDiff(
 			( diffsize > 0 ? 'pos' : 'neg' )
 	} mw-diff-bytes` } title={
 		mw.message(
-			'deputy.session.revision.byteChange',
+			'deputy.revision.byteChange',
 			size.toString()
 		).text()
 	}>
@@ -237,7 +241,7 @@ export function ChangesListTags( { tags }: { tags: string[] } ): JSX.Element {
 		title="Special:Tags"
 		target="_blank"
 	>{ mw.message(
-			'deputy.session.revision.tags',
+			'deputy.revision.tags',
 			tags.length.toString()
 		).text() }</a>{
 		tags.map( ( v ) => {
