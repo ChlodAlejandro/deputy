@@ -50,6 +50,7 @@ export default class InfringementAssistant extends DeputyModule {
 	 * adding in necessary UI elements that serve as an entry point to IA.
 	 */
 	async preInit(): Promise<boolean> {
+		mw.hook( 'ia.preload' ).fire();
 		if ( !await super.preInit( deputyIaEnglish ) ) {
 			return false;
 		}
@@ -59,7 +60,6 @@ export default class InfringementAssistant extends DeputyModule {
 			return false;
 		}
 
-		mw.hook( 'ia.preload' ).fire();
 		mw.util.addCSS( iaStyles );
 
 		if (

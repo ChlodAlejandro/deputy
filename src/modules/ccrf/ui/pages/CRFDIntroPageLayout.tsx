@@ -4,6 +4,7 @@ import msgEval from '../../../../wiki/util/msgEval';
 import type CaseRequestFilingDialog from '../CaseRequestFilingDialog';
 import unwrapWidget from '../../../../util/unwrapWidget';
 import CRFDNavigation from '../CRFDNavigation';
+import unwrapJQ from '../../../../util/unwrapJQ';
 
 interface CRFDIntroPageLayoutConfig {
 	dialog: ReturnType<typeof CaseRequestFilingDialog>;
@@ -62,20 +63,14 @@ function initCRFDIntroPageLayout() {
 					<p style={{
 						marginLeft: '1em'
 					}}><em>{mw.msg( 'deputy.ccrf.intro.newbies' )}</em></p>
-					<p
-						dangerouslySetInnerHTML={mw.message(
-							'deputy.ccrf.intro.explain1',
-							config.cci.rootPage.get().getPrefixedText()
-						).parse()}
-					/>
-					<p
-						dangerouslySetInnerHTML={mw.message( 'deputy.ccrf.intro.explain2' ).parse()}
-					/>
-					{ config.ccrf.introExtra.get() !== null && <p
-						dangerouslySetInnerHTML={ msgEval(
-							config.ccrf.introExtra.get()
-						).parse() }
-					/> }
+					{ unwrapJQ( <p/>, mw.message(
+						'deputy.ccrf.intro.explain1',
+						config.cci.rootPage.get().getPrefixedText()
+					).parseDom() ) }
+					{ unwrapJQ( <p/>, mw.message( 'deputy.ccrf.intro.explain2' ).parseDom() ) }
+					{ config.ccrf.introExtra.get() !== null && unwrapJQ( <p/>, msgEval(
+						config.ccrf.introExtra.get()
+					).parseDom() ) }
 					<CRFDNavigation dialog={this.dialog} page={this} />
 				</div>
 			];

@@ -33,11 +33,13 @@ export default class CCICaseRequestFiler extends DeputyModule {
 		'oojs-ui-windows',
 		'oojs-ui.styles.icons-movement',
 		'oojs-ui.styles.icons-interactions',
+		'mediawiki.jqueryMsg',
 		'mediawiki.util',
 		'mediawiki.api',
 		'mediawiki.Title',
 		'mediawiki.widgets',
-		'mediawiki.widgets.UserInputWidget'
+		'mediawiki.widgets.UserInputWidget',
+		'moment'
 	];
 
 	readonly static = CCICaseRequestFiler;
@@ -63,6 +65,7 @@ export default class CCICaseRequestFiler extends DeputyModule {
 	 * adding in necessary UI elements that serve as an entry point to IA.
 	 */
 	async preInit(): Promise<boolean> {
+		mw.hook( 'ccrf.preload' ).fire();
 		if ( !await super.preInit( deputyCcrfEnglish ) ) {
 			return false;
 		}
@@ -73,8 +76,6 @@ export default class CCICaseRequestFiler extends DeputyModule {
 		}
 
 		await DeputyLanguage.load( 'shared', deputySharedEnglish );
-
-		mw.hook( 'ccrf.preload' ).fire();
 		mw.util.addCSS( iaStyles );
 
 		mw.hook( 'ccrf.postload' ).fire();

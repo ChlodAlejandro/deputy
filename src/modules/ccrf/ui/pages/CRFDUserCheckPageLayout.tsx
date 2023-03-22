@@ -5,6 +5,13 @@ import unwrapWidget from '../../../../util/unwrapWidget';
 import DeputyMessageWidget from '../../../../ui/shared/DeputyMessageWidget';
 import { DeputyDispatchTask } from '../../../../api/DispatchAsync';
 import { BackgroundChecks } from '../../BackgroundChecks';
+import { h } from 'tsx-dom';
+import unwrapJQ from '../../../../util/unwrapJQ';
+import BackgroundCheck from '../checks/BackgroundCheck';
+import DeletedPageCheck from '../checks/DeletedPageCheck';
+import DispatchUser from '../../../../api/DispatchUser';
+import swapElements from '../../../../util/swapElements';
+import error from '../../../../util/error';
 
 interface CRFDUserCheckPageLayoutConfig {
 	dialog: ReturnType<typeof CaseRequestFilingDialog>;
@@ -23,9 +30,10 @@ function initCRFDUserCheckPageLayout() {
 		dialog: ReturnType<typeof CaseRequestFilingDialog>;
 
 		user: string = null;
-		userChecks: Record<keyof BackgroundChecks, DeputyDispatchTask<any>>;
+		userChecks: Partial<Record<keyof BackgroundChecks, BackgroundCheck<any>>> = {};
 
 		mainContainer: JSX.Element = null;
+		checksContainer: JSX.Element = null;
 		userCheckElements: Record<keyof BackgroundChecks, JSX.Element>;
 
 		/**
@@ -51,10 +59,41 @@ function initCRFDUserCheckPageLayout() {
 		 *
 		 * @param newUser
 		 */
-		setUser( newUser: string ): void {
+		async setUser( newUser: string ): Promise<void> {
 			if ( this.user !== newUser ) {
 				this.user = newUser;
-				// TODO: Start checks
+
+				const checkPromises = [];
+				const checks = this.dialog.getEnabledChecks();
+				if ( checks.page ) {
+					checkPromises.push(
+						DispatchUser.i.deletedPages( this.user )
+							.then( ( task ) => {
+								this.userChecks.page = new DeletedPageCheck( task );
+							} )
+					);
+				}
+				// TODO checks.revision
+				// TODO checks.warnings
+
+				await Promise.all( checkPromises )
+					.then( () => {
+						this.mainContainer = swapElements(
+							this.mainContainer,
+							this.renderUserChecks()
+						);
+					} )
+					.catch( e => {
+						error( e );
+						this.mainContainer = unwrapWidget( DeputyMessageWidget( {
+							type: 'error',
+							label: mw.msg( 'deputy.ccrf.step2.error', e )
+						} ) );
+					} );
+				this.checksContainer = swapElements(
+					this.checksContainer,
+					<div>{this.renderChecksInterface( checks )}</div>
+				);
 			}
 		}
 
@@ -72,10 +111,16 @@ function initCRFDUserCheckPageLayout() {
 		}
 
 		/**
+		 * Renders the user checks portion of the dialog.
 		 *
+		 * @return A JSX.Element
 		 */
 		renderUserChecks(): JSX.Element {
-			return <div></div>;
+			return <div>
+				{this.userChecks.page?.render()}
+				{this.userChecks.revision?.render()}
+				{this.userChecks.warnings?.render()}
+			</div>;
 		}
 
 		/**
@@ -87,14 +132,16 @@ function initCRFDUserCheckPageLayout() {
 		 */
 		renderManualInterface(): JSX.Element[] {
 			return [
-				<p>{mw.msg( 'deputy.ccrf.step2.fallback' )}</p>,
+				<p>{mw.msg( 'deputy.ccrf.step2.fallback', this.user )}</p>,
 				<ul>
-					<li dangerouslySetInnerHTML={
-						mw.message( 'deputy.ccrf.step2.fallback.link1', this.user ).parse()
-					}/>
-					<li dangerouslySetInnerHTML={
-						mw.message( 'deputy.ccrf.step2.fallback.link2', this.user ).parse()
-					}/>
+					{unwrapJQ(
+						<li/>,
+						mw.message( 'deputy.ccrf.step2.fallback.link1', this.user ).parseDom()
+					)}
+					{unwrapJQ(
+						<li/>,
+						mw.message( 'deputy.ccrf.step2.fallback.link2', this.user ).parseDom()
+					)}
 				</ul>,
 				<p>{mw.msg( 'deputy.ccrf.step2.fallback2' )}</p>
 			];
@@ -132,8 +179,8 @@ function initCRFDUserCheckPageLayout() {
 			return [
 				<p>{mw.msg( 'deputy.ccrf.step2.details' )}</p>,
 				checkList,
-				<p dangerouslySetInnerHTML={mw.message( 'deputy.ccrf.step2.details2' ).parse()} />,
-				( this.mainContainer = this.renderNoUserMessageBox() )
+				unwrapJQ( <p/>, mw.message( 'deputy.ccrf.step2.details2' ).parseDom() ),
+				( this.mainContainer ?? ( this.mainContainer = this.renderNoUserMessageBox() ) )
 			];
 		}
 
@@ -145,10 +192,12 @@ function initCRFDUserCheckPageLayout() {
 
 			return <div>
 				<h1>{mw.msg( 'deputy.ccrf.step2.heading' )}</h1>
-				{ ...( Object.values( checks ).every( v => !v ) ?
-					this.renderManualInterface() :
-					this.renderChecksInterface( checks )
-				) }
+				{ this.checksContainer = <div>{
+					...( Object.values( checks ).every( v => !v ) ?
+						this.renderManualInterface() :
+						this.renderChecksInterface( checks )
+					)
+				}</div> }
 				<CRFDNavigation dialog={this.dialog} page={this} />
 			</div>;
 		}

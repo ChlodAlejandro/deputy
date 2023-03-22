@@ -54,14 +54,41 @@
 	transform: translateY( 0 );
 }
 
-.cci-case-request-filer .crfd-background-check {
+.cci-case-request-filer .ccrf-background-check {
 	margin: 1em 0;
 }
 
-.cci-case-request-filer .crfd-background-check--header {
+.cci-case-request-filer .ccrf-background-check--header {
 	margin-bottom: 0.4em;
+	padding: 0.5em;
+	background-color: rgba(198, 213, 255, 0.1);
 }
 
-.cci-case-request-filer .crfd-background-check--header > span:last-child {
+.cci-case-request-filer .ccrf-background-check--header > span:last-child {
 	margin-left: 0.4em;
 }
+
+.cci-case-request-filer .ccrf-background-check--header .oo-ui-iconWidget {
+	margin-right: 0.4em;
+}
+
+.ccrf-deleted-page--links::before {
+	content: attr(data-before);
+}
+
+.ccrf-deleted-page--links::after {
+	content: attr(data-after);
+}
+
+.ccrf-deleted-page--links > *:not(:last-child)::after {
+	content: attr(data-separator)
+}
+
+.ccrf-deleted-page--links > *:not(:last-child)::after {
+	content: attr(data-separator)
+}
+
+.ccrf-deleted-page--details > *:not(:last-child)::after {
+	content: attr(data-separator)
+}
+

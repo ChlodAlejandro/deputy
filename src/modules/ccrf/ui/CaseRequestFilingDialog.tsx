@@ -5,7 +5,7 @@ import CRFDIntroPageLayout from './pages/CRFDIntroPageLayout';
 import CRFDUserSelectPageLayout from './pages/CRFDUserSelectPageLayout';
 import sleep from '../../../util/sleep';
 import { BackgroundChecks } from '../BackgroundChecks';
-import CRFDUserCheckPageLayout from './checks/CRFDBackgroundCheck';
+import CRFDUserCheckPageLayout from './pages/CRFDUserCheckPageLayout';
 
 let InternalCaseRequestFilingDialog: any;
 
@@ -85,8 +85,10 @@ function initCaseRequestFilingDialog() {
 		getEnabledChecks(): BackgroundChecks {
 			const ccrfConfig = window.CCICaseRequestFiler.wikiConfig.ccrf;
 			return {
-				page: ccrfConfig.performPageChecks.get(),
-				revision: ccrfConfig.performRevisionChecks.get(),
+				page: ccrfConfig.performPageChecks.get() &&
+					ccrfConfig.pageDeletionFilters.get() != null,
+				revision: ccrfConfig.performRevisionChecks.get() &&
+					ccrfConfig.revisionDeletionFilters.get() != null,
 				warnings: ccrfConfig.performWarningChecks.get() &&
 					ccrfConfig.warningFilters.get() != null
 			};

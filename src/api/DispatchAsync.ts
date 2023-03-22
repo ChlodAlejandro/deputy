@@ -125,6 +125,7 @@ export default class DispatchAsync {
 		taskOptions: DeputyDispatchTaskOptions = {}
 	): Promise<DeputyDispatchTask<T>> {
 		const taskInfo = await fetch( endpoint, {
+			method: 'POST',
 			body: JSON.stringify( options ),
 			headers: {
 				'Content-Type': 'application/json',

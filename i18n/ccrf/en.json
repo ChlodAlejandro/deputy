@@ -19,13 +19,14 @@
     "deputy.ccrf.step1.error.notfound": "It looks like this user doesn't exist on this wiki. Check your spelling and try again.",
 
     "deputy.ccrf.step2.heading": "Perform background checks",
-    "deputy.ccrf.step2.details": "We're running a few background checks for you. These background checks determine if:",
+    "deputy.ccrf.step2.details": "We're running a few background checks for you. Some of these checks may contain false positives and false negatives; it's important that you double check the data here before including them in your request. These background checks determine if:",
     "deputy.ccrf.step2.details.page": "$1 created pages that were deleted for copyright violations",
     "deputy.ccrf.step2.details.revisions": "$1 has revisions hidden due to copyright violations",
     "deputy.ccrf.step2.details.revisions.note": "Note that $1's revisions may have been collateral damage from another user's copyright violation. We've placed notes on revisions where this is the likely case.",
     "deputy.ccrf.step2.details.warnings": "$1 has received copyright-related warnings in the past",
     "deputy.ccrf.step2.details2": "These checks may take a while. Some of these checks have progress indicators to help you gauge how long they'll take. Grab a cup of coffee or stare at [[Special:RecentChanges|recent changes]] while you wait.",
     "deputy.ccrf.step2.noUser": "You haven't selected a user yet. Please go back to the previous step and select a user.",
+    "deputy.ccrf.step2.error": "An error occurred while attempting to perform background checks: $1",
 
     "deputy.ccrf.step2.fallback": "Prior to writing a case on $1, check if this user has a history of copyright violations. This can help you determine if this user is a repeat offender, and you can include this information as required in your report. You can start off by checking the following places:",
     "deputy.ccrf.step2.fallback.link1": "[[Special:PageHistory/User talk:$1|$1's talk page history]] (to look for past warnings)",
@@ -40,5 +41,15 @@
     "deputy.ccrf.check.revisions.clear": "Found no revisions that were likely copyright violations",
     "deputy.ccrf.check.warnings.load": "Checking user's warnings...",
     "deputy.ccrf.check.warnings.match": "Found $1 copyright violation warnings",
-    "deputy.ccrf.check.warnings.clear": "Found no copyright violation warnings"
+    "deputy.ccrf.check.warnings.clear": "Found no copyright violation warnings",
+
+    "deputy.ccrf.page.links.parenthesis": "(",
+    "deputy.ccrf.page.links.separator": " | ",
+    "deputy.ccrf.page.links.history": "history",
+    "deputy.ccrf.page.links.edit": "edit",
+    "deputy.ccrf.page.links.end": ")",
+    "deputy.ccrf.page.details.separator": "•",
+    "deputy.ccrf.page.details.created": "created $1",
+    "deputy.ccrf.page.deleted": "deleted on [[$1|$2]] by [[$3|$4]] with reason \"$5\"",
+    "deputy.ccrf.page.deleted.userhidden": "deleted on [[$1|$2]] with reason \"$3\""
 }

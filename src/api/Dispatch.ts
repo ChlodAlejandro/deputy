@@ -1,6 +1,7 @@
 import { ExpandedRevisionData } from './ExpandedRevisionData';
 import Requester from '../util/Requester';
 import { deputyVersion } from '../DeputyVersion';
+import WikiConfiguration from '../config/WikiConfiguration';
 
 /**
  * API communication class
@@ -51,7 +52,7 @@ export default class Dispatch {
 	async getEndpoint( endpoint: string ): Promise<URL> {
 		return new URL(
 			endpoint.replace( /^\/+/, '' ),
-			( await window.deputy.getWikiConfig() ).core.dispatchRoot.get()
+			( await WikiConfiguration.load() ).core.dispatchRoot.get()
 				.href
 				.replace( /\/+$/, '' )
 		);

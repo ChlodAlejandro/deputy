@@ -4,6 +4,8 @@ import getRevisionDiffURL from '../../wiki/util/getRevisionDiffURL';
 import nsId from '../../wiki/util/nsId';
 import type { ExpandedRevisionData } from '../../api/ExpandedRevisionData';
 import { h } from 'tsx-dom';
+import unwrapJQ from '../../util/unwrapJQ';
+import msgEval from '../../wiki/util/msgEval';
 
 /**
  * @param root0
@@ -246,12 +248,53 @@ export function ChangesListTags( { tags }: { tags: string[] } ): JSX.Element {
 		).text() }</a>{
 		tags.map( ( v ) => {
 			// eslint-disable-next-line mediawiki/msg-doc
-			const tagMessage = mw.message( `tag-${ v }` ).parse();
-			return tagMessage !== '-' && <span
-				class={ `mw-tag-marker mw-tag-marker-${ v }` }
-				dangerouslySetInnerHTML={ tagMessage }
-			/>;
+			const tagMessage = mw.message( `tag-${ v }` ).parseDom();
+			return tagMessage.text() !== '-' && unwrapJQ(
+				<span
+					class={ `mw-tag-marker mw-tag-marker-${ v }` }
+				/>,
+				tagMessage
+			);
 		} )
 	}
+	</span>;
+}
+
+/**
+ * @param root0
+ * @param root0.revision
+ */
+export function ChangesListRow( { revision }: { revision: ExpandedRevisionData } ): JSX.Element {
+	const commentElement = revision.parsedcomment ? <span
+		class="comment comment--without-parentheses"
+		/** Stranger danger! Yes. */
+		dangerouslySetInnerHTML={revision.parsedcomment}
+	/> : unwrapJQ( <span/>, msgEval( revision.comment ).parseDom() );
+
+	return <span>
+		<ChangesListLinks
+			revid={ revision.revid }
+			parentid={ revision.parentid }
+		/> {
+			!revision.parentid && <NewPageIndicator />
+		}<ChangesListTime
+			timestamp={ revision.timestamp }
+		/><ChangesListDate
+			revision={ revision }
+		/>  <ChangesListUser
+			user={ revision.user }
+		/> <span
+			class="mw-changeslist-separator"
+		/> <ChangesListBytes
+			size={ revision.size }
+		/> <ChangesListDiff
+			size={ revision.size }
+			diffsize={ revision.diffsize }
+		/> <span
+			class="mw-changeslist-separator"
+		/> { commentElement } {
+			( revision.tags?.length ?? -1 ) > 0 &&
+			<ChangesListTags tags={revision.tags} />
+		}
 	</span>;
 }

@@ -134,7 +134,7 @@ function initCRFDUserSelectPageLayout() {
 						field.setErrors( [ mw.msg( 'deputy.ccrf.step1.error.notfound' ) ] );
 						return false;
 					} else {
-						this.dialog.userCheckPage.setUser( user.name );
+						await this.dialog.userCheckPage.setUser( user.name );
 						return true;
 					}
 				}

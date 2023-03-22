@@ -22,6 +22,7 @@ import log from '../util/log';
 import warn from '../util/warn';
 import error from '../util/error';
 import { StringFilterType } from './types';
+import warn from '../util/warn';
 
 export type WikiPageConfiguration = {
 	title: mw.Title,
@@ -370,9 +371,19 @@ export default class WikiConfiguration extends ConfigurationBase {
 			defaultValue: true,
 			displayOptions: { type: 'checkbox' }
 		} ),
+		pageDeletionFilters: new Setting<StringFilterType, StringFilterType>( {
+			...Setting.basicSerializers,
+			defaultValue: null,
+			displayOptions: { type: 'unimplemented' }
+		} ),
+		revisionDeletionFilters: new Setting<StringFilterType, StringFilterType>( {
+			...Setting.basicSerializers,
+			defaultValue: null,
+			displayOptions: { type: 'unimplemented' }
+		} ),
 		warningFilters: new Setting<StringFilterType, StringFilterType>( {
 			...Setting.basicSerializers,
-			defaultValue: { source: '<!--\\s*Template:uw-(.+?)\\s*-->', flags: 'gi' },
+			defaultValue: null,
 			displayOptions: { type: 'unimplemented' }
 		} )
 	};
@@ -417,7 +428,6 @@ export default class WikiConfiguration extends ConfigurationBase {
 					this.serializedData,
 					window.deputyWikiConfigOverride,
 					( key, oldVal, newVal ) => {
-
 						warn( `${key}: ${
 							JSON.stringify( oldVal )
 						} → ${

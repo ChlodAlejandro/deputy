@@ -77,6 +77,7 @@ export default class CopiedTemplateEditor extends DeputyModule {
 	 * adding in necessary UI elements that serve as an entry point to CTE.
 	 */
 	async preInit(): Promise<boolean> {
+		mw.hook( 'ante.preload' ).fire();
 		if ( !await super.preInit( deputyAnteEnglish ) ) {
 			return false;
 		}

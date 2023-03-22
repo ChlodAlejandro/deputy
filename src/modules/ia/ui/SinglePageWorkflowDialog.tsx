@@ -12,6 +12,7 @@ import equalTitle from '../../../util/equalTitle';
 import msgEval from '../../../wiki/util/msgEval';
 import CCICaseInputWidget from './CCICaseInputWidget';
 import changeTag from '../../../config/changeTag';
+import unwrapJQ from '../../../util/unwrapJQ';
 
 export interface SinglePageWorkflowDialogData {
 	page: TitleLike;
@@ -148,26 +149,19 @@ function initSinglePageWorkflowDialog() {
 		initialize() {
 			super.initialize();
 
-			const intro = <div
-				class="ia-report-intro"
-				dangerouslySetInnerHTML={
-					mw.message(
-						'deputy.ia.report.intro',
-						CopyrightProblemsPage.getCurrentListingPage().getPrefixedText()
-					).parse()
-				}
-			/>;
+			const intro = unwrapJQ( <div class="ia-report-intro" />, mw.message(
+				'deputy.ia.report.intro',
+				CopyrightProblemsPage.getCurrentListingPage().getPrefixedText()
+			).parseDom() );
 			intro.querySelector( 'a' ).setAttribute( 'target', '_blank' );
 
-			const page = <div
-				class="ia-report-intro"
-				dangerouslySetInnerHTML={
-					mw.message(
-						'deputy.ia.report.page',
-						this.page.getPrefixedText()
-					).parse()
-				}
-			/>;
+			const page = unwrapJQ( <div class="ia-report-intro" />, mw.message(
+				'deputy.ia.report.intro',
+				mw.message(
+					'deputy.ia.report.page',
+					this.page.getPrefixedText()
+				).parse()
+			).parseDom() );
 			page.querySelector( 'a' ).setAttribute( 'target', '_blank' );
 
 			this.fieldsetLayout = new OO.ui.FieldsetLayout( {

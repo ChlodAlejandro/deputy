@@ -5,6 +5,7 @@ import removeElement from '../../util/removeElement';
 
 interface DeputyMessageWidgetOptions extends OO.ui.MessageWidget.ConfigOptions {
 	title?: string;
+	label?: string;
 	message?: ComponentChild;
 	closable?: boolean;
 	actions?: ( OO.ui.Element | HTMLElement )[];
