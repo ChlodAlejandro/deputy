@@ -65,9 +65,16 @@ export interface RawContributionSurveyRow {
 	 *
 	 * $1 - Revision ID
 	 * $2 - Diff size
-	 * $3 - Bold syntax (if any; "'''").
 	 */
 	diffTemplate: string;
+	/**
+	 * Template to use for rebuilding the entirety of the diffs section.
+	 *
+	 * $1 - Diff links
+	 *
+	 * @default "$1"
+	 */
+	diffsTemplate?: string;
 }
 
 /**
@@ -118,6 +125,7 @@ export default class ContributionSurveyRowParser {
 			this.eatUntil( /^(?:'''?)?\[\[Special:Diff\/\d+/, true ) ??
 			// {{dif|12345|6789}}
 			this.eatUntil( /^(?:'''?)?{{dif\|\d+/, true );
+		let diffsBolded = false;
 
 		// At this point, `extras` is either a string or `null`. If it's a string,
 		// extras exist, and we should add them. If not, there's likely no more
@@ -143,9 +151,19 @@ export default class ContributionSurveyRowParser {
 			// All diff links removed. Get diff of starting and current to get entire diff part.
 			diffs = starting.slice( 0, starting.length - this.current.length );
 
-			// Dawkeye support.
+			// Bolded diffs support.
+			if (
+				diffs.slice( 0, 3 ) === "'''" &&
+				diffs.slice( -3 ) === "'''" &&
+				!diffs.slice( 3, -3 ).includes( "'''" )
+			) {
+				diffsBolded = true;
+			}
+
+			// Pre-2014 style support.
 			if ( ( diffs ?? '' ).includes( '{{dif' ) ) {
-				diffTemplate = '$3{{dif|$1|$2}}$3';
+				diffsBolded = true;
+				diffTemplate = '{{dif|$1|($2)}}';
 			}
 
 			// Comments should be empty, but just in case we do come across comments.
@@ -180,7 +198,8 @@ export default class ContributionSurveyRowParser {
 			diffs,
 			comments,
 			revids,
-			diffTemplate
+			diffTemplate,
+			diffsTemplate: diffsBolded ? "'''$1'''" : '$1'
 		};
 	}
 

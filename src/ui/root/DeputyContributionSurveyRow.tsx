@@ -257,15 +257,17 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 			)
 		) ?? [];
 
+		let diffsText = '';
 		if ( unfinishedDiffs.length > 0 ) {
-			result += unfinishedDiffs.map( ( v ) => {
+			diffsText += unfinishedDiffs.map( ( v ) => {
 				return mw.format(
 					this.row.data.diffTemplate,
 					v.revision.revid,
-					v.revision.diffsize > 0 ? '+' + v.revision.diffsize : v.revision.diffsize,
-					Math.abs( v.revision.diffsize ) > 500 ? "'''" : ''
+					v.revision.diffsize > 0 ? '+' + v.revision.diffsize : v.revision.diffsize
 				);
 			} ).join( '' );
+
+			result += mw.format( this.row.data.diffsTemplate, diffsText );
 
 			if ( this.row.data.comments ) {
 				// Comments existed despite not being finished yet. Allow anyway.
