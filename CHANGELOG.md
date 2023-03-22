@@ -3,6 +3,22 @@
 
 These are changes that may or may not have been deployed to wikis, but are not yet considered as part of any release.
 
+# [v0.4.2](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.4.1) - 2023-03-23
+
+## Modified
+* [[`0aeeb4d`](../../commit/0aeeb4d)] Hid `lastEdited` option from wiki configuration editor
+* [[`b9e7f83`](../../commit/b9e7f83)] Moved wiki configuration to localStorage instead of MediaWiki options
+* [[`866cdee`](../../commit/866cdee)] (dev) Added automatically-generated utility index files
+* [[`04ba5ce`](../../commit/04ba5ce)] Exposed utility functions onto Deputy global object
+* [[`cb639dc`](../../commit/cb639dc)] Added z-index to page toolbar
+* [[`3e0f425`](../../commit/3e0f425)] Increased page toolbar timeout for page details
+
+## Bugs
+* [[`595ce69`](../../commit/595ce69)] Fixed broken pre-20124 case style processing
+* [[`9fcbd0f`](../../commit/9fcbd0f)] Fixed comment rows causing parser to throw errors
+
+For a granular list of changes, see [v0.4.1...v0.4.2](https://github.com/ChlodAlejandro/deputy/compare/v0.4.1...v0.4.2).
+
 # [v0.4.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.4.1) - 2023-01-18
 
 Small patch, big leap. This patch switches Deputy over to using the dedicated [Deputy Dispatch tool](https://deputy.toolforge.org/) instead of the Zoomiebot Deputy module. For more information about Dispatch, see its [GitHub repository](https://github.com/ChlodAlejandro/deputy-dispatch).
