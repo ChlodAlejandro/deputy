@@ -4,6 +4,7 @@
 These are changes that may or may not have been deployed to wikis, but are not yet considered as part of any release.
 
 # [v0.4.2](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.4.1) - 2023-03-23
+Another set of patches and fixes.
 
 ## Modified
 * [[`0aeeb4d`](../../commit/0aeeb4d)] Hid `lastEdited` option from wiki configuration editor
@@ -14,7 +15,7 @@ These are changes that may or may not have been deployed to wikis, but are not y
 * [[`3e0f425`](../../commit/3e0f425)] Increased page toolbar timeout for page details
 
 ## Bugs
-* [[`595ce69`](../../commit/595ce69)] Fixed broken pre-20124 case style processing
+* [[`595ce69`](../../commit/595ce69)] Fixed broken pre-2014 case style processing
 * [[`9fcbd0f`](../../commit/9fcbd0f)] Fixed comment rows causing parser to throw errors
 
 For a granular list of changes, see [v0.4.1...v0.4.2](https://github.com/ChlodAlejandro/deputy/compare/v0.4.1...v0.4.2).
