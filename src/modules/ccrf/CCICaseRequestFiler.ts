@@ -39,6 +39,9 @@ export default class CCICaseRequestFiler extends DeputyModule {
 		'mediawiki.Title',
 		'mediawiki.widgets',
 		'mediawiki.widgets.UserInputWidget',
+		'mediawiki.special.changeslist',
+		'mediawiki.interface.helpers.styles',
+		'mediawiki.pager.styles',
 		'moment'
 	];
 

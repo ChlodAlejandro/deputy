@@ -1,6 +1,7 @@
 import { DeputyResources } from './DeputyResources';
 import cloneRegex from './util/cloneRegex';
 import error from './util/error';
+import { USER_LOCALE } from './wiki/Locale';
 
 /**
  * Handles internationalization and localization for Deputy and sub-modules.
@@ -66,7 +67,7 @@ export default class DeputyLanguage {
 	 *
 	 * @param locale The locale to load. `window.deputyLang` by default.
 	 */
-	static async loadMomentLocale( locale = window.deputyLang ) {
+	static async loadMomentLocale( locale = USER_LOCALE ) {
 		if ( locale === 'en' ) {
 			// Always loaded.
 			return;

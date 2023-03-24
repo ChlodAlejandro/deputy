@@ -35,12 +35,11 @@ export default function msgEval( string: string, ...parameters: any[] ): mw.Mess
 	if ( typeof parameters[ 0 ] === 'object' ) {
 		named = parameters.shift();
 	}
-	const m = new mw.Map();
 
 	for ( const [ from, to ] of Object.entries( named ) ) {
 		string = string.replace( new RegExp( `\\$${from}`, 'g' ), to );
 	}
 
-	m.set( 'msg', string );
-	return new mw.Message( m, 'msg', parameters );
+	mw.messages.set( 'deputy-message-temp', string );
+	return mw.message( 'deputy-message-temp', parameters );
 }

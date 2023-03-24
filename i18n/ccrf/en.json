@@ -36,9 +36,10 @@
     "deputy.ccrf.check.page.load": "Checking user's deleted pages...",
     "deputy.ccrf.check.page.match": "Found $1 pages that were likely copyright violations",
     "deputy.ccrf.check.page.clear": "Found no pages that were likely copyright violations",
-    "deputy.ccrf.check.revisions.load": "Checking user's hidden revisions...",
-    "deputy.ccrf.check.revisions.match": "Found $1 revisions that were likely copyright violations",
-    "deputy.ccrf.check.revisions.clear": "Found no revisions that were likely copyright violations",
+    "deputy.ccrf.check.revision.load": "Checking user's hidden revisions...",
+    "deputy.ccrf.check.revision.match": "Found $1 revisions that may have copyright violations, none likely",
+    "deputy.ccrf.check.revision.match.close": "Found $1 revisions that may have copyright violations, $2 likely",
+    "deputy.ccrf.check.revision.clear": "Found no revisions that were deleted for copyright violations",
     "deputy.ccrf.check.warnings.load": "Checking user's warnings...",
     "deputy.ccrf.check.warnings.match": "Found $1 copyright violation warnings",
     "deputy.ccrf.check.warnings.clear": "Found no copyright violation warnings",
@@ -50,6 +51,10 @@
     "deputy.ccrf.page.links.end": ")",
     "deputy.ccrf.page.details.separator": "•",
     "deputy.ccrf.page.details.created": "created $1",
-    "deputy.ccrf.page.deleted": "deleted on [[$1|$2]] by [[$3|$4]] with reason \"$5\"",
-    "deputy.ccrf.page.deleted.userhidden": "deleted on [[$1|$2]] with reason \"$3\""
+    "deputy.ccrf.page.deleted": "Deleted on [[$1|$2]] by [[$3|$4]] with reason \"<i>$5</i>\"",
+    "deputy.ccrf.page.deleted.userhidden": "Deleted on [[$1|$2]] with reason \"<i>$3</i>\"",
+
+    "deputy.ccrf.revision.deleted": "Deleted on [[$1|$2]] by [[$3|$4]] with reason \"<i>$5</i>\"",
+    "deputy.ccrf.revision.deleted.userhidden": "Deleted on [[$1|$2]] with reason \"<i>$3</i>\"",
+    "deputy.ccrf.revision.likely": "Likely cause of deletion"
 }

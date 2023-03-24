@@ -9,6 +9,7 @@ import msgEval from '../../../../wiki/util/msgEval';
 import nsId from '../../../../wiki/util/nsId';
 import { h } from 'tsx-dom';
 import { DeputyDispatchTask } from '../../../../api/DispatchAsync';
+import { USER_LOCALE } from '../../../../wiki/Locale';
 
 /**
  * Renders the header for a deleted page entry
@@ -62,11 +63,11 @@ function DeletedPageReason(
 	const time = new Date( page.deleted.timestamp );
 	const now = window.moment( time );
 
-	const formattedTime = time.toLocaleTimeString( window.deputyLang, {
+	const formattedTime = time.toLocaleTimeString( USER_LOCALE, {
 		hourCycle: 'h24',
 		timeStyle: mw.user.options.get( 'date' ) === 'ISO 8601' ? 'long' : 'short'
 	} );
-	const formattedDate = now.locale( window.deputyLang ).format( {
+	const formattedDate = now.locale( USER_LOCALE ).format( {
 		dmy: 'D MMMM YYYY',
 		mdy: 'MMMM D, Y',
 		ymd: 'YYYY MMMM D',
@@ -75,14 +76,14 @@ function DeletedPageReason(
 
 	const comma = mw.msg( 'comma-separator' );
 
-	const logPage = new mw.Title( 'Special:Redirect/log/' + page.deleted.logid )
+	const logPage = new mw.Title( 'Special:Redirect/logid/' + page.deleted.logid )
 		.getPrefixedText();
 	const userPage = new mw.Title( page.deleted.user, nsId( 'user' ) )
 		.getPrefixedText();
 
-	return <div class="ccrf-deleted-page--reason">
-		&#x21B3; {unwrapJQ(
-			<span/>,
+	return <ul class="ccrf-deleted-page--reason">
+		{unwrapJQ(
+			<li/>,
 			page.deleted.userhidden ?
 				mw.message( 'deputy.ccrf.page.deleted.userhidden',
 					logPage,
@@ -97,7 +98,7 @@ function DeletedPageReason(
 					msgEval( page.deleted.comment ).parseDom()
 				).parseDom()
 		)}
-	</div>;
+	</ul>;
 }
 
 /**
@@ -149,10 +150,7 @@ export default class DeletedPageCheck
 	}
 
 	/**
-	 *
-	 * @param data
-	 * @param data.pages
-	 * @return The result message
+	 * @inheritDoc
 	 */
 	getResultMessage( data: { pages: DeletedPage[] } ): { icon: string; message: string } {
 		const pages = this.getMatchingPages( data.pages );
@@ -165,9 +163,7 @@ export default class DeletedPageCheck
 	}
 
 	/**
-	 * @param data
-	 * @param data.pages
-	 * @return Rendered check results.
+	 * @inheritDoc
 	 */
 	renderCheckResults( data: { pages: DeletedPage[] } ): JSX.Element {
 		const pageElements = [];

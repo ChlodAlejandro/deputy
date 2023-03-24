@@ -12,6 +12,7 @@ import DeletedPageCheck from '../checks/DeletedPageCheck';
 import DispatchUser from '../../../../api/DispatchUser';
 import swapElements from '../../../../util/swapElements';
 import error from '../../../../util/error';
+import DeletedRevisionCheck from '../checks/DeletedRevisionCheck';
 
 interface CRFDUserCheckPageLayoutConfig {
 	dialog: ReturnType<typeof CaseRequestFilingDialog>;
@@ -73,7 +74,14 @@ function initCRFDUserCheckPageLayout() {
 							} )
 					);
 				}
-				// TODO checks.revision
+				if ( checks.revision ) {
+					checkPromises.push(
+						DispatchUser.i.deletedRevisions( this.user )
+							.then( ( task ) => {
+								this.userChecks.revision = new DeletedRevisionCheck( task );
+							} )
+					);
+				}
 				// TODO checks.warnings
 
 				await Promise.all( checkPromises )

@@ -4,6 +4,7 @@ import { h } from 'tsx-dom';
 import { BackgroundChecks } from '../../BackgroundChecks';
 import swapElements from '../../../../util/swapElements';
 import { DispatchUserDeletedPagesResponse } from '../../../../api/types/DispatchTypes';
+import { PromiseOrNot } from '../../../../types';
 
 /**
  *
@@ -28,11 +29,11 @@ export default abstract class BackgroundCheck<T> {
 		this.render();
 
 		this.task.addEventListener( 'progress', ( event: CustomEvent ) => {
-			this.progressBarWidget?.setProgress( event.detail );
+			this.progressBarWidget?.setProgress( event.detail * 100 );
 		} );
 		this.task.addEventListener( 'finished', () => {
 			this.progressBarWidget?.setProgress( 1 );
-			this.task.waitUntilDone().then( ( v ) => {
+			this.task.waitUntilDone().then( async ( v ) => {
 				const message = this.getResultMessage( v );
 				this.headerElement =
 					swapElements(
@@ -40,7 +41,7 @@ export default abstract class BackgroundCheck<T> {
 						this.renderHeader( message.icon, message.message )
 					);
 				this.mainElement =
-					swapElements( this.mainElement, this.renderCheckResults( v ) );
+					swapElements( this.mainElement, await this.renderCheckResults( v ) );
 			} );
 		} );
 	}
@@ -50,7 +51,7 @@ export default abstract class BackgroundCheck<T> {
 	 * @param {...any} params
 	 * @return a message for this specific check
 	 */
-	msg( key: string, ...params: string[] ): string {
+	msg( key: string, ...params: any[] ): string {
 		return mw.msg( `deputy.ccrf.check.${this.checkName}.${key}`, ...params );
 	}
 
@@ -59,11 +60,14 @@ export default abstract class BackgroundCheck<T> {
 	 *
 	 * @param data
 	 */
-	abstract renderCheckResults( data: T ): JSX.Element;
+	abstract renderCheckResults( data: T ): PromiseOrNot<JSX.Element>;
 
-	abstract getResultMessage( data: T ): {
-		icon: string, message: string
-	};
+	/**
+	 * Gets the result message for the check. This displays as the "heading" of the check.
+	 *
+	 * @param data
+	 */
+	abstract getResultMessage( data: T ): { icon: string, message: string };
 
 	/**
 	 * Renders the header
