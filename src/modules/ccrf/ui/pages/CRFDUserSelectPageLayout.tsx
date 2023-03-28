@@ -1,7 +1,7 @@
 import { h } from 'tsx-dom';
 import '../../../../types';
 import type CaseRequestFilingDialog from '../CaseRequestFilingDialog';
-import CRFDNavigation from '../CRFDNavigation';
+import CRFDNavigation, { getCRFDNavigationNextButton } from '../CRFDNavigation';
 import MwApi from '../../../../MwApi';
 import unwrapWidget from '../../../../util/unwrapWidget';
 import normalizeTitle from '../../../../wiki/util/normalizeTitle';
@@ -140,6 +140,16 @@ function initCRFDUserSelectPageLayout() {
 				}
 			};
 
+			// Run on enter
+			const nextButton = getCRFDNavigationNextButton( {
+				dialog: this.dialog,
+				page: this,
+				preNext
+			} );
+			input.on( 'enter', async () => {
+				unwrapWidget( nextButton ).querySelector( 'a' ).click();
+			} );
+
 			return <div>
 				<h1>{mw.msg( 'deputy.ccrf.step1.heading' )}</h1>
 				<p>{mw.msg( 'deputy.ccrf.step1.details' )}</p>
@@ -147,7 +157,9 @@ function initCRFDUserSelectPageLayout() {
 					<p>{mw.msg( 'deputy.ccrf.step1.details2' )}</p>
 				}
 				{unwrapWidget( field )}
-				<CRFDNavigation dialog={this.dialog} page={this} preNext={preNext} />
+				<CRFDNavigation dialog={this.dialog} page={this} nextButton={
+					unwrapWidget( nextButton )
+				} />
 			</div>;
 		}
 

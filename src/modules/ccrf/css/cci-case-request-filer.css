@@ -55,21 +55,38 @@
 }
 
 .cci-case-request-filer .ccrf-background-check {
-	margin: 0.8em 0 0 0;
+	margin: 0.4em 0;
 }
 
 .cci-case-request-filer .ccrf-background-check--header {
 	margin-bottom: 0.4em;
 	padding: 0.5em;
 	background-color: rgba(198, 213, 255, 0.1);
+
+	position: relative;
 }
 
-.cci-case-request-filer .ccrf-background-check--header > span:last-child {
+.cci-case-request-filer .ccrf-background-check--header > div:first-child > span:last-child {
 	margin-left: 0.4em;
 }
 
-.cci-case-request-filer .ccrf-background-check--header .oo-ui-iconWidget {
+.cci-case-request-filer .ccrf-background-check--header > div:first-child .oo-ui-iconWidget {
 	margin-right: 0.4em;
+}
+
+.cci-case-request-filer .ccrf-background-check--header--toggle {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+.cci-case-request-filer .ccrf-background-check--header--toggle.oo-ui-toggleWidget-on .oo-ui-buttonElement-button {
+	background-color: initial !important;
+}
+
+.cci-case-request-filer .ccrf-background-check--header + div {
+	transition: max-height 0.2s ease-in-out;
+	overflow: hidden;
 }
 
 .ccrf-deleted-page--links::before {
@@ -90,6 +107,17 @@
 
 .ccrf-deleted-page--details > *:not(:last-child)::after {
 	content: attr(data-separator)
+}
+
+.ccrf-deleted-revision--interval {
+	padding-bottom: 4px;
+	margin-top: 12px;
+	border-bottom: 1px solid #888;
+
+	color: #888;
+	font-weight: bold;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
 }
 
 .ccrf-deleted-page, .ccrf-deleted-revision {

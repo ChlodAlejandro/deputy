@@ -1,5 +1,3 @@
-// noinspection ES6UnusedImports
-import type CCICaseRequestFiler from '../../CCICaseRequestFiler';
 import BackgroundCheck from './BackgroundCheck';
 import { DispatchUserDeletedRevisionsResponse } from '../../../../api/types/DispatchTypes';
 import {
@@ -35,6 +33,7 @@ function DeletedRevisionHeader( { revision }: {revision: DeletedRevision} ): JSX
  *
  * @param root0
  * @param root0.revision
+ * @return A JSX Element
  */
 function DeletedRevisionReason(
 	{ revision }: { revision: DeletedRevision & { deleted: RevisionDeletionInfo } }
@@ -157,7 +156,7 @@ export default class DeletedRevisionCheck
 	 * @inheritDoc
 	 */
 	async renderCheckResults( data: { revisions: DeletedRevision[] } ): Promise<JSX.Element> {
-		const pageElements = [];
+		const revisionElements = [];
 
 		const matchingRevisions = this.getMatchingRevisions( data.revisions );
 
@@ -177,15 +176,46 @@ export default class DeletedRevisionCheck
 			}
 		);
 
+		// Sort from newest to oldest (to prepare for below)
+		matchingRevisions.sort(
+			// FIXME: Wasteful; numerous ephemeral Date object creation
+			( a, b ) =>
+				new Date( b.timestamp ).getTime() - new Date( a.timestamp ).getTime()
+		);
+		// Date headers
+		const intervals = [
+			1e3 * 60 * 60 * 24 * 7, // Past week
+			1e3 * 60 * 60 * 24 * 30, // Past month
+			1e3 * 60 * 60 * 24 * 30 * 3, // Past 3 months
+			1e3 * 60 * 60 * 24 * 365 // Past year
+		];
+		let lastInterval = null;
+
+		const now = Date.now();
 		for ( const revision of matchingRevisions ) {
-			pageElements.push(
+			const revisionTimestamp = new Date( revision.timestamp ).getTime();
+			const closestInterval =
+				intervals.find( ( interval ) => now - revisionTimestamp < interval );
+			if ( closestInterval !== lastInterval ) {
+				revisionElements.push(
+					<div class="ccrf-deleted-revision--interval">
+						{window.moment( now - revisionTimestamp ).fromNow()}
+					</div>
+				);
+				lastInterval = closestInterval;
+			}
+
+			revisionElements.push(
 				<DeletedRevisionPanel
 					revision={revision as DeletedRevision & { deleted: RevisionDeletionInfo }}
 				/>
 			);
 			// Ignore all deletions which don't match our conditions.
 		}
-		return <div>{pageElements}</div>;
+		if ( revisionElements.length === 0 ) {
+			return <div>{this.msg( 'none' )}</div>;
+		}
+		return <div>{revisionElements}</div>;
 	}
 
 }

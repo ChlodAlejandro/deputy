@@ -1,5 +1,3 @@
-// noinspection ES6UnusedImports
-import type CCICaseRequestFiler from '../../CCICaseRequestFiler';
 import BackgroundCheck from './BackgroundCheck';
 import { DispatchUserDeletedPagesResponse } from '../../../../api/types/DispatchTypes';
 import type { DeletedPage, PageDeletionInfo } from 'deputy-dispatch/src/models/DeletedPage';
@@ -56,6 +54,7 @@ function DeletedPageHeader( { page }: {page: DeletedPage} ): JSX.Element {
  *
  * @param root0
  * @param root0.page
+ * @return A JSX Element
  */
 function DeletedPageReason(
 	{ page }: { page: DeletedPage & { deleted: PageDeletionInfo } }
@@ -173,6 +172,9 @@ export default class DeletedPageCheck
 				<DeletedPagePanel page={page as DeletedPage & { deleted: PageDeletionInfo }} />
 			);
 			// Ignore all deletions which don't match our conditions.
+		}
+		if ( pageElements.length === 0 ) {
+			return <div>{this.msg( 'none' )}</div>;
 		}
 		return <div>{pageElements}</div>;
 	}

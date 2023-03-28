@@ -3,7 +3,6 @@ import unwrapWidget from '../../../../util/unwrapWidget';
 import { h } from 'tsx-dom';
 import { BackgroundChecks } from '../../BackgroundChecks';
 import swapElements from '../../../../util/swapElements';
-import { DispatchUserDeletedPagesResponse } from '../../../../api/types/DispatchTypes';
 import { PromiseOrNot } from '../../../../types';
 
 /**
@@ -77,10 +76,40 @@ export default abstract class BackgroundCheck<T> {
 	 * @return A JSX Element
 	 */
 	renderHeader( icon: string, message: string ): JSX.Element {
-		return <div class="ccrf-background-check--header">
-			{ unwrapWidget( new OO.ui.IconWidget( { icon } ) ) }
-			<span>{message}</span>
-		</div>;
+		const header = <div class="ccrf-background-check--header" />;
+		const toggleButton = new OO.ui.ToggleButtonWidget( {
+			classes: [ 'ccrf-background-check--header--toggle' ],
+			label: mw.msg( 'deputy.ccrf.check.toggle' ),
+			invisibleLabel: true,
+			icon: 'expand',
+			framed: false
+		} );
+		toggleButton.on( 'change', ( state: boolean ) => {
+			if ( state ) {
+				this.mainElement.style.maxHeight = '0';
+			} else {
+				// Transitioning to expanded state.
+				// Unset first to get actual height.
+				this.mainElement.style.maxHeight = 'unset';
+				this.mainElement.style.maxHeight = this.mainElement.clientHeight + 'px';
+			}
+			toggleButton.setIcon( state ? 'collapse' : 'expand' );
+			header.classList.toggle( 'ccrf-background-check--header--collapsed', !state );
+		} );
+
+		header.appendChild(
+			<div>
+				{ unwrapWidget( new OO.ui.IconWidget( { icon } ) ) }
+				<span>{message}</span>
+			</div>
+		);
+		header.appendChild(
+			<div>
+				{ unwrapWidget( toggleButton )}
+			</div>
+		);
+
+		return header;
 	}
 
 	/**
