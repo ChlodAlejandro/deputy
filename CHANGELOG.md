@@ -3,6 +3,13 @@
 
 These are changes that may or may not have been deployed to wikis, but are not yet considered as part of any release.
 
+## Modified
+* [[`c77ad39`](../../commit/c77ad39)] Made page toolbar appear as long as a session was active
+* [[`51330ac`](../../commit/51330ac)] Made page toolbar only show when viewing normally, viewing a diff, or viewing a permanent link
+
+## Bugs
+* [[`c77ad39`](../../commit/c77ad39)] Fixed revisions not working when the page title doesn't match
+
 # [v0.4.2](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.4.1) - 2023-03-23
 Another set of patches and fixes.
 
