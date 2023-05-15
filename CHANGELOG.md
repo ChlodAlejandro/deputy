@@ -6,6 +6,7 @@ These are changes that may or may not have been deployed to wikis, but are not y
 ## Modified
 * [[`c77ad39`](../../commit/c77ad39)] Made page toolbar appear as long as a session was active
 * [[`51330ac`](../../commit/51330ac)] Made page toolbar only show when viewing normally, viewing a diff, or viewing a permanent link
+* [[`6d212b1`](../../commit/6d212b1)] Added shorthand summary for case page assessment edit summaries
 
 ## Bugs
 * [[`c77ad39`](../../commit/c77ad39)] Fixed revisions not working when the page title doesn't match
