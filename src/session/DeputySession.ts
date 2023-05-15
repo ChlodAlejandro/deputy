@@ -96,7 +96,7 @@ export default class DeputySession {
 				const casePage = await DeputyCasePage.build();
 
 				await DeputyRootSession.initOverwriteMessage( casePage );
-			} else {
+			} else if ( mw.config.get( 'wgAction' ) === 'view' ) {
 				await this.normalPageInitialization();
 				window.deputy.comms.addEventListener( 'sessionStarted', () => {
 					// This misses by a few seconds right now since sessionStarted is
