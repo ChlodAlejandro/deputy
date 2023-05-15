@@ -21,7 +21,7 @@ export default class DeputyPageSession {
 	 * @param timeout Timeout for the page detail request.
 	 */
 	static async getPageDetails(
-		revision?: number,
+		revision = mw.config.get( 'wgRevisionId' ),
 		title: mw.Title = window.deputy.currentPage,
 		timeout = 500
 	): Promise<DeputyPageStatusResponseMessage | null> {

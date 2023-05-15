@@ -85,6 +85,14 @@ export default class DeputySession {
 					await casePage.bumpActive();
 				}
 			} else if ( DeputyCasePage.isCasePage() ) {
+				if (
+					mw.config.get( 'wgCurRevisionId' ) !==
+					mw.config.get( 'wgRevisionId' )
+				) {
+					// This is an old revision. Don't show the interface.
+					return;
+				}
+
 				const casePage = await DeputyCasePage.build();
 
 				await DeputyRootSession.initOverwriteMessage( casePage );

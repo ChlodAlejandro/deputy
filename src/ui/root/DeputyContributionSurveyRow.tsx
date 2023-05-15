@@ -975,7 +975,14 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 		const rev = this.revisions?.find(
 			( r ) => r.revision.revid === event.data.revision
 		);
-		if ( event.data.page === this.row.title.getPrefixedText() ) {
+		// Handles the cases:
+		// * Page title and revision ID (if supplied) match
+		// * Page title matches
+		// * Page revision ID (if supplied) matches
+		if (
+			event.data.page === this.row.title.getPrefixedText() ||
+			( rev && event.data.revision )
+		) {
 			window.deputy.comms.reply(
 				event.data, {
 					type: 'pageStatusResponse',

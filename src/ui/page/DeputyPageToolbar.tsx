@@ -30,7 +30,7 @@ export interface DeputyPageToolbarOptions extends Omit<DeputyPageStatusResponseM
 	 * The revision to use. Helpful when overriding the revision being previewed, such as when
 	 * the revision that the case targets is on the left side of the page.
 	 */
-	revision: number;
+	revision?: number;
 }
 
 /**
@@ -55,7 +55,7 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 	/**
 	 * The revision ID that this toolbar is associated with.
 	 */
-	revision: number;
+	revision?: number;
 
 	readonly instanceId = generateId();
 	readonly revisionStatusUpdateListener = this.onRevisionStatusUpdate.bind( this );
@@ -136,7 +136,11 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 	 */
 	renderRevisionInfo(): JSX.Element {
 		if ( this.revision == null ) {
-			if ( this.options.forceRevision ?? true ) {
+			if (
+				// Show if forced, or if we're not looking at the latest revision.
+				mw.config.get( 'wgRevisionId' ) !== mw.config.get( 'wgCurRevisionId' ) ||
+				( this.options.forceRevision ?? true )
+			) {
 				return this.renderMissingRevisionInfo();
 			} else {
 				return null;
