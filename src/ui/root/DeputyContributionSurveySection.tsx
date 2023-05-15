@@ -216,13 +216,23 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 				);
 			}
 
-			if ( !this._section.originallyClosed && this.closed ) {
-				// Now closed.
+			const nowClosed = !this._section.originallyClosed && this.closed;
+			if ( nowClosed ) {
 				message.push( mw.msg( 'deputy.content.assessed.sectionClosed' ) );
 			}
 
 			const m = message.join( mw.msg( 'deputy.content.assessed.comma' ) );
-			return m[ 0 ].toUpperCase() + m.slice( 1 );
+
+			const summary = mw.msg(
+				nowClosed ?
+					'deputy.content.summary.sectionClosed' :
+					( finished === 0 && assessed > 0 ?
+						'deputy.content.summary.partial' :
+						'deputy.content.summary' ),
+				this.headingName,
+				finished
+			);
+			return summary + m[ 0 ].toUpperCase() + m.slice( 1 );
 		} else {
 			return mw.msg( 'deputy.content.reformat' );
 		}

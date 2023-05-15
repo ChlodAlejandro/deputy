@@ -1,5 +1,8 @@
 {
-    "deputy.content.assessed": "Assessed $1 revisions across $2 pages",
+    "deputy.content.summary": "/* $1 */ -$2) (",
+    "deputy.content.summary.partial": "/* $1 */ - partial) (",
+    "deputy.content.summary.sectionClosed": "/* $1 */ -$2, section done) (",
+    "deputy.content.assessed": "Assessed $1 {{PLURAL:$1|revision|revisions}} across $2 pages",
     "deputy.content.assessed.comma": ", ",
     "deputy.content.assessed.finished": "$1 finished",
     "deputy.content.assessed.reworked": "$1 reworked",
