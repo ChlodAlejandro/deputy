@@ -20,6 +20,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          cache: 'npm'
+
       - name: Install dependencies
         run: npm ci
 
@@ -86,6 +91,11 @@ jobs:
       - name: Install chromedriver
         if: matrix.browser.product == 'chrome'
         uses: nanasess/setup-chromedriver@v1
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          cache: 'npm'
 
       - name: Install dependencies
         if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
@@ -171,3 +181,34 @@ jobs:
           artifacts: "artifacts/*"
           allowUpdates: true
           replacesArtifacts: true
+
+  deploy:
+    name: Deploy (English Wikipedia)
+    needs: tests
+    runs-on: ubuntu-latest
+    environment: en.wikipedia
+    # `main` branch or version release only
+    if: ${{ startsWith( github.ref, 'refs/tags/v' ) || github.ref == 'refs/heads/main' }}
+    steps:
+      - name: Download transpiled code
+        uses: actions/download-artifact@v3
+        with:
+          name: builds
+
+      - name: Wipe sourcemap references
+        run: sed -i 's/\/\/# sourceMappingURL=.*//' deputy*.js
+
+      - name: Get edit summary
+        id: edit-summary
+        run: echo "commit-message=$(git show -s --format="[%h] %s" $GITHUB_REF)" >> $GITHUB_OUTPUT
+
+      - name: Deploy to Wikipedia
+        uses: wikimedia-gadgets/deploy-action@v1
+        with:
+          paths: |
+            deputy.js User:Chlod/Scripts/Deputy.js
+            deputy-ante.js User:Chlod/Scripts/Deputy/AttributionNoticeTemplateEditor.js
+            deputy-ia.js User:Chlod/Scripts/Deputy/InfringementAssistant.js
+          apiUrl: 'https://en.wikipedia.org/w/api.php'
+          oauth2Token: ${{ secrets.OAUTH_ACCESS_TOKEN }}
+          editSummary: '${{ steps.edit-summary.output.commit-message }} (bot/CD)'
