@@ -93,6 +93,7 @@ jobs:
         uses: nanasess/setup-chromedriver@v1
 
       - name: Setup Node
+        if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
         uses: actions/setup-node@v3
         with:
           cache: 'npm'
