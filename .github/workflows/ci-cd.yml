@@ -203,7 +203,7 @@ jobs:
         run: echo "commit-message=$(git show -s --format="[%h] %s" $GITHUB_REF)" >> $GITHUB_OUTPUT
 
       - name: Deploy to Wikipedia
-        uses: wikimedia-gadgets/deploy-action@v1
+        uses: wikimedia-gadgets/deploy-action@v1.1.0
         with:
           paths: |
             deputy.js User:Chlod/Scripts/Deputy.js
