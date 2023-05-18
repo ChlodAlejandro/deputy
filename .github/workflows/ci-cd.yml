@@ -202,7 +202,7 @@ jobs:
       - name: Get edit summary
         id: edit-summary
         run: | 
-          if [[ $GITHUB_REF == refs/tags/v* ]] then
+          if [ $GITHUB_REF == refs/tags/v* ] then
             echo "message=$(git show -s --format="[%h] %s" $GITHUB_REF)" >> $GITHUB_OUTPUT
           else
             TAG=$(echo $GITHUB_REF | sed -E 's/^refs\/tags\/(.*)\/.*/\1/')
