@@ -201,7 +201,13 @@ jobs:
 
       - name: Get edit summary
         id: edit-summary
-        run: echo "commit-message=$(git show -s --format="[%h] %s" $GITHUB_REF)" >> $GITHUB_OUTPUT
+        run: | 
+          if [[ $GITHUB_REF == refs/tags/v* ]] then
+            echo "message=$(git show -s --format="[%h] %s" $GITHUB_REF)" >> $GITHUB_OUTPUT
+          else
+            TAG=$(echo $GITHUB_REF | sed -E 's/^refs\/tags\/(.*)\/.*/\1/')
+            echo "message=$TAG; https://github.com/ChlodAlejandro/deputy/releases/tag/$TAG " >> $GITHUB_OUTPUT
+          fi
 
       - name: Deploy to Wikipedia
         uses: wikimedia-gadgets/deploy-action@v1.1.0
@@ -212,4 +218,4 @@ jobs:
             deputy-ia.js User:Chlod/Scripts/Deputy/InfringementAssistant.js
           apiUrl: 'https://en.wikipedia.org/w/api.php'
           oauth2Token: ${{ secrets.OAUTH_ACCESS_TOKEN }}
-          editSummary: '${{ steps.edit-summary.output.commit-message }} (bot/CD)'
+          editSummary: '${{ steps.edit-summary.output.message }} (bot/CD)'
