@@ -33,6 +33,9 @@ function initBackwardsCopyTemplateRowPage() {
 	InternalBackwardsCopyTemplateRowPage = class BackwardsCopyTemplateRowPage
 		extends OO.ui.PageLayout implements AttributionNoticePageLayout {
 
+		// OOUI
+		outlineItem: OO.ui.OutlineOptionWidget|null;
+
 		/**
 		 * The row that this page refers to.
 		 */
@@ -49,15 +52,16 @@ function initBackwardsCopyTemplateRowPage() {
 		 * An OOUI FieldsetLayout that contains the button set (using `.append`) and
 		 * input fields (using `.addItems`)
 		 */
-		layout: any;
+		layout: OO.ui.FieldsetLayout;
 		/**
 		 * An array of OOUI InputWidget widgets that represent the fields of this row.
 		 */
-		inputs: Record<BackwardsCopyTemplateRowParameter | 'toggle', any>;
+		inputs: Record<BackwardsCopyTemplateRowParameter | 'toggle',
+			OO.ui.TagMultiselectWidget | OO.ui.TextInputWidget>;
 		/**
 		 * An array of OOUI FieldLayout widgets that contain inputs for this row.
 		 */
-		fieldLayouts: Record<BackwardsCopyTemplateRowParameter | 'toggle', any>;
+		fieldLayouts: Record<BackwardsCopyTemplateRowParameter | 'toggle', OO.ui.FieldLayout>;
 		/**
 		 * The label of this page. Used in the BookletLayout and header.
 		 */
@@ -115,7 +119,7 @@ function initBackwardsCopyTemplateRowPage() {
 		 *
 		 * @return An OOUI FieldsetLayout
 		 */
-		render(): any {
+		render(): OO.ui.FieldsetLayout {
 			this.layout = new OO.ui.FieldsetLayout( {
 				icon: 'parameter',
 				label: mw.msg( 'deputy.ante.copied.entry.label' ),
@@ -160,7 +164,7 @@ function initBackwardsCopyTemplateRowPage() {
 		 *
 		 * @return An array of OOUI FieldLayouts
 		 */
-		renderFields(): any[] {
+		renderFields(): OO.ui.FieldLayout[] {
 			// Use order: `date`, `monthday` + `year`, `year`
 			const rowDate = this.backwardsCopyTemplateRow.date ??
 				(
@@ -254,25 +258,26 @@ function initBackwardsCopyTemplateRowPage() {
 				const input = inputs[ field ];
 
 				if ( field === 'author' ) {
-					input.on( 'change', ( value: { data: string }[] ) => {
-						if ( value.length === 0 ) {
-							this.backwardsCopyTemplateRow.author = null;
-							this.backwardsCopyTemplateRow.authorlist = null;
-						} else if ( value.length > 1 ) {
-							this.backwardsCopyTemplateRow.author = null;
-							this.backwardsCopyTemplateRow.authorlist =
-								// TODO: ANTE l10n
-								value.map( ( v ) => v.data ).join( '; ' );
-						} else {
-							this.backwardsCopyTemplateRow.authorlist = null;
-							this.backwardsCopyTemplateRow.author =
-								value[ 0 ].data;
-						}
-						this.backwardsCopyTemplateRow.parent.save();
-					} );
+					( input as OO.ui.TagMultiselectWidget )
+						.on( 'change', ( value: ( OO.ui.Element & { data: string } )[] ) => {
+							if ( value.length === 0 ) {
+								this.backwardsCopyTemplateRow.author = null;
+								this.backwardsCopyTemplateRow.authorlist = null;
+							} else if ( value.length > 1 ) {
+								this.backwardsCopyTemplateRow.author = null;
+								this.backwardsCopyTemplateRow.authorlist =
+									// TODO: ANTE l10n
+									value.map( ( v ) => v.data ).join( '; ' );
+							} else {
+								this.backwardsCopyTemplateRow.authorlist = null;
+								this.backwardsCopyTemplateRow.author =
+									value[ 0 ].data;
+							}
+							this.backwardsCopyTemplateRow.parent.save();
+						} );
 				} else {
 					// Attach the change listener
-					input.on( 'change', ( value: string ) => {
+					( input as OO.ui.TextInputWidget ).on( 'change', ( value: string ) => {
 						this.backwardsCopyTemplateRow[ field ] = value;
 						this.backwardsCopyTemplateRow.parent.save();
 					} );
@@ -291,9 +296,7 @@ function initBackwardsCopyTemplateRowPage() {
 		 * Sets up the outline item of this page. Used in the BookletLayout.
 		 */
 		setupOutlineItem() {
-			/** @member any */
 			if ( this.outlineItem !== undefined ) {
-				/** @member any */
 				this.outlineItem
 					.setMovable( true )
 					.setRemovable( true )

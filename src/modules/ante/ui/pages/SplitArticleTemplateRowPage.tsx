@@ -16,7 +16,7 @@ export interface SplitArticleTemplateRowPageData {
 	/**
 	 * The parent of this page.
 	 *
-	 * Set to `any` due to OOUI's lack of proper TypeScript support.
+	 * Set to `any` due to lack of proper handling for mw.loader.using calls and the like.
 	 */
 	parent: /* CopiedTemplateEditorDialog */ any;
 }
@@ -35,6 +35,8 @@ function initSplitArticleTemplateRowPage() {
 
 		splitArticleTemplateRow: SplitArticleTemplateRow;
 		parent: ReturnType<typeof CopiedTemplateEditorDialog>;
+		outlineItem: OO.ui.OutlineOptionWidget;
+		layout: OO.ui.FieldsetLayout;
 
 		/**
 		 * @param config Configuration to be passed to the element.
@@ -134,7 +136,7 @@ function initSplitArticleTemplateRowPage() {
 		 *
 		 * @return An array of OOUI FieldLayouts
 		 */
-		renderFields(): any[] {
+		renderFields(): OO.ui.FieldLayout[] {
 			const rowDate = this.splitArticleTemplateRow.date;
 			const parsedDate =
 				( rowDate == null || rowDate.trim().length === 0 ) ?
@@ -155,7 +157,6 @@ function initSplitArticleTemplateRowPage() {
 				} ),
 				// eslint-disable-next-line camelcase
 				from_oldid: new OO.ui.TextInputWidget( {
-					$overlay: this.parent.$overlay,
 					value: this.splitArticleTemplateRow.from_oldid || '',
 					placeholder: mw.msg( 'deputy.ante.splitArticle.from_oldid.placeholder' )
 				} ),
@@ -168,7 +169,6 @@ function initSplitArticleTemplateRowPage() {
 					value: parsedDate
 				} ),
 				diff: new OO.ui.TextInputWidget( {
-					$overlay: this.parent.$overlay,
 					value: this.splitArticleTemplateRow.from_oldid || '',
 					placeholder: mw.msg( 'deputy.ante.splitArticle.diff.placeholder' ),
 					validate: ( value: string ) => {
@@ -256,9 +256,7 @@ function initSplitArticleTemplateRowPage() {
 		 * Sets up the outline item of this page. Used in the BookletLayout.
 		 */
 		setupOutlineItem() {
-			/** @member any */
 			if ( this.outlineItem !== undefined ) {
-				/** @member any */
 				this.outlineItem
 					.setMovable( true )
 					.setRemovable( true )

@@ -47,9 +47,9 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 	row: { casePage: DeputyCase, title: mw.Title };
 
 	element: HTMLElement;
-	revisionCheckbox: any;
+	revisionCheckbox: OO.ui.CheckboxInputWidget;
 	statusDropdown: DeputyCCIStatusDropdown;
-	nextRevisionButton: any;
+	nextRevisionButton: OO.ui.ButtonWidget;
 	nextRevisionSection: HTMLElement;
 
 	/**
@@ -148,7 +148,7 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 		}
 
 		this.revisionCheckbox = new OO.ui.CheckboxInputWidget( {
-			label: mw.msg( 'deputy.session.revision.assessed' ),
+			title: mw.msg( 'deputy.session.revision.assessed' ),
 			selected: this.options.revisionStatus
 		} );
 

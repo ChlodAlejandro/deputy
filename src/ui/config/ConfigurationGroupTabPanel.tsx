@@ -20,6 +20,8 @@ function initConfigurationGroupTabPanel() {
 	InternalConfigurationGroupTabPanel = class ConfigurationGroupTabPanel
 		extends OO.ui.TabPanelLayout {
 
+		tabItem: OO.ui.TabOptionWidget;
+
 		data: any;
 		mode: 'user' | 'wiki';
 
@@ -96,6 +98,7 @@ function initConfigurationGroupTabPanel() {
 			this.tabItem.setLabel(
 				this.getMsg( this.config.group )
 			);
+			return this;
 		}
 
 		/**
@@ -200,7 +203,7 @@ function initConfigurationGroupTabPanel() {
 			} );
 			// Attach disabled re-checker
 			this.on( 'change', () => {
-				field.setDisabled( setting.disabled );
+				field.setDisabled( !!setting.disabled );
 			} );
 
 			return <div class="deputy-setting">{ unwrapWidget( layout ) }</div>;
@@ -234,10 +237,11 @@ function initConfigurationGroupTabPanel() {
 				helpInline: true
 			} );
 
-			field.on( 'change', ( items: string[] ) => {
+			// TODO: @types/oojs-ui limitation
+			( field as any ).on( 'change', ( items: string[] ) => {
 				const finalData = Array.isArray( setting.allowedValues ) ?
 					items :
-					( field.findSelectedItemsData() as string[] ).map(
+					( field.getValue() as unknown as string[] ).map(
 						( v ) => ( setting.allowedValues as Record<string, string> )[ v ]
 					);
 				setting.set( finalData );
@@ -245,7 +249,7 @@ function initConfigurationGroupTabPanel() {
 			} );
 			// Attach disabled re-checker
 			this.on( 'select', () => {
-				field.setDisabled( setting.disabled );
+				field.setDisabled( !!setting.disabled );
 			} );
 
 			return <div class="deputy-setting">{ unwrapWidget( layout ) }</div>;
@@ -265,8 +269,8 @@ function initConfigurationGroupTabPanel() {
 			);
 
 			const field = new OO.ui.RadioSelectWidget( {
-				readOnly: setting.displayOptions.readOnly ?? false,
-				disabled: isDisabled !== undefined && isDisabled !== false,
+				disabled: isDisabled !== undefined && isDisabled !== false &&
+					!( setting.displayOptions.readOnly ?? false ),
 				items: this.getAllowedValuesArray( settingKey, setting.allowedValues )
 					.map( ( [ key, label ] ) =>
 						new OO.ui.RadioOptionWidget( {
@@ -296,7 +300,7 @@ function initConfigurationGroupTabPanel() {
 			} );
 			// Attach disabled re-checker
 			this.on( 'change', () => {
-				field.setDisabled( setting.disabled );
+				field.setDisabled( !!setting.disabled );
 			} );
 
 			return <div class="deputy-setting">{ unwrapWidget( layout ) }</div>;

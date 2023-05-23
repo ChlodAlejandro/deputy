@@ -1,7 +1,7 @@
 import '../../../../types';
 import CopiedTemplateEditorDialog from '../CopiedTemplateEditorDialog';
 
-export interface AttributionNoticePageLayout {
+export interface AttributionNoticePageLayout extends OO.ui.PageLayout {
 
 	/**
 	 * The parent of this page.

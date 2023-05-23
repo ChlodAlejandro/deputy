@@ -17,7 +17,7 @@ export interface SplitArticleTemplatePageData {
 	/**
 	 * The parent of this page.
 	 *
-	 * Set to `any` due to OOUI's lack of proper TypeScript support.
+	 * Set to `any` due to lack of proper handling for mw.loader.using calls and the like.
 	 */
 	parent: /* splitArticleTemplateEditorDialog */ any;
 }
@@ -55,6 +55,9 @@ function initSplitArticleTemplatePage() {
 		 */
 		childPages: Map<SplitArticleTemplateRow, ReturnType<typeof SplitArticleTemplateRowPage>> =
 			new Map();
+
+		mergeButton: OO.ui.ButtonWidget;
+		outlineItem: OO.ui.OutlineOptionWidget;
 
 		/**
 		 * @param config Configuration to be passed to the element.
@@ -251,9 +254,7 @@ function initSplitArticleTemplatePage() {
 		 * Sets up the outline item of this page. Used in the BookletLayout.
 		 */
 		setupOutlineItem() {
-			/** @member any */
 			if ( this.outlineItem !== undefined ) {
-				/** @member any */
 				this.outlineItem
 					.setMovable( true )
 					.setRemovable( true )

@@ -8,7 +8,6 @@ export type EnumValue<T> = T[keyof T];
 
 declare global {
 	interface Window {
-		OO: any;
 		deputy: Deputy;
 		deputyLang?: string;
 		moment: moment.Moment;

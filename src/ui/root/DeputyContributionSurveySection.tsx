@@ -42,14 +42,14 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	 */
 	revid: number;
 
-	// UI elements (no OOUI types, fall back to `any`)
+	// UI elements
 	container: HTMLElement;
 	rows: DeputyContributionSurveyRow[];
-	closingCheckbox: any;
-	closingComments: any;
-	closeButton: any;
-	reviewButton: any;
-	saveButton: any;
+	closingCheckbox: OO.ui.CheckboxInputWidget;
+	closingComments: OO.ui.TextInputWidget;
+	closeButton: OO.ui.ButtonWidget;
+	reviewButton: OO.ui.ButtonWidget;
+	saveButton: OO.ui.ButtonWidget;
 
 	/**
 	 * A collection of strings or DeputyContributionSurveyRows. Used to build the
@@ -640,8 +640,6 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		this.closingComments.on( 'change', ( v: string ) => {
 			this.comments = v;
 		} );
-
-		( window as any ).test = this;
 
 		return this.container = <div class="deputy dp-cs-section">
 			<div>

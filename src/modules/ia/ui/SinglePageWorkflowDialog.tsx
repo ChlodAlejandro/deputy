@@ -82,6 +82,7 @@ function initSinglePageWorkflowDialog() {
 
 		// For dialogs. Remove if not a dialog.
 		static static = {
+			...OO.ui.ProcessDialog.static,
 			name: 'iaSinglePageWorkflowDialog',
 			title: mw.msg( 'deputy.ia' ),
 			actions: [
@@ -96,6 +97,8 @@ function initSinglePageWorkflowDialog() {
 			]
 		};
 
+		fieldsetLayout: OO.ui.FieldsetLayout;
+		$body: JQuery;
 		data: Partial<SinglePageWorkflowDialogResponseData>;
 
 		page: mw.Title;
@@ -181,6 +184,8 @@ function initSinglePageWorkflowDialog() {
 					this.renderSubmitButton()
 				]
 			} ).$element );
+
+			return this;
 		}
 
 		/**
@@ -216,9 +221,9 @@ function initSinglePageWorkflowDialog() {
 		/**
 		 * Render OOUI FieldLayouts to be appended to the fieldset layout.
 		 *
-		 * @return An array of OOUI `FieldsetLayout`s
+		 * @return An array of OOUI `FieldLayout`s
 		 */
-		renderFields(): any[] {
+		renderFields(): OO.ui.FieldLayout[] {
 			const entirePageByDefault = this.data.entirePage;
 
 			this.inputs = {
@@ -228,12 +233,12 @@ function initSinglePageWorkflowDialog() {
 				startSection: new OO.ui.DropdownInputWidget( {
 					$overlay: this.$overlay,
 					disabled: entirePageByDefault,
-					placeholder: mw.msg( 'deputy.ia.report.startSection.placeholder' )
+					title: mw.msg( 'deputy.ia.report.startSection.placeholder' )
 				} ),
 				endSection: new OO.ui.DropdownInputWidget( {
 					$overlay: this.$overlay,
 					disabled: entirePageByDefault,
-					placeholder: mw.msg( 'deputy.ia.report.endSection.placeholder' )
+					title: mw.msg( 'deputy.ia.report.endSection.placeholder' )
 				} ),
 				presumptive: new OO.ui.CheckboxInputWidget( {
 					selected: false
@@ -252,7 +257,7 @@ function initSinglePageWorkflowDialog() {
 					$overlay: this.$overlay,
 					allowArbitrary: true,
 					inputPosition: 'outline',
-					indicators: [ 'required' ],
+					indicator: 'required',
 					placeholder: mw.msg( 'deputy.ia.report.sourceUrls.placeholder' )
 				} ),
 				sourceText: new OO.ui.MultilineTextInputWidget( {
@@ -457,10 +462,10 @@ function initSinglePageWorkflowDialog() {
 		 *
 		 * @return An array of DropdownInputWidget options
 		 */
-		generateSectionOptions(): any {
+		generateSectionOptions(): OO.ui.DropdownInputWidget.Option[] {
 			const thisTitle = this.page.getPrefixedDb();
 
-			const options: any[] = [];
+			const options: OO.ui.DropdownInputWidget.Option[] = [];
 			if ( this.sections.length > 0 ) {
 				this.sections.forEach( ( section ) => {
 					options.push( {
@@ -489,7 +494,7 @@ function initSinglePageWorkflowDialog() {
 		 * @param data
 		 * @return An OOUI Process
 		 */
-		getSetupProcess( data: any ): any {
+		getSetupProcess( data: any ): OO.ui.Process {
 			const process = super.getSetupProcess.call( this, data );
 
 			process.next( MwApi.action.get( {
@@ -644,7 +649,7 @@ function initSinglePageWorkflowDialog() {
 		 * @param action
 		 * @return An OOUI Process
 		 */
-		getActionProcess( action: string ): any {
+		getActionProcess( action: string ): OO.ui.Process {
 			const process = super.getActionProcess.call( this, action );
 
 			if ( action === 'submit' ) {
@@ -689,15 +694,6 @@ function initSinglePageWorkflowDialog() {
 			}, this );
 
 			return process;
-		}
-
-		/**
-		 * @param data
-		 * @return An OOUI Process
-		 */
-		getTeardownProcess( data: any ): any {
-			/** @member any */
-			return super.getTeardownProcess.call( this, data );
 		}
 
 	};

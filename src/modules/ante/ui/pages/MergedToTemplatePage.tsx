@@ -18,7 +18,7 @@ export interface MergedToTemplatePageData {
 	/**
 	 * The parent of this page.
 	 *
-	 * Set to `any` due to OOUI's lack of proper TypeScript support.
+	 * Set to `any` due to lack of proper handling for mw.loader.using calls and the like.
 	 */
 	parent: /* CopiedTemplateEditorDialog */ any;
 }
@@ -32,6 +32,8 @@ function initMergedToTemplatePage() {
 	InternalMergedToTemplatePage = class MergedToTemplatePage
 		extends OO.ui.PageLayout
 		implements AttributionNoticePageLayout, MergedToTemplatePageData {
+
+		outlineItem: OO.ui.OutlineOptionWidget;
 
 		/**
 		 * @inheritDoc
@@ -167,7 +169,6 @@ function initMergedToTemplatePage() {
 					value: parsedDate
 				} ),
 				small: new OO.ui.CheckboxInputWidget( {
-					$overlay: this.parent.$overlay,
 					selected: yesNo( this.mergedToTemplate.small, false )
 				} )
 			};
@@ -234,9 +235,7 @@ function initMergedToTemplatePage() {
 		 * Sets up the outline item of this page. Used in the BookletLayout.
 		 */
 		setupOutlineItem() {
-			/** @member any */
 			if ( this.outlineItem !== undefined ) {
-				/** @member any */
 				this.outlineItem
 					.setMovable( true )
 					.setRemovable( true )

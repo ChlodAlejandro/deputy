@@ -4,7 +4,7 @@ import swapElements from '../../util/swapElements';
 import { h } from 'tsx-dom';
 import MwApi from '../../MwApi';
 
-export interface DeputyReviewDialogData {
+export interface DeputyReviewDialogData extends OO.ui.ProcessDialog.ConfigOptions {
 	from: string;
 	to: string;
 	title: mw.Title;
@@ -19,6 +19,7 @@ function initDeputyReviewDialog() {
 	InternalDeputyReviewDialog = class DeputyReviewDialog extends OO.ui.ProcessDialog {
 
 		static static = {
+			...OO.ui.ProcessDialog.static,
 			name: 'deputyReviewDialog',
 			title: mw.msg( 'deputy.diff' ),
 			actions: [
@@ -32,6 +33,10 @@ function initDeputyReviewDialog() {
 				}
 			]
 		};
+
+		content: OO.ui.PanelLayout;
+		element: JSX.Element;
+		$body: JQuery;
 
 		data: any;
 
@@ -56,7 +61,7 @@ function initDeputyReviewDialog() {
 		 *
 		 * @param {...any} args
 		 */
-		initialize( ...args: any[] ): void {
+		initialize( ...args: any[] ) {
 			super.initialize.apply( this, args );
 
 			this.element = <div style={ {
@@ -80,6 +85,8 @@ function initDeputyReviewDialog() {
 			this.content = new OO.ui.PanelLayout( { expanded: true, padded: true } );
 			unwrapWidget( this.content ).appendChild( this.element );
 			this.$body.append( this.content.$element );
+
+			return this;
 		}
 
 		/**
@@ -87,7 +94,7 @@ function initDeputyReviewDialog() {
 		 * @return The ready process for this object.
 		 */
 		getReadyProcess( data: any ) {
-			return ( super.getReadyProcess.call( this, data ) as typeof window.OO.ui.Process )
+			return ( super.getReadyProcess.call( this, data ) as OO.ui.Process )
 				.next( new Promise<void>( ( res ) => {
 					// Load MediaWiki diff styles
 					mw.loader.using( 'mediawiki.diff.styles', () => res() );
@@ -112,10 +119,12 @@ function initDeputyReviewDialog() {
 					} );
 
 					if ( compareRequest.error ) {
-						swapElements( this.element, new OO.ui.MessageWidget( {
-							type: 'error',
-							label: mw.msg( 'deputy.diff.error' )
-						} ) );
+						swapElements( this.element, unwrapWidget(
+							new OO.ui.MessageWidget( {
+								type: 'error',
+								label: mw.msg( 'deputy.diff.error' )
+							} )
+						) );
 					}
 
 					const diffHTML = compareRequest.compare.bodies.main;

@@ -21,7 +21,7 @@ export default abstract class DeputyModule {
 	 * An OOUI WindowManager. If this class is instantiated standalone (without Deputy),
 	 * this will be a set value.
 	 */
-	private _windowManager: any;
+	private _windowManager: OO.ui.WindowManager;
 	/**
 	 * The configuration object handling this module. Unavailable if Deputy is active.
 	 *
@@ -38,7 +38,7 @@ export default abstract class DeputyModule {
 	/**
 	 * @return The responsible window manager for this class.
 	 */
-	get windowManager(): any {
+	get windowManager(): OO.ui.WindowManager {
 		if ( !this.deputy ) {
 			if ( !this._windowManager ) {
 				this._windowManager = new OO.ui.WindowManager();

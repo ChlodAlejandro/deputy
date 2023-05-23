@@ -31,8 +31,8 @@ export interface DeputyCCIStatusDropdownProps {
  */
 export default class DeputyCCIStatusDropdown extends EventTarget {
 
-	static readonly menuOptionIcons = {
-		[ ContributionSurveyRowStatus.Unfinished ]: false,
+	static readonly menuOptionIcons: Record<ContributionSurveyRowStatus, OO.ui.Icon | null> = {
+		[ ContributionSurveyRowStatus.Unfinished ]: null,
 		[ ContributionSurveyRowStatus.Unknown ]: 'alert',
 		[ ContributionSurveyRowStatus.WithViolations ]: 'check',
 		[ ContributionSurveyRowStatus.WithoutViolations ]: 'close',
@@ -53,16 +53,16 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 	 * due to its lack of support for icons in dropdown menu options and the ability
 	 * to hide said icons using CSS and other fun trickery.
 	 */
-	dropdown: any;
+	dropdown: OO.ui.DropdownWidget;
 	/**
 	 * A set of OOUI MenuOptionWidgets that make up the status dropdown.
 	 */
-	options: Map<ContributionSurveyRowStatus, any>;
+	options: Map<ContributionSurveyRowStatus, OO.ui.MenuOptionWidget>;
 	/**
 	 * A listener that listens to changes in the status dropdown and performs respective
 	 * updates and changes.
 	 */
-	dropdownChangeListener: ( items: any[] ) => void;
+	dropdownChangeListener: ( items: OO.ui.OptionWidget[] ) => void;
 	/**
 	 * A listener that listens to external changes to the status dropdown from the
 	 * inter-tab communication channel.
@@ -73,7 +73,9 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 	 * @return The currently-selected status of this dropdown.
 	 */
 	get status(): ContributionSurveyRowStatus {
-		return this.dropdown.getMenu().findSelectedItem()?.getData() ?? null;
+		return (
+			this.dropdown.getMenu().findSelectedItem() as OO.ui.OptionWidget
+		)?.getData() as ContributionSurveyRowStatus ?? null;
 	}
 	/**
 	 * Sets the currently-selected status of this dropdown.
@@ -289,7 +291,7 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 	 */
 	refresh(): void {
 		const icon = DeputyCCIStatusDropdown.menuOptionIcons[ this.status ];
-		this.dropdown.setIcon( icon === false ? null : icon );
+		this.dropdown.setIcon( icon );
 	}
 
 	/**

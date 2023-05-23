@@ -19,7 +19,7 @@ import RowedAttributionNotice from '../models/RowedAttributionNotice';
 export function renderMergePanel<T extends SupportedAttributionNoticeType>(
 	type: T,
 	parentTemplate: AttributionNoticeTypeClass<T> & RowedAttributionNotice<any>,
-	mergeButton: any
+	mergeButton: OO.ui.ButtonWidget
 ): JSX.Element {
 	const mergePanel = new OO.ui.FieldsetLayout( {
 		classes: [ 'cte-merge-panel' ],
@@ -34,14 +34,14 @@ export function renderMergePanel<T extends SupportedAttributionNoticeType>(
 	// <select> and button for merging templates
 	const mergeTarget = new OO.ui.DropdownInputWidget( {
 		$overlay: true,
-		label: mw.msg( 'deputy.ante.merge.from.select' )
+		title: mw.msg( 'deputy.ante.merge.from.select' )
 	} );
 	const mergeTargetButton = new OO.ui.ButtonWidget( {
 		label: mw.msg( 'deputy.ante.merge.button' )
 	} );
 	mergeTargetButton.on( 'click', () => {
 		const template = parentTemplate.parsoid.findNoticeType( type ).find(
-			( v: AttributionNoticeTypeClass<T> ) => v.name === mergeTarget.value
+			( v: AttributionNoticeTypeClass<T> ) => v.name === mergeTarget.getValue()
 		);
 		if ( template ) {
 			// If template found, merge and reset panel
@@ -140,6 +140,7 @@ export function renderMergePanel<T extends SupportedAttributionNoticeType>(
 export function renderPreviewPanel( template: AttributionNotice ): JSX.Element {
 	const previewPanel = <div class="cte-preview" /> as HTMLElement;
 
+	// TODO: types-mediawiki limitation
 	const updatePreview = ( mw.util as any ).throttle( async (): Promise<void> => {
 		if ( !previewPanel ) {
 			// Skip if still unavailable.

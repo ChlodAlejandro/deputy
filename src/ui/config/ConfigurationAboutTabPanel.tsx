@@ -7,7 +7,14 @@ import deputyVersion, {
 	gitBranch,
 	gitVersion
 } from '../../DeputyVersion';
-import WikiConfiguration from '../../config/WikiConfiguration';
+import type WikiConfiguration from '../../config/WikiConfiguration';
+
+interface ConfigurationGroupTabPanelOptions extends OO.ui.TabPanelLayout.ConfigOptions {
+
+	config: WikiConfiguration;
+	group: keyof WikiConfiguration['all'];
+
+}
 
 let InternalConfigurationGroupTabPanel: any;
 
@@ -17,6 +24,10 @@ let InternalConfigurationGroupTabPanel: any;
 function initConfigurationGroupTabPanel() {
 	InternalConfigurationGroupTabPanel = class ConfigurationGroupTabPanel
 		extends OO.ui.TabPanelLayout {
+
+		// OOUI
+		config: ConfigurationGroupTabPanelOptions;
+		tabItem: OO.ui.TabOptionWidget;
 
 		static readonly logoUrl =
 			'https://upload.wikimedia.org/wikipedia/commons/2/2b/Deputy_logo.svg';
@@ -99,6 +110,7 @@ function initConfigurationGroupTabPanel() {
 		 */
 		setupTabItem() {
 			this.tabItem.setLabel( mw.msg( 'deputy.about' ) );
+			return this;
 		}
 
 	};

@@ -23,7 +23,8 @@ let InternalConfigurationDialog: any;
 function initConfigurationDialog() {
 	InternalConfigurationDialog = class ConfigurationDialog extends OO.ui.ProcessDialog {
 
-		static static = {
+		static static: OO.ui.Dialog.Static = {
+			...OO.ui.ProcessDialog.static,
 			name: 'configurationDialog',
 			title: mw.msg( 'deputy.settings.dialog.title' ),
 			size: 'large',
@@ -43,6 +44,10 @@ function initConfigurationDialog() {
 				}
 			]
 		};
+
+		// OOUI
+		$body: JQuery;
+		layout: OO.ui.IndexLayout;
 
 		data: any;
 		config: Configuration;
@@ -75,6 +80,8 @@ function initConfigurationDialog() {
 				this.layout.addTabPanels( [ ConfigurationAboutTabPanel() ] );
 			}
 			this.$body.append( this.layout.$element );
+
+			return this;
 		}
 
 		/**
@@ -82,7 +89,7 @@ function initConfigurationDialog() {
 		 *
 		 * @return An array of TabPanelLayouts
 		 */
-		generateGroupLayouts(): any[] {
+		generateGroupLayouts(): OO.ui.TabPanelLayout[] {
 			return Object.keys( this.config.all ).map(
 				( group: keyof ConfigurationBase['all'] ) => ConfigurationGroupTabPanel( {
 					config: this.config,
@@ -96,7 +103,7 @@ function initConfigurationDialog() {
 		 * @param action
 		 * @return An OOUI Process.
 		 */
-		getActionProcess( action: string ): typeof window.OO.ui.Process {
+		getActionProcess( action: string ): OO.ui.Process {
 			const process = super.getActionProcess();
 
 			if ( action === 'save' ) {

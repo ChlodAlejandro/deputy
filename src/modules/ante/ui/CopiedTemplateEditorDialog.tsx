@@ -5,7 +5,6 @@ import errorToOO from '../../../wiki/util/errorToOO';
 import { blockExit, unblockExit } from '../../../util/blockExit';
 import unwrapWidget from '../../../util/unwrapWidget';
 import decorateEditSummary from '../../../wiki/util/decorateEditSummary';
-import { OOUIBookletLayout } from '../../../types';
 import type CopiedTemplateEditor from '../CopiedTemplateEditor';
 import getObjectValues from '../../../util/getObjectValues';
 import { h } from 'tsx-dom';
@@ -38,9 +37,10 @@ function initCopiedTemplateEditorDialog() {
 		extends OO.ui.ProcessDialog {
 
 		static static = {
+			...OO.ui.ProcessDialog.static,
 			name: 'copiedTemplateEditorDialog',
 			title: mw.msg( 'deputy.ante' ),
-			size: 'huge',
+			size: 'huge' as const,
 			actions: [
 				{
 					flags: [ 'primary', 'progressive' ],
@@ -59,10 +59,13 @@ function initCopiedTemplateEditorDialog() {
 			]
 		};
 
+		// OOUI
+		$body: JQuery;
+
 		/**
 		 * The BookletLayout for this dialog.
 		 */
-		layout: OOUIBookletLayout;
+		layout: OO.ui.BookletLayout;
 		/**
 		 * Parsoid document for this dialog.
 		 */
@@ -134,6 +137,8 @@ function initCopiedTemplateEditorDialog() {
 
 			this.renderMenuActions();
 			this.$body.append( this.layout.$element );
+
+			return this;
 		}
 
 		/**
@@ -484,7 +489,9 @@ function initCopiedTemplateEditorDialog() {
 									'deputy.ante.content.add'
 							)
 						)
-					} ).catch( errorToOO );
+					} ).catch( ( e, c ) => {
+						throw errorToOO( e, c );
+					} );
 				}, this );
 
 				// Page redirect

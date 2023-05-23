@@ -37,6 +37,8 @@ function initCopiedTemplateRowPage() {
 	InternalCopiedTemplateRowPage = class CopiedTemplateRowPage
 		extends OO.ui.PageLayout implements AttributionNoticePageLayout {
 
+		outlineItem: OO.ui.OutlineOptionWidget;
+
 		/**
 		 * The row that this page refers to.
 		 */
@@ -44,7 +46,7 @@ function initCopiedTemplateRowPage() {
 		/**
 		 * The parent of this page.
 		 *
-		 * Set to `any` due to OOUI's lack of proper TypeScript support.
+		 * Set to `any` due to lack of proper handling for mw.loader.using calls and the like.
 		 */
 		parent: ReturnType<typeof CopiedTemplateEditorDialog>;
 
@@ -61,7 +63,7 @@ function initCopiedTemplateRowPage() {
 		/**
 		 * An array of OOUI FieldLayout widgets that contain inputs for this row.
 		 */
-		fieldLayouts: Record<CopiedTemplateRowParameter | 'toggle', any>;
+		fieldLayouts: Record<CopiedTemplateRowParameter | 'toggle', OO.ui.FieldLayout>;
 		/**
 		 * The label of this page. Used in the BookletLayout and header.
 		 */
@@ -137,7 +139,7 @@ function initCopiedTemplateRowPage() {
 		 *
 		 * @return An OOUI FieldsetLayout
 		 */
-		render(): any {
+		render(): OO.ui.FieldsetLayout {
 			this.layout = new OO.ui.FieldsetLayout( {
 				icon: 'parameter',
 				label: mw.msg( 'deputy.ante.copied.entry.label' ),
@@ -250,7 +252,7 @@ function initCopiedTemplateRowPage() {
 		 *
 		 * @return An array of OOUI FieldLayouts
 		 */
-		renderFields(): any[] {
+		renderFields(): OO.ui.FieldLayout[] {
 			const copiedTemplateRow = this.copiedTemplateRow;
 			const parsedDate =
 				( copiedTemplateRow.date == null || copiedTemplateRow.date.trim().length === 0 ) ?
@@ -296,7 +298,7 @@ function initCopiedTemplateRowPage() {
 					value: copiedTemplateRow.diff
 				} ),
 				merge: new OO.ui.CheckboxInputWidget( {
-					value: yesNo( copiedTemplateRow.merge )
+					selected: yesNo( copiedTemplateRow.merge )
 				} ),
 				afd: new OO.ui.TextInputWidget( {
 					placeholder: mw.msg( 'deputy.ante.copied.afd.placeholder' ),
@@ -600,9 +602,7 @@ function initCopiedTemplateRowPage() {
 		 * Sets up the outline item of this page. Used in the BookletLayout.
 		 */
 		setupOutlineItem() {
-			/** @member any */
 			if ( this.outlineItem !== undefined ) {
-				/** @member any */
 				this.outlineItem
 					.setMovable( true )
 					.setRemovable( true )
