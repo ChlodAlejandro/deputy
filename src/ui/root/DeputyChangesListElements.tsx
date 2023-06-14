@@ -79,7 +79,8 @@ export function ChangesListDate(
 	}
 	const formattedTime = time.toLocaleTimeString( window.deputyLang, {
 		hourCycle: 'h24',
-		timeStyle: mw.user.options.get( 'date' ) === 'ISO 8601' ? 'long' : 'short'
+		timeStyle: mw.user.options.get( 'date' ) === 'ISO 8601' ? 'long' : 'short',
+		timeZone: window.deputy.config.cci.forceUtc.get() ? 'UTC' : undefined
 	} );
 	const formattedDate = now.locale( window.deputyLang ).format( {
 		dmy: 'D MMMM YYYY',
