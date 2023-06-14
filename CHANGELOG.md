@@ -10,6 +10,7 @@ These are changes that may or may not have been deployed to wikis, but are not y
 
 ## Bugs
 * [[`c77ad39`](../../commit/c77ad39)] Fixed revisions not working when the page title doesn't match
+* [[`ff55837`](../../commit/ff55837)] Fixed "Force UTC time" only taking effect on dates
 
 # [v0.4.2](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.4.1) - 2023-03-23
 Another set of patches and fixes.
