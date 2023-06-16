@@ -70,7 +70,7 @@ export default class DeputyContributionSurveyRevision
 	 *
 	 * @private
 	 */
-	private completedCheckbox: any;
+	private completedCheckbox: OO.ui.CheckboxInputWidget;
 
 	/**
 	 * @param revision
@@ -82,6 +82,7 @@ export default class DeputyContributionSurveyRevision
 		this.uiRow = row;
 
 		if ( this.statusAutosaveFunction == null ) {
+			// TODO: types-mediawiki limitation
 			this.statusAutosaveFunction = ( mw.util as any ).throttle( async () => {
 				await this.saveStatus();
 			}, 500 );
@@ -148,7 +149,7 @@ export default class DeputyContributionSurveyRevision
 	 */
 	async prepare(): Promise<void> {
 		this.completedCheckbox = new OO.ui.CheckboxInputWidget( {
-			label: mw.msg( 'deputy.session.revision.assessed' ),
+			title: mw.msg( 'deputy.session.revision.assessed' ),
 			selected: await this.getSavedStatus()
 		} );
 

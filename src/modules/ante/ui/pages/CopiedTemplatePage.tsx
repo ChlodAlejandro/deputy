@@ -18,7 +18,7 @@ export interface CopiedTemplatePageData {
 	/**
 	 * The parent of this page.
 	 *
-	 * Set to `any` due to OOUI's lack of proper TypeScript support.
+	 * Set to `any` due to lack of proper handling for mw.loader.using calls and the like.
 	 */
 	parent: /* CopiedTemplateEditorDialog */ any;
 }
@@ -35,6 +35,8 @@ let InternalCopiedTemplatePage: any;
 function initCopiedTemplatePage() {
 	InternalCopiedTemplatePage = class CopiedTemplatePage
 		extends OO.ui.PageLayout implements AttributionNoticePageLayout {
+
+		outlineItem: OO.ui.OutlineOptionWidget;
 
 		/**
 		 * The ParsoidDocument that this {{copied}} template is from.
@@ -53,7 +55,7 @@ function initCopiedTemplatePage() {
 		/**
 		 * The "merge" toggle button in the button set.
 		 */
-		mergeButton: any;
+		mergeButton: OO.ui.ButtonWidget;
 		/**
 		 * A record of OOUI InputWidget objects.
 		 */
@@ -270,9 +272,7 @@ function initCopiedTemplatePage() {
 		 * Sets up the outline item of this page. Used in the BookletLayout.
 		 */
 		setupOutlineItem() {
-			/** @member any */
 			if ( this.outlineItem !== undefined ) {
-				/** @member any */
 				this.outlineItem
 					.setMovable( true )
 					.setRemovable( true )

@@ -39,14 +39,15 @@ export default class ListingResponsePanel extends EventTarget {
 	listing: CopyrightProblemsListing;
 	element: HTMLElement;
 
-	dropdown: any;
-	commentsField: any;
+	dropdown: OO.ui.DropdownInputWidget;
+	commentsField: OO.ui.MultilineTextInputWidget;
 	previewPanel: HTMLElement;
-	submitButton: any;
+	submitButton: OO.ui.ButtonWidget;
 
 	prefill: CopyrightProblemsResponse;
 	comments: string;
 
+	// TODO: types-mediawiki limitation
 	readonly reloadPreviewThrottled = ( mw.util as any ).throttle( this.reloadPreview, 500 );
 
 	/**
@@ -81,7 +82,7 @@ export default class ListingResponsePanel extends EventTarget {
 	 * @return An unwrapped OOUI DropdownInputWidget.
 	 */
 	renderPrefillDropdown(): JSX.Element {
-		const options: any[] = [ {
+		const options: OO.ui.DropdownInputWidget.Option[] = [ {
 			data: null,
 			label: mw.msg( 'deputy.ia.listing.re.label' ),
 			disabled: true
@@ -114,8 +115,7 @@ export default class ListingResponsePanel extends EventTarget {
 	 * @return An unwrapped OOUI TextInputWidget
 	 */
 	renderAdditionalCommentsField(): JSX.Element {
-		this.commentsField = new OO.ui.TextInputWidget( {
-			multiline: true,
+		this.commentsField = new OO.ui.MultilineTextInputWidget( {
 			placeholder: mw.msg( 'deputy.ia.listing.re.extras' ),
 			autosize: true,
 			rows: 1

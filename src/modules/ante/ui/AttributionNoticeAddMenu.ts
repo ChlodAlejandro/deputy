@@ -11,14 +11,14 @@ import CTEParsoidDocument from '../models/CTEParsoidDocument';
 export default class AttributionNoticeAddMenu {
 
 	document: CTEParsoidDocument;
-	baseWidget: any;
-	menuSelectWidget: any;
+	baseWidget: OO.ui.ButtonWidget;
+	menuSelectWidget: OO.ui.MenuSelectWidget;
 
 	/**
 	 * @param document
 	 * @param baseWidget
 	 */
-	constructor( document: CTEParsoidDocument, baseWidget: any ) {
+	constructor( document: CTEParsoidDocument, baseWidget: OO.ui.ButtonWidget ) {
 		this.document = document;
 		this.baseWidget = baseWidget;
 	}
@@ -27,7 +27,7 @@ export default class AttributionNoticeAddMenu {
 	 * @inheritDoc
 	 */
 	render(): HTMLElement {
-		const menuItems: Map<any, SupportedAttributionNoticeType> = new Map();
+		const menuItems: Map<OO.ui.MenuOptionWidget, SupportedAttributionNoticeType> = new Map();
 
 		const menuSelectWidget = new OO.ui.MenuSelectWidget( {
 			hideWhenOutOfView: false,
@@ -53,9 +53,10 @@ export default class AttributionNoticeAddMenu {
 		} );
 
 		menuSelectWidget.on( 'select', () => {
-			const selected = menuSelectWidget.findSelectedItem();
+			// Not a multiselect menu; cast the result to OptionWidget.
+			const selected = menuSelectWidget.findSelectedItem() as OO.ui.OptionWidget;
 			if ( selected ) {
-				const type: SupportedAttributionNoticeType = selected.getData();
+				const type = selected.getData() as SupportedAttributionNoticeType;
 				const spot = this.document.findNoticeSpot( type );
 				this.document.insertNewNotice( type, spot );
 				// Clear selections.

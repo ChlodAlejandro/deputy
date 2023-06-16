@@ -12,7 +12,7 @@ import DeputyMessageWidget from '../shared/DeputyMessageWidget';
 export default function WikiConfigurationEditIntro( config: WikiConfiguration ): JSX.Element {
 	const current = config.onConfigurationPage();
 
-	let buttons: any[];
+	let buttons: OO.ui.ButtonWidget[];
 	if ( current ) {
 		const editCurrent = new OO.ui.ButtonWidget( {
 			flags: [ 'progressive', 'primary' ],
@@ -53,7 +53,7 @@ export default function WikiConfigurationEditIntro( config: WikiConfiguration ):
 		classes: [
 			'deputy', 'dp-mb'
 		],
-		type: 'info',
+		type: 'notice',
 		title: mw.msg( 'deputy.settings.wikiEditIntro.title' ),
 		message: current ?
 			mw.msg( 'deputy.settings.wikiEditIntro.current' ) :

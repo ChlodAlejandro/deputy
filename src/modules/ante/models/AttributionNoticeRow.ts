@@ -67,6 +67,8 @@ implements AttributionNoticePageGenerator {
 	 * @return The cloned row
 	 */
 	clone( parent: T ): AttributionNoticeRow<T> {
+		// Odd constructor usage here allows cloning from subclasses without having
+		// to re-implement the cloning function.
 		// noinspection JSCheckFunctionSignatures
 		return new ( this.constructor as any )( this, parent );
 	}

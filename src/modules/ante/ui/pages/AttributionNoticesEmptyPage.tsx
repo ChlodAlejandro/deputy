@@ -11,7 +11,7 @@ export interface AttributionNoticesEmptyPageData {
 	/**
 	 * The parent of this page.
 	 *
-	 * Set to `any` due to OOUI's lack of proper TypeScript support.
+	 * Set to `any` due to lack of proper handling for mw.loader.using calls and the like.
 	 */
 	parent: /* CopiedTemplateEditorDialog */ any;
 }
@@ -24,6 +24,9 @@ let InternalAttributionNoticesEmptyPage: any;
 function initAttributionNoticesEmptyPage() {
 	InternalAttributionNoticesEmptyPage = class AttributionNoticesEmptyPage
 		extends OO.ui.PageLayout implements AttributionNoticesEmptyPageData {
+
+		// OOUI
+		outlineItem: OO.ui.OutlineOptionWidget|null;
 
 		/**
 		 * @inheritdoc
@@ -44,7 +47,6 @@ function initAttributionNoticesEmptyPage() {
 			this.parsoid = config.parsoid;
 			const addListener = this.parent.layout.on( 'add', () => {
 				for ( const name of Object.keys( this.parent.layout.pages ) ) {
-					/** @member any */
 					if ( name !== 'cte-no-templates' && this.outlineItem !== null ) {
 						// Pop this page out if a page exists.
 						this.parent.layout.removePages( [ this ] );
@@ -85,9 +87,7 @@ function initAttributionNoticesEmptyPage() {
 		 * Sets up the outline item of this page. Used in the BookletLayout.
 		 */
 		setupOutlineItem() {
-			/** @member any */
 			if ( this.outlineItem !== undefined ) {
-				/** @member any */
 				this.outlineItem.toggle( false );
 			}
 		}

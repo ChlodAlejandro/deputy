@@ -21,7 +21,7 @@ export interface BackwardsCopyTemplatePageData {
 	/**
 	 * The parent of this page.
 	 *
-	 * Set to `any` due to OOUI's lack of proper TypeScript support.
+	 * Set to `any` due to lack of proper handling for mw.loader.using calls and the like.
 	 */
 	parent: /* CopiedTemplateEditorDialog */ any;
 }
@@ -38,6 +38,9 @@ let InternalBackwardsCopyTemplatePage: any;
 function initBackwardsCopyTemplatePage() {
 	InternalBackwardsCopyTemplatePage = class BackwardsCopyTemplatePage
 		extends OO.ui.PageLayout implements AttributionNoticePageLayout {
+
+		// OOUI
+		outlineItem: OO.ui.OutlineOptionWidget|null;
 
 		/**
 		 * The ParsoidDocument that this {{copied}} template is from.
@@ -56,7 +59,7 @@ function initBackwardsCopyTemplatePage() {
 		/**
 		 * The "merge" toggle button in the button set.
 		 */
-		mergeButton: any;
+		mergeButton: OO.ui.ButtonWidget;
 		/**
 		 * The label of this page. Used in the BookletLayout and header.
 		 */
@@ -334,7 +337,6 @@ function initBackwardsCopyTemplatePage() {
 		 * Sets up the outline item of this page. Used in the BookletLayout.
 		 */
 		setupOutlineItem() {
-			/** @member any */
 			if ( this.outlineItem !== undefined ) {
 				/** @member any */
 				this.outlineItem

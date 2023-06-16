@@ -103,19 +103,19 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 	/**
 	 * TextInputWidget for closing comments. Used by both `renderFinished` and `renderUnfinished`.
 	 */
-	commentsTextInput: any;
+	commentsTextInput: OO.ui.TextInputWidget;
 	/**
 	 * FieldLayout for `commentsTextInput`. If not set, this field is not rendered.
 	 */
-	commentsField: any;
+	commentsField: OO.ui.FieldLayout;
 	/**
 	 * Button that checks all revisions of this row
 	 */
-	checkAllButton: any;
+	checkAllButton: OO.ui.ButtonWidget;
 	/**
 	 * Message box displayed when a user has set a status but not yet cleared all diffs.
 	 */
-	unfinishedMessageBox: any;
+	unfinishedMessageBox: OO.ui.MessageWidget;
 	/**
 	 * The revisions associated with this element. Only populated by `renderUnfinished`.
 	 */
@@ -492,6 +492,7 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 	 */
 	onUpdate(): void {
 		if ( this.statusAutosaveFunction == null ) {
+			// TODO: types-mediawiki limitation
 			this.statusAutosaveFunction = ( mw.util as any ).throttle( async () => {
 				await this.saveStatus();
 			}, 500 );
@@ -552,7 +553,7 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 	 * @param value
 	 * @return The OOUI TextInputWidget
 	 */
-	renderCommentsTextInput( value?: string ): any {
+	renderCommentsTextInput( value?: string ): OO.ui.TextInputWidget {
 		this.commentsTextInput = new OO.ui.MultilineTextInputWidget( {
 			classes: [ 'dp-cs-row-closeComments' ],
 			placeholder: mw.msg( 'deputy.session.row.closeComments' ),

@@ -92,12 +92,12 @@ class Deputy {
 	 * An OOUI WindowManager. Automatically instantiated when needed. See the
 	 * `windowManager` getter for instantiation.
 	 */
-	_windowManager: any;
+	_windowManager: OO.ui.WindowManager;
 
 	/**
 	 * @return An OOUI window manager
 	 */
-	get windowManager(): any {
+	get windowManager(): OO.ui.WindowManager {
 		if ( !this._windowManager ) {
 			this._windowManager = new OO.ui.WindowManager();
 			document.body.appendChild( unwrapWidget( this._windowManager ) );

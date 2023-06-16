@@ -18,7 +18,9 @@ import CCICaseInputWidget from './CCICaseInputWidget';
  * @param props.button
  * @return A panel for opening a single page workflow dialog
  */
-function NewCopyrightProblemsListingPanel( props: { button: any } ): JSX.Element {
+function NewCopyrightProblemsListingPanel( props: {
+	button: OO.ui.ButtonWidget
+} ): JSX.Element {
 	const titleSearch = new mw.widgets.TitleInputWidget( {
 		required: true,
 		showMissing: false,
@@ -78,7 +80,9 @@ function NewCopyrightProblemsListingPanel( props: { button: any } ): JSX.Element
  * @param props.button
  * @return A panel for reporting multiple pages
  */
-function NewCopyrightProblemsBatchListingPanel( props: { button: any } ) {
+function NewCopyrightProblemsBatchListingPanel( props: {
+	button: OO.ui.ButtonWidget
+} ) {
 	blockExit( 'ia-ncpbl' );
 	const cancelButton = new OO.ui.ButtonWidget( {
 		label: mw.msg( 'deputy.cancel' ),
@@ -189,6 +193,7 @@ function NewCopyrightProblemsBatchListingPanel( props: { button: any } ) {
 		class="ia-listing--preview"
 		data-label={mw.msg( 'deputy.ia.listing.new.preview' )}
 	/>;
+	// TODO: types-mediawiki limitation
 	const reloadPreview = ( mw.util as any ).throttle( async () => {
 		const data = getData( currentListingPage );
 		await renderWikitext(
@@ -238,7 +243,7 @@ function NewCopyrightProblemsBatchListingPanel( props: { button: any } ) {
 		} );
 	}, 500 );
 
-	getObjectValues( inputs ).forEach( ( a: typeof window.OO.EventEmitter ) => {
+	getObjectValues( inputs ).forEach( ( a: OO.EventEmitter ) => {
 		a.on( 'change', reloadPreview );
 	} );
 

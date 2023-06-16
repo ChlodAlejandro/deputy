@@ -220,7 +220,7 @@ export default class DeputyRootSession {
 						classes: [
 							'deputy', 'dp-cs-session-notice', 'dp-cs-session-tabActive'
 						],
-						type: 'info',
+						type: 'notice',
 						title: mw.msg( 'deputy.session.tabActive.head' ),
 						message: mw.msg( 'deputy.session.tabActive.help' ),
 						closable: true

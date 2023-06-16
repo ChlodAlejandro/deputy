@@ -15,7 +15,7 @@ export default function ConfigurationReloadBanner(): JSX.Element {
 		classes: [
 			'deputy', 'dp-mb', 'dp-wikiConfigUpdateMessage'
 		],
-		type: 'info',
+		type: 'notice',
 		title: mw.msg( 'deputy.settings.wikiOutdated' ),
 		message: mw.msg( 'deputy.settings.wikiOutdated.help' ),
 		actions: [ reloadButton ]

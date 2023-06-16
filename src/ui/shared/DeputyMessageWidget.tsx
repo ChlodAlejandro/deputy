@@ -1,7 +1,14 @@
-import { h } from 'tsx-dom';
+import { ComponentChild, h } from 'tsx-dom';
 import '../../types';
 import unwrapWidget from '../../util/unwrapWidget';
 import removeElement from '../../util/removeElement';
+
+interface DeputyMessageWidgetOptions extends OO.ui.MessageWidget.ConfigOptions {
+	title?: string;
+	message?: ComponentChild;
+	closable?: boolean;
+	actions?: ( OO.ui.Element | HTMLElement )[];
+}
 
 let InternalDeputyMessageWidget: any;
 
@@ -16,7 +23,7 @@ function initDeputyMessageWidget() {
 		/**
 		 * @param config Configuration to be passed to the element.
 		 */
-		constructor( config: any ) {
+		constructor( config: DeputyMessageWidgetOptions ) {
 			super( config );
 			this.$element.addClass( 'dp-messageWidget' );
 
@@ -36,7 +43,7 @@ function initDeputyMessageWidget() {
 			if ( config.actions || config.closable ) {
 				const actionContainer = <div class="dp-messageWidget-actions" />;
 				for ( const action of ( config.actions ?? [] ) ) {
-					if ( action instanceof OO.ui.Widget ) {
+					if ( action instanceof OO.ui.Element ) {
 						actionContainer.appendChild( unwrapWidget( action ) );
 					} else {
 						actionContainer.appendChild( action );
@@ -66,7 +73,7 @@ function initDeputyMessageWidget() {
  * @param config Configuration to be passed to the element.
  * @return A DeputyMessageWidget object
  */
-export default function ( config: any ) {
+export default function ( config: DeputyMessageWidgetOptions ) {
 	if ( !InternalDeputyMessageWidget ) {
 		initDeputyMessageWidget();
 	}

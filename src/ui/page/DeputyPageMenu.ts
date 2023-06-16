@@ -17,15 +17,19 @@ export default class DeputyPageMenu implements DeputyUIElement {
 
 	options: DeputyPageMenuOption[];
 	toolbar: DeputyPageToolbar;
-	baseWidget: any;
-	menuSelectWidget: any;
+	baseWidget: OO.ui.ToggleButtonWidget;
+	menuSelectWidget: OO.ui.MenuSelectWidget;
 
 	/**
 	 * @param options
 	 * @param toolbar
 	 * @param baseWidget
 	 */
-	constructor( options: DeputyPageMenuOption[], toolbar: DeputyPageToolbar, baseWidget: any ) {
+	constructor(
+		options: DeputyPageMenuOption[],
+		toolbar: DeputyPageToolbar,
+		baseWidget: OO.ui.ToggleButtonWidget
+	) {
 		this.options = options;
 		this.toolbar = toolbar;
 		this.baseWidget = baseWidget;
@@ -35,7 +39,7 @@ export default class DeputyPageMenu implements DeputyUIElement {
 	 * @inheritDoc
 	 */
 	render(): HTMLElement {
-		const menuItems: Map<any, DeputyPageMenuOption> = new Map();
+		const menuItems: Map<OO.ui.MenuOptionWidget, DeputyPageMenuOption> = new Map();
 
 		const menuSelectWidget = new OO.ui.MenuSelectWidget( {
 			autoHide: false,
@@ -60,9 +64,10 @@ export default class DeputyPageMenu implements DeputyUIElement {
 		} );
 
 		menuSelectWidget.on( 'select', () => {
-			const selected = menuSelectWidget.findSelectedItem();
+			// Not a multiselect MenuSelectWidget
+			const selected = menuSelectWidget.findSelectedItem() as OO.ui.OptionWidget;
 			if ( selected ) {
-				this.options[ selected.getData() ].action( this.toolbar );
+				this.options[ selected.getData() as number ].action( this.toolbar );
 				// Clear selections.
 				menuSelectWidget.selectItem();
 				this.baseWidget.setValue( false );
