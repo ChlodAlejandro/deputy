@@ -1,0 +1,45 @@
+name: Deployment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy (English Wikipedia)
+    needs: tests
+    runs-on: ubuntu-latest
+    environment: en.wikipedia
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          path: ./project/
+
+      - name: Download transpiled code
+        uses: actions/download-artifact@v3
+        with:
+          name: builds
+
+      - name: Wipe sourcemap references
+        run: sed -i 's/\/\/# sourceMappingURL=.*//' deputy*.js
+
+      - name: Get edit summary
+        id: edit-summary
+        run: |
+          if [ $GITHUB_REF == refs/tags/v* ]; then
+            echo "message=$(git show -s --format="[%h] %s" $GITHUB_REF)" >> $GITHUB_OUTPUT
+          else
+            TAG=$(echo $GITHUB_REF | sed -E 's/^refs\/tags\/(.*)\/.*/\1/')
+            echo "message=$TAG; https://github.com/ChlodAlejandro/deputy/releases/tag/$TAG " >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy to Wikipedia
+        uses: wikimedia-gadgets/deploy-action@v1.1.0
+        with:
+          paths: |
+            deputy.js User:Chlod/Scripts/Deputy.js
+            deputy-ante.js User:Chlod/Scripts/Deputy/AttributionNoticeTemplateEditor.js
+            deputy-ia.js User:Chlod/Scripts/Deputy/InfringementAssistant.js
+          apiUrl: 'https://en.wikipedia.org/w/api.php'
+          oauth2Token: ${{ secrets.OAUTH_ACCESS_TOKEN }}
+          editSummary: '${{ steps.edit-summary.output.message }} (bot/CD)'
