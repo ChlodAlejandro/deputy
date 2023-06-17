@@ -1,0 +1,8 @@
+{
+    "out": "./docs",
+    "excludeExternals": true,
+    "cleanOutputDir": false,
+    "compilerOptions": {
+        "skipLibCheck": true
+    }
+}
