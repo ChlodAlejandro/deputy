@@ -71,6 +71,14 @@ export default class DeputyLanguage {
 			return;
 		}
 
+		if ( mw.loader.getState( 'moment' ) !== 'ready' ) {
+			// moment.js is not yet loaded.
+			console.warn(
+				'Deputy tried loading moment.js locales but moment.js is not yet ready.'
+			);
+			return;
+		}
+
 		if ( window.moment.locales().indexOf( locale ) !== -1 ) {
 			// Already loaded.
 			return;

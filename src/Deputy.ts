@@ -24,6 +24,7 @@ import WikiConfiguration from './config/WikiConfiguration';
 import Recents from './wiki/Recents';
 import util from './util';
 import wikiUtil from './wiki/util';
+import DeputyAnnouncements from './DeputyAnnouncements';
 
 /**
  * The main class for Deputy. Entry point for execution.
@@ -176,8 +177,13 @@ class Deputy {
 
 		mw.hook( 'deputy.load' ).fire( this );
 
-		// Asynchronously reload wiki configuration.
-		this.wikiConfig.update().catch( () => { /* silently fail */ } );
+		// Perform post-load tasks.
+		await Promise.all( [
+			// Show announcements (if any)
+			await DeputyAnnouncements.init( this.config ),
+			// Asynchronously reload wiki configuration.
+			this.wikiConfig.update().catch( () => { /* silently fail */ } )
+		] );
 	}
 
 	/**

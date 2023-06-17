@@ -67,7 +67,11 @@ export default class UserConfiguration extends ConfigurationBase {
 			PortletNameView
 		>(
 			generateEnumConfigurationProperties( PortletNameView, PortletNameView.Full )
-		)
+		),
+		seenAnnouncements: new Setting<string[], string[]>( {
+			defaultValue: [],
+			displayOptions: { hidden: true }
+		} )
 	};
 	public readonly cci = <const>{
 		enablePageToolbar: new Setting<boolean, boolean>( {

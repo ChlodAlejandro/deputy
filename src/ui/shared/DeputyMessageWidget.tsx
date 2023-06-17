@@ -55,6 +55,7 @@ function initDeputyMessageWidget() {
 					} );
 					closeButton.on( 'click', () => {
 						removeElement( unwrapWidget( this ) );
+						this.emit( 'close' );
 					} );
 					actionContainer.appendChild( unwrapWidget( closeButton ) );
 				}

@@ -81,10 +81,6 @@ export default class CopiedTemplateEditor extends DeputyModule {
 		if ( !await super.preInit( deputyAnteEnglish ) ) {
 			return false;
 		}
-		await Promise.all( [
-			DeputyLanguage.load( 'shared', deputySharedEnglish ),
-			DeputyLanguage.loadMomentLocale()
-		] );
 
 		if (
 			// Button not yet appended

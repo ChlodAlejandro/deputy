@@ -102,7 +102,9 @@ export default class InfringementAssistant extends DeputyModule {
 
 		// Query parameter-based autostart disable (i.e. don't start if param exists)
 		if ( !/[?&]ia-autostart(=(0|no|false|off)?(&|$)|$)/.test( window.location.search ) ) {
-			await this.init();
+			return mw.loader.using( InfringementAssistant.dependencies, async () => {
+				await this.init();
+			} );
 		}
 		return true;
 	}
@@ -118,6 +120,7 @@ export default class InfringementAssistant extends DeputyModule {
 			this.wikiConfig.ia.listingWikitextMatch.get() != null &&
 			this.wikiConfig.ia.responses.get() != null
 		) {
+			await DeputyLanguage.loadMomentLocale();
 			this.session = new CopyrightProblemsSession();
 			mw.hook( 'wikipage.content' ).add( ( el: Element[] ) => {
 				if ( el[ 0 ].classList.contains( 'ia-upgraded' ) ) {
@@ -153,6 +156,7 @@ export default class InfringementAssistant extends DeputyModule {
 	async openWorkflowDialog(): Promise<void> {
 		return mw.loader.using( InfringementAssistant.dependencies, async () => {
 			if ( !this.dialog ) {
+				await DeputyLanguage.loadMomentLocale();
 				this.dialog = SinglePageWorkflowDialog( {
 					page: new mw.Title( mw.config.get( 'wgPageName' ) ),
 					revid: mw.config.get( 'wgCurRevisionId' )

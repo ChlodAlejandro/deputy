@@ -2,6 +2,7 @@ import { h } from 'tsx-dom';
 import type CopyrightProblemsListing from '../models/CopyrightProblemsListing';
 import type CopyrightProblemsSession from '../models/CopyrightProblemsSession';
 import ListingResponsePanel from './ListingResponsePanel';
+import DeputyLanguage from '../../../DeputyLanguage';
 
 /**
  *

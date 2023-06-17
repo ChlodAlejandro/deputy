@@ -1,5 +1,6 @@
 import CopiedTemplateEditor from './CopiedTemplateEditor';
 import Recents from '../../wiki/Recents';
+import DeputyAnnouncements from '../../DeputyAnnouncements';
 
 /**
  * This function handles CTE loading when Deputy isn't present. When Deputy is not
@@ -16,5 +17,6 @@ import Recents from '../../wiki/Recents';
 	Recents.save();
 	window.CopiedTemplateEditor = new CopiedTemplateEditor();
 	await window.CopiedTemplateEditor.preInit();
+	await DeputyAnnouncements.init( window.CopiedTemplateEditor.config );
 
 } )( window );

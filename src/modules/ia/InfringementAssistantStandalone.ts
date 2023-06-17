@@ -1,5 +1,6 @@
 import InfringementAssistant from './InfringementAssistant';
 import Recents from '../../wiki/Recents';
+import DeputyAnnouncements from '../../DeputyAnnouncements';
 
 /**
  * This function handles IA loading when Deputy isn't present. When Deputy is not
@@ -16,5 +17,6 @@ import Recents from '../../wiki/Recents';
 	Recents.save();
 	window.InfringementAssistant = new InfringementAssistant();
 	await window.InfringementAssistant.preInit();
+	await DeputyAnnouncements.init( window.InfringementAssistant.config );
 
 } )( window );
