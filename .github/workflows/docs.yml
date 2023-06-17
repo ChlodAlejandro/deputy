@@ -36,7 +36,8 @@ jobs:
           run: npm ci
       -   name: Run TypeDoc
           working-directory: ./project/
-          run: npx --yes typedoc --out ../docs src/Deputy.ts
+          run: |
+            npx --yes typedoc --out ../docs src/Deputy.ts
 
       # Commit
       -   name: Commit new documentation
