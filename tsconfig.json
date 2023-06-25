@@ -21,6 +21,7 @@
             "./node_modules/types-mediawiki",
             "./types"
         ],
+        "skipLibCheck": true,
 
         "jsx": "react",
         "jsxFactory": "h"
