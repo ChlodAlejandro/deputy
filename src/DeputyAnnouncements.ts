@@ -13,6 +13,7 @@ import unwrapWidget from './util/unwrapWidget';
  * keys are available.
  */
 interface Announcement {
+	expiry?: Date;
 	actions: { id: string, flags?: string[], action: () => void }[];
 }
 
@@ -27,30 +28,17 @@ interface Announcement {
 export default class DeputyAnnouncements {
 
 	static knownAnnouncements: Record<string, Announcement> = {
-		'ues-06-2023': {
-			actions: [
-				{
-					id: 'survey',
-					flags: [ 'primary', 'progressive' ],
-					action: () => {
-						open(
-							'https://hourglass.limesurvey.net/188262',
-							'_blank'
-						);
-					}
-				},
-				{
-					id: 'learn',
-					flags: [ 'primary' ],
-					action: () => {
-						open(
-							'https://meta.wikimedia.org/wiki/Deputy/Research/Surveys/06-2023',
-							'_blank'
-						);
-					}
-				}
-			]
-		}
+		// No active announcements
+
+		// 'announcementId': {
+		// 	actions: [
+		// 		{
+		// 			id: 'actionButton',
+		// 			flags: [ 'primary', 'progressive' ],
+		// 			action: () => { /* do something */ }
+		// 		}
+		// 	]
+		// }
 	};
 
 	/**
@@ -65,6 +53,10 @@ export default class DeputyAnnouncements {
 		mw.util.addCSS( '#siteNotice .deputy { text-align: left; }' );
 		for ( const [ id, announcements ] of Object.entries( this.knownAnnouncements ) ) {
 			if ( config.core.seenAnnouncements.get().includes( id ) ) {
+				continue;
+			}
+			if ( announcements.expiry && ( announcements.expiry < new Date() ) ) {
+				// Announcement has expired. Skip it.
 				continue;
 			}
 
