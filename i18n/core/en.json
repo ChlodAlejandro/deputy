@@ -25,13 +25,14 @@
     "deputy.session.section.close": "Archive section",
     "deputy.session.section.closeComments": "Archiving comments",
     "deputy.session.section.closeHelp": "Your signature will automatically be included.",
-    "deputy.session.section.closeWarning": "Some revisions remain unassessed. You may want to mark these revisions as assessed before archiving this section.",
+    "deputy.session.section.closeError": "Some revisions remain unassessed. You must mark these revisions as assessed before archiving this section.",
     "deputy.session.section.closeWarn": "You have unsaved changes. Close the section without saving?",
 
     "deputy.session.section.stop": "Stop session",
     "deputy.session.section.saved": "Section saved",
     "deputy.session.section.failed": "Failed to save section",
     "deputy.session.section.missingSection": "The target section is missing from the case page.",
+    "deputy.session.section.sectionIncomplete": "The target section still has unreviewed rows.",
     "deputy.session.section.conflict.title": "Edit conflict",
     "deputy.session.section.conflict.help": "Someone else edited the page before you. Deputy will restart to load the new case content. Your changes will be preserved.",
 
@@ -64,6 +65,7 @@
     "deputy.session.row.checked.talk": "talk",
     "deputy.session.row.checked.contribs": "contribs",
 
+    "deputy.session.revision.assessed": "Mark as assessed",
     "deputy.session.revision.cur": "cur",
     "deputy.session.revision.prev": "prev",
     "deputy.session.revision.cur.tooltip": "Difference with latest revision",

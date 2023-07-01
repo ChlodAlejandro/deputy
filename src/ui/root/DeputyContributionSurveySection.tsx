@@ -416,14 +416,10 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	 */
 	async save( sectionId: number ): Promise<any | false> {
 		if ( sectionId == null ) {
-			mw.notify(
-				mw.msg( 'deputy.session.section.missingSection' ),
-				{
-					autoHide: false,
-					title: mw.msg( 'deputy.session.section.failed' ),
-					type: 'error'
-				}
-			);
+			throw new Error( mw.msg( 'deputy.session.section.missingSection' ) );
+		}
+		if ( this.closed && this.rows.some( r => !r.completed ) ) {
+			throw new Error( mw.msg( 'deputy.session.section.sectionIncomplete' ) );
 		}
 
 		return MwApi.action.postWithEditToken( {
@@ -586,6 +582,12 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 					}
 				}
 			}, ( error ) => {
+				OO.ui.alert(
+					error.message,
+					{
+						title: mw.msg( 'deputy.session.section.failed' )
+					}
+				);
 				console.error( error );
 				saveContainer.classList.remove( 'active' );
 				this.setDisabled( false );
@@ -597,12 +599,14 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 
 		const closingWarning = DeputyMessageWidget( {
 			classes: [ 'dp-cs-section-unfinishedWarning' ],
-			type: 'warning',
-			label: mw.msg( 'deputy.session.section.closeWarning' )
+			type: 'error',
+			label: mw.msg( 'deputy.session.section.closeError' )
 		} );
 		closingWarning.toggle( false );
 		const updateClosingWarning = ( () => {
-			closingWarning.toggle( this.rows.some( ( row ) => !row.completed ) );
+			const incomplete = this.rows.some( ( row ) => !row.completed );
+			this.saveButton.setDisabled( incomplete );
+			closingWarning.toggle( incomplete );
 		} );
 
 		const closingCommentsField = new OO.ui.FieldLayout( this.closingComments, {
@@ -632,6 +636,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 				} );
 			} else {
 				closingWarning.toggle( false );
+				this.saveButton.setDisabled( false );
 				this.rows.forEach( ( row ) => {
 					row.removeEventListener( 'update', updateClosingWarning );
 				} );
