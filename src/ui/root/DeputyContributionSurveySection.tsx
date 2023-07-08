@@ -223,6 +223,10 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 
 			const m = message.join( mw.msg( 'deputy.content.assessed.comma' ) );
 
+			if ( m.length === 0 ) {
+				return mw.msg( 'deputy.content.reformat' );
+			}
+
 			const summary = mw.msg(
 				nowClosed ?
 					'deputy.content.summary.sectionClosed' :
