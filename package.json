@@ -50,7 +50,7 @@
         "eslint": "8.36.0",
         "eslint-config-wikimedia": "^0.25.1",
         "eslint-plugin-compat": "^4.1.2",
-        "eslint-plugin-jsdoc": "^44.2.4",
+        "eslint-plugin-jsdoc": "^46.4.3",
         "jest": "^29.6.1",
         "moment": "^2.29.4",
         "oojs-ui": "^0.46.3",
@@ -77,7 +77,8 @@
     "overrides": {
         "serve-handler": {
             "minimatch": "~3.1.2"
-        }
+        },
+        "semver": "^7.5.4"
     },
     "browserslist": [
         ">0.05% and supports fetch and not dead"
