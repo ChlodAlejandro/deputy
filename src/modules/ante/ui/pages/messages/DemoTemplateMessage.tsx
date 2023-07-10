@@ -11,11 +11,11 @@ export default function ( nocat = false ) {
 	return <span>
 		<b>{
 			mw.message(
-				nocat ? 'deputy.cci.nocat.head' : 'deputy.cci.demo.head'
+				nocat ? 'deputy.ante.nocat.head' : 'deputy.ante.demo.head'
 			).parseDom().get()
 		}</b><br/>{
 			mw.message(
-				nocat ? 'deputy.cci.nocat.help' : 'deputy.cci.demo.help'
+				nocat ? 'deputy.ante.nocat.help' : 'deputy.ante.demo.help'
 			).parseDom().get()
 		}<br/><span class="cte-message-button" />
 		{/* The above <span> will be replaced in parent classes. */}
