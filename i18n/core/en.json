@@ -78,6 +78,7 @@
     "deputy.session.revision.new": "N",
     "deputy.session.revision.new.tooltip": "This edit created a new page.",
 
+    "deputy.session.page.diff.previous": "Navigate to the previous unassessed revision",
     "deputy.session.page.diff.next": "Navigate to the next unassessed revision",
     "deputy.session.page.diff.loadFail": "Failed to load diff. Please check your internet connection and try again.",
     "deputy.session.page.incommunicable": "Cannot find an active Deputy session. Please ensure that Deputy is running on a contributor investigation case page.",

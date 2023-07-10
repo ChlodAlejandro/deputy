@@ -169,6 +169,11 @@ export interface DeputyPageNextRevisionRequest {
 	 * first unassessed revision.
 	 */
 	after: number;
+	/**
+	 * If `true`, the revision list will be reversed. This is useful for finding the *previous*
+	 * revision.
+	 */
+	reverse?: boolean;
 }
 
 export interface DeputyPageNextRevisionResponse {

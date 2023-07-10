@@ -49,8 +49,9 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 	element: HTMLElement;
 	revisionCheckbox: OO.ui.CheckboxInputWidget;
 	statusDropdown: DeputyCCIStatusDropdown;
+	previousRevisionButton: OO.ui.ButtonWidget;
 	nextRevisionButton: OO.ui.ButtonWidget;
-	nextRevisionSection: HTMLElement;
+	revisionNavigationSection: HTMLElement;
 
 	/**
 	 * The revision ID that this toolbar is associated with.
@@ -250,7 +251,59 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 	 *
 	 * @return The OOUI ButtonWidget element.
 	 */
-	renderNextRevisionButton(): JSX.Element {
+	renderRevisionNavigationButtons(): JSX.Element {
+		const getButtonClickHandler = ( button: OO.ui.ButtonWidget, reverse: boolean ) => {
+			return async () => {
+				this.setDisabled( true );
+
+				if ( this.options.nextRevision ) {
+					// No need to worry about swapping elements here, since `loadNewDiff`
+					// will fire the `wikipage.diff` MW hook. This means this element will
+					// be rebuilt from scratch anyway.
+					try {
+						const nextRevisionData = await window.deputy.comms.sendAndWait( {
+							type: 'pageNextRevisionRequest',
+							caseId: this.options.caseId,
+							page: this.row.title.getPrefixedText(),
+							after: this.revision,
+							reverse
+						} );
+
+						if ( nextRevisionData == null ) {
+							OO.ui.alert(
+								mw.msg( 'deputy.session.page.incommunicable' )
+							);
+							this.setDisabled( false );
+						} else if ( nextRevisionData.revid != null ) {
+							await DiffPage.loadNewDiff( nextRevisionData.revid );
+						} else {
+							this.setDisabled( false );
+							button.setDisabled( true );
+						}
+					} catch ( e ) {
+						console.error( e );
+						this.setDisabled( false );
+					}
+				} else if ( this.options.nextRevision !== false ) {
+					// Sets disabled to false if the value is null.
+					this.setDisabled( false );
+				}
+			};
+		};
+
+		this.previousRevisionButton = new OO.ui.ButtonWidget( {
+			invisibleLabel: true,
+			label: mw.msg( 'deputy.session.page.diff.previous' ),
+			title: mw.msg( 'deputy.session.page.diff.previous' ),
+			icon: 'previous',
+			disabled: this.options.nextRevision == null
+		} );
+
+		this.previousRevisionButton.on(
+			'click',
+			getButtonClickHandler( this.nextRevisionButton, true )
+		);
+
 		this.nextRevisionButton = new OO.ui.ButtonWidget( {
 			invisibleLabel: true,
 			label: mw.msg( 'deputy.session.page.diff.next' ),
@@ -259,44 +312,14 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 			disabled: this.options.nextRevision == null
 		} );
 
-		this.nextRevisionButton.on( 'click', async () => {
-			this.setDisabled( true );
-
-			if ( this.options.nextRevision ) {
-				// No need to worry about swapping elements here, since `loadNewDiff`
-				// will fire the `wikipage.diff` MW hook. This means this element will
-				// be rebuilt from scratch anyway.
-				try {
-					const nextRevisionData = await window.deputy.comms.sendAndWait( {
-						type: 'pageNextRevisionRequest',
-						caseId: this.options.caseId,
-						page: this.row.title.getPrefixedText(),
-						after: this.revision
-					} );
-
-					if ( nextRevisionData == null ) {
-						OO.ui.alert(
-							mw.msg( 'deputy.session.page.incommunicable' )
-						);
-						this.setDisabled( false );
-					} else if ( nextRevisionData.revid != null ) {
-						await DiffPage.loadNewDiff( nextRevisionData.revid );
-					} else {
-						this.setDisabled( false );
-						this.nextRevisionButton.setDisabled( true );
-					}
-				} catch ( e ) {
-					console.error( e );
-					this.setDisabled( false );
-				}
-			} else if ( this.options.nextRevision !== false ) {
-				// Sets disabled to false if the value is null.
-				this.setDisabled( false );
-			}
-		} );
+		this.nextRevisionButton.on(
+			'click',
+			getButtonClickHandler( this.nextRevisionButton, false )
+		);
 
 		return <div class="dp-pt-section">
 			<div class="dp-pt-section-content">
+				{ this.revision != null && unwrapWidget( this.previousRevisionButton ) }
 				{ unwrapWidget( this.nextRevisionButton ) }
 			</div>
 		</div>;
@@ -351,7 +374,7 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 			{ this.renderStatusDropdown() }
 			{ this.renderCaseInfo() }
 			{ this.renderRevisionInfo() }
-			{ this.nextRevisionSection = this.renderNextRevisionButton() as HTMLElement }
+			{ this.revisionNavigationSection = this.renderRevisionNavigationButtons() as HTMLElement }
 			{ this.renderMenus() }
 		</div> as HTMLElement;
 	}
@@ -364,6 +387,7 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 	setDisabled( disabled: boolean ) {
 		this.statusDropdown?.setDisabled( disabled );
 		this.revisionCheckbox?.setDisabled( disabled );
+		this.previousRevisionButton?.setDisabled( disabled );
 		this.nextRevisionButton?.setDisabled( disabled );
 	}
 
@@ -401,8 +425,8 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 			this.options.nextRevision = data.nextRevision;
 			// Re-render button.
 			swapElements(
-				this.nextRevisionSection,
-				this.nextRevisionSection = this.renderNextRevisionButton() as HTMLElement
+				this.revisionNavigationSection,
+				this.revisionNavigationSection = this.renderRevisionNavigationButtons() as HTMLElement
 			);
 		}
 	}

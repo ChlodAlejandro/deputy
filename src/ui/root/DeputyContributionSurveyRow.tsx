@@ -19,6 +19,7 @@ import {
 } from '../../DeputyCommunications';
 import DeputyCCIStatusDropdown from '../shared/DeputyCCIStatusDropdown';
 import { ContributionSurveyRowSort } from '../../models/ContributionSurveyRowSort';
+import last from '../../util/last';
 
 export enum DeputyContributionSurveyRowState {
 	/*
@@ -1026,9 +1027,14 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 				const baseRevisionIndex = baseRevision == null ?
 					0 : this.revisions.indexOf( baseRevision );
 
-				const exactRevision = this.revisions.find(
-					( r, i ) => i > baseRevisionIndex && !r.completed
-				);
+				// Find the next revision that is not completed.
+				const exactRevision = event.data.reverse ?
+					last( this.revisions.filter(
+						( r, i ) => i < baseRevisionIndex && !r.completed
+					) ) :
+					this.revisions.find(
+						( r, i ) => i > baseRevisionIndex && !r.completed
+					);
 				const firstRevision = exactRevision == null ?
 					this.revisions.find( ( r ) => !r.completed ) : null;
 
