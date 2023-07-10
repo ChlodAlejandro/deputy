@@ -3,9 +3,14 @@
 
 These are changes that may or may not have been deployed to wikis, but are not yet considered as part of any release.
 
+# [v0.5.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.5.0) - *(unreleased)*
+Generic patches and fixes. Added an announcements system for reaching users of Deputy. Also improved CCI case navigation and handling.
+
 ## Added
-* [[`adaab2f`](../../commit/adaab2f)] Added an announcements system
+* [[`4cb3432`](../../commit/4cb3432)] Added button to navigate to previous unassessed revisions
 * [[`6d212b1`](../../commit/6d212b1)] Added shorthand summary for case page assessment edit summaries
+* [[`8c352a8`](../../commit/8c352a8)] Added proper support for missing (deleted/suppressed) revisions
+* [[`adaab2f`](../../commit/adaab2f)] Added an announcements system
 
 ## Modified
 * [[`c77ad39`](../../commit/c77ad39)] Made page toolbar appear as long as a session was active
@@ -15,8 +20,12 @@ These are changes that may or may not have been deployed to wikis, but are not y
 ## Bugs
 * [[`c77ad39`](../../commit/c77ad39)] Fixed revisions not working when the page title doesn't match
 * [[`ff55837`](../../commit/ff55837)] Fixed "Force UTC time" only taking effect on dates
+* [[`2470f56`](../../commit/2470f56)] Fixed error when saving a section without making savable changes
+* [[`e790fb7`](../../commit/e790fb7)] Fixed incorrect message key in ANTE template with demo parameter enabled 
 
-# [v0.4.2](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.4.1) - 2023-03-23
+For a granular list of changes, see [v0.4.1...v0.4.2](https://github.com/ChlodAlejandro/deputy/compare/v0.4.2...v0.5.0).
+
+# [v0.4.2](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.4.2) - 2023-03-23
 Another set of patches and fixes.
 
 ## Modified
