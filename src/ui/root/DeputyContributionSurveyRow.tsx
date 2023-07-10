@@ -707,7 +707,9 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 	renderDetails( diffs: Map<number, ContributionSurveyRevision> ): JSX.Element | false {
 		const parts: ComponentChild = [];
 
-		if ( diffs.size > 0 ) {
+		// Timestamp is always found in a non-missing diff, suppressed or not.
+		const validDiffs = Array.from( diffs.values() ).filter( ( v ) => v.timestamp );
+		if ( validDiffs.length > 0 ) {
 			const diffArray = Array.from( diffs.values() );
 			if ( diffArray.some( ( v ) => !v.parentid ) ) {
 				parts.push(
@@ -719,14 +721,12 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 			}
 
 			// Number of edits
-			{
-				parts.push(
-					mw.message(
-						'deputy.session.row.details.edits',
-						diffs.size.toString()
-					).text()
-				);
-			}
+			parts.push(
+				mw.message(
+					'deputy.session.row.details.edits',
+					diffs.size.toString()
+				).text()
+			);
 
 			// Identify largest diff
 			const largestDiff = diffs.get(

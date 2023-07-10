@@ -9,26 +9,35 @@ import nsId from '../../wiki/util/nsId';
  * @param root0
  * @param root0.revid
  * @param root0.parentid
+ * @param root0.missing
  * @return HTML element
  */
 export function ChangesListLinks(
-	{ revid, parentid }: { revid: number, parentid: number }
+	{ revid: _revid, parentid: _parentid, missing }:
+		{ revid: number, parentid: number, missing?: boolean }
 ): JSX.Element {
+	let diff: number | 'prev' = _revid;
+	let oldid = _parentid;
+	if ( missing ) {
+		oldid = _revid;
+		diff = 'prev';
+	}
+
 	return <span class="mw-changeslist-links">
 		<span><a
 			rel="noopener"
-			href={ getRevisionDiffURL( revid, 0 ) }
+			href={ getRevisionDiffURL( diff, 'cur' ) }
 			title={ mw.msg( 'deputy.session.revision.cur.tooltip' ) }
 			target="_blank"
 		>{ mw.msg( 'deputy.session.revision.cur' ) }</a></span>
 		<span>{
-			!parentid ?
+			!oldid ?
 				mw.msg( 'deputy.session.revision.prev' ) :
 				<a
 					rel="noopener"
-					href={ !parentid ?
+					href={ !oldid ?
 						null :
-						getRevisionDiffURL( parentid, revid )
+						getRevisionDiffURL( oldid, diff )
 					}
 					title={ mw.msg( 'deputy.session.revision.prev.tooltip' ) }
 					target="_blank"

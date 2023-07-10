@@ -329,10 +329,13 @@ export default class ContributionSurveyRow {
 		}
 
 		// Load tag messages
+		// First gather all tags mentioned, and then load messages.
 		const tags = Array.from( revisionData.values() ).reduce<string[]>( ( acc, cur ) => {
-			for ( const tag of cur.tags ) {
-				if ( acc.indexOf( tag ) === -1 ) {
-					acc.push( tag );
+			if ( cur.tags ) {
+				for ( const tag of cur.tags ) {
+					if ( acc.indexOf( tag ) === -1 ) {
+						acc.push( tag );
+					}
 				}
 			}
 			return acc;

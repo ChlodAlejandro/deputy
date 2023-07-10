@@ -77,6 +77,7 @@
     "deputy.session.revision.tags": "{{PLURAL:$1|Tag|Tags}}:",
     "deputy.session.revision.new": "N",
     "deputy.session.revision.new.tooltip": "This edit created a new page.",
+    "deputy.session.revision.missing": "The revision [[Special:Diff/$1|$1]] could not be found. It may have been deleted or suppressed.",
 
     "deputy.session.page.diff.previous": "Navigate to the previous unassessed revision",
     "deputy.session.page.diff.next": "Navigate to the next unassessed revision",

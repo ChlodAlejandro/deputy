@@ -7,8 +7,8 @@
  * @return The URL of the diff page
  */
 export default function (
-	from: number,
-	to?: number,
+	from: number | 'cur' | 'prev' | 'oldid',
+	to?: number | 'cur' | 'prev' | 'oldid',
 	includeCurrentParams = false
 ): string {
 	const url = new URL( window.location.href );

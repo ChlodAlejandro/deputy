@@ -12,6 +12,7 @@ import {
 	ChangesListUser,
 	NewPageIndicator
 } from './DeputyChangesListElements';
+import unwrapElement from '../../util/unwrapElement';
 
 /**
  * A specific revision for a section row.
@@ -176,29 +177,17 @@ export default class DeputyContributionSurveyRevision
 	}
 
 	/**
-	 * @inheritDoc
+	 * Renders revision info. This is only called if the revision exists.
 	 */
-	render(): HTMLElement {
+	renderRevisionInfo(): HTMLElement {
 		const commentElement = <span
 			class="comment comment--without-parentheses"
 			/** Stranger danger! Yes. */
 			dangerouslySetInnerHTML={this.revision.parsedcomment}
 		/>;
 
-		window.deputy.comms.addEventListener(
-			'revisionStatusUpdate',
-			this.revisionStatusUpdateListener
-		);
-
-		// Be wary of the spaces between tags.
-		return <div
-			class={ ( this.revision.tags ?? [] ).map( ( v ) => 'mw-tag-' + v ).join( ' ' ) }
-		>
-			{unwrapWidget( this.completedCheckbox )}
-			<ChangesListLinks
-				revid={ this.revision.revid }
-				parentid={ this.revision.parentid }
-			/> {
+		return <span>
+			{
 				!this.revision.parentid && <NewPageIndicator />
 			}<ChangesListTime
 				timestamp={ this.revision.timestamp }
@@ -219,6 +208,44 @@ export default class DeputyContributionSurveyRevision
 				( this.revision.tags?.length ?? -1 ) > 0 &&
 				<ChangesListTags tags={this.revision.tags} />
 			}
+		</span> as HTMLElement;
+	}
+
+	/**
+	 * Renders a placeholder for missing revisions.
+	 */
+	renderMissingRevisionInfo(): HTMLElement {
+		return <span>
+			<i dangerouslySetInnerHTML={mw.message(
+				'deputy.session.revision.missing',
+				this.revision.revid
+			).parse()}/>
+		</span> as HTMLElement;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	render(): HTMLElement {
+		window.deputy.comms.addEventListener(
+			'revisionStatusUpdate',
+			this.revisionStatusUpdateListener
+		);
+
+		// Be wary of the spaces between tags.
+		return <div
+			class={ ( this.revision.tags ?? [] ).map( ( v ) => 'mw-tag-' + v ).join( ' ' ) }
+		>
+			{unwrapWidget( this.completedCheckbox )}
+			<ChangesListLinks
+				revid={ this.revision.revid }
+				parentid={ this.revision.parentid }
+				missing={ ( this.revision as any ).missing }
+			/> {unwrapElement(
+				( this.revision as any ).missing ?
+					this.renderMissingRevisionInfo() :
+					this.renderRevisionInfo()
+			)}
 		</div> as HTMLElement;
 	}
 
