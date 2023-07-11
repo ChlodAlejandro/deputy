@@ -42,11 +42,6 @@ mw.hook( 'deputy.preload' ).add( function () {
 } );
 ```
 
-This project uses TypeScript, but some parts of the tool are weakly-typed. This is due to a lack of types and unorthodox
-JavaScript patterns on the part of reliant libraries, namely [OOUI](https://www.mediawiki.org/wiki/OOUI), which makes it
-difficult to enforce types. Tread carefully when modifying files that extend off of OOUI widgets or similar, as the use
-of many `any` types may prevent you from knowing when something might break.
-
 ## Testing
 
 ### Live testing
