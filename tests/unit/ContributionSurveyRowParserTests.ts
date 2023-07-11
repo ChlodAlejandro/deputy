@@ -83,6 +83,9 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 			diffs: '[[Special:Diff/123456|(+173)]]',
 			comments: null,
 			revids: [ 123456 ],
+			revidText: {
+				123456: '+173'
+			},
 			diffTemplate: '[[Special:Diff/$1|($2)]]',
 			diffsTemplate: '$1'
 		} );
@@ -101,6 +104,9 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 			diffs: '[[Special:Diff/123456|(+173)]]',
 			comments: null,
 			revids: [ 123456 ],
+			revidText: {
+				123456: '+173'
+			},
 			diffTemplate: '[[Special:Diff/$1|($2)]]',
 			diffsTemplate: '$1'
 		} );
@@ -120,6 +126,10 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 			diffs: '[[Special:Diff/123456|(+173)]][[Special:Diff/7890|(+22)]]',
 			comments: null,
 			revids: [ 123456, 7890 ],
+			revidText: {
+				123456: '+173',
+				7890: '+22'
+			},
 			diffTemplate: '[[Special:Diff/$1|($2)]]',
 			diffsTemplate: '$1'
 		} );
@@ -138,6 +148,9 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 			diffs: '[[Special:Diff/123456|(+173)]]',
 			comments: null,
 			revids: [ 123456 ],
+			revidText: {
+				123456: '+173'
+			},
 			diffTemplate: '[[Special:Diff/$1|($2)]]',
 			diffsTemplate: '$1'
 		} );
@@ -156,6 +169,9 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 			diffs: '[[Special:Diff/123456|(+173)]]',
 			comments: null,
 			revids: [ 123456 ],
+			revidText: {
+				123456: '+173'
+			},
 			diffTemplate: '[[Special:Diff/$1|($2)]]',
 			diffsTemplate: '$1'
 		} );
@@ -174,6 +190,7 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 			diffs: null,
 			comments: '{{?}} Deleted',
 			revids: [],
+			revidText: {},
 			diffTemplate: '[[Special:Diff/$1|($2)]]',
 			diffsTemplate: '$1'
 		} );
@@ -192,6 +209,9 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 			diffs: '[[Special:Diff/123456|(+173)]]',
 			comments: null,
 			revids: [ 123456 ],
+			revidText: {
+				123456: '+173'
+			},
 			diffTemplate: '[[Special:Diff/$1|($2)]]',
 			diffsTemplate: '$1'
 		} );
@@ -210,6 +230,9 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 			diffs: '[[Special:Diff/123456|(+173)]]',
 			comments: null,
 			revids: [ 123456 ],
+			revidText: {
+				123456: '+173'
+			},
 			diffTemplate: '[[Special:Diff/$1|($2)]]',
 			diffsTemplate: '$1'
 		} );
@@ -234,6 +257,7 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 				'([[#top|top]]&nbsp;•&nbsp;[[Special:Contributions/Chlod|contribs]])</small> ' +
 				'16:22, 28 June 2022 (UTC)',
 			revids: [],
+			revidText: {},
 			diffTemplate: '[[Special:Diff/$1|($2)]]',
 			diffsTemplate: '$1'
 		} );
@@ -253,6 +277,9 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 			diffs: '\'\'\'{{dif|340829968|(+15927)}}\'\'\'',
 			comments: null,
 			revids: [ 340829968 ],
+			revidText: {
+				340829968: '+15927'
+			},
 			diffTemplate: '{{dif|$1|($2)}}',
 			diffsTemplate: "'''$1'''"
 		} );
@@ -271,6 +298,7 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 			diffs: null,
 			comments: null,
 			revids: [],
+			revidText: {},
 			diffTemplate: '[[Special:Diff/$1|($2)]]',
 			diffsTemplate: '$1'
 		} );
@@ -289,6 +317,7 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 			diffs: null,
 			comments: null,
 			revids: [],
+			revidText: {},
 			diffTemplate: '[[Special:Diff/$1|($2)]]',
 			diffsTemplate: '$1'
 		} );
@@ -307,6 +336,7 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 			diffs: null,
 			comments: '{{n}}',
 			revids: [],
+			revidText: {},
 			diffTemplate: '[[Special:Diff/$1|($2)]]',
 			diffsTemplate: '$1'
 		} );
@@ -325,6 +355,7 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 			diffs: null,
 			comments: '{{?}}',
 			revids: [],
+			revidText: {},
 			diffTemplate: '[[Special:Diff/$1|($2)]]',
 			diffsTemplate: '$1'
 		} );
@@ -343,6 +374,7 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 			diffs: null,
 			comments: '{{done}} with {{y}}',
 			revids: [],
+			revidText: {},
 			diffTemplate: '[[Special:Diff/$1|($2)]]',
 			diffsTemplate: '$1'
 		} );
@@ -361,6 +393,7 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 			diffs: null,
 			comments: '{{x}}',
 			revids: [],
+			revidText: {},
 			diffTemplate: '[[Special:Diff/$1|($2)]]',
 			diffsTemplate: '$1'
 		} );
@@ -379,6 +412,9 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 			diffs: '[[Special:Diff/123456|(+173)]]',
 			comments: ' muy bien',
 			revids: [ 123456 ],
+			revidText: {
+				123456: '+173'
+			},
 			diffTemplate: '[[Special:Diff/$1|($2)]]',
 			diffsTemplate: '$1'
 		} );
@@ -398,6 +434,7 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 			diffs: null,
 			comments: null,
 			revids: [],
+			revidText: {},
 			diffTemplate: '[[Special:Diff/$1|($2)]]',
 			diffsTemplate: '$1'
 		} );
@@ -417,6 +454,7 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 			diffs: null,
 			comments: null,
 			revids: [],
+			revidText: {},
 			diffTemplate: '[[Special:Diff/$1|($2)]]',
 			diffsTemplate: '$1'
 		} );
