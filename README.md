@@ -10,9 +10,9 @@ features are not yet ready. Progress is done every day to accomplish the goals o
 Deputy exposes a `deputy` variable on the `window` object for public use. The API is documented
 at [chlodalejandro.github.io/deputy](https://chlodalejandro.github.io/deputy/classes/Deputy.html).
 
-Deputy relies on modules from [Zoomiebot](https://github.com/ChlodAlejandro/zoomiebot/tree/master/bot/api/deputy/v1) to
-perform bulk data operations. Zoomiebot is hosted on Wikimedia Toolforge, more information can be
-found [here](https://github.com/ChlodAlejandro/zoomiebot#README).
+Deputy relies on modules from [Dispatch](https://github.com/ChlodAlejandro/deputy-dispatch) to
+perform bulk data operations. Dispatch is hosted on Wikimedia Toolforge, more information can be
+found [here](https://github.com/ChlodAlejandro/deputy-dispatch#README).
 
 ## Installation
 See [User:Chlod/Scripts/Deputy § Installation](https://en.wikipedia.org/wiki/User:Chlod/Scripts/Deputy#Installation) on the English Wikipedia for more information.
