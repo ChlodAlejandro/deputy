@@ -16,29 +16,24 @@ export function ChangesListLinks(
 	{ revid: _revid, parentid: _parentid, missing }:
 		{ revid: number, parentid: number, missing?: boolean }
 ): JSX.Element {
-	let diff: number | 'prev' = _revid;
-	let oldid = _parentid;
-	if ( missing ) {
-		oldid = _revid;
-		diff = 'prev';
-	}
+	const cur = getRevisionDiffURL( _revid, 'cur' );
+	const prev = missing ?
+		getRevisionDiffURL( _revid, 'prev' ) :
+		getRevisionDiffURL( _parentid, _revid );
 
 	return <span class="mw-changeslist-links">
 		<span><a
 			rel="noopener"
-			href={ getRevisionDiffURL( diff, 'cur' ) }
+			href={ cur }
 			title={ mw.msg( 'deputy.session.revision.cur.tooltip' ) }
 			target="_blank"
 		>{ mw.msg( 'deputy.session.revision.cur' ) }</a></span>
 		<span>{
-			!oldid ?
+			( !_parentid && !missing ) ?
 				mw.msg( 'deputy.session.revision.prev' ) :
 				<a
 					rel="noopener"
-					href={ !oldid ?
-						null :
-						getRevisionDiffURL( oldid, diff )
-					}
+					href={ prev }
 					title={ mw.msg( 'deputy.session.revision.prev.tooltip' ) }
 					target="_blank"
 				>{ mw.msg( 'deputy.session.revision.prev' ) }</a>

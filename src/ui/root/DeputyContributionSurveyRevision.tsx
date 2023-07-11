@@ -189,11 +189,11 @@ export default class DeputyContributionSurveyRevision
 		return <span>
 			{
 				!this.revision.parentid && <NewPageIndicator />
-			}<ChangesListTime
+			} <ChangesListTime
 				timestamp={ this.revision.timestamp }
 			/><ChangesListDate
 				revision={ this.revision }
-			/>  <ChangesListUser
+			/> <ChangesListUser
 				user={ this.revision.user }
 			/> <span
 				class="mw-changeslist-separator"
@@ -216,7 +216,7 @@ export default class DeputyContributionSurveyRevision
 	 */
 	renderMissingRevisionInfo(): HTMLElement {
 		return <span>
-			<i dangerouslySetInnerHTML={mw.message(
+			{' '}<i dangerouslySetInnerHTML={mw.message(
 				'deputy.session.revision.missing',
 				this.revision.revid
 			).parse()}/>
@@ -241,7 +241,7 @@ export default class DeputyContributionSurveyRevision
 				revid={ this.revision.revid }
 				parentid={ this.revision.parentid }
 				missing={ ( this.revision as any ).missing }
-			/> {unwrapElement(
+			/>{unwrapElement(
 				( this.revision as any ).missing ?
 					this.renderMissingRevisionInfo() :
 					this.renderRevisionInfo()
