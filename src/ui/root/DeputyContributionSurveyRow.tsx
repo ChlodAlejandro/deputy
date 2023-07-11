@@ -264,7 +264,12 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 				return mw.format(
 					this.row.data.diffTemplate,
 					v.revision.revid,
-					v.revision.diffsize > 0 ? '+' + v.revision.diffsize : v.revision.diffsize
+					v.revision.diffsize == null ?
+						// For whatever reason, diffsize is missing. Fall back to the text we had
+						// previously.
+						v.uiRow.row.data.revidText[ v.revision.revid ] :
+						( v.revision.diffsize > 0 ?
+							'+' + v.revision.diffsize : v.revision.diffsize )
 				);
 			} ).join( '' );
 

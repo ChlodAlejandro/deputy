@@ -61,6 +61,11 @@ export interface RawContributionSurveyRow {
 	 */
 	revids: number[];
 	/**
+	 * A map of all revision IDs to their apparent size. This is the diff size
+	 * provided in wikitext.
+	 */
+	revidText: Record<number, string>;
+	/**
 	 * Template to use for rebuilding row revisions.
 	 *
 	 * $1 - Revision ID
@@ -131,6 +136,7 @@ export default class ContributionSurveyRowParser {
 		// extras exist, and we should add them. If not, there's likely no more
 		// revisions to be processed here, and can assume that the rest is user comments.
 		const revids: number[] = [];
+		const revidText: Record<number, string> = {};
 		let diffs: string = null,
 			comments: string,
 			diffTemplate = '[[Special:Diff/$1|($2)]]';
@@ -138,13 +144,19 @@ export default class ContributionSurveyRowParser {
 			const starting = this.current;
 			let diff: true | string = true;
 			while ( diff ) {
-				diff =
+				const diffMatch =
 					// [[Special:Diff/12345|6789]]
-					this.eatExpression( /(?:'''?)?\[\[Special:Diff\/(\d+)(?:\|[^\]]*)?]](?:'''?)?/g, 1 ) ??
+					this.eatExpressionMatch(
+						/(?:'''?)?\[\[Special:Diff\/(\d+)(?:\|([^\]]*))?]](?:'''?)?/g
+					) ??
 					// {{dif|12345|6789}}
-					this.eatExpression( /(?:'''?)?{{dif\|(\d+)\|[^}]+}}(?:'''?)?/g, 1 );
+					this.eatExpressionMatch(
+						/(?:'''?)?{{dif\|(\d+)\|([^}]+)}}(?:'''?)?/g
+					);
+				diff = diffMatch?.[ 1 ];
 				if ( diff != null ) {
 					revids.push( +diff );
+					revidText[ +diff ] = diffMatch[ 2 ].replace( /^\(|\)$/g, '' );
 				}
 			}
 
@@ -198,6 +210,7 @@ export default class ContributionSurveyRowParser {
 			diffs,
 			comments,
 			revids,
+			revidText,
 			diffTemplate,
 			diffsTemplate: diffsBolded ? "'''$1'''" : '$1'
 		};
@@ -303,6 +316,35 @@ export default class ContributionSurveyRowParser {
 		if ( match ) {
 			this.current = this.current.slice( match[ 0 ].length );
 			return match[ n ];
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Eats a given expression from the start of the working string. If the working
+	 * string does not contain the given expression, `null` is returned (and not a
+	 * blank string). Only eats once, so any expression must be greedy if different
+	 * behavior is expected.
+	 *
+	 * The regular expression passed into this function is automatically re-wrapped
+	 * with `^(?:<source>)`. Avoid adding these expressions on your own.
+	 *
+	 * @param pattern The pattern to match.
+	 * @return A {@link RegExpExecArray}.
+	 */
+	eatExpressionMatch( pattern: RegExp ): RegExpExecArray {
+		const expression = new RegExp(
+			`^(?:${pattern.source})`,
+			// Ban global and multiline, useless since this only matches once and to
+			// ensure that the reading remains 'flat'.
+			pattern.flags.replace( /[gm]/g, '' )
+		);
+
+		const match = expression.exec( this.current );
+		if ( match ) {
+			this.current = this.current.slice( match[ 0 ].length );
+			return match;
 		} else {
 			return null;
 		}
