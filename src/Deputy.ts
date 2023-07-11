@@ -107,7 +107,8 @@ class Deputy {
 	}
 
 	/**
-	 * Initialize Deputy.
+	 * Initialize Deputy. This static function attaches Deputy to the `window.deputy`
+	 * object and initializes that instance.
 	 */
 	static async init(): Promise<void> {
 		Deputy.instance = new Deputy();

@@ -1,5 +1,10 @@
 {
     "out": "./docs",
     "excludeExternals": true,
-    "cleanOutputDir": false
+    "cleanOutputDir": false,
+    "plugin": [
+        "typedoc-plugin-mdn-links",
+        "typedoc-plugin-missing-exports",
+        "typedoc-plugin-rename-defaults"
+    ]
 }
