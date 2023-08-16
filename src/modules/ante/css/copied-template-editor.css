@@ -111,6 +111,7 @@
 	padding-bottom: 6px !important;
 }
 
-.oo-ui-windowManager-modal > .oo-ui-window.oo-ui-dialog.oo-ui-messageDialog {
-	z-index: 200;
+.deputy.oo-ui-window {
+	/** Place below default window manager */
+	z-index: 199 !important;
 }
