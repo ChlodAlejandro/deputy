@@ -3,6 +3,15 @@
 
 These are changes that may or may not have been deployed to wikis, but are not yet considered as part of any release.
 
+## Added
+* [[`2374c07`](../../commit/2374c07)] Reintroduced template merging
+
+## Bugs
+* [[`ec1bd49`](../../commit/ec1bd49)] Fixed how links appear in the CCI interface
+* [[`4446402`](../../commit/4446402)] Fixed missing revisions appearing improperly
+* [[`b8a5975`](../../commit/b8a5975)] Fixed z-index issues with confirmation dialogs
+* [[`b45cc88`](../../commit/b45cc88)] Fixed title parsing issue when attrib. notice field is empty
+
 # [v0.5.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.5.0) - *(unreleased)*
 Generic patches and fixes. Added an announcements system for reaching users of Deputy. Also improved CCI case navigation and handling.
 
