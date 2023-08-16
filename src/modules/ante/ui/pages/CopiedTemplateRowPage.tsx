@@ -104,7 +104,7 @@ function initCopiedTemplateRowPage() {
 		 * Refreshes the page's label
 		 */
 		refreshLabel(): void {
-			if ( equalTitle(
+			if ( this.copiedTemplateRow.from && equalTitle(
 				this.copiedTemplateRow.from,
 				normalizeTitle( this.copiedTemplateRow.parent.parsoid.getPage() )
 					.getSubjectPage()
@@ -113,7 +113,7 @@ function initCopiedTemplateRowPage() {
 					'deputy.ante.copied.entry.shortTo',
 					this.copiedTemplateRow.to || '???'
 				).text();
-			} else if ( equalTitle(
+			} else if ( this.copiedTemplateRow.to && equalTitle(
 				this.copiedTemplateRow.to,
 				normalizeTitle( this.copiedTemplateRow.parent.parsoid.getPage() )
 					.getSubjectPage()
