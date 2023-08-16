@@ -235,27 +235,28 @@ function initCopiedTemplateEditorDialog() {
 				invisibleLabel: true,
 				label: mw.msg( 'deputy.ante.mergeAll' ),
 				title: mw.msg( 'deputy.ante.mergeAll' ),
-				disabled: true
 			} );
-			// TODO: Repair mergeButton
 			this.mergeButton.on( 'click', () => {
-				const notices = this.parsoid.findNoticeType( 'copied' );
-				if ( notices.length > 1 ) {
-					return OO.ui.confirm(
+				const notices = this.parsoid.findRowedNoticesByHref();
+				const noticeCount = Object.values(notices)
+					.filter( v => v.length > 1 )
+					.reduce( (p, n) => p + n.length, 0 );
+				return noticeCount ?
+					OO.ui.confirm(
 						mw.message(
 							'deputy.ante.mergeAll.confirm',
-							`${notices.length}`
+							`${noticeCount}`
 						).text()
 					).done( ( confirmed: boolean ) => {
 						if ( !confirmed ) {
 							return;
 						}
 
-						TemplateMerger.copied( notices );
-					} );
-				} else {
-					return OO.ui.alert( 'There are no templates to merge.' );
-				}
+						for ( const noticeSet of Object.values(notices)) {
+							TemplateMerger.merge(noticeSet);
+						}
+					} ) :
+					OO.ui.alert( 'There are no templates to merge.' );
 			} );
 
 			const resetButton = new OO.ui.ButtonWidget( {
@@ -322,16 +323,16 @@ function initCopiedTemplateEditorDialog() {
 			} );
 
 			this.layout.on( 'remove', () => {
-				const notices = this.parsoid.findNotices();
-				// TODO: Repair mergeButton
-				// this.mergeButton.setDisabled( notices.length < 2 );
-				deleteButton.setDisabled( notices.length === 0 );
+				this.mergeButton.setDisabled(
+					!Object.values(this.parsoid.findRowedNoticesByHref()).some( v => v.length > 1 )
+				);
+				deleteButton.setDisabled( this.parsoid.findNotices().length === 0 );
 			} );
 			this.parsoid.addEventListener( 'templateInsert', () => {
-				const notices = this.parsoid.findNotices();
-				// TODO: Repair mergeButton
-				// this.mergeButton.setDisabled( notices.length < 2 );
-				deleteButton.setDisabled( notices.length === 0 );
+				this.mergeButton.setDisabled(
+					!Object.values(this.parsoid.findRowedNoticesByHref()).some( v => v.length > 1 )
+				);
+				deleteButton.setDisabled( this.parsoid.findNotices().length === 0 );
 			} );
 
 			this.$overlay.append(
@@ -438,7 +439,8 @@ function initCopiedTemplateEditorDialog() {
 
 			// Recheck state of merge button
 			this.mergeButton.setDisabled(
-				( this.parsoid.findNoticeType( 'copied' ).length ?? 0 ) < 2
+				!Object.values(this.parsoid.findRowedNoticesByHref())
+					.some( v => v.length > 1 )
 			);
 
 			process.next( () => {

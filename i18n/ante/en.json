@@ -5,7 +5,7 @@
     "deputy.ante.edit": "Modify content attribution notices for this page",
     "deputy.ante.add": "Add a notice",
     "deputy.ante.mergeAll": "Merge all notices",
-    "deputy.ante.mergeAll.confirm": "You are about to merge $1 {{PLURAL:$1|notice|notices}}. Continue?",
+    "deputy.ante.mergeAll.confirm": "You are about to merge $1 {{PLURAL:$1|notice|notices}} which support rows. Continue?",
     "deputy.ante.reset": "Reset all changes",
     "deputy.ante.reset.confirm": "This will reset all changes. Proceed?",
     "deputy.ante.delete": "Delete all notices",

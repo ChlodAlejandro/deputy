@@ -77,7 +77,7 @@ export function renderMergePanel<T extends SupportedAttributionNoticeType>(
 		).done( ( confirmed: boolean ) => {
 			if ( confirmed ) {
 				// Recursively merge all templates
-				TemplateMerger.copied(
+				TemplateMerger.merge(
 					notices as any,
 					parentTemplate as any
 				);

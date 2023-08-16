@@ -9,6 +9,8 @@ import TemplateInsertEvent from '../events/TemplateInsertEvent';
 import { CTEParsoidTransclusionTemplateNode } from './CTEParsoidTransclusionTemplateNode';
 import TemplateFactory from './TemplateFactory';
 import moveToStart from '../../../util/moveToStart';
+import RowedAttributionNotice from './RowedAttributionNotice';
+import organize from '../../../util/organize';
 
 /**
  * An object containing an {@link HTMLIFrameElement} along with helper functions
@@ -109,6 +111,15 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 		}
 
 		return notices;
+	}
+
+	findRowedNoticesByHref(): Record<string, RowedAttributionNotice<any>[]> {
+		return organize(
+			this.findNotices().filter(
+				v => v instanceof RowedAttributionNotice
+			) as RowedAttributionNotice<any>[],
+			(v) => v.node.getTarget().href
+		);
 	}
 
 	/**
