@@ -90,7 +90,7 @@ jobs:
 
       - name: Install chromedriver
         if: matrix.browser.product == 'chrome'
-        uses: nanasess/setup-chromedriver@v1
+        uses: nanasess/setup-chromedriver@v2
 
       - name: Setup Node
         if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
