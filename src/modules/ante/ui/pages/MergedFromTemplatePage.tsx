@@ -161,13 +161,18 @@ function initMergedFromTemplatePage() {
 					value: this.mergedFromTemplate.article || '',
 					placeholder: mw.msg( 'deputy.ante.mergedFrom.article.placeholder' )
 				} ),
-				date: new mw.widgets.datetime.DateTimeInputWidget( {
+				date: new mw.widgets.DateInputWidget( {
 					$overlay: this.parent.$overlay,
 					required: true,
-					calendar: null,
 					icon: 'calendar',
-					clearable: true,
-					value: parsedDate
+					value: parsedDate ? `${
+						parsedDate.getUTCFullYear()
+					}-${
+						parsedDate.getUTCMonth() + 1
+					}-${
+						parsedDate.getUTCDate()
+					}` : undefined,
+					placeholder: mw.msg( 'deputy.ante.copied.date.placeholder' )
 				} ),
 				target: new mw.widgets.TitleInputWidget( {
 					$overlay: this.parent.$overlay,
@@ -231,11 +236,11 @@ function initMergedFromTemplatePage() {
 				input.on( 'change', ( value: string ) => {
 					if ( input instanceof OO.ui.CheckboxInputWidget ) {
 						this.mergedFromTemplate[ field ] = value ? 'yes' : 'no';
-					} else if ( input instanceof mw.widgets.datetime.DateTimeInputWidget ) {
-						this.mergedFromTemplate[ field ] =
-							new Date( value ).toLocaleDateString( 'en-GB', {
+					} else if ( input instanceof mw.widgets.DateInputWidget ) {
+						this.mergedFromTemplate[ field ] = value ?
+							new Date( value + ' UTC' ).toLocaleDateString( 'en-GB', {
 								year: 'numeric', month: 'long', day: 'numeric'
-							} );
+							} ) : undefined;
 						if ( value.length > 0 ) {
 							fieldLayouts[ field ].setWarnings( [] );
 						}

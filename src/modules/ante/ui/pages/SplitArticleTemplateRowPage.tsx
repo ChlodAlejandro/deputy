@@ -160,13 +160,18 @@ function initSplitArticleTemplateRowPage() {
 					value: this.splitArticleTemplateRow.from_oldid || '',
 					placeholder: mw.msg( 'deputy.ante.splitArticle.from_oldid.placeholder' )
 				} ),
-				date: new mw.widgets.datetime.DateTimeInputWidget( {
+				date: new mw.widgets.DateInputWidget( {
 					$overlay: this.parent.$overlay,
 					required: true,
-					calendar: null,
 					icon: 'calendar',
-					clearable: true,
-					value: parsedDate
+					value: parsedDate ? `${
+						parsedDate.getUTCFullYear()
+					}-${
+						parsedDate.getUTCMonth() + 1
+					}-${
+						parsedDate.getUTCDate()
+					}` : undefined,
+					placeholder: mw.msg( 'deputy.ante.copied.date.placeholder' )
 				} ),
 				diff: new OO.ui.TextInputWidget( {
 					value: this.splitArticleTemplateRow.from_oldid || '',
@@ -222,11 +227,11 @@ function initSplitArticleTemplateRowPage() {
 
 				// Attach the change listener
 				input.on( 'change', ( value: string ) => {
-					if ( input instanceof mw.widgets.datetime.DateTimeInputWidget ) {
-						this.splitArticleTemplateRow[ field ] =
-							new Date( value ).toLocaleDateString( 'en-GB', {
+					if ( input instanceof mw.widgets.DateInputWidget ) {
+						this.splitArticleTemplateRow[ field ] = value ?
+							new Date( value + ' UTC' ).toLocaleDateString( 'en-GB', {
 								year: 'numeric', month: 'long', day: 'numeric'
-							} );
+							} ) : undefined;
 						if ( value.length > 0 ) {
 							fieldLayouts[ field ].setWarnings( [] );
 						}

@@ -78,24 +78,16 @@
 	margin-right: 16px;
 }
 
-.copied-template-editor .mw-widgets-datetime-dateTimeInputWidget-handle .oo-ui-iconElement-icon {
-	left: 0.5em;
-	width: 1em;
-	height: 1em;
-	top: 0.4em;
+.cte-fieldset-date .oo-ui-fieldLayout-field {
+	min-width: 18em;
 }
 
-.cte-fieldset-date .mw-widgets-datetime-dateTimeInputWidget-editField {
-	min-width: 2.5ch !important;
-}
-
-.cte-fieldset-date :not(.mw-widgets-datetime-dateTimeInputWidget-empty) > .mw-widgets-datetime-dateTimeInputWidget-handle {
-	padding-right: 0;
+.cte-fieldset .mw-widget-dateInputWidget {
+	max-width: unset;
 }
 
 .cte-page-row:not(:last-child),
-.cte-page-template:not(:last-child),
-.cte-fieldset-date.oo-ui-actionFieldLayout.oo-ui-fieldLayout-align-top .oo-ui-fieldLayout-header {
+.cte-page-template:not(:last-child) {
 	padding-bottom: 0 !important;
 }
 

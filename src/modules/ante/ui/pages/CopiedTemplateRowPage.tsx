@@ -307,14 +307,17 @@ function initCopiedTemplateRowPage() {
 					// Prevent people from adding the WP:AFD prefix.
 					validate: /^((?!W(iki)?p(edia)?:(A(rticles)?[ _]?f(or)?[ _]?d(eletion)?\/)).+|$)/gi
 				} ),
-				date: new mw.widgets.datetime.DateTimeInputWidget( {
-					// calendar: {
-					//     $overlay: parent["$overlay"]
-					// },
-					calendar: null,
+				date: new mw.widgets.DateInputWidget( {
+					$overlay: this.parent.$overlay,
 					icon: 'calendar',
-					clearable: true,
-					value: parsedDate
+					value: parsedDate ? `${
+						parsedDate.getUTCFullYear()
+					}-${
+						parsedDate.getUTCMonth() + 1
+					}-${
+						parsedDate.getUTCDate()
+					}` : undefined,
+					placeholder: mw.msg( 'deputy.ante.copied.date.placeholder' )
 				} ),
 				toggle: new OO.ui.ToggleSwitchWidget()
 			};
@@ -481,11 +484,11 @@ function initCopiedTemplateRowPage() {
 					if ( input instanceof OO.ui.CheckboxInputWidget ) {
 						// Specific to `merge`. Watch out before adding more checkboxes.
 						this.copiedTemplateRow[ field ] = value ? 'yes' : '';
-					} else if ( input instanceof mw.widgets.datetime.DateTimeInputWidget ) {
-						this.copiedTemplateRow[ field ] =
-							new Date( value ).toLocaleDateString( 'en-GB', {
+					} else if ( input instanceof mw.widgets.DateInputWidget ) {
+						this.copiedTemplateRow[ field ] = value ?
+							new Date( value + ' UTC' ).toLocaleDateString( 'en-GB', {
 								year: 'numeric', month: 'long', day: 'numeric'
-							} );
+							} ) : undefined;
 						if ( value.length > 0 ) {
 							this.fieldLayouts[ field ].setWarnings( [] );
 						}

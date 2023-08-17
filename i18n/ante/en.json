@@ -88,6 +88,7 @@
     "deputy.ante.copied.afd.placeholder": "AfD page (without Wikipedia:Articles for deletion/)",
     "deputy.ante.copied.afd.label": "AfD page",
     "deputy.ante.copied.afd.help": "The AfD page if the copy was made due to an AfD closed as \"merge\".",
+    "deputy.ante.copied.date.placeholder": "Date (YYYY-MM-DD)",
 
     "deputy.ante.copied.advanced": "Advanced",
     "deputy.ante.copied.dateInvalid": "The previous date value, \"$1\", was not a valid date.",
