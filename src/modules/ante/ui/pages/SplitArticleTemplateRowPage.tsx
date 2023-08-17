@@ -229,7 +229,7 @@ function initSplitArticleTemplateRowPage() {
 				input.on( 'change', ( value: string ) => {
 					if ( input instanceof mw.widgets.DateInputWidget ) {
 						this.splitArticleTemplateRow[ field ] = value ?
-							new Date( value + ' UTC' ).toLocaleDateString( 'en-GB', {
+							new Date( value + 'T00:00:00Z' ).toLocaleDateString( 'en-GB', {
 								year: 'numeric', month: 'long', day: 'numeric'
 							} ) : undefined;
 						if ( value.length > 0 ) {

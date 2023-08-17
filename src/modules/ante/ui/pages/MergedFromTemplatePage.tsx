@@ -238,7 +238,7 @@ function initMergedFromTemplatePage() {
 						this.mergedFromTemplate[ field ] = value ? 'yes' : 'no';
 					} else if ( input instanceof mw.widgets.DateInputWidget ) {
 						this.mergedFromTemplate[ field ] = value ?
-							new Date( value + ' UTC' ).toLocaleDateString( 'en-GB', {
+							new Date( value + 'T00:00:00Z' ).toLocaleDateString( 'en-GB', {
 								year: 'numeric', month: 'long', day: 'numeric'
 							} ) : undefined;
 						if ( value.length > 0 ) {
