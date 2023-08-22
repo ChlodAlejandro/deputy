@@ -12,6 +12,8 @@ import { AttributionNoticePageLayout } from './AttributionNoticePageLayout';
 import yesNo from '../../../../util/yesNo';
 import normalizeTitle from '../../../../wiki/util/normalizeTitle';
 import equalTitle from '../../../../util/equalTitle';
+import MwApi from '../../../../MwApi';
+import RevisionDateGetButton from '../components/RevisionDateGetButton';
 
 export interface CopiedTemplateRowPageData {
 	/**
@@ -323,12 +325,13 @@ function initCopiedTemplateRowPage() {
 			};
 
 			const diffConvert = new OO.ui.ButtonWidget( {
-				label: 'Convert'
+				label: mw.msg( 'deputy.ante.copied.convert' )
 			} );
-			// const dateButton = new OO.ui.PopupButtonWidget({
-			//     icon: "calendar",
-			//     title: "Select a date"
-			// });
+			const dateAuto = RevisionDateGetButton( {
+				label: mw.msg( 'deputy.ante.dateAuto', 'to_diff' ),
+				revisionInputWidget: this.inputs.to_diff,
+				dateInputWidget: this.inputs.date
+			} );
 
 			this.fieldLayouts = {
 				from: new OO.ui.FieldLayout( this.inputs.from, {
@@ -383,7 +386,7 @@ function initCopiedTemplateRowPage() {
 					align: 'left',
 					help: mw.msg( 'deputy.ante.copied.afd.help' )
 				} ),
-				date: new OO.ui.FieldLayout( this.inputs.date, {
+				date: new OO.ui.ActionFieldLayout( this.inputs.date, dateAuto, {
 					align: 'inline',
 					classes: [ 'cte-fieldset-date' ]
 				} ),

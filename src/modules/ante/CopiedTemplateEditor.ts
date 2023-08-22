@@ -34,7 +34,7 @@ export default class CopiedTemplateEditor extends DeputyModule {
 		'mediawiki.api',
 		'mediawiki.Title',
 		'mediawiki.widgets',
-		'mediawiki.widgets.datetime',
+		'mediawiki.widgets.DateInputWidget',
 		'jquery.makeCollapsible'
 	];
 

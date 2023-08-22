@@ -7,6 +7,7 @@ import SplitArticleTemplateRow, {
 import { h } from 'tsx-dom';
 import getObjectValues from '../../../../util/getObjectValues';
 import unwrapWidget from '../../../../util/unwrapWidget';
+import RevisionDateGetButton from '../components/RevisionDateGetButton';
 
 export interface SplitArticleTemplateRowPageData {
 	/**
@@ -160,19 +161,6 @@ function initSplitArticleTemplateRowPage() {
 					value: this.splitArticleTemplateRow.from_oldid || '',
 					placeholder: mw.msg( 'deputy.ante.splitArticle.from_oldid.placeholder' )
 				} ),
-				date: new mw.widgets.DateInputWidget( {
-					$overlay: this.parent.$overlay,
-					required: true,
-					icon: 'calendar',
-					value: parsedDate ? `${
-						parsedDate.getUTCFullYear()
-					}-${
-						parsedDate.getUTCMonth() + 1
-					}-${
-						parsedDate.getUTCDate()
-					}` : undefined,
-					placeholder: mw.msg( 'deputy.ante.copied.date.placeholder' )
-				} ),
 				diff: new OO.ui.TextInputWidget( {
 					value: this.splitArticleTemplateRow.from_oldid || '',
 					placeholder: mw.msg( 'deputy.ante.splitArticle.diff.placeholder' ),
@@ -191,8 +179,28 @@ function initSplitArticleTemplateRowPage() {
 							return false;
 						}
 					}
+				} ),
+				date: new mw.widgets.DateInputWidget( {
+					$overlay: this.parent.$overlay,
+					required: true,
+					icon: 'calendar',
+					value: parsedDate ? `${
+						parsedDate.getUTCFullYear()
+					}-${
+						parsedDate.getUTCMonth() + 1
+					}-${
+						parsedDate.getUTCDate()
+					}` : undefined,
+					placeholder: mw.msg( 'deputy.ante.copied.date.placeholder' )
 				} )
 			};
+
+			const dateAuto = RevisionDateGetButton( {
+				label: mw.msg( 'deputy.ante.dateAuto', 'diff' ),
+				revisionInputWidget: inputs.diff,
+				dateInputWidget: inputs.date
+			} );
+
 			const fieldLayouts = {
 				to: new OO.ui.FieldLayout( inputs.to, {
 					$overlay: this.parent.$overlay,
@@ -207,17 +215,17 @@ function initSplitArticleTemplateRowPage() {
 					label: mw.msg( 'deputy.ante.splitArticle.from_oldid.label' ),
 					help: mw.msg( 'deputy.ante.splitArticle.from_oldid.help' )
 				} ),
-				date: new OO.ui.FieldLayout( inputs.date, {
-					$overlay: this.parent.$overlay,
-					align: 'left',
-					label: mw.msg( 'deputy.ante.splitArticle.date.label' ),
-					help: mw.msg( 'deputy.ante.splitArticle.date.help' )
-				} ),
 				diff: new OO.ui.FieldLayout( inputs.diff, {
 					$overlay: this.parent.$overlay,
 					align: 'left',
 					label: mw.msg( 'deputy.ante.splitArticle.diff.label' ),
 					help: mw.msg( 'deputy.ante.splitArticle.diff.help' )
+				} ),
+				date: new OO.ui.ActionFieldLayout( inputs.date, dateAuto, {
+					$overlay: this.parent.$overlay,
+					align: 'left',
+					label: mw.msg( 'deputy.ante.splitArticle.date.label' ),
+					help: mw.msg( 'deputy.ante.splitArticle.date.help' )
 				} )
 			};
 

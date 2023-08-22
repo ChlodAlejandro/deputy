@@ -46,6 +46,9 @@
 
     "deputy.ante.templateOptions": "Template options",
 
+    "deputy.ante.dateAuto": "Pull the date from the provided revision ID (`$1` parameter)",
+    "deputy.ante.dateAuto.failed": "Could not pull date from revision: $1",
+
     "deputy.ante.copied.label": "Copied $1",
 
     "deputy.ante.copied.remove": "Remove notice",
@@ -64,6 +67,7 @@
 
     "deputy.ante.copied.collapse": "Collapse",
     "deputy.ante.copied.small": "Small",
+    "deputy.ante.copied.convert": "Convert",
 
     "deputy.ante.copied.from.placeholder": "Page A",
     "deputy.ante.copied.from.label": "Page copied from",
