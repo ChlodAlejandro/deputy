@@ -3,15 +3,6 @@
 
 These are changes that may or may not have been deployed to wikis, but are not yet considered as part of any release.
 
-## Added
-* [[`2374c07`](../../commit/2374c07)] Reintroduced template merging
-
-## Bugs
-* [[`ec1bd49`](../../commit/ec1bd49)] Fixed how links appear in the CCI interface
-* [[`4446402`](../../commit/4446402)] Fixed missing revisions appearing improperly
-* [[`b8a5975`](../../commit/b8a5975)] Fixed z-index issues with confirmation dialogs
-* [[`b45cc88`](../../commit/b45cc88)] Fixed title parsing issue when attrib. notice field is empty
-
 # [v0.5.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.5.0) - *(unreleased)*
 Generic patches and fixes. Added an announcements system for reaching users of Deputy. Also improved CCI case navigation and handling.
 
@@ -20,6 +11,8 @@ Generic patches and fixes. Added an announcements system for reaching users of D
 * [[`6d212b1`](../../commit/6d212b1)] Added shorthand summary for case page assessment edit summaries
 * [[`8c352a8`](../../commit/8c352a8)] Added proper support for missing (deleted/suppressed) revisions
 * [[`adaab2f`](../../commit/adaab2f)] Added an announcements system
+* [[`2374c07`](../../commit/2374c07)] Reintroduced template merging
+* [[`b1cfbaf`](../../commit/b1cfbaf)] Added button in ANTE to automatically get date from revision ID
 
 ## Modified
 * [[`c77ad39`](../../commit/c77ad39)] Made page toolbar appear as long as a session was active
@@ -30,7 +23,11 @@ Generic patches and fixes. Added an announcements system for reaching users of D
 * [[`c77ad39`](../../commit/c77ad39)] Fixed revisions not working when the page title doesn't match
 * [[`ff55837`](../../commit/ff55837)] Fixed "Force UTC time" only taking effect on dates
 * [[`2470f56`](../../commit/2470f56)] Fixed error when saving a section without making savable changes
-* [[`e790fb7`](../../commit/e790fb7)] Fixed incorrect message key in ANTE template with demo parameter enabled 
+* [[`e790fb7`](../../commit/e790fb7)] Fixed incorrect message key in ANTE template with demo parameter enabled
+* [[`ec1bd49`](../../commit/ec1bd49)] Fixed how links appear in the CCI interface
+* [[`4446402`](../../commit/4446402)] Fixed missing revisions appearing improperly
+* [[`b8a5975`](../../commit/b8a5975)] Fixed z-index issues with confirmation dialogs
+* [[`b45cc88`](../../commit/b45cc88)] Fixed title parsing issue when attrib. notice field is empty
 
 For a granular list of changes, see [v0.4.1...v0.4.2](https://github.com/ChlodAlejandro/deputy/compare/v0.4.2...v0.5.0).
 
