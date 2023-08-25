@@ -1,3 +1,5 @@
+import { deputyVersion } from './DeputyVersion';
+
 /**
  *
  */
@@ -11,6 +13,13 @@ export default class MwApi {
 	 */
 	static get action(): mw.Api {
 		return this._action ?? ( this._action = new mw.Api( {
+			ajax: {
+				headers: {
+					'Api-User-Agent': `Deputy/${
+						deputyVersion
+					} (https://w.wiki/5k$q; User:Chlod; wiki@chlod.net)`
+				}
+			},
 			parameters: {
 				format: 'json',
 				formatversion: 2,
