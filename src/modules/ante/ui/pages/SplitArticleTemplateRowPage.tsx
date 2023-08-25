@@ -191,7 +191,10 @@ function initSplitArticleTemplateRowPage() {
 					}-${
 						parsedDate.getUTCDate()
 					}` : undefined,
-					placeholder: mw.msg( 'deputy.ante.copied.date.placeholder' )
+					placeholder: mw.msg( 'deputy.ante.copied.date.placeholder' ),
+					calendar: {
+						verticalPosition: 'above'
+					}
 				} )
 			};
 
@@ -225,10 +228,7 @@ function initSplitArticleTemplateRowPage() {
 					$overlay: this.parent.$overlay,
 					align: 'left',
 					label: mw.msg( 'deputy.ante.splitArticle.date.label' ),
-					help: mw.msg( 'deputy.ante.splitArticle.date.help' ),
-					calendar: {
-						verticalPosition: 'above'
-					}
+					help: mw.msg( 'deputy.ante.splitArticle.date.help' )
 				} )
 			};
 
