@@ -319,7 +319,10 @@ function initCopiedTemplateRowPage() {
 					}-${
 						parsedDate.getUTCDate()
 					}` : undefined,
-					placeholder: mw.msg( 'deputy.ante.copied.date.placeholder' )
+					placeholder: mw.msg( 'deputy.ante.copied.date.placeholder' ),
+					calendar: {
+						verticalPosition: 'above'
+					}
 				} ),
 				toggle: new OO.ui.ToggleSwitchWidget()
 			};

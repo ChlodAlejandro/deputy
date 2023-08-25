@@ -225,7 +225,10 @@ function initSplitArticleTemplateRowPage() {
 					$overlay: this.parent.$overlay,
 					align: 'left',
 					label: mw.msg( 'deputy.ante.splitArticle.date.label' ),
-					help: mw.msg( 'deputy.ante.splitArticle.date.help' )
+					help: mw.msg( 'deputy.ante.splitArticle.date.help' ),
+					calendar: {
+						verticalPosition: 'above'
+					}
 				} )
 			};
 
