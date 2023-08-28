@@ -8,6 +8,10 @@ export default class MwApi {
 	private static _action: mw.Api;
 	private static _rest: mw.Rest;
 
+	public static readonly USER_AGENT = `Deputy/${
+		deputyVersion
+	} (https://w.wiki/5k$q; User:Chlod; wiki@chlod.net)`;
+
 	/**
 	 * @return A mw.Api for the current wiki.
 	 */

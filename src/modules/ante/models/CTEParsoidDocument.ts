@@ -11,6 +11,8 @@ import TemplateFactory from './TemplateFactory';
 import moveToStart from '../../../util/moveToStart';
 import RowedAttributionNotice from './RowedAttributionNotice';
 import organize from '../../../util/organize';
+import MwApi from '../../../MwApi';
+import { parsoidVersion } from '../../../DeputyVersion';
 
 /**
  * An object containing an {@link HTMLIFrameElement} along with helper functions
@@ -73,6 +75,21 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 
 	/**
 	 * @inheritDoc
+	 * @protected
+	 */
+	protected getRequestOptions(): Omit<RequestInit, 'body' | 'cache' | 'method'> {
+		const ro = super.getRequestOptions();
+		return {
+			headers: {
+				'Api-User-Agent': `${MwApi.USER_AGENT} ${
+					( ro.headers as any )?.[ 'Api-User-Agent' ] ?? ''
+				}`
+			}
+		};
+	}
+
+	/**
+	 * @inheritDoc
 	 */
 	reset() {
 		super.reset();
@@ -113,12 +130,17 @@ export default class CTEParsoidDocument extends ParsoidDocument {
 		return notices;
 	}
 
+	/**
+	 * Find all notices which have rows using their 'href' fields.
+	 *
+	 * @return All found {@link RowedAttributionNotice}s
+	 */
 	findRowedNoticesByHref(): Record<string, RowedAttributionNotice<any>[]> {
 		return organize(
 			this.findNotices().filter(
 				v => v instanceof RowedAttributionNotice
 			) as RowedAttributionNotice<any>[],
-			(v) => v.node.getTarget().href
+			( v ) => v.node.getTarget().href
 		);
 	}
 

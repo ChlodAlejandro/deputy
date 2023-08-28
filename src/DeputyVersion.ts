@@ -21,3 +21,6 @@ export {
 	version as deputyVersion,
 	version as default
 } from '../package.json';
+
+import { dependencies } from '../package-lock.json';
+export const parsoidVersion = dependencies[ '@chlodalejandro/parsoid' ].version;
