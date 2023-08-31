@@ -51,6 +51,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 	 * Loads the configuration from a set of possible sources.
 	 *
 	 * @param sourcePage The specific page to load from
+	 * @return A WikiConfiguration object
 	 */
 	static async load( sourcePage?: mw.Title ): Promise<WikiConfiguration> {
 		if ( sourcePage ) {
@@ -62,25 +63,46 @@ export default class WikiConfiguration extends ConfigurationBase {
 	}
 
 	/**
-	 * loads the wiki configuration from localStorage. This allows for faster loads at
-	 * the expense of a (small) chance of outdated configuration.
+	 * Loads the wiki configuration from localStorage and/or MediaWiki
+	 * settings. This allows for faster loads at the expense of a (small)
+	 * chance of outdated configuration.
+	 *
+	 * The localStorage layer allows fast browser-based caching. If a user
+	 * is logging in again on another device, the user configuration
+	 * will automatically be sent to the client, lessening turnaround time.
+	 * If all else fails, the configuration will be loaded from the wiki.
+	 *
+	 * @return A WikiConfiguration object.
 	 */
 	static async loadFromLocal(): Promise<WikiConfiguration> {
-		let configPage;
-		try {
-			// If `mw.storage.get` returns `false` or `null`, it'll be thrown up.
-			configPage = JSON.parse( mw.storage.get( WikiConfiguration.optionKey ) as string );
-		} catch ( e ) {
-			// Bad local! Switch to non-local.
-			console.error( 'Failed to get Deputy wiki configuration', e );
+		let configInfo;
+
+		// If `mw.storage.get` returns `false` or `null`, it'll be thrown up.
+		let rawConfigInfo: string | boolean = mw.storage.get( WikiConfiguration.optionKey );
+
+		// Try to grab it from user options, if it exists.
+		if ( !rawConfigInfo ) {
+			rawConfigInfo = mw.user.options.get( WikiConfiguration.optionKey );
+		}
+
+		if ( typeof rawConfigInfo === 'string' ) {
+			try {
+				configInfo = JSON.parse( rawConfigInfo as string );
+			} catch ( e ) {
+				// Bad local! Switch to non-local.
+				console.error( 'Failed to get Deputy wiki configuration', e );
+				return this.loadFromWiki();
+			}
+		} else {
+			console.log( 'No locally-cached Deputy configuration, pulling from wiki.' );
 			return this.loadFromWiki();
 		}
 
-		if ( configPage ) {
+		if ( configInfo ) {
 			return new WikiConfiguration(
-				new mw.Title( configPage.title.title, configPage.title.namespace ),
-				JSON.parse( configPage.wt ),
-				configPage.editable
+				new mw.Title( configInfo.title.title, configInfo.title.namespace ),
+				JSON.parse( configInfo.wt ),
+				configInfo.editable
 			);
 		} else {
 			return this.loadFromWiki();
@@ -91,6 +113,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 	 * Loads the configuration from the current wiki.
 	 *
 	 * @param sourcePage The specific page to load from
+	 * @return A WikiConfiguration object
 	 */
 	static async loadFromWiki( sourcePage?: mw.Title ): Promise<WikiConfiguration> {
 		const configPage = sourcePage ? {
@@ -379,7 +402,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 		// Attempt save if on-wiki config found and doesn't match local.
 		// Doesn't need to be from the same config page, since this usually means a new config
 		// page was made, and we need to switch to it.
-		if ( this.core.lastEdited < liveWikiConfig.lastEdited ) {
+		if ( this.core.lastEdited.get() < liveWikiConfig.core.lastEdited ) {
 			const onSuccess = () => {
 				// Only mark outdated after saving, so we don't indirectly cause a save operation
 				// to cancel.
@@ -398,15 +421,18 @@ export default class WikiConfiguration extends ConfigurationBase {
 			// to MediaWiki settings. This is most likely already saved by the original tab
 			// that sent the comms message.
 			if ( !sourceConfig ) {
-				MwApi.action.saveOption(
-					WikiConfiguration.optionKey,
-					// Use `liveWikiConfig`, since this contains the compressed version and is more
-					// bandwidth-friendly.
+				// Use `liveWikiConfig`, since this contains the compressed version and is more
+				// bandwidth-friendly.
+				const rawConfigInfo =
 					JSON.stringify( {
 						title: fromWiki.title,
 						editable: fromWiki.editable,
-						wt: liveWikiConfig
-					} )
+						wt: JSON.stringify( liveWikiConfig )
+					} );
+				mw.storage.set( WikiConfiguration.optionKey, rawConfigInfo );
+				await MwApi.action.saveOption(
+					WikiConfiguration.optionKey,
+					rawConfigInfo
 				).then( () => {
 					if ( window.deputy?.comms ) {
 						// Broadcast the update to other tabs.
@@ -438,7 +464,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 		await MwApi.action.postWithEditToken( {
 			action: 'edit',
 			title: this.sourcePage.getPrefixedText(),
-			text: JSON.stringify( this.all, null, '\t' )
+			text: this.serialize()
 		} );
 	}
 
@@ -469,6 +495,8 @@ export default class WikiConfiguration extends ConfigurationBase {
 
 	/**
 	 * Shows the configuration edit intro banner, if applicable on this page.
+	 *
+	 * @return void
 	 */
 	async prepareEditBanners(): Promise<void> {
 		if ( [ 'view', 'diff' ].indexOf( mw.config.get( 'wgAction' ) ) === -1 ) {
