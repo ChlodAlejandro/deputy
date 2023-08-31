@@ -13,11 +13,14 @@ Generic patches and fixes. Added an announcements system for reaching users of D
 * [[`adaab2f`](../../commit/adaab2f)] Added an announcements system
 * [[`2374c07`](../../commit/2374c07)] Reintroduced template merging
 * [[`b1cfbaf`](../../commit/b1cfbaf)] Added button in ANTE to automatically get date from revision ID
+* [[`de7bd37`](../../commit/de7bd37)] Added Action API Api-User-Agent hedaers
+* [[`7cb48de`](../../commit/7cb48de)] Added RESTBase Api-User-Agent headers
 
 ## Modified
 * [[`c77ad39`](../../commit/c77ad39)] Made page toolbar appear as long as a session was active
 * [[`51330ac`](../../commit/51330ac)] Made page toolbar only show when viewing normally, viewing a diff, or viewing a permanent link
 * [[`3d552a7`](../../commit/3d552a7)] Made sections unsave-able if there is are still unassessed revisions
+* [[`79a1e59`](../../commit/79a1e59)] Made DateInputWidget dropdown show downwards
 
 ## Bugs
 * [[`c77ad39`](../../commit/c77ad39)] Fixed revisions not working when the page title doesn't match
@@ -28,6 +31,7 @@ Generic patches and fixes. Added an announcements system for reaching users of D
 * [[`4446402`](../../commit/4446402)] Fixed missing revisions appearing improperly
 * [[`b8a5975`](../../commit/b8a5975)] Fixed z-index issues with confirmation dialogs
 * [[`b45cc88`](../../commit/b45cc88)] Fixed title parsing issue when attrib. notice field is empty
+* [[`e35904d`](../../commit/e35904d)] Fixed wiki configuration changes not applying
 
 For a granular list of changes, see [v0.4.1...v0.4.2](https://github.com/ChlodAlejandro/deputy/compare/v0.4.2...v0.5.0).
 
