@@ -13,7 +13,7 @@ const axios = require( 'axios' );
  *
  * @type {number}
  */
-const cpcVersion = 1112515158;
+const cpcVersion = 1171074480;
 
 ( async () => {
 
@@ -129,7 +129,10 @@ const cpcVersion = 1112515158;
 		'Blanked and relisted under today.': 'blanked',
 
 		// [[Special:PermanentLink/1110556291]]
-		"User was not notified, relisted under today": "user"
+		"User was not notified, relisted under today": "user",
+
+		// [[Special:PermanentLink/1171074480]]
+		"Already rewritten. No infringing content remains.": "alreadyrewritten"
 	};
 
 	// Reverse queries. Overwrite with the latest occurrence.
