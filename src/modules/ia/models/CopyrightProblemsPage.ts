@@ -2,6 +2,7 @@ import normalizeTitle from '../../../wiki/util/normalizeTitle';
 import getPageContent from '../../../wiki/util/getPageContent';
 import decorateEditSummary from '../../../wiki/util/decorateEditSummary';
 import MwApi from '../../../MwApi';
+import changeTag from '../../../config/changeTag';
 
 /**
  * A class that represents a `Wikipedia:Copyright problems` page, a page that lists
@@ -172,6 +173,7 @@ export default class CopyrightProblemsPage {
 		// The `catch` statement here can theoretically create an infinite loop given
 		// enough race conditions. Don't worry about it too much, though.
 		await MwApi.action.postWithEditToken( {
+			...changeTag( await window.InfringementAssistant.getWikiConfig() ),
 			action: 'edit',
 			title: listingPage.getPrefixedText(),
 			...textParameters,

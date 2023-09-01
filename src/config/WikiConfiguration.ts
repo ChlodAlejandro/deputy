@@ -15,6 +15,7 @@ import {
 	listingWikitext
 } from '../wiki/TemplatePolyfills';
 import ConfigurationReloadBanner from '../ui/config/ConfigurationReloadBanner';
+import changeTag from './changeTag';
 
 export type WikiPageConfiguration = {
 	title: mw.Title,
@@ -233,6 +234,10 @@ export default class WikiConfiguration extends ConfigurationBase {
 			defaultValue: new URL( 'https://deputy.toolforge.org/' ),
 			displayOptions: { type: 'text' },
 			alwaysSave: true
+		} ),
+		changeTag: new Setting<string, string>( {
+			defaultValue: null,
+			displayOptions: { type: 'text' }
 		} )
 	};
 
@@ -462,6 +467,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 		// Update last edited number
 		this.core.lastEdited.set( Date.now() );
 		await MwApi.action.postWithEditToken( {
+			...changeTag( await window.deputy.getWikiConfig() ),
 			action: 'edit',
 			title: this.sourcePage.getPrefixedText(),
 			text: this.serialize()

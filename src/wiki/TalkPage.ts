@@ -2,6 +2,8 @@ import normalizeTitle from './util/normalizeTitle';
 import decorateEditSummary from './util/decorateEditSummary';
 import nsId from './util/nsId';
 import MwApi from '../MwApi';
+import changeTag from '../config/changeTag';
+import WikiConfiguration from '../config/WikiConfiguration';
 
 /**
  * Options for performing edits with {@link TalkPage}.
@@ -57,6 +59,7 @@ export default class TalkPage {
 					nsId( 'user_talk' )
 			}, editOptions, {
 				// Non-overridable options
+				...changeTag( await WikiConfiguration.load() ),
 				action: 'edit',
 				title: this.talkPage.getPrefixedText(),
 				summary: decorateEditSummary( options.summary ),

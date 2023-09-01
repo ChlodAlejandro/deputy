@@ -11,6 +11,7 @@ import { TripleCompletionAction } from '../../shared/CompletionAction';
 import equalTitle from '../../../util/equalTitle';
 import msgEval from '../../../wiki/util/msgEval';
 import CCICaseInputWidget from './CCICaseInputWidget';
+import changeTag from '../../../config/changeTag';
 
 export interface SinglePageWorkflowDialogData {
 	page: TitleLike;
@@ -577,6 +578,7 @@ function initSinglePageWorkflowDialog() {
 			}
 
 			await MwApi.action.postWithEditToken( {
+				...changeTag( await window.InfringementAssistant.getWikiConfig() ),
 				action: 'edit',
 				title: this.page.getPrefixedText(),
 				text: finalPageContent,

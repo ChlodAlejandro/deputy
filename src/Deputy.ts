@@ -59,10 +59,8 @@ class Deputy {
 
 	/**
 	 * This version of Deputy.
-	 *
-	 * @type {string}
 	 */
-	readonly version = deputyVersion;
+	readonly version: string = deputyVersion;
 	/**
 	 * The current page as an mw.Title.
 	 */
@@ -129,12 +127,14 @@ class Deputy {
 	 * sub-components as well.
 	 */
 	async init() {
+		// Attach modules to respective names
 		window.CopiedTemplateEditor = this.ante;
 		window.InfringementAssistant = this.ia;
+
 		mw.hook( 'deputy.preload' ).fire( this );
 
 		// Initialize the configuration
-		this.config = await UserConfiguration.load();
+		this.config = UserConfiguration.load();
 		window.deputyLang = this.config.core.language.get();
 
 		// Inject CSS

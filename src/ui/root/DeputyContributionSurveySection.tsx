@@ -21,6 +21,7 @@ import { generateTrace } from '../../models/DeputyTrace';
 import DeputyMessageWidget from '../shared/DeputyMessageWidget';
 import sectionHeadingN from '../../wiki/util/sectionHeadingN';
 import last from '../../util/last';
+import changeTag from '../../config/changeTag';
 
 /**
  * The contribution survey section UI element. This includes a list of revisions
@@ -427,6 +428,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		}
 
 		return MwApi.action.postWithEditToken( {
+			...changeTag( await window.deputy.getWikiConfig() ),
 			action: 'edit',
 			pageid: this.casePage.pageId,
 			section: sectionId,

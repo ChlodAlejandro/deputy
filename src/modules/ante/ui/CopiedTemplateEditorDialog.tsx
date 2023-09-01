@@ -18,6 +18,7 @@ import DeputyReviewDialog from '../../../ui/root/DeputyReviewDialog';
 import normalizeTitle from '../../../wiki/util/normalizeTitle';
 import getPageContent from '../../../wiki/util/getPageContent';
 import openWindow from '../../../wiki/util/openWindow';
+import changeTag from '../../../config/changeTag';
 
 interface CopiedTemplateEditorDialogData {
 	main: CopiedTemplateEditor;
@@ -234,13 +235,13 @@ function initCopiedTemplateEditorDialog() {
 				framed: false,
 				invisibleLabel: true,
 				label: mw.msg( 'deputy.ante.mergeAll' ),
-				title: mw.msg( 'deputy.ante.mergeAll' ),
+				title: mw.msg( 'deputy.ante.mergeAll' )
 			} );
 			this.mergeButton.on( 'click', () => {
 				const notices = this.parsoid.findRowedNoticesByHref();
-				const noticeCount = Object.values(notices)
+				const noticeCount = Object.values( notices )
 					.filter( v => v.length > 1 )
-					.reduce( (p, n) => p + n.length, 0 );
+					.reduce( ( p, n ) => p + n.length, 0 );
 				return noticeCount ?
 					OO.ui.confirm(
 						mw.message(
@@ -252,8 +253,8 @@ function initCopiedTemplateEditorDialog() {
 							return;
 						}
 
-						for ( const noticeSet of Object.values(notices)) {
-							TemplateMerger.merge(noticeSet);
+						for ( const noticeSet of Object.values( notices ) ) {
+							TemplateMerger.merge( noticeSet );
 						}
 					} ) :
 					OO.ui.alert( 'There are no templates to merge.' );
@@ -324,13 +325,15 @@ function initCopiedTemplateEditorDialog() {
 
 			this.layout.on( 'remove', () => {
 				this.mergeButton.setDisabled(
-					!Object.values(this.parsoid.findRowedNoticesByHref()).some( v => v.length > 1 )
+					!Object.values( this.parsoid.findRowedNoticesByHref() )
+						.some( v => v.length > 1 )
 				);
 				deleteButton.setDisabled( this.parsoid.findNotices().length === 0 );
 			} );
 			this.parsoid.addEventListener( 'templateInsert', () => {
 				this.mergeButton.setDisabled(
-					!Object.values(this.parsoid.findRowedNoticesByHref()).some( v => v.length > 1 )
+					!Object.values( this.parsoid.findRowedNoticesByHref() )
+						.some( v => v.length > 1 )
 				);
 				deleteButton.setDisabled( this.parsoid.findNotices().length === 0 );
 			} );
@@ -439,7 +442,7 @@ function initCopiedTemplateEditorDialog() {
 
 			// Recheck state of merge button
 			this.mergeButton.setDisabled(
-				!Object.values(this.parsoid.findRowedNoticesByHref())
+				!Object.values( this.parsoid.findRowedNoticesByHref() )
 					.some( v => v.length > 1 )
 			);
 
@@ -478,6 +481,7 @@ function initCopiedTemplateEditorDialog() {
 				// Saves the page.
 				process.next( async () => {
 					return new mw.Api().postWithEditToken( {
+						...changeTag( await window.CopiedTemplateEditor.getWikiConfig() ),
 						action: 'edit',
 						format: 'json',
 						formatversion: '2',

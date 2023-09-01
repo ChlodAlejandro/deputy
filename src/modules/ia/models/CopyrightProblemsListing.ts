@@ -4,6 +4,7 @@ import normalizeTitle from '../../../wiki/util/normalizeTitle';
 import anchorToTitle from '../../../wiki/util/anchorToTitle';
 import decorateEditSummary from '../../../wiki/util/decorateEditSummary';
 import MwApi from '../../../MwApi';
+import changeTag from '../../../config/changeTag';
 
 interface FullCopyrightProblemsListingData {
 	basic: false;
@@ -55,6 +56,9 @@ export default class CopyrightProblemsListing {
 	 * @return A regular expression.
 	 */
 	static get articleCvRegex(): RegExp {
+		// Acceptable level of danger; global configuration is found only in trusted
+		// places (see WikiConfiguration documentation).
+		// eslint-disable-next-line security/detect-non-literal-regexp
 		return new RegExp( window.InfringementAssistant.wikiConfig.ia.listingWikitextMatch.get() );
 	}
 
@@ -391,6 +395,7 @@ export default class CopyrightProblemsListing {
 		const newWikitext = await this.addComment( message, indent );
 
 		await MwApi.action.postWithEditToken( {
+			...changeTag( await window.InfringementAssistant.getWikiConfig() ),
 			action: 'edit',
 			format: 'json',
 			formatversion: '2',
