@@ -61,6 +61,7 @@ function initRevisionDateGetButton() {
 				rvprop: 'timestamp'
 			} ).then( ( data ) => {
 				this.dateInputWidget.setValue(
+					// ISO-format date
 					data.query.pages[ 0 ].revisions[ 0 ].timestamp.split( 'T' )[ 0 ]
 				);
 				this.dateInputWidget.setDisabled( false );

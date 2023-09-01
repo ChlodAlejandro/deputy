@@ -492,9 +492,9 @@ function initCopiedTemplateRowPage() {
 						this.copiedTemplateRow[ field ] = value ? 'yes' : '';
 					} else if ( input instanceof mw.widgets.DateInputWidget ) {
 						this.copiedTemplateRow[ field ] = value ?
-							new Date( value + 'T00:00:00Z' ).toLocaleDateString( 'en-GB', {
-								year: 'numeric', month: 'long', day: 'numeric'
-							} ) : undefined;
+							window.moment( value, 'YYYY-MM-DD' )
+								.locale( 'en' )
+								.format( 'YYYY-MM-DD' ) : undefined;
 						if ( value.length > 0 ) {
 							this.fieldLayouts[ field ].setWarnings( [] );
 						}
