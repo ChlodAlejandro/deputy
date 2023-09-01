@@ -62,7 +62,7 @@ function initConfigurationGroupTabPanel() {
 					</div>
 				</div>
 				<div>
-					<a href="https://w.wiki/5k$q" target="_blank">{
+					<a href="https://w.wiki/7NWR" target="_blank">{
 						unwrapWidget( new OO.ui.ButtonWidget( {
 							label: mw.msg( 'deputy.about.homepage' ),
 							flags: [ 'progressive' ]
@@ -74,7 +74,7 @@ function initConfigurationGroupTabPanel() {
 							flags: [ 'progressive' ]
 						} ) )
 					}</a>
-					<a href="https://w.wiki/5k$p" target="_blank">{
+					<a href="https://w.wiki/7NWS" target="_blank">{
 						unwrapWidget( new OO.ui.ButtonWidget( {
 							label: mw.msg( 'deputy.about.contact' ),
 							flags: [ 'progressive' ]
