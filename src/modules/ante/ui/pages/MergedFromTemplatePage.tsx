@@ -239,8 +239,8 @@ function initMergedFromTemplatePage() {
 					} else if ( input instanceof mw.widgets.DateInputWidget ) {
 						this.mergedFromTemplate[ field ] = value ?
 							window.moment( value, 'YYYY-MM-DD' )
-								.locale( 'en' )
-								.format( 'YYYY-MM-DD' ) : undefined;
+								.locale( mw.config.get( 'wgContentLanguage' ) )
+								.format( 'D MMMM Y' ) : undefined;
 						if ( value.length > 0 ) {
 							fieldLayouts[ field ].setWarnings( [] );
 						}
