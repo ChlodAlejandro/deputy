@@ -470,7 +470,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 			...changeTag( await window.deputy.getWikiConfig() ),
 			action: 'edit',
 			title: this.sourcePage.getPrefixedText(),
-			text: this.serialize()
+			text: JSON.stringify( this.serialize() )
 		} );
 	}
 
