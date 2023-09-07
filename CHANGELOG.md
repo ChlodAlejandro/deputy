@@ -13,15 +13,18 @@ Generic patches and fixes. Added an announcements system for reaching users of D
 * [[`adaab2f`](../../commit/adaab2f)] Added an announcements system
 * [[`2374c07`](../../commit/2374c07)] Reintroduced template merging
 * [[`b1cfbaf`](../../commit/b1cfbaf)] Added button in ANTE to automatically get date from revision ID
-* [[`de7bd37`](../../commit/de7bd37)] Added Action API Api-User-Agent hedaers
+* [[`de7bd37`](../../commit/de7bd37)] Added Action API Api-User-Agent headers
 * [[`7cb48de`](../../commit/7cb48de)] Added RESTBase Api-User-Agent headers
 * [[`9ecbc4a`](../../commit/9ecbc4a)] Added support for change tags
+* [[`df72d6e`](../../commit/df72d6e)] Added option for quick Earwig's Copyvio Detector links on CCI revisions
+* [[`f294aec`](../../commit/f294aec)] Added suggestions for current page on page-related ANTE fields.
 
 ## Modified
 * [[`c77ad39`](../../commit/c77ad39)] Made page toolbar appear as long as a session was active
 * [[`51330ac`](../../commit/51330ac)] Made page toolbar only show when viewing normally, viewing a diff, or viewing a permanent link
 * [[`3d552a7`](../../commit/3d552a7)] Made sections unsave-able if there is are still unassessed revisions
 * [[`79a1e59`](../../commit/79a1e59)] Made DateInputWidget dropdown show upwards
+* [[`b2a7dde`](../../commit/b2a7dde)] Changed homepage to link to new [Wikipedia:Deputy](https://w.wiki/7NWR) home.
 
 ## Bugs
 * [[`c77ad39`](../../commit/c77ad39)] Fixed revisions not working when the page title doesn't match
