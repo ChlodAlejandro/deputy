@@ -21,6 +21,24 @@ export function ChangesListLinks(
 		getRevisionDiffURL( _revid, 'prev' ) :
 		getRevisionDiffURL( _parentid, _revid );
 
+	let cv;
+	if ( window.deputy.config.cci.showCvLink && window.deputy.wikiConfig.cci.earwigRoot ) {
+		cv = new URL( '', window.deputy.wikiConfig.cci.earwigRoot.get() );
+		const selfUrl = new URL( window.location.href );
+		const urlSplit = selfUrl.hostname.split( '.' ).reverse();
+		const proj = urlSplit[ 1 ]; // wikipedia
+		const lang = urlSplit[ 2 ]; // en
+		// Cases where the project/lang is unsupported (e.g. proj = "facebook", for example)
+		// should be handled by Earwig's.
+
+		cv.searchParams.set( 'action', 'search' );
+		cv.searchParams.set( 'lang', lang );
+		cv.searchParams.set( 'project', proj );
+		cv.searchParams.set( 'oldid', `${_revid}` );
+		cv.searchParams.set( 'use_engine', '0' );
+		cv.searchParams.set( 'use_links', '1' );
+	}
+
 	return <span class="mw-changeslist-links">
 		<span><a
 			rel="noopener"
@@ -38,6 +56,18 @@ export function ChangesListLinks(
 					target="_blank"
 				>{ mw.msg( 'deputy.session.revision.prev' ) }</a>
 		}</span>
+		{
+			!!window.deputy.config.cci.showCvLink &&
+			cv &&
+			<span>
+				<a
+					rel="noopener"
+					href={ cv.toString() }
+					title={ mw.msg( 'deputy.session.revision.cv.tooltip' ) }
+					target="_blank"
+				>{ mw.msg( 'deputy.session.revision.cv' ) }</a>
+			</span>
+		}
 	</span>;
 }
 

@@ -80,6 +80,12 @@ export default class UserConfiguration extends ConfigurationBase {
 				type: 'checkbox'
 			}
 		} ),
+		showCvLink: new Setting<boolean, boolean>( {
+			defaultValue: true,
+			displayOptions: {
+				type: 'checkbox'
+			}
+		} ),
 		forceUtc: new Setting<boolean, boolean>( {
 			defaultValue: false,
 			displayOptions: {

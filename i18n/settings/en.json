@@ -49,7 +49,8 @@
 
     "deputy.setting.user.cci.enablePageToolbar.name": "Enable page toolbar",
     "deputy.setting.user.cci.enablePageToolbar.description": "Enables the page toolbar, which is used to quickly show tools, analysis options, and related case information on a page that is the subject of a CCI investigation.",
-    "deputy.setting.user.cci.enablePageToolbar.unimplemented": "This feature has not yet been implemented.",
+    "deputy.setting.user.cci.showCvLink.name": "Show \"cv\" (\"copyvios\") link for revisions",
+    "deputy.setting.user.cci.showCvLink.description": "Show a \"cv\" link next to \"cur\" and \"prev\" on revision rows. This link will only appear if this wiki is configured to use Earwig's Copyvio Detector.",
     "deputy.setting.user.cci.forceUtc.name": "Force UTC time",
     "deputy.setting.user.cci.forceUtc.description": "Forces Deputy to use UTC time whenever displaying dates and times, irregardless of your system's timezone or your MediaWiki time settings.",
     "deputy.setting.user.cci.signingBehavior.name": "Row signing behavior",
