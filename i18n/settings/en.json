@@ -103,6 +103,8 @@
     "deputy.setting.wiki.core.lastEdited.description": "The last time that this configuration was edited, as a timestamp. This is a way to ensure that all users are on the correct wiki-wide configuration version before changes are made. Checks are performed on every page load with Deputy.",
     "deputy.setting.wiki.core.dispatchRoot.name": "Deputy Dispatch root URL",
     "deputy.setting.wiki.core.dispatchRoot.description": "The URL to a Deputy Dispatch instance that can handle this wiki. Deputy Dispatch is a webserver responsible for centralizing and optimizing data used by Deputy, and can be used to reduce load on wikis. More information can be found at https://github.com/ChlodAlejandro/deputy-dispatch.",
+    "deputy.setting.wiki.core.changeTag.name": "Change tag",
+    "deputy.setting.wiki.core.changeTag.description": "Tag to use for all Deputy edits.",
 
     "deputy.setting.wiki.cci": "CCI",
 
