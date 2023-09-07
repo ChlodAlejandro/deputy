@@ -10,6 +10,7 @@ import { renderPreviewPanel } from '../RowPageShared';
 import getObjectValues from '../../../../util/getObjectValues';
 import nsId from '../../../../wiki/util/nsId';
 import yesNo from '../../../../util/yesNo';
+import SmartTitleInputWidget from '../components/SmartTitleInputWidget';
 
 export interface MergedFromTemplatePageData {
 	/**
@@ -155,7 +156,7 @@ function initMergedFromTemplatePage() {
 					);
 
 			const inputs = {
-				article: new mw.widgets.TitleInputWidget( {
+				article: SmartTitleInputWidget( {
 					$overlay: this.parent.$overlay,
 					required: true,
 					value: this.mergedFromTemplate.article || '',
@@ -174,7 +175,7 @@ function initMergedFromTemplatePage() {
 					}` : undefined,
 					placeholder: mw.msg( 'deputy.ante.copied.date.placeholder' )
 				} ),
-				target: new mw.widgets.TitleInputWidget( {
+				target: SmartTitleInputWidget( {
 					$overlay: this.parent.$overlay,
 					value: this.mergedFromTemplate.target || '',
 					placeholder: mw.msg( 'deputy.ante.mergedFrom.target.placeholder' )

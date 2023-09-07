@@ -12,8 +12,8 @@ import { AttributionNoticePageLayout } from './AttributionNoticePageLayout';
 import yesNo from '../../../../util/yesNo';
 import normalizeTitle from '../../../../wiki/util/normalizeTitle';
 import equalTitle from '../../../../util/equalTitle';
-import MwApi from '../../../../MwApi';
 import RevisionDateGetButton from '../components/RevisionDateGetButton';
+import SmartTitleInputWidget from '../components/SmartTitleInputWidget';
 
 export interface CopiedTemplateRowPageData {
 	/**
@@ -267,7 +267,7 @@ function initCopiedTemplateRowPage() {
 					);
 
 			this.inputs = {
-				from: new mw.widgets.TitleInputWidget( {
+				from: SmartTitleInputWidget( {
 					$overlay: this.parent.$overlay,
 					placeholder: mw.msg( 'deputy.ante.copied.from.placeholder' ),
 					value: copiedTemplateRow.from,
@@ -278,7 +278,7 @@ function initCopiedTemplateRowPage() {
 					value: copiedTemplateRow.from_oldid,
 					validate: /^\d*$/
 				} ),
-				to: new mw.widgets.TitleInputWidget( {
+				to: SmartTitleInputWidget( {
 					$overlay: this.parent.$overlay,
 					placeholder: mw.msg( 'deputy.ante.copied.to.placeholder' ),
 					value: copiedTemplateRow.to

@@ -8,6 +8,7 @@ import { h } from 'tsx-dom';
 import getObjectValues from '../../../../util/getObjectValues';
 import unwrapWidget from '../../../../util/unwrapWidget';
 import RevisionDateGetButton from '../components/RevisionDateGetButton';
+import SmartTitleInputWidget from '../components/SmartTitleInputWidget';
 
 export interface SplitArticleTemplateRowPageData {
 	/**
@@ -150,7 +151,7 @@ function initSplitArticleTemplateRowPage() {
 					);
 
 			const inputs = {
-				to: new mw.widgets.TitleInputWidget( {
+				to: SmartTitleInputWidget( {
 					$overlay: this.parent.$overlay,
 					required: true,
 					value: this.splitArticleTemplateRow.to || '',

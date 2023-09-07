@@ -9,6 +9,7 @@ import unwrapWidget from '../../../../util/unwrapWidget';
 import { renderPreviewPanel } from '../RowPageShared';
 import getObjectValues from '../../../../util/getObjectValues';
 import yesNo from '../../../../util/yesNo';
+import SmartTitleInputWidget from '../components/SmartTitleInputWidget';
 
 export interface MergedToTemplatePageData {
 	/**
@@ -154,7 +155,7 @@ function initMergedToTemplatePage() {
 					);
 
 			const inputs = {
-				to: new mw.widgets.TitleInputWidget( {
+				to: SmartTitleInputWidget( {
 					$overlay: this.parent.$overlay,
 					required: true,
 					value: this.mergedToTemplate.to || '',

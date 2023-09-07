@@ -8,6 +8,7 @@ import unwrapWidget from '../../../../util/unwrapWidget';
 import CTEParsoidDocument from '../../models/CTEParsoidDocument';
 import { renderMergePanel, renderPreviewPanel } from '../RowPageShared';
 import yesNo from '../../../../util/yesNo';
+import SmartTitleInputWidget from '../components/SmartTitleInputWidget';
 
 export interface SplitArticleTemplatePageData {
 	/**
@@ -216,7 +217,7 @@ function initSplitArticleTemplatePage() {
 				selected: this.splitArticleTemplate.collapse ?
 					yesNo( this.splitArticleTemplate.collapse ) : false
 			} );
-			const from = new mw.widgets.TitleInputWidget( {
+			const from = SmartTitleInputWidget( {
 				$overlay: this.parent.$overlay,
 				value: this.splitArticleTemplate.from || '',
 				placeholder: page
