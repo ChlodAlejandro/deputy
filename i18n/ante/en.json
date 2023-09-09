@@ -50,6 +50,11 @@
     "deputy.ante.dateAuto.failed": "Could not pull date from revision: $1",
     "deputy.ante.dateAuto.missing": "The revision $1 could not be found. Its page may have been deleted.",
 
+    "deputy.ante.revisionAuto": "Latest",
+    "deputy.ante.revisionAuto.title": "Pull the revision ID from the latest (current) revision of the page in `$1`.",
+    "deputy.ante.revisionAuto.failed": "Could not pull revision ID from page: $1",
+    "deputy.ante.revisionAuto.missing": "The page $1 could not be found. It may have been deleted.",
+
     "deputy.ante.copied.label": "Copied $1",
 
     "deputy.ante.copied.remove": "Remove notice",

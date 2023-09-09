@@ -14,6 +14,7 @@ import normalizeTitle from '../../../../wiki/util/normalizeTitle';
 import equalTitle from '../../../../util/equalTitle';
 import RevisionDateGetButton from '../components/RevisionDateGetButton';
 import SmartTitleInputWidget from '../components/SmartTitleInputWidget';
+import PageLatestRevisionGetButton from '../components/PageLatestRevisionGetButton';
 
 export interface CopiedTemplateRowPageData {
 	/**
@@ -335,6 +336,20 @@ function initCopiedTemplateRowPage() {
 				revisionInputWidget: this.inputs.to_diff,
 				dateInputWidget: this.inputs.date
 			} );
+			const revisionAutoFrom = PageLatestRevisionGetButton( {
+				invisibleLabel: false,
+				label: mw.msg( 'deputy.ante.revisionAuto' ),
+				title: mw.msg( 'deputy.ante.revisionAuto.title', 'from' ),
+				titleInputWidget: this.inputs.from,
+				revisionInputWidget: this.inputs.from_oldid
+			} );
+			const revisionAutoTo = PageLatestRevisionGetButton( {
+				invisibleLabel: false,
+				label: mw.msg( 'deputy.ante.revisionAuto' ),
+				title: mw.msg( 'deputy.ante.revisionAuto.title', 'to' ),
+				titleInputWidget: this.inputs.to,
+				revisionInputWidget: this.inputs.to_diff
+			} );
 
 			this.fieldLayouts = {
 				from: new OO.ui.FieldLayout( this.inputs.from, {
@@ -343,7 +358,7 @@ function initCopiedTemplateRowPage() {
 					align: 'top',
 					help: mw.msg( 'deputy.ante.copied.from.help' )
 				} ),
-				from_oldid: new OO.ui.FieldLayout( this.inputs.from_oldid, {
+				from_oldid: new OO.ui.ActionFieldLayout( this.inputs.from_oldid, revisionAutoFrom, {
 					$overlay: this.parent.$overlay,
 					label: mw.msg( 'deputy.ante.copied.from_oldid.label' ),
 					align: 'left',
@@ -355,7 +370,7 @@ function initCopiedTemplateRowPage() {
 					align: 'top',
 					help: mw.msg( 'deputy.ante.copied.to.help' )
 				} ),
-				to_diff: new OO.ui.FieldLayout( this.inputs.to_diff, {
+				to_diff: new OO.ui.ActionFieldLayout( this.inputs.to_diff, revisionAutoTo, {
 					$overlay: this.parent.$overlay,
 					label: mw.msg( 'deputy.ante.copied.to_diff.label' ),
 					align: 'left',
