@@ -48,6 +48,7 @@
 
     "deputy.ante.dateAuto": "Pull the date from the provided revision ID (`$1` parameter)",
     "deputy.ante.dateAuto.failed": "Could not pull date from revision: $1",
+    "deputy.ante.dateAuto.missing": "The revision $1 could not be found. Its page may have been deleted.",
 
     "deputy.ante.copied.label": "Copied $1",
 
