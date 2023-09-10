@@ -234,7 +234,11 @@ export default class DeputyContributionSurveyRevision
 
 		// Be wary of the spaces between tags.
 		return <div
-			class={ ( this.revision.tags ?? [] ).map( ( v ) => 'mw-tag-' + v ).join( ' ' ) }
+			class={ ( this.revision.tags ?? [] ).map(
+				( v ) => 'mw-tag-' + v
+					.replace( /[^A-Z0-9-]/gi, '' )
+					.replace( /\s/g, '_' )
+			).join( ' ' ) }
 		>
 			{unwrapWidget( this.completedCheckbox )}
 			<ChangesListLinks
