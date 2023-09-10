@@ -193,9 +193,11 @@ export default class DeputyContributionSurveyRevision
 				timestamp={ this.revision.timestamp }
 			/><ChangesListDate
 				revision={ this.revision }
-			/> <ChangesListUser
-				user={ this.revision.user }
-			/> <span
+			/> {
+				window.deputy.config.cci.showUsername.get() && <ChangesListUser
+					user={ this.revision.user }
+				/>
+			} <span
 				class="mw-changeslist-separator"
 			/> <ChangesListBytes
 				size={ this.revision.size }

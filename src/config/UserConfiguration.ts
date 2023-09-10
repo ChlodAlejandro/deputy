@@ -86,6 +86,12 @@ export default class UserConfiguration extends ConfigurationBase {
 				type: 'checkbox'
 			}
 		} ),
+		showUsername: new Setting<boolean, boolean>( {
+			defaultValue: false,
+			displayOptions: {
+				type: 'checkbox'
+			}
+		} ),
 		forceUtc: new Setting<boolean, boolean>( {
 			defaultValue: false,
 			displayOptions: {
