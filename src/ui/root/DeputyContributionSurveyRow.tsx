@@ -626,8 +626,15 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 			this.renderCommentsTextInput( this.row.comment )
 		) );
 
+		const maxSize = window.deputy.config.cci.maxSizeToAutoShowDiff.get();
 		for ( const revision of diffs.values() ) {
-			const revisionUIEl = new DeputyContributionSurveyRevision( revision, this );
+			const revisionUIEl = new DeputyContributionSurveyRevision(
+				revision, this, {
+					expanded: window.deputy.config.cci.autoShowDiff.get() &&
+						diffs.size < window.deputy.config.cci.maxRevisionsToAutoShowDiff.get() &&
+						( maxSize === -1 || Math.abs( revision.diffsize ) < maxSize )
+				}
+			);
 
 			revisionUIEl.addEventListener(
 				'update',

@@ -320,10 +320,13 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
 }
 
 .dp-cs-rev-diff {
-	margin: 4px 0;
-	padding: 8px 14px;
 	background-color: white;
 	position: relative;
+}
+
+.dp-cs-rev-diff--loaded {
+	margin: 4px 0;
+	padding: 8px 14px;
 }
 
 .dp-cs-rev-diff--hidden {

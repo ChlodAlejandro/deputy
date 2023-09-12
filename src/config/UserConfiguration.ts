@@ -92,6 +92,34 @@ export default class UserConfiguration extends ConfigurationBase {
 				type: 'checkbox'
 			}
 		} ),
+		autoShowDiff: new Setting<boolean, boolean>( {
+			defaultValue: false,
+			displayOptions: {
+				type: 'checkbox'
+			}
+		} ),
+		maxRevisionsToAutoShowDiff: new Setting<number, number>( {
+			defaultValue: 2,
+			displayOptions: {
+				type: 'number',
+				// Force any due to self-reference
+				disabled: ( config: any ) => !config.cci.autoShowDiff.get(),
+				extraOptions: {
+					min: 1
+				}
+			}
+		} ),
+		maxSizeToAutoShowDiff: new Setting<number, number>( {
+			defaultValue: 500,
+			displayOptions: {
+				type: 'number',
+				// Force any due to self-reference
+				disabled: ( config: any ) => !config.cci.autoShowDiff.get(),
+				extraOptions: {
+					min: -1
+				}
+			}
+		} ),
 		forceUtc: new Setting<boolean, boolean>( {
 			defaultValue: false,
 			displayOptions: {

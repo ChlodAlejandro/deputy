@@ -223,25 +223,19 @@ export default class DeputyContributionSurveyRevision
 			value: this.autoExpanded
 		} );
 
+		this.diff = <div class="dp-cs-rev-diff"/> as HTMLElement;
+
+		let loaded = false;
 		const handleDiffToggle = ( active: boolean ) => {
-			if ( !this.element ) {
-				// Not yet mounted.
-				return;
-			}
-
-			let willLoad = true;
-
-			if ( this.diff == null ) {
-				this.diff = <div class="dp-cs-rev-diff"/> as HTMLElement;
-				this.element.appendChild( this.diff );
-			} else if ( active && this.diff.classList.contains( 'dp-cs-rev-diff--errored' ) ) {
+			this.diffToggle.setIndicator( active ? 'up' : 'down' );
+			if ( active && this.diff.classList.contains( 'dp-cs-rev-diff--errored' ) ) {
+				// Remake diff panel
 				this.diff = swapElements( this.diff, <div class="dp-cs-rev-diff"/> as HTMLElement );
-			} else {
+			} else if ( loaded ) {
 				this.diff.classList.toggle( 'dp-cs-rev-diff--hidden', !active );
-				willLoad = false;
 			}
 
-			if ( active && willLoad ) {
+			if ( active && !loaded ) {
 				// Going active, clear the element out
 				Array.from( this.diff.children ).forEach(
 					( child ) => this.diff.removeChild( child )
@@ -299,14 +293,18 @@ export default class DeputyContributionSurveyRevision
 							}
 						} );
 
+						this.diff.classList.toggle( 'dp-cs-rev-diff--loaded', true );
+						this.diff.classList.toggle( 'dp-cs-rev-diff--errored', false );
 						this.diff.appendChild( diffTable );
+						loaded = true;
 					}, ( _error, errorData ) => {
-					// Clear element out again
+						// Clear element out again
 						Array.from( this.diff.children ).map(
 							( child ) => this.diff.removeChild( child )
 						);
 
-						this.diff.classList.add( 'dp-cs-rev-diff--errored' );
+						this.diff.classList.toggle( 'dp-cs-rev-diff--loaded', true );
+						this.diff.classList.toggle( 'dp-cs-rev-diff--errored', true );
 						this.diff.appendChild( unwrapWidget( DeputyMessageWidget( {
 							type: 'error',
 							message: mw.msg(
@@ -321,7 +319,6 @@ export default class DeputyContributionSurveyRevision
 		};
 
 		this.diffToggle.on( 'change', ( checked: boolean ) => {
-			this.diffToggle.setIndicator( checked ? 'up' : 'down' );
 			handleDiffToggle( checked );
 		} );
 
@@ -406,7 +403,7 @@ export default class DeputyContributionSurveyRevision
 				( this.revision as any ).missing ?
 					this.renderMissingRevisionInfo() :
 					this.renderRevisionInfo()
-			)}
+			)}{this.diff}
 		</div> as HTMLElement;
 	}
 
