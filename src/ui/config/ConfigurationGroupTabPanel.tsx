@@ -1,6 +1,6 @@
 /* eslint-disable mediawiki/msg-doc */
 import '../../types';
-import Setting from '../../config/Setting';
+import Setting, { VisibleDisplayOptions } from '../../config/Setting';
 import { h } from 'tsx-dom';
 import unwrapWidget from '../../util/unwrapWidget';
 import ConfigurationBase from '../../config/ConfigurationBase';
@@ -56,7 +56,7 @@ function initConfigurationGroupTabPanel() {
 				const setting = this.settings[ settingKey as keyof typeof this.settings ] as
 					Setting<any, any>;
 
-				if ( setting.hidden ) {
+				if ( setting.isHidden( this.config.config as any ) ) {
 					continue;
 				}
 
@@ -71,13 +71,32 @@ function initConfigurationGroupTabPanel() {
 						this.$element.append( this.newRadioField( settingKey, setting ) );
 						break;
 					case 'text':
-						this.$element.append( this.newStringField( settingKey, setting ) );
+						this.$element.append( this.newStringField(
+							settingKey,
+							setting,
+							( setting.displayOptions as VisibleDisplayOptions ).extraOptions
+						) );
+						break;
+					case 'number':
+						this.$element.append( this.newNumberField(
+							settingKey,
+							setting,
+							( setting.displayOptions as VisibleDisplayOptions ).extraOptions
+						) );
 						break;
 					case 'page':
-						this.$element.append( this.newPageField( settingKey, setting ) );
+						this.$element.append( this.newPageField(
+							settingKey,
+							setting,
+							( setting.displayOptions as VisibleDisplayOptions ).extraOptions
+						) );
 						break;
 					case 'code':
-						this.$element.append( this.newCodeField( settingKey, setting ) );
+						this.$element.append( this.newCodeField(
+							settingKey,
+							setting,
+							( setting.displayOptions as VisibleDisplayOptions ).extraOptions
+						) );
 						break;
 					default:
 						this.$element.append( this.newUnimplementedField( settingKey ) );
@@ -179,7 +198,7 @@ function initConfigurationGroupTabPanel() {
 		 * @return An HTMLElement of the given setting's field.
 		 */
 		newCheckboxField( settingKey: string, setting: Setting<any, any> ): Element {
-			const isDisabled = setting.disabled;
+			const isDisabled = setting.isDisabled( this.config.config as any );
 			const desc = mw.message(
 				`deputy.setting.${this.mode}.${this.config.group}.${settingKey}.description`
 			);
@@ -203,7 +222,7 @@ function initConfigurationGroupTabPanel() {
 			} );
 			// Attach disabled re-checker
 			this.on( 'change', () => {
-				field.setDisabled( !!setting.disabled );
+				field.setDisabled( !!setting.isDisabled( this.config.config as any ) );
 			} );
 
 			return <div class="deputy-setting">{ unwrapWidget( layout ) }</div>;
@@ -217,7 +236,7 @@ function initConfigurationGroupTabPanel() {
 		 * @return An HTMLElement of the given setting's field.
 		 */
 		newCheckboxesField( settingKey: string, setting: Setting<any, any> ): Element {
-			const isDisabled = setting.disabled;
+			const isDisabled = setting.isDisabled( this.config.config as any );
 			const desc = mw.message(
 				`deputy.setting.${this.mode}.${this.config.group}.${settingKey}.description`
 			);
@@ -248,8 +267,8 @@ function initConfigurationGroupTabPanel() {
 				this.emit( 'change' );
 			} );
 			// Attach disabled re-checker
-			this.on( 'select', () => {
-				field.setDisabled( !!setting.disabled );
+			this.on( 'change', () => {
+				field.setDisabled( !!setting.isDisabled( this.config.config as any ) );
 			} );
 
 			return <div class="deputy-setting">{ unwrapWidget( layout ) }</div>;
@@ -263,7 +282,7 @@ function initConfigurationGroupTabPanel() {
 		 * @return An HTMLElement of the given setting's field.
 		 */
 		newRadioField( settingKey: string, setting: Setting<any, any> ): Element {
-			const isDisabled = setting.disabled;
+			const isDisabled = setting.isDisabled( this.config.config as any );
 			const desc = mw.message(
 				`deputy.setting.${this.mode}.${this.config.group}.${settingKey}.description`
 			);
@@ -300,7 +319,7 @@ function initConfigurationGroupTabPanel() {
 			} );
 			// Attach disabled re-checker
 			this.on( 'change', () => {
-				field.setDisabled( !!setting.disabled );
+				field.setDisabled( !!setting.isDisabled( this.config.config as any ) );
 			} );
 
 			return <div class="deputy-setting">{ unwrapWidget( layout ) }</div>;
@@ -319,9 +338,9 @@ function initConfigurationGroupTabPanel() {
 			FieldClass: any,
 			settingKey: string,
 			setting: Setting<any, any>,
-			extraFieldOptions = {}
+			extraFieldOptions: Record<string, any> = {}
 		): Element {
-			const isDisabled = setting.disabled;
+			const isDisabled = setting.isDisabled( this.config.config as any );
 			const desc = mw.message(
 				`deputy.setting.${this.mode}.${this.config.group}.${settingKey}.description`
 			);
@@ -341,13 +360,20 @@ function initConfigurationGroupTabPanel() {
 				helpInline: true
 			} );
 
-			field.on( 'change', ( value: string ) => {
-				setting.set( value );
-				this.emit( 'change' );
-			} );
+			if ( FieldClass === OO.ui.NumberInputWidget ) {
+				field.on( 'change', ( value: string ) => {
+					setting.set( +value );
+					this.emit( 'change' );
+				} );
+			} else {
+				field.on( 'change', ( value: string ) => {
+					setting.set( value );
+					this.emit( 'change' );
+				} );
+			}
 			// Attach disabled re-checker
 			this.on( 'change', () => {
-				field.setDisabled( setting.disabled );
+				field.setDisabled( setting.isDisabled( this.config.config as any ) );
 			} );
 
 			return <div class="deputy-setting">{ unwrapWidget( layout ) }</div>;
@@ -358,10 +384,41 @@ function initConfigurationGroupTabPanel() {
 		 *
 		 * @param settingKey
 		 * @param setting
+		 * @param extraFieldOptions
 		 * @return An HTMLElement of the given setting's field.
 		 */
-		newStringField( settingKey: string, setting: Setting<any, any> ): Element {
-			return this.newStringLikeField( OO.ui.TextInputWidget, settingKey, setting );
+		newStringField(
+			settingKey: string,
+			setting: Setting<any, any>,
+			extraFieldOptions?: Record<string, any>
+		): Element {
+			return this.newStringLikeField(
+				OO.ui.TextInputWidget,
+				settingKey,
+				setting,
+				extraFieldOptions
+			);
+		}
+
+		/**
+		 * Creates a new number setting field.
+		 *
+		 * @param settingKey
+		 * @param setting
+		 * @param extraFieldOptions
+		 * @return An HTMLElement of the given setting's field.
+		 */
+		newNumberField(
+			settingKey: string,
+			setting: Setting<any, any>,
+			extraFieldOptions?: Record<string, any>
+		): Element {
+			return this.newStringLikeField(
+				OO.ui.NumberInputWidget,
+				settingKey,
+				setting,
+				extraFieldOptions
+			);
 		}
 
 		/**
@@ -369,10 +426,20 @@ function initConfigurationGroupTabPanel() {
 		 *
 		 * @param settingKey
 		 * @param setting
+		 * @param extraFieldOptions
 		 * @return An HTMLElement of the given setting's field.
 		 */
-		newPageField( settingKey: string, setting: Setting<any, any> ): Element {
-			return this.newStringLikeField( mw.widgets.TitleInputWidget, settingKey, setting );
+		newPageField(
+			settingKey: string,
+			setting: Setting<any, any>,
+			extraFieldOptions?: Record<string, any>
+		): Element {
+			return this.newStringLikeField(
+				mw.widgets.TitleInputWidget,
+				settingKey,
+				setting,
+				extraFieldOptions
+			);
 		}
 
 		/**
@@ -380,10 +447,20 @@ function initConfigurationGroupTabPanel() {
 		 *
 		 * @param settingKey
 		 * @param setting
+		 * @param extraFieldOptions
 		 * @return An HTMLElement of the given setting's field.
 		 */
-		newCodeField( settingKey: string, setting: Setting<any, any> ): Element {
-			return this.newStringLikeField( OO.ui.MultilineTextInputWidget, settingKey, setting );
+		newCodeField(
+			settingKey: string,
+			setting: Setting<any, any>,
+			extraFieldOptions?: Record<string, any>
+		): Element {
+			return this.newStringLikeField(
+				OO.ui.MultilineTextInputWidget,
+				settingKey,
+				setting,
+				extraFieldOptions
+			);
 		}
 
 	};

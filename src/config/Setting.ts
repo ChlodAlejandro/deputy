@@ -32,7 +32,7 @@ interface DisplayOptionsBase {
 
 }
 
-interface VisibleDisplayOptions extends DisplayOptionsBase {
+export interface VisibleDisplayOptions extends DisplayOptionsBase {
 	/**
 	 * The type of UI element to display.
 	 */
@@ -43,9 +43,13 @@ interface VisibleDisplayOptions extends DisplayOptionsBase {
 	 * show up in the settings interface at all.
 	 */
 	hidden?: false | ( ( config: UserConfiguration ) => boolean | string );
+	/**
+	 * Extra options to pass to the UI element.
+	 */
+	extraOptions?: Record<string, any>;
 }
 
-interface HiddenDisplayOptions extends DisplayOptionsBase {
+export interface HiddenDisplayOptions extends DisplayOptionsBase {
 	/**
 	 * Whether an option should be hidden or not. If an option is hidden, it will not
 	 * show up in the settings interface at all.
@@ -137,7 +141,7 @@ export default class Setting<SerializedType, DeserializedType> {
 	 *
 	 * @param value The value to serialize
 	 */
-	serialize?: Transformer<SerializedType, DeserializedType>;
+	readonly serialize?: Transformer<SerializedType, DeserializedType>;
 
 	/**
 	 * Parse a serialized value into a deserialized one.
@@ -145,7 +149,17 @@ export default class Setting<SerializedType, DeserializedType> {
 	 * @param raw The raw value to parse.
 	 * @return The parsed value.
 	 */
-	deserialize?: Transformer<DeserializedType, SerializedType>;
+	readonly deserialize?: Transformer<DeserializedType, SerializedType>;
+
+	/**
+	 * @return if this option is disabled or not.
+	 */
+	readonly isDisabled: ( config?: UserConfiguration ) => string | boolean;
+
+	/**
+	 * @return if this option is hidden or not.
+	 */
+	readonly isHidden: ( config?: UserConfiguration ) => string | boolean;
 
 	/**
 	 *
@@ -175,24 +189,17 @@ export default class Setting<SerializedType, DeserializedType> {
 		this.allowedValues = options.allowedValues;
 		this.value = this.defaultValue = options.defaultValue;
 		this.alwaysSave = options.alwaysSave;
-	}
 
-	/**
-	 * @return if this option is disabled or not.
-	 */
-	get disabled(): boolean | string {
-		return typeof this.displayOptions.disabled !== 'function' ?
-			this.displayOptions.disabled :
-			this.displayOptions.disabled.call( this );
-	}
-
-	/**
-	 * @return if this option is hidden or not.
-	 */
-	get hidden(): boolean | string {
-		return typeof this.displayOptions.hidden !== 'function' ?
-			this.displayOptions.hidden :
-			this.displayOptions.hidden.call( this );
+		this.isDisabled = options.displayOptions?.disabled != null ?
+			( typeof options.displayOptions.disabled === 'function' ?
+				options.displayOptions.disabled.bind( this ) :
+				() => options.displayOptions.disabled
+			) : () => false;
+		this.isHidden = options.displayOptions?.hidden != null ?
+			( typeof options.displayOptions.hidden === 'function' ?
+				options.displayOptions.hidden.bind( this ) :
+				() => options.displayOptions.hidden
+			) : () => false;
 	}
 
 	/**
