@@ -1,6 +1,7 @@
 {
+    "private": true,
     "name": "deputy",
-    "description": "[task tracking](https://trello.com/b/UmI82e0y/deputy)",
+    "description": "Contributor copyright investigation and copyright cleanup assistance tool for Wikipedia.",
     "version": "0.5.0",
     "main": "src/deputy.js",
     "scripts": {
