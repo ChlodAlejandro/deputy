@@ -3,7 +3,7 @@
 
 These are changes that may or may not have been deployed to wikis, but are not yet considered as part of any release.
 
-# [v0.5.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.5.0) - *(unreleased)*
+# [v0.5.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.5.0) - *2023-09-12*
 Generic patches and fixes. Added an announcements system for reaching users of Deputy. Also improved CCI case navigation and handling.
 
 ## Added
@@ -18,7 +18,9 @@ Generic patches and fixes. Added an announcements system for reaching users of D
 * [[`9ecbc4a`](../../commit/9ecbc4a)] Added support for change tags
 * [[`df72d6e`](../../commit/df72d6e)] Added option for quick Earwig's Copyvio Detector links on CCI revisions
 * [[`f294aec`](../../commit/f294aec)] Added suggestions for current page on page-related ANTE fields
-* [[`d2cedac`](../../commit/d2cedac)] Added button in ANTE to automatically get latest revision ID from page 
+* [[`d2cedac`](../../commit/d2cedac)] Added button in ANTE to automatically get latest revision ID from page
+* [[`3684db3`](../../commit/3684db3)] Added a "diff" dropdown button for revisions
+* [[`b464ff8`](../../commit/b464ff8)] Added option to automatically open diffs for certain thresholds
 
 ## Modified
 * [[`c77ad39`](../../commit/c77ad39)] Made page toolbar appear as long as a session was active
@@ -26,6 +28,7 @@ Generic patches and fixes. Added an announcements system for reaching users of D
 * [[`3d552a7`](../../commit/3d552a7)] Made sections unsave-able if there is are still unassessed revisions
 * [[`79a1e59`](../../commit/79a1e59)] Made DateInputWidget dropdown show upwards
 * [[`b2a7dde`](../../commit/b2a7dde)] Changed homepage to link to new [Wikipedia:Deputy](https://w.wiki/7NWR) home
+* [[`bb453f3`](../../commit/bb453f3)] Hid user by default in CCI revisions
 
 ## Bugs
 * [[`c77ad39`](../../commit/c77ad39)] Fixed revisions not working when the page title doesn't match
@@ -38,8 +41,9 @@ Generic patches and fixes. Added an announcements system for reaching users of D
 * [[`b45cc88`](../../commit/b45cc88)] Fixed title parsing issue when attrib. notice field is empty
 * [[`e35904d`](../../commit/e35904d)] Fixed wiki configuration changes not applying
 * [[`ae127dc`](../../commit/ae127dc)] Fixed dates being incorrectly set for negative UTC offsets
+* [[`97bb369`](../../commit/97bb369)] Fixed problems with element classes when revision tag has spaces or symbols
 
-For a granular list of changes, see [v0.4.1...v0.4.2](https://github.com/ChlodAlejandro/deputy/compare/v0.4.2...v0.5.0).
+For a granular list of changes, see [v0.4.2...v5.0.0](https://github.com/ChlodAlejandro/deputy/compare/v0.4.2...v0.5.0).
 
 # [v0.4.2](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.4.2) - 2023-03-23
 Another set of patches and fixes.
