@@ -66,6 +66,8 @@
     "deputy.session.row.checked.contribs": "contribs",
 
     "deputy.session.revision.assessed": "Mark as assessed",
+    "deputy.session.revision.diff.toggle": "Toggle comparison (diff) view",
+    "deputy.session.revision.diff.error": "Failed to load comparison: $1",
     "deputy.session.revision.cur": "cur",
     "deputy.session.revision.prev": "prev",
     "deputy.session.revision.cv": "cv",

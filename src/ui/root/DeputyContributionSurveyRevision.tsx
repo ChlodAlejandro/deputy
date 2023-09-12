@@ -13,6 +13,17 @@ import {
 	NewPageIndicator
 } from './DeputyChangesListElements';
 import unwrapElement from '../../util/unwrapElement';
+import DeputyLoadingDots from './DeputyLoadingDots';
+import MwApi from '../../MwApi';
+import classMix from '../../util/classMix';
+import DeputyMessageWidget from '../shared/DeputyMessageWidget';
+import swapElements from '../../util/swapElements';
+import getApiErrorText from '../../wiki/util/getApiErrorText';
+import removeElement from '../../util/removeElement';
+
+export interface DeputyContributionSurveyRevisionOptions {
+	expanded?: boolean;
+}
 
 /**
  * A specific revision for a section row.
@@ -29,6 +40,10 @@ export default class DeputyContributionSurveyRevision
 	 * The row that this revision belongs to.
 	 */
 	uiRow: DeputyContributionSurveyRow;
+	/**
+	 * Whether this revision is expanded by default.
+	 */
+	private readonly autoExpanded: boolean;
 
 	/**
 	 * @return `true` the current revision has been checked by the user or `false` if not.
@@ -67,20 +82,43 @@ export default class DeputyContributionSurveyRevision
 	readonly revisionStatusUpdateListener = this.onRevisionStatusUpdate.bind( this );
 
 	/**
+	 * The <div> of this element.
+	 * @private
+	 */
+	private element: HTMLElement;
+	/**
 	 * The checkbox to indicate that a diff has been checked by the user.
 	 *
 	 * @private
 	 */
 	private completedCheckbox: OO.ui.CheckboxInputWidget;
+	/**
+	 * The toggle button to show and hide a diff view of the given revision.
+	 * @private
+	 */
+	private diffToggle: OO.ui.ToggleButtonWidget;
+	/**
+	 * The diff view of the given revision. May also be "loading" text, or
+	 * null if the diff view has not yet been set.
+	 * @private
+	 */
+	private diff: HTMLElement | null = null;
 
 	/**
 	 * @param revision
 	 * @param row
+	 * @param options
+	 * @param options.expanded
 	 */
-	constructor( revision: ContributionSurveyRevision, row: DeputyContributionSurveyRow ) {
+	constructor(
+		revision: ContributionSurveyRevision,
+		row: DeputyContributionSurveyRow,
+		options: DeputyContributionSurveyRevisionOptions = {}
+	) {
 		super();
 		this.revision = revision;
 		this.uiRow = row;
+		this.autoExpanded = options.expanded ?? false;
 
 		if ( this.statusAutosaveFunction == null ) {
 			// TODO: types-mediawiki limitation
@@ -151,7 +189,8 @@ export default class DeputyContributionSurveyRevision
 	async prepare(): Promise<void> {
 		this.completedCheckbox = new OO.ui.CheckboxInputWidget( {
 			title: mw.msg( 'deputy.session.revision.assessed' ),
-			selected: await this.getSavedStatus()
+			selected: await this.getSavedStatus(),
+			classes: [ 'dp-cs-rev-checkbox' ]
 		} );
 
 		this.completedCheckbox.on( 'change', ( checked: boolean ) => {
@@ -174,6 +213,121 @@ export default class DeputyContributionSurveyRevision
 			} );
 			this.statusAutosaveFunction();
 		} );
+
+		this.diffToggle = new OO.ui.ToggleButtonWidget( {
+			label: mw.msg( 'deputy.session.revision.diff.toggle' ),
+			invisibleLabel: true,
+			indicator: 'down',
+			framed: false,
+			classes: [ 'dp-cs-rev-toggleDiff' ],
+			value: this.autoExpanded
+		} );
+
+		const handleDiffToggle = ( active: boolean ) => {
+			if ( !this.element ) {
+				// Not yet mounted.
+				return;
+			}
+
+			let willLoad = true;
+
+			if ( this.diff == null ) {
+				this.diff = <div class="dp-cs-rev-diff"/> as HTMLElement;
+				this.element.appendChild( this.diff );
+			} else if ( active && this.diff.classList.contains( 'dp-cs-rev-diff--errored' ) ) {
+				this.diff = swapElements( this.diff, <div class="dp-cs-rev-diff"/> as HTMLElement );
+			} else {
+				this.diff.classList.toggle( 'dp-cs-rev-diff--hidden', !active );
+				willLoad = false;
+			}
+
+			if ( active && willLoad ) {
+				// Going active, clear the element out
+				Array.from( this.diff.children ).forEach(
+					( child ) => this.diff.removeChild( child )
+				);
+				this.diff.setAttribute( 'class', 'dp-cs-rev-diff' );
+				this.diff.appendChild( <DeputyLoadingDots/> );
+
+				const comparePromise = MwApi.action.get( {
+					action: 'compare',
+					fromrev: this.revision.revid,
+					torelative: 'prev',
+					prop: 'diff'
+				} );
+				const stylePromise = mw.loader.using( 'mediawiki.diff.styles' );
+
+				// Promise.all not used here since we need to use JQuery.Promise#then
+				// if we want to access the underlying error response.
+				$.when( [ comparePromise, stylePromise ] )
+					.then( ( results ) => results[ 0 ] )
+					.then( ( data ) => {
+						unwrapWidget( this.diffToggle ).classList.add(
+							'dp-cs-rev-toggleDiff--loaded'
+						);
+						// Clear element out again
+						Array.from( this.diff.children ).forEach(
+							( child ) => this.diff.removeChild( child )
+						);
+
+						// https://youtrack.jetbrains.com/issue/WEB-61047
+						// noinspection JSXDomNesting
+						const diffTable = <table class={ classMix(
+							'diff',
+							`diff-editfont-${ mw.user.options.get( 'editfont' ) }`
+						) }>
+							<colgroup>
+								<col class="diff-marker" />
+								<col class="diff-content" />
+								<col class="diff-marker" />
+								<col class="diff-content" />
+							</colgroup>
+						</table>;
+						// Trusted .innerHTML (data always comes from MediaWiki Action API)
+						diffTable.innerHTML += data.compare.body;
+
+						diffTable.querySelectorAll( 'tr' ).forEach( ( tr ) => {
+						// Delete all header rows
+							if ( tr.querySelector( '.diff-lineno' ) ) {
+								removeElement( tr );
+								return;
+							}
+							// Delete all no-change rows (gray rows)
+							// !(.diff-markers with a marker) = no change for row
+							if ( !tr.querySelector( 'td.diff-marker[data-marker]' ) ) {
+								removeElement( tr );
+							}
+						} );
+
+						this.diff.appendChild( diffTable );
+					}, ( _error, errorData ) => {
+					// Clear element out again
+						Array.from( this.diff.children ).map(
+							( child ) => this.diff.removeChild( child )
+						);
+
+						this.diff.classList.add( 'dp-cs-rev-diff--errored' );
+						this.diff.appendChild( unwrapWidget( DeputyMessageWidget( {
+							type: 'error',
+							message: mw.msg(
+								'deputy.session.revision.diff.error',
+								errorData ?
+									getApiErrorText( errorData ) :
+									( _error as Error ).message
+							)
+						} ) ) );
+					} );
+			}
+		};
+
+		this.diffToggle.on( 'change', ( checked: boolean ) => {
+			this.diffToggle.setIndicator( checked ? 'up' : 'down' );
+			handleDiffToggle( checked );
+		} );
+
+		if ( this.autoExpanded ) {
+			handleDiffToggle( true );
+		}
 	}
 
 	/**
@@ -235,7 +389,7 @@ export default class DeputyContributionSurveyRevision
 		);
 
 		// Be wary of the spaces between tags.
-		return <div
+		return this.element = <div
 			class={ ( this.revision.tags ?? [] ).map(
 				( v ) => 'mw-tag-' + v
 					.replace( /[^A-Z0-9-]/gi, '' )
@@ -243,6 +397,7 @@ export default class DeputyContributionSurveyRevision
 			).join( ' ' ) }
 		>
 			{unwrapWidget( this.completedCheckbox )}
+			{unwrapWidget( this.diffToggle )}
 			<ChangesListLinks
 				revid={ this.revision.revid }
 				parentid={ this.revision.parentid }

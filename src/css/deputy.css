@@ -310,6 +310,36 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
 	margin-left: 0.2em;
 }
 
+.dp-cs-rev-checkbox {
+	margin-right: 4px;
+}
+
+.dp-cs-rev-toggleDiff {
+	vertical-align: baseline;
+	margin-right: 4px;
+}
+
+.dp-cs-rev-diff {
+	margin: 4px 0;
+	padding: 8px 14px;
+	background-color: white;
+	position: relative;
+}
+
+.dp-cs-rev-diff--hidden {
+	display: none;
+}
+
+.dp-cs-rev-toggleDiff > .oo-ui-buttonElement-button {
+	padding: 0;
+	min-height: 1em;
+	background-color: unset !important;
+}
+
+.dp-cs-rev-toggleDiff .oo-ui-indicatorElement-indicator {
+	top: -1px;
+}
+
 /*
 ===============================================================================
 

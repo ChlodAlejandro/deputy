@@ -407,6 +407,7 @@ export default class DeputyRootSession {
 				'mediawiki.pager.styles',
 				'oojs-ui-core',
 				'oojs-ui-windows',
+				'oojs-ui-widgets',
 				'oojs-ui.styles.icons-alerts',
 				'oojs-ui.styles.icons-content',
 				'oojs-ui.styles.icons-editing-core',
