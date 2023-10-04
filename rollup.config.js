@@ -46,6 +46,8 @@ function blockCommentIfy( text ) {
  * @return {string} A fully-decorated banner
  */
 function loadBanner( ...bannerPath ) {
+	// development script, limited impact
+	// eslint-disable-next-line security/detect-non-literal-fs-filename
 	return blockCommentIfy( fs.readFileSync( path.join( __dirname, ...bannerPath ) ) );
 }
 
@@ -234,7 +236,7 @@ export default [
 		watch: getWatch()
 	} ),
 
-	// Standalone Infringement Assistant
+	// Standalone CCI Case Request Filer Loader
 	auto( 'ccrf-loader', {
 		...globals,
 		input: 'src/modules/ccrf/CCICaseRequestFilerLoader.ts',
