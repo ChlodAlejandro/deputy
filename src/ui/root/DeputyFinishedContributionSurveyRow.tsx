@@ -5,7 +5,7 @@ import guessAuthor from '../../wiki/util/guessAuthor';
 import nsId from '../../wiki/util/nsId';
 import type { Moment } from 'moment';
 import { guessTrace } from '../../models/DeputyTrace';
-import { warn } from 'rollup-plugin-visualizer/dist/plugin/warn';
+import warn from '../../util/warn';
 import unwrapJQ from '../../util/unwrapJQ';
 
 /**

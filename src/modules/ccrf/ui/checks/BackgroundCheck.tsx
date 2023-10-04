@@ -10,7 +10,7 @@ import { PromiseOrNot } from '../../../../types';
  */
 export default abstract class BackgroundCheck<T> {
 
-	progressBarWidget: typeof OO.ui.ProgressBarWidget;
+	progressBarWidget: OO.ui.ProgressBarWidget;
 	element: JSX.Element;
 	headerElement: JSX.Element;
 	mainElement: JSX.Element;

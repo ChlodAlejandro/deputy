@@ -51,7 +51,7 @@ import warn from '../../util/warn';
 					config,
 					window.deputyWikiConfigOverride,
 					( key, oldVal, newVal ) => {
-						console.warn( `${key}: ${
+						warn( `${key}: ${
 							JSON.stringify( oldVal )
 						} → ${
 							JSON.stringify( newVal )

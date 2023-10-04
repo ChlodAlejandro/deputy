@@ -15,7 +15,7 @@ import equalTitle from '../../../../util/equalTitle';
 import RevisionDateGetButton from '../components/RevisionDateGetButton';
 import SmartTitleInputWidget from '../components/SmartTitleInputWidget';
 import PageLatestRevisionGetButton from '../components/PageLatestRevisionGetButton';
-import { warn } from '../../../../util/warn';
+import warn from '../../../../util/warn';
 import error from '../../../../util/error';
 
 export interface CopiedTemplateRowPageData {

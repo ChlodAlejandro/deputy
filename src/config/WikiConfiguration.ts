@@ -11,7 +11,9 @@ import {
 	batchListingPageWikitext,
 	batchListingWikitext,
 	collapseBottom,
-	collapseTop, copyvioBottom, copyvioTop,
+	collapseTop,
+	copyvioBottom,
+	copyvioTop,
 	listingWikitext
 } from '../wiki/TemplatePolyfills';
 import ConfigurationReloadBanner from '../ui/config/ConfigurationReloadBanner';
@@ -22,7 +24,6 @@ import log from '../util/log';
 import warn from '../util/warn';
 import error from '../util/error';
 import { StringFilterType } from './types';
-import warn from '../util/warn';
 
 export type WikiPageConfiguration = {
 	title: mw.Title,

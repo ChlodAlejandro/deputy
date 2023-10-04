@@ -13,11 +13,14 @@ import last from './last';
 import log from './log';
 import matchAll from './matchAll';
 import moveToStart from './moveToStart';
+import organize from './organize';
 import pickSequence from './pickSequence';
 import removeElement from './removeElement';
 import Requester from './Requester';
 import sleep from './sleep';
 import swapElements from './swapElements';
+import unwrapElement from './unwrapElement';
+import unwrapJQ from './unwrapJQ';
 import unwrapWidget from './unwrapWidget';
 import warn from './warn';
 import yesNo from './yesNo';
@@ -37,11 +40,14 @@ export default {
 	log: log,
 	matchAll: matchAll,
 	moveToStart: moveToStart,
+	organize: organize,
 	pickSequence: pickSequence,
 	removeElement: removeElement,
 	Requester: Requester,
 	sleep: sleep,
 	swapElements: swapElements,
+	unwrapElement: unwrapElement,
+	unwrapJQ: unwrapJQ,
 	unwrapWidget: unwrapWidget,
 	warn: warn,
 	yesNo: yesNo

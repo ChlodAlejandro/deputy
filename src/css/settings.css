@@ -45,7 +45,7 @@
 }
 
 .deputy-about > :nth-child(2) > :first-child > :nth-child(2) {
-	color: gray;
+	color: rgb(128, 128, 128);
 	vertical-align: bottom;
 	margin-left: 0.4em;
 }

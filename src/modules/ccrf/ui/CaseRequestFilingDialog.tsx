@@ -1,6 +1,5 @@
 import '../../../types';
 import { blockExit, unblockExit } from '../../../util/blockExit';
-import { h } from 'tsx-dom';
 import CRFDIntroPageLayout from './pages/CRFDIntroPageLayout';
 import CRFDUserSelectPageLayout from './pages/CRFDUserSelectPageLayout';
 import sleep from '../../../util/sleep';
@@ -24,6 +23,7 @@ function initCaseRequestFilingDialog() {
 
 		// For dialogs. Remove if not a dialog.
 		static static = {
+			...OO.ui.ProcessDialog.static,
 			name: 'caseRequestFilingDialog',
 			title: mw.msg( 'deputy.ccrf.caseRequestFilingDialog.title' ),
 			actions: [
@@ -36,11 +36,12 @@ function initCaseRequestFilingDialog() {
 		};
 
 		data: any;
+		$body: JQuery;
 
 		introPage: ReturnType<typeof CRFDIntroPageLayout>;
 		userSelectPage: ReturnType<typeof CRFDUserSelectPageLayout>;
 		userCheckPage: ReturnType<typeof CRFDUserCheckPageLayout>;
-		layout: typeof window.OO.ui.BookletLayout;
+		layout: OO.ui.BookletLayout;
 
 		/**
 		 * @param config
@@ -77,6 +78,8 @@ function initCaseRequestFilingDialog() {
 			this.setPage( this.introPage.name, true );
 
 			this.$body.append( this.layout.$element );
+
+			return this;
 		}
 
 		/**

@@ -8,7 +8,6 @@ import unwrapJQ from '../../util/unwrapJQ';
 import msgEval from '../../wiki/util/msgEval';
 import classMix from '../../util/classMix';
 import { USER_LOCALE } from '../../wiki/Locale';
-import { DeletedRevision } from 'deputy-dispatch/src/models/DeletedRevision';
 
 /**
  * @param root0
@@ -290,7 +289,7 @@ export function ChangesListTags( { tags }: { tags: string[] } ): JSX.Element {
 			'deputy.revision.tags',
 			tags.length.toString()
 		).text() }</a>{
-		tags.map( ( v, i ) => {
+		tags.map( ( v ) => {
 			// eslint-disable-next-line mediawiki/msg-doc
 			const tagMessage = mw.message( `tag-${ v }` ).parseDom();
 			return [
@@ -304,6 +303,24 @@ export function ChangesListTags( { tags }: { tags: string[] } ): JSX.Element {
 			];
 		} )
 	}
+	</span>;
+}
+
+/**
+ *
+ * @param root0
+ * @param root0.revision
+ */
+export function ChangesListMissingRow(
+	{ revision }: {
+		revision: ExpandedRevisionData
+	}
+): JSX.Element {
+	return <span>
+		{' '}<i dangerouslySetInnerHTML={mw.message(
+			'deputy.session.revision.missing',
+			revision.revid
+		).parse()}/>
 	</span>;
 }
 

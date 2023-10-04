@@ -5,7 +5,7 @@ import deputySharedEnglish from '../../i18n/shared/en.json';
 import UserConfiguration from '../config/UserConfiguration';
 import { attachConfigurationDialogPortletLink } from '../ui/config/ConfigurationDialog';
 import WikiConfiguration from '../config/WikiConfiguration';
-import { warn } from 'rollup-plugin-visualizer/dist/plugin/warn';
+import warn from '../util/warn';
 
 /**
  * A Deputy module. Modules are parts of Deputy that can usually be removed

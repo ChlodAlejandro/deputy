@@ -1,5 +1,4 @@
 import RowedAttributionNotice from './RowedAttributionNotice';
-import { AttributionNoticeRow } from './AttributionNoticeRow';
 
 /**
  * Merges templates together. Its own class to avoid circular dependencies.
@@ -20,7 +19,7 @@ export default class TemplateMerger {
 			const template = templateList[ 0 ];
 			if ( template !== pivot ) {
 				if ( template.node.getTarget().href !== pivot.node.getTarget().href ) {
-					throw new Error("Attempted to merge incompatible templates.");
+					throw new Error( 'Attempted to merge incompatible templates.' );
 				}
 				pivot.merge( template, { delete: true } );
 			}

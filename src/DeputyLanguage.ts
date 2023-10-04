@@ -1,6 +1,7 @@
 import { DeputyResources } from './DeputyResources';
 import cloneRegex from './util/cloneRegex';
 import error from './util/error';
+import warn from './util/warn';
 import { USER_LOCALE } from './wiki/Locale';
 
 /**
@@ -75,7 +76,7 @@ export default class DeputyLanguage {
 
 		if ( mw.loader.getState( 'moment' ) !== 'ready' ) {
 			// moment.js is not yet loaded.
-			console.warn(
+			warn(
 				'Deputy tried loading moment.js locales but moment.js is not yet ready.'
 			);
 			return;

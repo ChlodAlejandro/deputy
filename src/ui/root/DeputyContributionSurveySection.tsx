@@ -591,7 +591,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 				}
 			}, ( err ) => {
 				OO.ui.alert(
-					error.message,
+					err.message,
 					{
 						title: mw.msg( 'deputy.session.section.failed' )
 					}

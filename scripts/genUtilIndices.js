@@ -17,7 +17,7 @@ const path = require( 'path' );
 
 		const dir = ( await fs.opendir( utilPath ) );
 		for await ( const fse of dir ) {
-			const moduleName = fse.name.replace( /\.ts$/, '' );
+			const moduleName = fse.name.replace( /\.tsx?$/, '' );
 
 			if ( fse.isFile() && fse.name !== 'index.ts' ) {
 				modules.push( moduleName );

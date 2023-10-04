@@ -3,7 +3,6 @@ import type CaseRequestFilingDialog from '../CaseRequestFilingDialog';
 import CRFDNavigation from '../CRFDNavigation';
 import unwrapWidget from '../../../../util/unwrapWidget';
 import DeputyMessageWidget from '../../../../ui/shared/DeputyMessageWidget';
-import { DeputyDispatchTask } from '../../../../api/DispatchAsync';
 import { BackgroundChecks } from '../../BackgroundChecks';
 import { h } from 'tsx-dom';
 import unwrapJQ from '../../../../util/unwrapJQ';

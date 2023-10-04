@@ -1,6 +1,3 @@
-import { ExpandedRevisionData } from './ExpandedRevisionData';
-import Requester from '../util/Requester';
-import { deputyVersion } from '../DeputyVersion';
 import WikiConfiguration from '../config/WikiConfiguration';
 
 /**

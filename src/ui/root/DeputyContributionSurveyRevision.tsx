@@ -5,14 +5,8 @@ import unwrapWidget from '../../util/unwrapWidget';
 import { DeputyMessageEvent, DeputyRevisionStatusUpdateMessage } from '../../DeputyCommunications';
 import type DeputyContributionSurveyRow from './DeputyContributionSurveyRow';
 import {
-	ChangesListBytes, ChangesListDate,
-	ChangesListDiff,
-	ChangesListLinks, ChangesListRow,
-	ChangesListTags, ChangesListTime,
-	ChangesListUser,
-	NewPageIndicator
+	ChangesListLinks, ChangesListMissingRow, ChangesListRow
 } from '../shared/ChangesList';
-import unwrapElement from '../../util/unwrapElement';
 import DeputyLoadingDots from './DeputyLoadingDots';
 import MwApi from '../../MwApi';
 import classMix from '../../util/classMix';
@@ -350,11 +344,11 @@ export default class DeputyContributionSurveyRevision
 				revid={ this.revision.revid }
 				parentid={ this.revision.parentid }
 				missing={ ( this.revision as any ).missing }
-			/>{unwrapElement(
+			/>{
 				( this.revision as any ).missing ?
-					this.renderMissingRevisionInfo() :
+					<ChangesListMissingRow revision={this.revision}/> :
 					<ChangesListRow revision={this.revision}/>
-			)}{this.diff}
+			}{this.diff}
 		</div> as HTMLElement;
 	}
 

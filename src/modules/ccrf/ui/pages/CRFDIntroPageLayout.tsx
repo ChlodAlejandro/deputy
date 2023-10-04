@@ -2,7 +2,6 @@ import { h } from 'tsx-dom';
 import '../../../../types';
 import msgEval from '../../../../wiki/util/msgEval';
 import type CaseRequestFilingDialog from '../CaseRequestFilingDialog';
-import unwrapWidget from '../../../../util/unwrapWidget';
 import CRFDNavigation from '../CRFDNavigation';
 import unwrapJQ from '../../../../util/unwrapJQ';
 

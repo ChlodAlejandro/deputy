@@ -4,7 +4,7 @@
 import UserConfiguration from './UserConfiguration';
 import { ArrayOrNot } from '../types';
 import getObjectValues from '../util/getObjectValues';
-import { warn } from 'rollup-plugin-visualizer/dist/plugin/warn';
+import warn from '../util/warn';
 
 interface DisplayOptionsBase {
 

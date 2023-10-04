@@ -358,7 +358,7 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
 
 	padding: 8px;
 	background-color: #fff;
-	border: 1px solid gray;
+	border: 1px solid rgb(128, 128, 128);
 	font-size: 0.9rem;
 
 	display: flex;
@@ -386,7 +386,7 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
 	/* TODO: Recheck RTL compatibility */
 	margin-left: 16px;
 	padding-left: 16px;
-	border-left: 1px solid gray;
+	border-left: 1px solid rgb(128, 128, 128);
 }
 
 .dp-pt-section:last-child {

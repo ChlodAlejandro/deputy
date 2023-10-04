@@ -21,7 +21,7 @@ body.rtl .ia-listing-action--bracket:last-child {
 }
 
 .ia-listing-action--link[disabled] {
-	color: gray;
+	color: rgb(128, 128, 128);
 	pointer-events: none;
 }
 
@@ -120,7 +120,7 @@ body.rtl .ia-listing-action--bracket:last-child {
 .ia-report-intro {
 	font-size: 0.8rem;
 	padding-bottom: 12px;
-	border-bottom: 1px solid gray;
+	border-bottom: 1px solid rgb(128, 128, 128);
 	margin-bottom: 12px;
 }
 .ia-report-intro b {
