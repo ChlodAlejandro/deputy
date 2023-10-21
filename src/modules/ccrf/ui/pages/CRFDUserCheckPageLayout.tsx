@@ -65,6 +65,14 @@ function initCRFDUserCheckPageLayout() {
 
 				const checkPromises = [];
 				const checks = this.dialog.getEnabledChecks();
+
+				if ( Object.values( checks ).every( v => !v ) ) {
+					// No checks enabled!
+					// Do nothing (manual check interface should already
+					// be shown).
+					return;
+				}
+
 				if ( checks.page ) {
 					checkPromises.push(
 						DispatchUser.i.deletedPages( this.user )
@@ -185,6 +193,7 @@ function initCRFDUserCheckPageLayout() {
 
 			return [
 				<p>{mw.msg( 'deputy.ccrf.step2.details' )}</p>,
+				<hr />,
 				checkList,
 				unwrapJQ( <p/>, mw.message( 'deputy.ccrf.step2.details2' ).parseDom() ),
 				( this.mainContainer ?? ( this.mainContainer = this.renderNoUserMessageBox() ) )

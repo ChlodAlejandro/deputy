@@ -199,7 +199,7 @@ export default class DeletedRevisionCheck
 			if ( closestInterval !== lastInterval ) {
 				revisionElements.push(
 					<div class="ccrf-deleted-revision--interval">
-						{window.moment( now - revisionTimestamp ).fromNow()}
+						{window.moment( revisionTimestamp ).fromNow()}
 					</div>
 				);
 				lastInterval = closestInterval;
