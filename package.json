@@ -69,7 +69,7 @@
         "ts-jest": "^29.1.1",
         "tslib": "^2.5.0",
         "typedoc": "^0.24.8",
-        "typedoc-plugin-mdn-links": "^3.0.3",
+        "typedoc-plugin-mdn-links": "^3.1.4",
         "typedoc-plugin-missing-exports": "^2.0.0",
         "typedoc-plugin-rename-defaults": "^0.6.5",
         "types-mediawiki": "github:wikimedia-gadgets/types-mediawiki",
