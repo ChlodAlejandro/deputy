@@ -15,7 +15,7 @@ perform bulk data operations. Dispatch is hosted on Wikimedia Toolforge, more in
 found [here](https://github.com/ChlodAlejandro/deputy-dispatch#README).
 
 ## Installation
-See [User:Chlod/Scripts/Deputy § Installation](https://en.wikipedia.org/wiki/User:Chlod/Scripts/Deputy#Installation) on the English Wikipedia for more information.
+See [Wikipedia:Deputy § Installation](https://en.wikipedia.org/wiki/Wikipedia:Deputy#Installation) on the English Wikipedia for more information.
 
 ## Developing
 
