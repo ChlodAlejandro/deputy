@@ -15,6 +15,7 @@ import { ArrayOrNot } from '../types';
 import DeputyMessageWidget from '../ui/shared/DeputyMessageWidget';
 import sectionHeadingId from '../wiki/util/sectionHeadingId';
 import last from '../util/last';
+import findNextSiblingElement from '../util/findNextSiblingElement';
 
 /**
  * The DeputyRootSession. Instantiated only when:
@@ -507,7 +508,7 @@ export default class DeputyRootSession {
 
 		const headingTop = window.scrollY + heading.getBoundingClientRect().bottom;
 		const sectionBottom = window.scrollY + (
-			( last( section )?.nextSibling as HTMLElement )?.getBoundingClientRect()?.top ??
+			findNextSiblingElement( last( section ) )?.getBoundingClientRect()?.top ??
 				heading.parentElement.getBoundingClientRect().bottom
 		);
 		const overlayHeight = sectionBottom - headingTop;

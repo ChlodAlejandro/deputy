@@ -8,7 +8,7 @@
         "test": "npm run build && npm run test:clean && npm run test:jest",
         "test:clean": "shx rm -rf tests/artifacts/ && shx mkdir -p tests/artifacts/",
         "test:jest": "jest",
-        "clean": "shx rm -rf build .rollup.cache",
+        "clean": "shx rm -rf build node_modules/.cache/rollup-plugin-typescript2",
         "prebuild": "shx mkdir -p build/i18n/ && shx cp -Rf i18n/* build/i18n/",
         "build": "npm run prebuild && rollup -c",
         "build:deputy": "npm run prebuild && cross-env DEPUTY_ONLY=deputy rollup -c",

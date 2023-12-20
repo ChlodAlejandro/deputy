@@ -20,6 +20,7 @@ import { generateTrace } from '../../models/DeputyTrace';
 import DeputyMessageWidget from '../shared/DeputyMessageWidget';
 import sectionHeadingN from '../../wiki/util/sectionHeadingN';
 import changeTag from '../../config/changeTag';
+import DeputyExtraneousElement from './DeputyExtraneousElement';
 
 /**
  * The contribution survey section UI element. This includes a list of revisions
@@ -44,6 +45,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	// UI elements
 	container: HTMLElement;
 	rows: DeputyContributionSurveyRow[];
+	rowElements: ( HTMLElement | DeputyContributionSurveyRow )[];
 	closingCheckbox: OO.ui.CheckboxInputWidget;
 	closingComments: OO.ui.TextInputWidget;
 	closeButton: OO.ui.ButtonWidget;
@@ -334,12 +336,12 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 
 		const wikitextLines = sectionWikitext.split( '\n' );
 		this.rows = [];
+		this.rowElements = [];
 		this.wikitextLines = [];
-		let lastSurveyRow: DeputyContributionSurveyRow;
+		let rowElement;
 		for ( let i = 0; i < wikitextLines.length; i++ ) {
 			const line = wikitextLines[ i ];
 
-			let rowElement;
 			try {
 				const csr = new ContributionSurveyRow( this.casePage, line );
 				const originalElement = rowElements[ csr.title.getPrefixedText() ];
@@ -348,26 +350,71 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 					rowElement = new DeputyContributionSurveyRow(
 						csr, originalElement, line, this
 					);
-					lastSurveyRow = rowElement;
 				} else {
 					// Element somehow not in list. Just keep line as-is.
 					rowElement = line;
 				}
 			} catch ( e ) {
-				// Only trigger on actual bulleted lists.
+				// This is not a contribution surveyor row.
+
 				if ( /^\*[^*:]+/.test( line ) ) {
+					// Only trigger on actual bulleted lists.
 					console.warn( 'Could not parse row.', line, e );
 					// For debugging and tests.
 					mw.hook( 'deputy.errors.cciRowParse' ).fire( {
 						line, error: e.toString()
 					} );
 				}
-				rowElement = line;
+
+				if (
+					rowElement instanceof DeputyContributionSurveyRow &&
+					rowElement.originalElement.nextSibling == null &&
+					rowElement.originalElement.parentNode.nextSibling != null &&
+					// Just a blank line. Don't try to do anything else.
+					line !== ''
+				) {
+					// The previous row element was the last in the list. The
+					// list probably broke somewhere. (comment with wrong
+					// bullet?)
+					// In any case, let's try show it anyway. The user might
+					// miss some context otherwise.
+					// We'll only begin reading proper section data once we hit
+					// another bullet. So let's grab all nodes from the erring
+					// one until the next bullet list.
+					const extraneousNodes = [];
+					let lastNode: Node | null =
+						rowElement.originalElement.parentElement.nextSibling;
+					while (
+						// Another node exists next
+						lastNode != null &&
+						// The node is part of this section
+						this.sectionNodes.includes( lastNode ) &&
+						(
+							// The node is not an element
+							!( lastNode instanceof HTMLElement ) ||
+							// The element is not a bullet list
+							lastNode.tagName !== 'UL'
+						)
+					) {
+						extraneousNodes.push( lastNode );
+						lastNode = lastNode.nextSibling;
+					}
+					rowElement = extraneousNodes;
+				} else {
+					rowElement = line;
+				}
 			}
 			if ( rowElement instanceof DeputyContributionSurveyRow ) {
 				this.rows.push( rowElement );
+				this.rowElements.push( rowElement );
+				this.wikitextLines.push( rowElement );
+			} else if ( Array.isArray( rowElement ) ) {
+				// Array of Nodes
+				this.wikitextLines.push( line );
+				this.rowElements.push( DeputyExtraneousElement( rowElement ) );
+			} else if ( typeof rowElement === 'string' ) {
+				this.wikitextLines.push( rowElement );
 			}
-			this.wikitextLines.push( rowElement );
 		}
 
 		// Hide all section elements
@@ -550,7 +597,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 				title: this.casePage.title
 			} );
 			window.deputy.windowManager.addWindows( [ reviewDialog ] );
-			window.deputy.windowManager.openWindow( reviewDialog );
+			await window.deputy.windowManager.openWindow( reviewDialog ).opened;
 		} );
 
 		this.saveButton.on( 'click', async () => {
@@ -611,14 +658,14 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 						setTimeout( this.loadData.bind( this ), 0 );
 					}
 				}
-			}, ( error ) => {
+			}, ( err ) => {
 				OO.ui.alert(
-					error.message,
+					err.message,
 					{
 						title: mw.msg( 'deputy.session.section.failed' )
 					}
 				);
-				console.error( error );
+				console.error( err );
 				saveContainer.classList.remove( 'active' );
 				this.setDisabled( false );
 			} );
@@ -678,7 +725,9 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 
 		return this.container = <div class="deputy dp-cs-section">
 			<div>
-				{ this.rows.map( ( row ) => row.render() ) }
+				{ this.rowElements.map( ( row ) =>
+					row instanceof HTMLElement ? row : row.render()
+				) }
 			</div>
 			<div class="dp-cs-section-footer">
 				<div style={{ display: 'flex' }}>
