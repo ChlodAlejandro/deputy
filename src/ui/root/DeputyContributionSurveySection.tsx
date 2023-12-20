@@ -6,7 +6,6 @@ import DeputyContributionSurveyRow from './DeputyContributionSurveyRow';
 import ContributionSurveyRow from '../../models/ContributionSurveyRow';
 import ContributionSurveySection from '../../models/ContributionSurveySection';
 import DeputyReviewDialog from './DeputyReviewDialog';
-import swapElements from '../../util/swapElements';
 import sectionHeadingName from '../../wiki/util/sectionHeadingName';
 import getSectionId from '../../wiki/util/getSectionId';
 import getSectionHTML from '../../wiki/util/getSectionHTML';
@@ -20,7 +19,6 @@ import {
 import { generateTrace } from '../../models/DeputyTrace';
 import DeputyMessageWidget from '../shared/DeputyMessageWidget';
 import sectionHeadingN from '../../wiki/util/sectionHeadingN';
-import last from '../../util/last';
 import changeTag from '../../config/changeTag';
 
 /**
@@ -36,7 +34,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	casePage: DeputyCasePage;
 	private _section: ContributionSurveySection;
 	heading: HTMLHeadingElement;
-	sectionElements: HTMLElement[];
+	sectionNodes: Node[];
 	originalList: HTMLElement;
 	/**
 	 * Revision ID of the actively-used wikitext. Used for detecting edit conflicts.
@@ -265,19 +263,20 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	 */
 	constructor( casePage: DeputyCasePage, heading: ContributionSurveyHeading ) {
 		this.casePage = casePage;
-		this.heading = heading;
-		this.sectionElements = casePage.getContributionSurveySection( heading );
+		this.heading = casePage.normalizeSectionHeading( heading );
+		this.sectionNodes = casePage.getContributionSurveySection( heading );
 	}
 
 	/**
 	 * Get the ContributionSurveySection for this section
 	 *
 	 * @param wikitext Internal use only. Used to skip section loading using existing wikitext.
+	 * @return The ContributionSurveySection for this section
 	 */
 	async getSection( wikitext?: string & { revid: number } ): Promise<ContributionSurveySection> {
-		const collapsible = this.sectionElements.find(
-			( v: HTMLElement ) => v.querySelector( '.mw-collapsible' )
-		)?.querySelector( '.mw-collapsible' ) ?? null;
+		const collapsible = ( this.sectionNodes.find(
+			( v: HTMLElement ) => v instanceof HTMLElement && v.querySelector( '.mw-collapsible' )
+		) as HTMLElement | null )?.querySelector( '.mw-collapsible' ) ?? null;
 
 		const sectionWikitext = await this.casePage.wikitext.getSectionWikitext(
 			this.headingName,
@@ -302,27 +301,30 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	 *         `false` if not (invalid section, already closed, etc.)
 	 */
 	async prepare(): Promise<boolean> {
-		const firstList = this.sectionElements.find( ( el ) => el.tagName === 'UL' );
+		const listElements =
+			this.sectionNodes.filter(
+				( el ) => el instanceof HTMLElement && el.tagName === 'UL'
+			) as HTMLUListElement[];
 
-		if ( firstList == null ) {
+		if ( listElements.length === 0 ) {
 			// Not a valid section! Might be closed already.
 			return false;
 		}
 
-		this.originalList = firstList as HTMLElement;
-
 		const rowElements: Record<string, HTMLLIElement> = {};
-		for ( let i = 0; i < this.originalList.children.length; i++ ) {
-			const li = this.originalList.children.item( i );
-			if ( li.tagName !== 'LI' ) {
-				// Skip this element.
-				continue;
-			}
-			const anchor: HTMLElement = li.querySelector( 'a:first-of-type' );
-			// Avoid enlisting if the anchor can't be found (invalid row).
-			if ( anchor ) {
-				rowElements[ new mw.Title( anchor.innerText ).getPrefixedText() ] =
-					li as HTMLLIElement;
+		for ( const listElement of listElements ) {
+			for ( let i = 0; i < listElement.children.length; i++ ) {
+				const li = listElement.children.item( i );
+				if ( li.tagName !== 'LI' ) {
+					// Skip this element.
+					continue;
+				}
+				const anchor: HTMLElement = li.querySelector( 'a:first-of-type' );
+				// Avoid enlisting if the anchor can't be found (invalid row).
+				if ( anchor ) {
+					rowElements[ new mw.Title( anchor.innerText ).getPrefixedText() ] =
+						li as HTMLLIElement;
+				}
 			}
 		}
 
@@ -333,6 +335,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		const wikitextLines = sectionWikitext.split( '\n' );
 		this.rows = [];
 		this.wikitextLines = [];
+		let lastSurveyRow: DeputyContributionSurveyRow;
 		for ( let i = 0; i < wikitextLines.length; i++ ) {
 			const line = wikitextLines[ i ];
 
@@ -345,6 +348,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 					rowElement = new DeputyContributionSurveyRow(
 						csr, originalElement, line, this
 					);
+					lastSurveyRow = rowElement;
 				} else {
 					// Element somehow not in list. Just keep line as-is.
 					rowElement = line;
@@ -360,16 +364,32 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 				}
 				rowElement = line;
 			}
-			if ( typeof rowElement !== 'string' ) {
+			if ( rowElement instanceof DeputyContributionSurveyRow ) {
 				this.rows.push( rowElement );
 			}
 			this.wikitextLines.push( rowElement );
 		}
 
-		// Remove last, this is to preserve as much state as possible
-		firstList.parentElement.removeChild( firstList );
+		// Hide all section elements
+		this.toggleSectionElements( false );
 
 		return true;
+	}
+
+	/**
+	 * Toggle section elements. Removes the section elements (but preservers them in
+	 * `this.sectionElements`) if `false`, re-appends them to the DOM if `true`.
+	 * @param toggle
+	 */
+	toggleSectionElements( toggle: boolean ) {
+		const bottom: Node = this.heading.nextSibling ?? null;
+		for ( const sectionElement of this.sectionNodes ) {
+			if ( toggle ) {
+				this.heading.parentNode.insertBefore( sectionElement, bottom );
+			} else {
+				removeElement( sectionElement );
+			}
+		}
 	}
 
 	/**
@@ -379,7 +399,8 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	 * instead.
 	 */
 	close(): void {
-		swapElements( this.container, this.originalList );
+		removeElement( this.container );
+		this.toggleSectionElements( true );
 
 		// Detach listeners to stop listening to events.
 		this.rows.forEach( ( row ) => {
@@ -418,6 +439,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	 * Saves the current section to the case page.
 	 *
 	 * @param sectionId
+	 * @return Save data, or `false` if the save hit an error
 	 */
 	async save( sectionId: number ): Promise<any | false> {
 		if ( sectionId == null ) {
@@ -473,6 +495,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	 */
 	async loadData(): Promise<void> {
 		// For debugging and tests.
+		// noinspection JSUnresolvedReference
 		if ( ( window.deputy as any ).NO_ROW_LOADING !== true ) {
 			await Promise.all( this.rows.map( row => row.loadData() ) );
 		}
@@ -551,22 +574,23 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 					} = await getSectionHTML( this.casePage.title, sectionId );
 
 					removeElement( this.container );
+					// Remove whatever section elements are still there.
+					// They may have been greatly modified by the save.
 					const sectionElements =
 						this.casePage.getContributionSurveySection( this.heading );
 					sectionElements.forEach( ( el ) => removeElement( el ) );
 
 					// Clear out section elements and re-append new ones to the DOM.
-					this.sectionElements = [];
+					this.sectionNodes = [];
 					// Heading is preserved to avoid messing with IDs.
 					const heading = this.heading;
-					for ( const child of Array.from( element.children ) ) {
-						if ( !this.casePage.isContributionSurveyHeading( child as HTMLElement ) ) {
-							( last( this.sectionElements ) ?? heading )
-								.insertAdjacentElement( 'afterend', child );
-							this.sectionElements.push( child as HTMLElement );
+					const insertRef = heading.nextSibling ?? null;
+					for ( const child of Array.from( element.childNodes ) ) {
+						if ( !this.casePage.isContributionSurveyHeading( child ) ) {
+							heading.parentNode.insertBefore( child, insertRef );
+							this.sectionNodes.push( child as HTMLElement );
 						}
 					}
-					this.originalList = element;
 
 					if ( !this._section.closed ) {
 						this._section = null;

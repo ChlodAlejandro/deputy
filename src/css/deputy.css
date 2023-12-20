@@ -114,7 +114,6 @@ p.dp-messageWidget-message {
 	/* -1.6em derived from MediaWiki list margins. */
 	left: -1.6em;
 	width: calc(100% + 1.6em);
-	height: 100%;
 
 	background-color: rgba(255, 255, 255, 75%);
 

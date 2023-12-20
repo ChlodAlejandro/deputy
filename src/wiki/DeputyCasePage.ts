@@ -136,7 +136,11 @@ export default class DeputyCasePage extends DeputyCase {
 	 * @param el The element to check for
 	 * @return `true` if the given heading is a valid contribution survey heading.
 	 */
-	isContributionSurveyHeading( el: HTMLElement ): el is ContributionSurveyHeading {
+	isContributionSurveyHeading( el: Node ): el is ContributionSurveyHeading {
+		if ( !( el instanceof HTMLElement ) ) {
+			return false;
+		}
+
 		// All headings (h1, h2, h3, h4, h5, h6)
 		// TODO: l10n
 		const headlineElement = this.parsoid ?
@@ -203,6 +207,30 @@ export default class DeputyCasePage extends DeputyCase {
 	}
 
 	/**
+	 * Normalizes a section heading. On some pages, DiscussionTools wraps the heading
+	 * around in a div, which breaks some assumptions with the DOM tree (e.g. that the
+	 * heading is immediately followed by section elements).
+	 *
+	 * This returns the element at the "root" level, i.e. the wrapping <div> when
+	 * DiscussionTools is active, or the <h2> when it is not.
+	 * @param heading
+	 */
+	normalizeSectionHeading( heading: HTMLElement ): ContributionSurveyHeading {
+		if ( !this.isContributionSurveyHeading( heading ) ) {
+			if ( !this.isContributionSurveyHeading( heading.parentElement ) ) {
+				throw new Error( 'Provided section heading is not a valid section heading.' );
+			} else {
+				heading = heading.parentElement;
+			}
+		}
+		// When DiscussionTools is being used, the header is wrapped in a div.
+		if ( heading.parentElement.classList.contains( 'mw-heading' ) ) {
+			heading = heading.parentElement;
+		}
+		return heading as ContributionSurveyHeading;
+	}
+
+	/**
 	 * Gets all elements that are part of a contribution survey "section", that is
 	 * a set of elements including the section heading and all elements succeeding
 	 * the heading until (and exclusive of) the heading of the next section.
@@ -217,26 +245,16 @@ export default class DeputyCasePage extends DeputyCase {
 	 * @param sectionHeading The section heading to work with
 	 * @return An array of all HTMLElements covered by the section
 	 */
-	getContributionSurveySection( sectionHeading: HTMLElement ): HTMLElement[] {
+	getContributionSurveySection( sectionHeading: HTMLElement ): Node[] {
 		// Normalize "sectionHeading" to use the h* element and not the .mw-heading span.
-		if ( !this.isContributionSurveyHeading( sectionHeading ) ) {
-			if ( !this.isContributionSurveyHeading( sectionHeading.parentElement ) ) {
-				throw new Error( 'Provided section heading is not a valid section heading.' );
-			} else {
-				sectionHeading = sectionHeading.parentElement;
-			}
-		}
-		// When DiscussionTools is being used, the header is wrapped in a div.
-		if ( sectionHeading.parentElement.classList.contains( 'mw-heading' ) ) {
-			sectionHeading = sectionHeading.parentElement;
-		}
+		sectionHeading = this.normalizeSectionHeading( sectionHeading );
 
-		const sectionMembers: HTMLElement[] = [];
+		const sectionMembers: Node[] = [];
 
-		let nextSibling = sectionHeading.nextElementSibling as HTMLElement;
+		let nextSibling = sectionHeading.nextSibling;
 		while ( nextSibling != null && !this.isContributionSurveyHeading( nextSibling ) ) {
 			sectionMembers.push( nextSibling );
-			nextSibling = nextSibling.nextElementSibling as HTMLElement;
+			nextSibling = nextSibling.nextSibling as HTMLElement;
 		}
 
 		return sectionMembers;
