@@ -103,11 +103,6 @@ function initConfigurationGroupTabPanel() {
 						break;
 				}
 			}
-
-			this.on( 'change', () => {
-				console.log( this.config.config );
-				console.log( this.config.config.serialize() );
-			} );
 		}
 
 		/**

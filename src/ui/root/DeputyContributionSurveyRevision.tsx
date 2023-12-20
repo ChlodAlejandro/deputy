@@ -5,14 +5,8 @@ import unwrapWidget from '../../util/unwrapWidget';
 import { DeputyMessageEvent, DeputyRevisionStatusUpdateMessage } from '../../DeputyCommunications';
 import type DeputyContributionSurveyRow from './DeputyContributionSurveyRow';
 import {
-	ChangesListBytes, ChangesListDate,
-	ChangesListDiff,
-	ChangesListLinks,
-	ChangesListTags, ChangesListTime,
-	ChangesListUser,
-	NewPageIndicator
-} from './DeputyChangesListElements';
-import unwrapElement from '../../util/unwrapElement';
+	ChangesListLinks, ChangesListMissingRow, ChangesListRow
+} from '../shared/ChangesList';
 import DeputyLoadingDots from './DeputyLoadingDots';
 import MwApi from '../../MwApi';
 import classMix from '../../util/classMix';
@@ -328,55 +322,6 @@ export default class DeputyContributionSurveyRevision
 	}
 
 	/**
-	 * Renders revision info. This is only called if the revision exists.
-	 */
-	renderRevisionInfo(): HTMLElement {
-		const commentElement = <span
-			class="comment comment--without-parentheses"
-			/** Stranger danger! Yes. */
-			dangerouslySetInnerHTML={this.revision.parsedcomment}
-		/>;
-
-		return <span>
-			{
-				!this.revision.parentid && <NewPageIndicator />
-			} <ChangesListTime
-				timestamp={ this.revision.timestamp }
-			/><ChangesListDate
-				revision={ this.revision }
-			/> {
-				window.deputy.config.cci.showUsername.get() && <ChangesListUser
-					user={ this.revision.user }
-				/>
-			} <span
-				class="mw-changeslist-separator"
-			/> <ChangesListBytes
-				size={ this.revision.size }
-			/> <ChangesListDiff
-				size={ this.revision.size }
-				diffsize={ this.revision.diffsize }
-			/> <span
-				class="mw-changeslist-separator"
-			/> { commentElement } {
-				( this.revision.tags?.length ?? -1 ) > 0 &&
-				<ChangesListTags tags={this.revision.tags} />
-			}
-		</span> as HTMLElement;
-	}
-
-	/**
-	 * Renders a placeholder for missing revisions.
-	 */
-	renderMissingRevisionInfo(): HTMLElement {
-		return <span>
-			{' '}<i dangerouslySetInnerHTML={mw.message(
-				'deputy.session.revision.missing',
-				this.revision.revid
-			).parse()}/>
-		</span> as HTMLElement;
-	}
-
-	/**
 	 * @inheritDoc
 	 */
 	render(): HTMLElement {
@@ -399,11 +344,11 @@ export default class DeputyContributionSurveyRevision
 				revid={ this.revision.revid }
 				parentid={ this.revision.parentid }
 				missing={ ( this.revision as any ).missing }
-			/>{unwrapElement(
+			/>{
 				( this.revision as any ).missing ?
-					this.renderMissingRevisionInfo() :
-					this.renderRevisionInfo()
-			)}{this.diff}
+					<ChangesListMissingRow revision={this.revision}/> :
+					<ChangesListRow revision={this.revision}/>
+			}{this.diff}
 		</div> as HTMLElement;
 	}
 

@@ -4,6 +4,7 @@
 import UserConfiguration from './UserConfiguration';
 import { ArrayOrNot } from '../types';
 import getObjectValues from '../util/getObjectValues';
+import warn from '../util/warn';
 
 interface DisplayOptionsBase {
 
@@ -225,7 +226,7 @@ export default class Setting<SerializedType, DeserializedType> {
 	 */
 	set( v: DeserializedType, throwOnInvalid = false ) {
 		if ( this.locked ) {
-			console.warn( 'Attempted to modify locked setting.' );
+			warn( 'Attempted to modify locked setting.' );
 			return;
 		}
 

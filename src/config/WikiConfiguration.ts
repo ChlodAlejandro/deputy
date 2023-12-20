@@ -11,11 +11,19 @@ import {
 	batchListingPageWikitext,
 	batchListingWikitext,
 	collapseBottom,
-	collapseTop, copyvioBottom, copyvioTop,
+	collapseTop,
+	copyvioBottom,
+	copyvioTop,
 	listingWikitext
 } from '../wiki/TemplatePolyfills';
 import ConfigurationReloadBanner from '../ui/config/ConfigurationReloadBanner';
+import WikiConfigurationLocations from './WikiConfigurationLocations';
 import changeTag from './changeTag';
+import applyOverrides from '../util/applyOverrides';
+import log from '../util/log';
+import warn from '../util/warn';
+import error from '../util/error';
+import { StringFilterType } from './types';
 
 export type WikiPageConfiguration = {
 	title: mw.Title,
@@ -41,12 +49,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 
 	static readonly configVersion = 1;
 	static readonly optionKey = 'userjs-deputy-wiki';
-	static readonly configLocations = [
-		'MediaWiki:Deputy-config.json',
-		// Prioritize interface protected page over Project namespace
-		'User:Chlod/Scripts/Deputy/configuration.json',
-		'Project:Deputy/configuration.json'
-	];
+	static readonly configLocations = WikiConfigurationLocations;
 
 	/**
 	 * Loads the configuration from a set of possible sources.
@@ -91,11 +94,11 @@ export default class WikiConfiguration extends ConfigurationBase {
 				configInfo = JSON.parse( rawConfigInfo as string );
 			} catch ( e ) {
 				// Bad local! Switch to non-local.
-				console.error( 'Failed to get Deputy wiki configuration', e );
+				error( 'Failed to get Deputy wiki configuration', e );
 				return this.loadFromWiki();
 			}
 		} else {
-			console.log( 'No locally-cached Deputy configuration, pulling from wiki.' );
+			log( 'No locally-cached Deputy configuration, pulling from wiki.' );
 			return this.loadFromWiki();
 		}
 
@@ -146,7 +149,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 				configPage.editable
 			);
 		} catch ( e ) {
-			console.error( e, configPage );
+			error( e, configPage );
 			mw.hook( 'deputy.i18nDone' ).add( function notifyConfigFailure() {
 				mw.notify( mw.msg( 'deputy.loadError.wikiConfig' ), {
 					type: 'error'
@@ -260,6 +263,14 @@ export default class WikiConfiguration extends ConfigurationBase {
 			defaultValue: collapseBottom,
 			displayOptions: { type: 'code' }
 		} ),
+		requestsHeader: new Setting<string, string>( {
+			defaultValue: null,
+			displayOptions: { type: 'text' }
+		} ),
+		requestsTemplate: new Setting<string, string>( {
+			defaultValue: null,
+			displayOptions: { type: 'code' }
+		} ),
 		earwigRoot: new Setting<string, URL>( {
 			serialize: ( v ) => v.href,
 			deserialize: ( v ) => new URL( v ),
@@ -344,8 +355,48 @@ export default class WikiConfiguration extends ConfigurationBase {
 		} )
 	};
 
+	public readonly ccrf = {
+		introExtra: new Setting<string, string>( {
+			defaultValue: null,
+			displayOptions: { type: 'code' }
+		} ),
+		performPageChecks: new Setting<boolean, boolean>( {
+			defaultValue: true,
+			displayOptions: { type: 'checkbox' }
+		} ),
+		performRevisionChecks: new Setting<boolean, boolean>( {
+			defaultValue: true,
+			displayOptions: { type: 'checkbox' }
+		} ),
+		performWarningChecks: new Setting<boolean, boolean>( {
+			defaultValue: true,
+			displayOptions: { type: 'checkbox' }
+		} ),
+		pageDeletionFilters: new Setting<StringFilterType, StringFilterType>( {
+			...Setting.basicSerializers,
+			defaultValue: null,
+			displayOptions: { type: 'unimplemented' }
+		} ),
+		revisionDeletionFilters: new Setting<StringFilterType, StringFilterType>( {
+			...Setting.basicSerializers,
+			defaultValue: null,
+			displayOptions: { type: 'unimplemented' }
+		} ),
+		warningFilters: new Setting<StringFilterType, StringFilterType>( {
+			...Setting.basicSerializers,
+			defaultValue: null,
+			displayOptions: { type: 'unimplemented' }
+		} )
+	};
+
 	readonly type = <const> 'wiki';
-	public readonly all = { core: this.core, cci: this.cci, ante: this.ante, ia: this.ia };
+	public readonly all = {
+		core: this.core,
+		cci: this.cci,
+		ante: this.ante,
+		ia: this.ia,
+		ccrf: this.ccrf
+	};
 
 	/**
 	 * Set to true when this configuration is outdated based on latest data. Usually adds banners
@@ -369,6 +420,25 @@ export default class WikiConfiguration extends ConfigurationBase {
 	) {
 		super();
 		if ( serializedData ) {
+			// #if _DEV
+			if ( window.deputyWikiConfigOverride ) {
+				warn(
+					'Configuration overrides found for Deputy. This may be bad!'
+				);
+				applyOverrides(
+					this.serializedData,
+					window.deputyWikiConfigOverride,
+					( key, oldVal, newVal ) => {
+						warn( `${key}: ${
+							JSON.stringify( oldVal )
+						} → ${
+							JSON.stringify( newVal )
+						}` );
+					}
+				);
+			}
+			// #endif
+
 			this.deserialize( serializedData );
 		}
 

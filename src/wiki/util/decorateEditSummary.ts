@@ -7,5 +7,5 @@ import deputyVersion from '../../DeputyVersion';
  * @return The decorated edit summary (in wikitext)
  */
 export default function ( editSummary: string ): string {
-	return `${editSummary} ([[User:Chlod/Scripts/Deputy|Deputy]] v${deputyVersion})`;
+	return `${editSummary} ([[Wikipedia:Deputy|Deputy]] v${deputyVersion})`;
 }

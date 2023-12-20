@@ -7,6 +7,10 @@ export interface RevisionData {
 	size: number;
 	comment: string;
 	tags: string[];
+
+	commenthidden?: true;
+	userhidden?: true;
+	texthidden?: true;
 }
 
 export interface ExpandedRevisionData extends RevisionData {

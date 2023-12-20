@@ -5,6 +5,8 @@ import guessAuthor from '../../wiki/util/guessAuthor';
 import nsId from '../../wiki/util/nsId';
 import type { Moment } from 'moment';
 import { guessTrace } from '../../models/DeputyTrace';
+import warn from '../../util/warn';
+import unwrapJQ from '../../util/unwrapJQ';
 
 /**
  * Displayed when a ContributionSurveyRow has no remaining diffs. Deputy is not able
@@ -59,7 +61,7 @@ export default class DeputyFinishedContributionSurveyRow {
 		try {
 			parsedComment = parser.parse( props.originalElement )?.commentItems?.[ 0 ];
 		} catch ( e ) {
-			console.warn( 'Failed to parse user signature.', e );
+			warn( 'Failed to parse user signature.', e );
 		}
 		if ( !parsedComment ) {
 			// See if the Deputy trace exists.
@@ -87,7 +89,7 @@ export default class DeputyFinishedContributionSurveyRow {
 			const talkPage = userPage.getTalkPage();
 			const contribsPage = new mw.Title( 'Special:Contributions/' + this.author );
 
-			const params: string[] = [
+			const params: ( string|JSX.Element )[] = [
 				( <span>
 					<a
 						target="_blank"
@@ -99,15 +101,15 @@ export default class DeputyFinishedContributionSurveyRow {
 							target="_blank"
 							rel="noopener" href={ mw.util.getUrl( talkPage.getPrefixedDb() ) }
 							title={ talkPage.getPrefixedText() }
-						>{ mw.msg( 'deputy.session.revision.talk' ) }</a></span>
+						>{ mw.msg( 'deputy.revision.talk' ) }</a></span>
 						<span><a
 							class="mw-usertoollinks-contribs"
 							target="_blank"
 							rel="noopener" href={ mw.util.getUrl( contribsPage.getPrefixedDb() ) }
 							title={ contribsPage.getPrefixedText() }
-						>{ mw.msg( 'deputy.session.revision.contribs' ) }</a></span>
+						>{ mw.msg( 'deputy.revision.contribs' ) }</a></span>
 					</span>
-				</span> ).outerHTML
+				</span> )
 			];
 
 			if ( this.timestamp ) {
@@ -118,16 +120,12 @@ export default class DeputyFinishedContributionSurveyRow {
 				);
 			}
 
-			return <i
-				dangerouslySetInnerHTML={
-					mw.message(
-						this.timestamp ?
-							'deputy.session.row.checkedComplete' :
-							'deputy.session.row.checked',
-						...params
-					).text()
-				}
-			/>;
+			return unwrapJQ( <i/>, mw.message(
+				this.timestamp ?
+					'deputy.session.row.checkedComplete' :
+					'deputy.session.row.checked',
+				...params
+			).parseDom() );
 		} else {
 			return null;
 		}

@@ -10,14 +10,34 @@
     "deputy.ante.short": "Attrib. Template Editor",
     "deputy.ante.acronym": "Deputy: ANTE",
 
+    "deputy.ccrf": "CCI Case Request Filer",
+    "deputy.ccrf.short": "Case Request Filer",
+    "deputy.ccrf.acronym": "Deputy: CCRF",
+
+    "deputy.module.loadFailure": "The requested module couldn't be loaded ($1).",
+
     "deputy.cancel": "Cancel",
     "deputy.review": "Review",
     "deputy.save": "Save",
     "deputy.close": "Close",
-    "deputy.positiveDiff": "+{{FORMATNUM:$1}}",
-    "deputy.negativeDiff": "-{{FORMATNUM:$1}}",
     "deputy.moreInfo": "More information",
     "deputy.dismiss": "Dismiss",
+
+    "deputy.revision.cur": "cur",
+    "deputy.revision.prev": "prev",
+    "deputy.revision.cur.tooltip": "Difference with latest revision",
+    "deputy.revision.prev.tooltip": "Difference with preceding revision",
+    "deputy.revision.talk": "talk",
+    "deputy.revision.contribs": "contribs",
+    "deputy.revision.bytes": "{{FORMATNUM:$1}} bytes",
+    "deputy.revision.byteChange": "{{FORMATNUM:$1}} bytes after change of this size",
+    "deputy.revision.tags": "{{PLURAL:$1|Tag|Tags}}:",
+    "deputy.revision.new": "N",
+    "deputy.revision.new.tooltip": "This edit created a new page.",
+    "deputy.revision.removed.user": "Username or IP removed",
+    "deputy.revision.removed.comment": "edit summary removed",
+    "deputy.positiveDiff": "+{{FORMATNUM:$1}}",
+    "deputy.negativeDiff": "-{{FORMATNUM:$1}}",
 
     "deputy.comma-separator": ", ",
 

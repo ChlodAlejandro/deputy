@@ -11,11 +11,13 @@ import removeElement from '../../util/removeElement';
  * @param props
  * @param props.casePage
  * @param props.heading
+ * @param props.height
  * @return HTML element
  */
 export default function ( props: {
 	casePage: DeputyCasePage,
-	heading: ContributionSurveyHeading
+	heading: ContributionSurveyHeading,
+	height: number
 } ): JSX.Element {
 	const { casePage, heading } = props;
 	const startButton = new OO.ui.ButtonWidget( {
@@ -25,7 +27,7 @@ export default function ( props: {
 		flags: [ 'primary', 'progressive' ]
 	} );
 
-	const element = <div class="dp-cs-section-add">
+	const element = <div style={{ height: props.height + 'px' }} class="dp-cs-section-add">
 		{ unwrapWidget( startButton ) }
 	</div> as HTMLElement;
 

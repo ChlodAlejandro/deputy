@@ -1,5 +1,6 @@
 import last from '../../util/last';
 import sectionHeadingId from './sectionHeadingId';
+import error from '../../util/error';
 
 /**
  * Checks the n of a given element, that is to say the `n`th occurrence of a section
@@ -43,7 +44,7 @@ export default function ( heading: HTMLHeadingElement, headingName: string ): nu
 			return +( headingIdEndPattern.exec( last( headingIdMatches ) )[ 1 ] );
 		}
 	} catch ( e ) {
-		console.error( 'Error getting section number', e, heading );
+		error( 'Error getting section number', e, heading );
 		throw e;
 	}
 }

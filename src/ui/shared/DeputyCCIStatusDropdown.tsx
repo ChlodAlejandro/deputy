@@ -1,8 +1,8 @@
 import '../../types';
-import { ContributionSurveyRowStatus } from '../../models/ContributionSurveyRow';
 import unwrapWidget from '../../util/unwrapWidget';
 import { DeputyMessageEvent, DeputyPageStatusUpdateMessage } from '../../DeputyCommunications';
 import DeputyCase from '../../wiki/DeputyCase';
+import { ContributionSurveyRowStatus } from '../../models/ContributionSurveyRowStatus';
 
 export interface DeputyCCIStatusDropdownProps {
 	/**

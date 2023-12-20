@@ -1,5 +1,8 @@
 import { DeputyResources } from './DeputyResources';
 import cloneRegex from './util/cloneRegex';
+import error from './util/error';
+import warn from './util/warn';
+import { USER_LOCALE } from './wiki/Locale';
 
 /**
  * Handles internationalization and localization for Deputy and sub-modules.
@@ -40,7 +43,7 @@ export default class DeputyLanguage {
 				mw.messages.set( key, langData[ key ] );
 			}
 		} catch ( e ) {
-			console.error( e );
+			error( e );
 			mw.notify(
 				// No languages to fall back on. Do not translate this string.
 				'Deputy: Requested language page is not a valid JSON file.',
@@ -65,7 +68,7 @@ export default class DeputyLanguage {
 	 *
 	 * @param locale The locale to load. `window.deputyLang` by default.
 	 */
-	static async loadMomentLocale( locale = window.deputyLang ) {
+	static async loadMomentLocale( locale = USER_LOCALE ) {
 		if ( locale === 'en' ) {
 			// Always loaded.
 			return;
@@ -73,7 +76,7 @@ export default class DeputyLanguage {
 
 		if ( mw.loader.getState( 'moment' ) !== 'ready' ) {
 			// moment.js is not yet loaded.
-			console.warn(
+			warn(
 				'Deputy tried loading moment.js locales but moment.js is not yet ready.'
 			);
 			return;
@@ -136,7 +139,7 @@ export default class DeputyLanguage {
 			}
 		} catch ( e ) {
 			// Silent failure.
-			console.error( 'Deputy: Requested language page is not a valid JSON file.', e );
+			error( 'Deputy: Requested language page is not a valid JSON file.', e );
 		}
 	}
 

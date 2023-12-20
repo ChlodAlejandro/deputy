@@ -1,4 +1,3 @@
-import { h } from 'tsx-dom';
 import '../../types';
 import unwrapWidget from '../../util/unwrapWidget';
 import DeputyMessageWidget from '../shared/DeputyMessageWidget';

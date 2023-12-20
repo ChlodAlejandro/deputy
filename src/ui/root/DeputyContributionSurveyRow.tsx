@@ -1,9 +1,7 @@
 import { ComponentChild, h } from 'tsx-dom';
 import DeputyContributionSurveySection from './DeputyContributionSurveySection';
 import { DeputyUIElement } from '../DeputyUIElement';
-import ContributionSurveyRow, {
-	ContributionSurveyRowStatus
-} from '../../models/ContributionSurveyRow';
+import ContributionSurveyRow from '../../models/ContributionSurveyRow';
 import swapElements from '../../util/swapElements';
 import unwrapWidget from '../../util/unwrapWidget';
 import DeputyLoadingDots from './DeputyLoadingDots';
@@ -20,6 +18,9 @@ import {
 import DeputyCCIStatusDropdown from '../shared/DeputyCCIStatusDropdown';
 import { ContributionSurveyRowSort } from '../../models/ContributionSurveyRowSort';
 import last from '../../util/last';
+import warn from '../../util/warn';
+import error from '../../util/error';
+import { ContributionSurveyRowStatus } from '../../models/ContributionSurveyRowStatus';
 
 export enum DeputyContributionSurveyRowState {
 	/*
@@ -227,7 +228,7 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 		}
 
 		if ( this.wasFinished == null ) {
-			console.warn(
+			warn(
 				'Could not determine if this is an originally-finished or ' +
 				'originally-unfinished row. Assuming unfinished and moving on...'
 			);
@@ -481,7 +482,7 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 			);
 			this.state = DeputyContributionSurveyRowState.Ready;
 		} catch ( e ) {
-			console.error( 'Caught exception while loading data', e );
+			error( 'Caught exception while loading data', e );
 			this.state = DeputyContributionSurveyRowState.Broken;
 			this.renderRow( null, unwrapWidget(
 				new OO.ui.MessageWidget( {

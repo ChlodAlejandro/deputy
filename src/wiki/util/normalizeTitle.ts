@@ -5,7 +5,7 @@ export type TitleLike = string | mw.Title | { namespace: number, title: string }
  * the current page.
  *
  * @param title The title to normalize. Default is current page.
- * @return {mw.Title} A mw.Title object.
+ * @return {mw.Title} A mw.Title object. `null` if not a valid title.
  * @private
  */
 export default function normalizeTitle( title?: TitleLike ): mw.Title {

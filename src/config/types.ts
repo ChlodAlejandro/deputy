@@ -36,3 +36,5 @@ export enum PortletNameView {
 	Short = 'short',
 	Acronym = 'acronym'
 }
+
+export type StringFilterType = string | string[] | { source: string, flags: string };

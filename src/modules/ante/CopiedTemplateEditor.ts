@@ -7,7 +7,6 @@ import DeputyModule from '../DeputyModule';
 // @ts-ignore
 import cteStyles from './css/copied-template-editor.css';
 import DeputyLanguage from '../../DeputyLanguage';
-import deputySharedEnglish from '../../../i18n/shared/en.json';
 
 declare global {
 	interface Window {
@@ -78,6 +77,7 @@ export default class CopiedTemplateEditor extends DeputyModule {
 	 * adding in necessary UI elements that serve as an entry point to CTE.
 	 */
 	async preInit(): Promise<boolean> {
+		mw.hook( 'ante.preload' ).fire();
 		if ( !await super.preInit( deputyAnteEnglish ) ) {
 			return false;
 		}
@@ -171,6 +171,7 @@ export default class CopiedTemplateEditor extends DeputyModule {
 	 */
 	openEditDialog() {
 		mw.loader.using( CopiedTemplateEditor.dependencies, async () => {
+			await DeputyLanguage.loadMomentLocale();
 			OO.ui.WindowManager.static.sizes.huge = {
 				width: 1100
 			};
@@ -191,7 +192,7 @@ export default class CopiedTemplateEditor extends DeputyModule {
 				} );
 				this.windowManager.addWindows( [ this.dialog ] );
 			}
-			this.windowManager.openWindow( this.dialog );
+			await this.windowManager.openWindow( this.dialog ).opened;
 		} );
 	}
 

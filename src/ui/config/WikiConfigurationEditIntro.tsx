@@ -4,6 +4,7 @@ import WikiConfiguration from '../../config/WikiConfiguration';
 import { spawnConfigurationDialog } from './ConfigurationDialog';
 import normalizeTitle from '../../wiki/util/normalizeTitle';
 import DeputyMessageWidget from '../shared/DeputyMessageWidget';
+import unwrapJQ from '../../util/unwrapJQ';
 
 /**
  * @param config The current configuration (actively loaded, not the one being viewed)
@@ -57,12 +58,10 @@ export default function WikiConfigurationEditIntro( config: WikiConfiguration ):
 		title: mw.msg( 'deputy.settings.wikiEditIntro.title' ),
 		message: current ?
 			mw.msg( 'deputy.settings.wikiEditIntro.current' ) :
-			<span dangerouslySetInnerHTML={
-				mw.message(
-					'deputy.settings.wikiEditIntro.other',
-					config.sourcePage.getPrefixedText()
-				).parse()
-			} />,
+			unwrapJQ( <span/>, mw.message(
+				'deputy.settings.wikiEditIntro.other',
+				config.sourcePage.getPrefixedText()
+			).parseDom() ),
 		actions: buttons
 	} );
 

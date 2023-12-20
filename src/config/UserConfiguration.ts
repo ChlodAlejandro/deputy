@@ -9,6 +9,7 @@ import ConfigurationBase from './ConfigurationBase';
 import {
 	ContributionSurveyRowSigningBehavior
 } from '../models/ContributionSurveyRowSigningBehavior';
+import error from '../util/error';
 
 /**
  * A configuration. Defines settings and setting groups.
@@ -31,7 +32,7 @@ export default class UserConfiguration extends ConfigurationBase {
 				config.deserialize( decodedOptions );
 			}
 		} catch ( e ) {
-			console.error( e, mw.user.options.get( UserConfiguration.optionKey ) );
+			error( e, mw.user.options.get( UserConfiguration.optionKey ) );
 			mw.hook( 'deputy.i18nDone' ).add( function notifyConfigFailure() {
 				mw.notify( mw.msg( 'deputy.loadError.userConfig' ), {
 					type: 'error'

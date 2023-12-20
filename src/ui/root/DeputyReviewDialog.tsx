@@ -137,6 +137,7 @@ function initDeputyReviewDialog() {
 							</div>
 						);
 					} else {
+						// noinspection JSXDomNesting
 						this.element = swapElements(
 							this.element,
 							<table class="diff">

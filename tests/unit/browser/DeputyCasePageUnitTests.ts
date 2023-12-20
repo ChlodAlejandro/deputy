@@ -250,7 +250,7 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 				const currentPage = await window.deputy.DeputyCasePage.build();
 				return currentPage.getContributionSurveySection(
 					document.getElementById( id ).nextElementSibling as HTMLElement
-				).filter( ( v ) => v.tagName === 'UL' ).length;
+				).filter( ( v ) => v instanceof HTMLElement && v.tagName === 'UL' ).length;
 			}, _id )
 		).resolves.toBe( 1 ) ) );
 	} );

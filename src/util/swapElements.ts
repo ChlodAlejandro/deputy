@@ -1,3 +1,5 @@
+import error from './error';
+
 /**
  * Swaps two elements in the DOM. Element 1 will be removed from the DOM, Element 2 will
  * be added in its place.
@@ -12,7 +14,7 @@ export default function <T extends Element> ( element1: T, element2: T ): T {
 		element1.parentElement.removeChild( element1 );
 		return element2;
 	} catch ( e ) {
-		console.error( e, { element1, element2 } );
+		error( e, { element1, element2 } );
 		// Caught for debug only. Rethrow.
 		throw e;
 	}

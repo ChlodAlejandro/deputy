@@ -114,7 +114,6 @@ p.dp-messageWidget-message {
 	/* -1.6em derived from MediaWiki list margins. */
 	left: -1.6em;
 	width: calc(100% + 1.6em);
-	height: 100%;
 
 	background-color: rgba(255, 255, 255, 75%);
 
@@ -358,7 +357,7 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
 
 	padding: 8px;
 	background-color: #fff;
-	border: 1px solid gray;
+	border: 1px solid rgb(128, 128, 128);
 	font-size: 0.9rem;
 
 	display: flex;
@@ -386,7 +385,7 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
 	/* TODO: Recheck RTL compatibility */
 	margin-left: 16px;
 	padding-left: 16px;
-	border-left: 1px solid gray;
+	border-left: 1px solid rgb(128, 128, 128);
 }
 
 .dp-pt-section:last-child {

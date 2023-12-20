@@ -3,7 +3,7 @@ import DeputyStorage from './DeputyStorage';
 import DeputyCommunications from './DeputyCommunications';
 import DeputySession from './session/DeputySession';
 import DeputyCasePage from './wiki/DeputyCasePage';
-import DeputyDispatch from './api/DeputyDispatch';
+import Dispatch from './api/Dispatch';
 import ContributionSurveyRow from './models/ContributionSurveyRow';
 import { DeputyPreferences } from './DeputyPreferences';
 import performHacks from './wiki/util/performHacks';
@@ -24,6 +24,7 @@ import WikiConfiguration from './config/WikiConfiguration';
 import Recents from './wiki/Recents';
 import util from './util';
 import wikiUtil from './wiki/util';
+import log from './util/log';
 import DeputyAnnouncements from './DeputyAnnouncements';
 
 /**
@@ -40,7 +41,7 @@ class Deputy {
 	 * @private
 	 */
 	static instance: Deputy;
-	readonly DeputyDispatch = DeputyDispatch;
+	readonly DeputyDispatch = Dispatch;
 	readonly DeputyStorage = DeputyStorage;
 	readonly DeputySession = DeputySession;
 	readonly DeputyPreferences = DeputyPreferences;
@@ -72,7 +73,7 @@ class Deputy {
 
 	// Components
 
-	dispatch: DeputyDispatch;
+	dispatch: Dispatch;
 	storage: DeputyStorage;
 	prefs: DeputyPreferences;
 	comms: DeputyCommunications;
@@ -152,7 +153,7 @@ class Deputy {
 		this.storage = new DeputyStorage();
 		await this.storage.init();
 		// Initialize the Deputy API interface
-		this.dispatch = new DeputyDispatch();
+		this.dispatch = Dispatch.i;
 		// Initialize the Deputy preferences instance
 		this.prefs = new DeputyPreferences();
 		// Initialize communications
@@ -174,7 +175,7 @@ class Deputy {
 		}
 		await this.wikiConfig.prepareEditBanners();
 
-		console.log( 'Loaded!' );
+		log( 'Loaded!' );
 
 		mw.hook( 'deputy.load' ).fire( this );
 

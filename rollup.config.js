@@ -1,3 +1,4 @@
+import jscc from 'rollup-plugin-jscc';
 import typescript from 'rollup-plugin-typescript2';
 import visualizer from 'rollup-plugin-visualizer';
 import sourcemaps from 'rollup-plugin-sourcemaps';
@@ -45,6 +46,8 @@ function blockCommentIfy( text ) {
  * @return {string} A fully-decorated banner
  */
 function loadBanner( ...bannerPath ) {
+	// development script, limited impact
+	// eslint-disable-next-line security/detect-non-literal-fs-filename
 	return blockCommentIfy( fs.readFileSync( path.join( __dirname, ...bannerPath ) ) );
 }
 
@@ -84,10 +87,23 @@ function cssString( options = { minify: true } ) {
  */
 function getPlugins() {
 	return [
+		// Serving (if dev)
+		process.env.DEPUTY_DEV && serve( {
+			contentBase: [ 'build', 'i18n' ],
+			headers: {
+				'Access-Control-Allow-Origin': '*'
+			},
+			port: 45000
+		} ),
 		// Appends license information
 		license(),
 		// Inserts sourcemaps
 		!production && sourcemaps(),
+		// Remove development-only code branches
+		jscc( {
+			values: { _DEV: process.env.NODE_ENV === 'development' },
+			asloader: false
+		} ),
 		// Makes Common.js imports possible
 		commonjs(),
 		// Handles Node-like resolution
@@ -110,14 +126,6 @@ function getPlugins() {
 			sourcemaps: true,
 			emitFile: true,
 			open: true
-		} ),
-		// Serving (if dev)
-		process.env.DEPUTY_DEV && serve( {
-			contentBase: [ 'build', 'i18n' ],
-			headers: {
-				'Access-Control-Allow-Origin': '*'
-			},
-			port: 45000
 		} )
 	].filter( ( v ) => !!v );
 }
@@ -157,12 +165,18 @@ function auto( key, options ) {
 	}
 }
 
+// GLOBALS
+const globals = {
+	external: [ 'types-mediawiki' ]
+};
+
 /**
  * @type {import('rollup').RollupOptions[]}
  */
 export default [
 	// Deputy core
 	auto( 'deputy', {
+		...globals,
 		input: 'src/Deputy.ts',
 		output: {
 			sourcemap: true,
@@ -177,6 +191,7 @@ export default [
 	} ),
 	// Standalone Attribution Notice Template Editor
 	auto( 'ante', {
+		...globals,
 		input: 'src/modules/ante/CopiedTemplateEditorStandalone.ts',
 		output: {
 			sourcemap: true,
@@ -191,12 +206,45 @@ export default [
 	} ),
 	// Standalone Infringement Assistant
 	auto( 'ia', {
+		...globals,
 		input: 'src/modules/ia/InfringementAssistantStandalone.ts',
 		output: {
 			sourcemap: true,
 			file: 'build/deputy-ia.js',
 			format: 'iife',
 			banner: loadBanner( 'src', 'modules', 'ia', 'BANNER.txt' ) +
+				'\n// <nowiki>',
+			footer: '// </nowiki>\n// <3'
+		},
+		plugins: getPlugins(),
+		watch: getWatch()
+	} ),
+
+	// Standalone CCI Case Request Filer
+	auto( 'ccrf', {
+		...globals,
+		input: 'src/modules/ccrf/CCICaseRequestFilerStandalone.ts',
+		output: {
+			sourcemap: true,
+			file: 'build/deputy-ccrf.js',
+			format: 'iife',
+			banner: loadBanner( 'src', 'modules', 'ccrf', 'BANNER.txt' ) +
+				'\n// <nowiki>',
+			footer: '// </nowiki>\n// <3'
+		},
+		plugins: getPlugins(),
+		watch: getWatch()
+	} ),
+
+	// Standalone CCI Case Request Filer Loader
+	auto( 'ccrf-loader', {
+		...globals,
+		input: 'src/modules/ccrf/CCICaseRequestFilerLoader.ts',
+		output: {
+			sourcemap: true,
+			file: 'build/deputy-ccrf-loader.js',
+			format: 'iife',
+			banner: loadBanner( 'src', 'modules', 'ccrf', 'BANNER.txt' ) +
 				'\n// <nowiki>',
 			footer: '// </nowiki>\n// <3'
 		},

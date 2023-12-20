@@ -1,9 +1,11 @@
 import { Deputy } from '../Deputy';
 import unwrapWidget from '../util/unwrapWidget';
 import DeputyLanguage from '../DeputyLanguage';
+import deputySharedEnglish from '../../i18n/shared/en.json';
 import UserConfiguration from '../config/UserConfiguration';
 import { attachConfigurationDialogPortletLink } from '../ui/config/ConfigurationDialog';
 import WikiConfiguration from '../config/WikiConfiguration';
+import warn from '../util/warn';
 
 /**
  * A Deputy module. Modules are parts of Deputy that can usually be removed
@@ -87,6 +89,16 @@ export default abstract class DeputyModule {
 	abstract getName(): string;
 
 	/**
+	 * Get the module key for this module. Allows modules to be identified with a different
+	 * configuration key.
+	 *
+	 * @return The module key. the module name by default.
+	 */
+	getModuleKey(): string {
+		return this.getName();
+	}
+
+	/**
 	 * Load the language pack for this module, with a fallback in case one could not be
 	 * loaded.
 	 *
@@ -95,6 +107,7 @@ export default abstract class DeputyModule {
 	async loadLanguages( fallback: Record<string, string> ): Promise<void> {
 		await Promise.all( [
 			DeputyLanguage.load( this.getName(), fallback ),
+			DeputyLanguage.load( 'shared', deputySharedEnglish ),
 			DeputyLanguage.loadMomentLocale()
 		] );
 	}
@@ -108,9 +121,11 @@ export default abstract class DeputyModule {
 	async preInit( languageFallback: Record<string, string> ): Promise<boolean> {
 		await this.getWikiConfig();
 
-		if ( this.wikiConfig[ this.getName() as 'ia' | 'ante' ]?.enabled.get() !== true ) {
+		if ( this.wikiConfig[
+			this.getModuleKey() as 'cci' | 'ia' | 'ante'
+		]?.enabled.get() !== true ) {
 			// Stop loading here.
-			console.warn( `[Deputy] Preinit for ${
+			warn( `[Deputy] Preinit for ${
 				this.getName()
 			} cancelled; module is disabled.` );
 			return false;

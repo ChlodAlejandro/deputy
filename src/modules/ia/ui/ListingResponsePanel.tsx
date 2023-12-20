@@ -5,6 +5,7 @@ import type CopyrightProblemsListing from '../models/CopyrightProblemsListing';
 import removeElement from '../../../util/removeElement';
 import renderWikitext from '../../../wiki/util/renderWikitext';
 import { CopyrightProblemsResponse } from '../models/CopyrightProblemsResponse';
+import error from '../../../util/error';
 
 /**
  *
@@ -186,7 +187,7 @@ export default class ListingResponsePanel extends EventTarget {
 					type: 'success'
 				} );
 			} catch ( e ) {
-				console.error( e );
+				error( e );
 				OO.ui.alert( mw.msg( 'deputy.ia.listing.re.error', e.message ) );
 
 				this.dropdown.setDisabled( false );

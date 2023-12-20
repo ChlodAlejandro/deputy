@@ -5,6 +5,7 @@ import anchorToTitle from '../../../wiki/util/anchorToTitle';
 import decorateEditSummary from '../../../wiki/util/decorateEditSummary';
 import MwApi from '../../../MwApi';
 import changeTag from '../../../config/changeTag';
+import warn from '../../../util/warn';
 
 interface FullCopyrightProblemsListingData {
 	basic: false;
@@ -144,7 +145,7 @@ export default class CopyrightProblemsListing {
 			} else if ( title.getPrefixedText() !== new mw.Title( prefixedDb ).getPrefixedText() ) {
 				// Anchor and link mismatch. Someone tampered with the template?
 				// In this case, rely on the link instead, as the anchor is merely invisible.
-				console.warn(
+				warn(
 					`Anchor and link mismatch for "${title.getPrefixedText()}".`, title, prefixedDb
 				);
 			}
@@ -179,7 +180,7 @@ export default class CopyrightProblemsListing {
 				plainlinks: plainlinks as HTMLSpanElement
 			};
 		} catch ( e ) {
-			console.warn( "Couldn't parse listing. Might be malformed?", e, el );
+			warn( "Couldn't parse listing. Might be malformed?", e, el );
 			return false;
 		}
 	}
@@ -238,7 +239,7 @@ export default class CopyrightProblemsListing {
 				element: el as HTMLAnchorElement
 			};
 		} catch ( e ) {
-			console.warn( "Couldn't parse listing. Might be malformed?", e, el );
+			warn( "Couldn't parse listing. Might be malformed?", e, el );
 			return false;
 		}
 	}
