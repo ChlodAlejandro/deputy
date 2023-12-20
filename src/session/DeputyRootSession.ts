@@ -14,6 +14,7 @@ import { SessionInformation } from './DeputySession';
 import { ArrayOrNot } from '../types';
 import DeputyMessageWidget from '../ui/shared/DeputyMessageWidget';
 import sectionHeadingId from '../wiki/util/sectionHeadingId';
+import last from '../util/last';
 
 /**
  * The DeputyRootSession. Instantiated only when:
@@ -500,12 +501,21 @@ export default class DeputyRootSession {
 	 */
 	addSectionOverlay( casePage: DeputyCasePage, heading: ContributionSurveyHeading ): void {
 		const section = casePage.getContributionSurveySection( heading );
-		const list = section.find( ( v ) => v.tagName === 'UL' );
+		const list = section.find(
+			( v ) => v instanceof HTMLElement && v.tagName === 'UL'
+		) as HTMLUListElement;
 
+		const headingTop = window.scrollY + heading.getBoundingClientRect().bottom;
+		const sectionBottom = window.scrollY + (
+			( last( section )?.nextSibling as HTMLElement )?.getBoundingClientRect()?.top ??
+				heading.parentElement.getBoundingClientRect().bottom
+		);
+		const overlayHeight = sectionBottom - headingTop;
 		if ( list != null ) {
 			list.style.position = 'relative';
 			list.appendChild( DeputyCCISessionAddSection( {
-				casePage, heading
+				casePage, heading,
+				height: overlayHeight
 			} ) );
 		}
 	}
@@ -554,7 +564,7 @@ export default class DeputyRootSession {
 	 */
 	async activateSection(
 		casePage: DeputyCasePage,
-		heading: ContributionSurveyHeading
+		heading: HTMLHeadingElement
 	): Promise<boolean> {
 		const el = new DeputyContributionSurveySection( casePage, heading );
 		if ( !( await el.prepare() ) ) {
