@@ -3,6 +3,18 @@
 
 These are changes that may or may not have been deployed to wikis, but are not yet considered as part of any release.
 
+# [v0.5.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.5.0) - *2023-12-21*
+
+## Modified
+* [[`640cc01`](../../commit/640cc01)] Moved User:Chlod/Scripts/Deputy links to Wikipedia:Deputy
+* [[`3c73d02`](../../commit/3c73d02)] (dev) Re-enabled Firefox tests on Windows
+
+## Bugs
+* [[`964af59`](../../commit/964af59)] Fixed section breaking when bullet list not continuous (#31)
+
+For a granular list of changes, see [v0.5.0...v0.5.1](https://github.com/ChlodAlejandro/deputy/compare/v0.5.0...v0.5.1).
+
+
 # [v0.5.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.5.0) - *2023-09-12*
 Generic patches and fixes. Added an announcements system for reaching users of Deputy. Also improved CCI case navigation and handling.
 
@@ -43,7 +55,7 @@ Generic patches and fixes. Added an announcements system for reaching users of D
 * [[`ae127dc`](../../commit/ae127dc)] Fixed dates being incorrectly set for negative UTC offsets
 * [[`97bb369`](../../commit/97bb369)] Fixed problems with element classes when revision tag has spaces or symbols
 
-For a granular list of changes, see [v0.4.2...v5.0.0](https://github.com/ChlodAlejandro/deputy/compare/v0.4.2...v0.5.0).
+For a granular list of changes, see [v0.4.2...v0.5.0](https://github.com/ChlodAlejandro/deputy/compare/v0.4.2...v0.5.0).
 
 # [v0.4.2](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.4.2) - 2023-03-23
 Another set of patches and fixes.

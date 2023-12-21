@@ -2,7 +2,7 @@
     "private": true,
     "name": "deputy",
     "description": "Contributor copyright investigation and copyright cleanup assistance tool for Wikipedia.",
-    "version": "0.5.0",
+    "version": "0.5.1",
     "main": "src/deputy.js",
     "scripts": {
         "test": "npm run build && npm run test:clean && npm run test:jest",
