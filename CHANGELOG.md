@@ -3,6 +3,13 @@
 
 These are changes that may or may not have been deployed to wikis, but are not yet considered as part of any release.
 
+# [v0.5.2](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.5.0) - *unreleased*
+
+## Bugs
+* [[`c577afa`](../../commit/c577afa)] Fixed banner being inserted in the wrong element for DiscussionTools-using wikis
+
+For a granular list of changes, see [v0.5.1...main](https://github.com/ChlodAlejandro/deputy/compare/v0.5.0...main).
+
 # [v0.5.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.5.0) - *2023-12-21*
 
 ## Modified
