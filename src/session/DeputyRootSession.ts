@@ -108,7 +108,9 @@ export default class DeputyRootSession {
 						window.deputy.session.init();
 					} );
 
-					firstHeading.insertAdjacentElement(
+					casePage.normalizeSectionHeading(
+						firstHeading
+					).insertAdjacentElement(
 						'beforebegin',
 						unwrapWidget( messageBox )
 					);
@@ -134,7 +136,9 @@ export default class DeputyRootSession {
 					const lastActiveSection =
 						DeputyRootSession.findFirstLastActiveSection( casePage );
 					const firstSection =
-						casePage.findFirstContributionSurveyHeading();
+						casePage.normalizeSectionHeading(
+							casePage.findFirstContributionSurveyHeading()
+						);
 
 					// Insert element directly into widget (not as text, or else event
 					// handlers will be destroyed).
@@ -216,7 +220,8 @@ export default class DeputyRootSession {
 		return mw.loader.using(
 			[ 'oojs-ui-core', 'oojs-ui.styles.icons-content' ],
 			() => {
-				const firstHeading = casePage.findFirstContributionSurveyHeading();
+				const firstHeading =
+					casePage.findFirstContributionSurveyHeading();
 				if ( firstHeading ) {
 					const messageBox = DeputyMessageWidget( {
 						classes: [
@@ -227,7 +232,9 @@ export default class DeputyRootSession {
 						message: mw.msg( 'deputy.session.tabActive.help' ),
 						closable: true
 					} );
-					firstHeading.insertAdjacentElement(
+					casePage.normalizeSectionHeading(
+						firstHeading
+					).insertAdjacentElement(
 						'beforebegin',
 						unwrapWidget( messageBox )
 					);
