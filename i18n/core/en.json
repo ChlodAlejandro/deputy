@@ -65,6 +65,8 @@
     "deputy.session.row.checked.talk": "talk",
     "deputy.session.row.checked.contribs": "contribs",
 
+    "deputy.session.row.pageonly": "This row does not contain any diffs. Please assess the page history manually.",
+
     "deputy.session.revision.assessed": "Mark as assessed",
     "deputy.session.revision.diff.toggle": "Toggle comparison (diff) view",
     "deputy.session.revision.diff.error": "Failed to load comparison: $1",
@@ -93,6 +95,8 @@
     "deputy.session.page.caseInfo.revision.help": "The requested revision was out of scope for the current Deputy case page. It was likely made by a user who is not a subject of the case page, or has already been removed or assessed by another user. Tools will still be available, but you will not be able to mark this revision as \"assessed\".",
     "deputy.session.page.caseInfo.assessed": "Assessed?",
     "deputy.session.page.caseInfo.next": "Navigate to the next unassessed revision",
+    "deputy.session.page.pageonly.title": "No revisions",
+    "deputy.session.page.pageonly.help": "This row does not contain any revisions with it. Please assess the page history manually before making an assessment.",
 
     "deputy.session.page.analysis": "Analysis",
     "deputy.session.page.earwigLatest": "Earwig's Copyvio Detector (latest)",

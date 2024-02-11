@@ -232,7 +232,6 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 				'originally-unfinished row. Assuming unfinished and moving on...'
 			);
 		}
-		const finished = this.wasFinished ?? false;
 
 		// "* "
 		let result = this.row.data.bullet;
@@ -325,17 +324,14 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 				result += ' ~~~~';
 			};
 
-			if ( finished ) {
-				if ( this.statusModified ) {
-					// Modified. Use user data.
-					useUserData();
-				} else {
-					// No changes. Just append original closure comments.
-					result += this.row.comment;
-				}
-			} else {
+			if ( this.statusModified ) {
+				// Modified. Use user data.
 				useUserData();
+			} else if ( this.wasFinished ?? false ) {
+				// No changes. Just append original closure comments.
+				result += this.row.comment;
 			}
+			// Otherwise, leave this row unchanged.
 		}
 
 		return result;
@@ -505,9 +501,12 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 		}
 
 		if ( this.revisions && this.statusDropdown ) {
-			this.statusDropdown.setOptionDisabled(
-				ContributionSurveyRowStatus.Unfinished, this.completed, true
-			);
+			if ( this.row.type !== 'pageonly' ) {
+				// Only disable this option if the row isn't already finished.
+				this.statusDropdown.setOptionDisabled(
+					ContributionSurveyRowStatus.Unfinished, this.completed, true
+				);
+			}
 
 			const unfinishedWithStatus = this.statusModified && !this.completed;
 			if ( this.unfinishedMessageBox ) {
@@ -626,27 +625,34 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 			this.renderCommentsTextInput( this.row.comment )
 		) );
 
-		const maxSize = window.deputy.config.cci.maxSizeToAutoShowDiff.get();
-		for ( const revision of diffs.values() ) {
-			const revisionUIEl = new DeputyContributionSurveyRevision(
-				revision, this, {
-					expanded: window.deputy.config.cci.autoShowDiff.get() &&
-						diffs.size < window.deputy.config.cci.maxRevisionsToAutoShowDiff.get() &&
-						( maxSize === -1 || Math.abs( revision.diffsize ) < maxSize )
-				}
-			);
+		if ( this.row.type === 'pageonly' ) {
+			revisionList.appendChild( <div class="dp-cs-row-pageonly">
+				<i>{ mw.msg( 'deputy.session.row.pageonly' ) }</i>
+			</div> );
+		} else {
+			const cciConfig = window.deputy.config.cci;
+			const maxSize = cciConfig.maxSizeToAutoShowDiff.get();
+			for ( const revision of diffs.values() ) {
+				const revisionUIEl = new DeputyContributionSurveyRevision(
+					revision, this, {
+						expanded: cciConfig.autoShowDiff.get() &&
+							diffs.size < cciConfig.maxRevisionsToAutoShowDiff.get() &&
+							( maxSize === -1 || Math.abs( revision.diffsize ) < maxSize )
+					}
+				);
 
-			revisionUIEl.addEventListener(
-				'update',
-				() => {
-					// Recheck options first to avoid "Unfinished" being selected when done.
-					this.onUpdate();
-				}
-			);
+				revisionUIEl.addEventListener(
+					'update',
+					() => {
+						// Recheck options first to avoid "Unfinished" being selected when done.
+						this.onUpdate();
+					}
+				);
 
-			await revisionUIEl.prepare();
-			revisionList.appendChild( revisionUIEl.render() );
-			this.revisions.push( revisionUIEl );
+				await revisionUIEl.prepare();
+				revisionList.appendChild( revisionUIEl.render() );
+				this.revisions.push( revisionUIEl );
+			}
 		}
 
 		return revisionList;
@@ -793,10 +799,13 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 			status: possibleStatus,
 			requireAcknowledge: false
 		} );
-		if ( ( diffs && diffs.size === 0 ) || this.wasFinished ) {
+		if (
+			this.row.type !== 'pageonly' &&
+			( ( diffs && diffs.size === 0 ) || this.wasFinished )
+		) {
 			// If there are no diffs found or `this.wasFinished` is set (both meaning there are
 			// no diffs and this is an already-assessed row), then the "Unfinished" option will
-			// be disabled.
+			// be disabled. This does not apply for page-only rows, which never have diffs.
 			this.statusDropdown.setOptionDisabled( ContributionSurveyRowStatus.Unfinished, true );
 		}
 		this.statusDropdown.addEventListener( 'change', ( event ) => {
@@ -1005,6 +1014,7 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 					title: this.row.title.getPrefixedText(),
 					status: this.status,
 					enabledStatuses: this.statusDropdown.getEnabledOptions(),
+					rowType: this.row.type,
 					revisionStatus: rev ? rev.completed : undefined,
 					revision: event.data.revision,
 					nextRevision: this.revisions?.find(

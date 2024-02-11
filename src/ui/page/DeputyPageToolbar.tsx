@@ -44,7 +44,7 @@ export interface DeputyPageToolbarOptions extends Omit<DeputyPageStatusResponseM
 export default class DeputyPageToolbar implements DeputyUIElement {
 
 	options: DeputyPageToolbarOptions;
-	row: { casePage: DeputyCase, title: mw.Title };
+	row: { casePage: DeputyCase, title: mw.Title, type: 'detailed' | 'pageonly' };
 
 	element: HTMLElement;
 	revisionCheckbox: OO.ui.CheckboxInputWidget;
@@ -92,7 +92,8 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 				this.options.caseId,
 				normalizeTitle( this.options.caseTitle )
 			),
-			title: normalizeTitle( this.options.title )
+			title: normalizeTitle( this.options.title ),
+			type: this.options.rowType
 		};
 	}
 
@@ -252,6 +253,27 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 	 * @return The OOUI ButtonWidget element.
 	 */
 	renderRevisionNavigationButtons(): JSX.Element {
+		if ( this.row.type === 'pageonly' ) {
+			return <div class="dp-pt-section">
+				{ unwrapWidget(
+					new OO.ui.PopupButtonWidget( {
+						icon: 'info',
+						framed: false,
+						label: mw.msg( 'deputy.session.page.pageonly.title' ),
+						popup: {
+							head: true,
+							icon: 'infoFilled',
+							label: mw.msg( 'deputy.session.page.pageonly.title' ),
+							$content: $( <p>{
+								mw.msg( 'deputy.session.page.pageonly.help' )
+							}</p> as HTMLElement ),
+							padded: true
+						}
+					} )
+				) }
+			</div>;
+		}
+
 		const getButtonClickHandler = ( button: OO.ui.ButtonWidget, reverse: boolean ) => {
 			return async () => {
 				this.setDisabled( true );
@@ -374,7 +396,8 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 			{ this.renderStatusDropdown() }
 			{ this.renderCaseInfo() }
 			{ this.renderRevisionInfo() }
-			{ this.revisionNavigationSection = this.renderRevisionNavigationButtons() as HTMLElement }
+			{ this.revisionNavigationSection =
+				this.renderRevisionNavigationButtons() as HTMLElement }
 			{ this.renderMenus() }
 		</div> as HTMLElement;
 	}
@@ -426,7 +449,8 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 			// Re-render button.
 			swapElements(
 				this.revisionNavigationSection,
-				this.revisionNavigationSection = this.renderRevisionNavigationButtons() as HTMLElement
+				this.revisionNavigationSection =
+					this.renderRevisionNavigationButtons() as HTMLElement
 			);
 		}
 	}

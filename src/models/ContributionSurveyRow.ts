@@ -186,6 +186,11 @@ export default class ContributionSurveyRow {
 	}
 
 	/**
+	 * - `detailed` refers to a row with both page and revision information.
+	 * - `pageonly` refers to a row with only a page and no revision information.
+	 */
+	type: 'detailed' | 'pageonly';
+	/**
 	 * The case page of this row.
 	 */
 	casePage: DeputyCasePage;
@@ -259,6 +264,7 @@ export default class ContributionSurveyRow {
 	constructor( casePage: DeputyCasePage, wikitext: string ) {
 		this.data = new ContributionSurveyRowParser( wikitext ).parse();
 
+		this.type = this.data.type;
 		this.casePage = casePage;
 		this.wikitext = wikitext;
 		this.title = new mw.Title( this.data.page );

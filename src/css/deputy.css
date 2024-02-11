@@ -400,6 +400,11 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
 	white-space: nowrap;
 }
 
+.dp-pt-section .oo-ui-popupWidget-popup {
+	/** Avoid preventing line breaks in popups */
+	white-space: initial;
+}
+
 .dp-pt-section + .dp-pt-section {
 	/* TODO: Recheck RTL compatibility */
 	margin-left: 16px;
