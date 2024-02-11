@@ -285,6 +285,25 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 		} );
 	} );
 
+	test( 'file link', () => {
+		const parser = new ContributionSurveyRowParser(
+			'* [[:File:Example.png]]'
+		);
+		expect( parser.parse() ).toEqual( {
+			type: 'pageonly',
+			bullet: '* ',
+			creation: false,
+			page: ':File:Example.png',
+			extras: null,
+			diffs: null,
+			comments: null,
+			revids: [ ],
+			revidText: {},
+			diffTemplate: '[[Special:Diff/$1|($2)]]',
+			diffsTemplate: '$1'
+		} );
+	} );
+
 	test( 'edge: pre-colon, no comment, no diffs', () => {
 		const parser = new ContributionSurveyRowParser(
 			'*[[:Example]]: (1 edit)'

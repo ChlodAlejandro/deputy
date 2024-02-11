@@ -46,7 +46,8 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 	 */
 	row: {
 		casePage: DeputyCase,
-		title: mw.Title
+		title: mw.Title,
+		type: 'detailed' | 'pageonly'
 	};
 	/**
 	 * The OOUI DropdownWidget element. This does <b>not</b> use DropdownInputWidget
@@ -101,10 +102,12 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 	 * @param row.casePage The DeputyCase for this dropdown
 	 * @param row.title The title of the row (page) that this dropdown accesses
 	 * @param options Additional construction options, usually used by the root session.
+	 * @param row.type
 	 */
 	constructor( row: {
 		casePage: DeputyCase,
-		title: mw.Title
+		title: mw.Title,
+		type: 'detailed' | 'pageonly'
 	}, options: DeputyCCIStatusDropdownProps = {} ) {
 		super();
 		this.row = row;
@@ -375,7 +378,7 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 	 * is as follows:
 	 *
 	 * For
-	 *   - Unfinished: WithoutViolations
+	 *   - Unfinished: WithoutViolations, unless it's `pageonly`, on which it'll be kept as is.
 	 *   - Unknown: Unfinished
 	 *   - WithViolations: _usually not disabled, kept as is_
 	 *   - WithoutViolations: _usually not disabled, kept as is_
@@ -386,6 +389,11 @@ export default class DeputyCCIStatusDropdown extends EventTarget {
 	 */
 	selectNextBestValue( status: ContributionSurveyRowStatus ) {
 		if ( status === ContributionSurveyRowStatus.Unfinished ) {
+			if ( this.row.type === 'pageonly' ) {
+				// Leave it alone.
+				return;
+			}
+
 			this.status = ContributionSurveyRowStatus.WithoutViolations;
 		} else if ( status === ContributionSurveyRowStatus.Unknown ) {
 			this.status = ContributionSurveyRowStatus.Unfinished;

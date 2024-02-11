@@ -15,6 +15,7 @@ import { ArrayOrNot } from '../types';
 import DeputyMessageWidget from '../ui/shared/DeputyMessageWidget';
 import sectionHeadingId from '../wiki/util/sectionHeadingId';
 import last from '../util/last';
+import findNextSiblingElement from '../util/findNextSiblingElement';
 
 /**
  * The DeputyRootSession. Instantiated only when:
@@ -107,7 +108,9 @@ export default class DeputyRootSession {
 						window.deputy.session.init();
 					} );
 
-					firstHeading.insertAdjacentElement(
+					casePage.normalizeSectionHeading(
+						firstHeading
+					).insertAdjacentElement(
 						'beforebegin',
 						unwrapWidget( messageBox )
 					);
@@ -133,7 +136,9 @@ export default class DeputyRootSession {
 					const lastActiveSection =
 						DeputyRootSession.findFirstLastActiveSection( casePage );
 					const firstSection =
-						casePage.findFirstContributionSurveyHeading();
+						casePage.normalizeSectionHeading(
+							casePage.findFirstContributionSurveyHeading()
+						);
 
 					// Insert element directly into widget (not as text, or else event
 					// handlers will be destroyed).
@@ -215,7 +220,8 @@ export default class DeputyRootSession {
 		return mw.loader.using(
 			[ 'oojs-ui-core', 'oojs-ui.styles.icons-content' ],
 			() => {
-				const firstHeading = casePage.findFirstContributionSurveyHeading();
+				const firstHeading =
+					casePage.findFirstContributionSurveyHeading();
 				if ( firstHeading ) {
 					const messageBox = DeputyMessageWidget( {
 						classes: [
@@ -226,7 +232,9 @@ export default class DeputyRootSession {
 						message: mw.msg( 'deputy.session.tabActive.help' ),
 						closable: true
 					} );
-					firstHeading.insertAdjacentElement(
+					casePage.normalizeSectionHeading(
+						firstHeading
+					).insertAdjacentElement(
 						'beforebegin',
 						unwrapWidget( messageBox )
 					);
@@ -507,7 +515,7 @@ export default class DeputyRootSession {
 
 		const headingTop = window.scrollY + heading.getBoundingClientRect().bottom;
 		const sectionBottom = window.scrollY + (
-			( last( section )?.nextSibling as HTMLElement )?.getBoundingClientRect()?.top ??
+			findNextSiblingElement( last( section ) )?.getBoundingClientRect()?.top ??
 				heading.parentElement.getBoundingClientRect().bottom
 		);
 		const overlayHeight = sectionBottom - headingTop;

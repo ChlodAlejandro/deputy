@@ -177,7 +177,26 @@ p.dp-messageWidget-message {
 	margin-top: 8px;
 }
 
-.dp-cs-row {
+.dp-cs-extraneous {
+	border: 1px solid rgba(0, 159, 255, 40%);
+	background-color: rgba(0, 159, 255, 10%);
+	margin-bottom: 8px;
+	padding: 16px;
+}
+
+.dp-cs-extraneous > dl {
+	margin-left: -1.6em;
+}
+
+.dp-cs-extraneous > :first-child {
+	margin-top: 0 !important;
+}
+
+.dp-cs-extraneous > :last-child {
+	margin-bottom: 0 !important;
+}
+
+.dp-cs-row, .dp-cs-extraneous {
 	margin-bottom: 8px;
 }
 
@@ -379,6 +398,11 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
 .dp-pt-section {
 	display: inline-block;
 	white-space: nowrap;
+}
+
+.dp-pt-section .oo-ui-popupWidget-popup {
+	/** Avoid preventing line breaks in popups */
+	white-space: initial;
 }
 
 .dp-pt-section + .dp-pt-section {

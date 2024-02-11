@@ -119,6 +119,11 @@ export interface DeputyPageStatusResponseMessage {
 	 */
 	revisionStatus?: boolean;
 	/**
+	 * - `detailed` refers to a row with both page and revision information.
+	 * - `pageonly` refers to a row with only a page and no revision information.
+	 */
+	rowType: 'detailed' | 'pageonly';
+	/**
 	 * An echo of the requested revision ID. Only enabled if the `revision`
 	 * parameter was supplied in the request.
 	 */
