@@ -7,8 +7,6 @@ import { ConfigurationType } from './Configuration';
  */
 export default abstract class ConfigurationBase {
 
-	static readonly configVersion = 1;
-
 	// eslint-disable-next-line jsdoc/require-returns-check
 	/**
 	 * @return the configuration from the current wiki.

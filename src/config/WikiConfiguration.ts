@@ -39,7 +39,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 	// Used to avoid circular dependencies.
 	static = WikiConfiguration;
 
-	static readonly configVersion = 1;
+	static readonly configVersion = 2;
 	static readonly optionKey = 'userjs-deputy-wiki';
 	static readonly configLocations = [
 		'MediaWiki:Deputy-config.json',
@@ -408,12 +408,26 @@ export default class WikiConfiguration extends ConfigurationBase {
 		// Doesn't need to be from the same config page, since this usually means a new config
 		// page was made, and we need to switch to it.
 		if ( this.core.lastEdited.get() < liveWikiConfig.core.lastEdited ) {
-			// Don't update if the config version is higher than ours. We don't want
-			// to load in the config of a newer version, as it may break things.
-			// Deputy should load in the newer version of the script soon enough,
-			// and the config will be parsed by a version that supports it.
 			if ( liveWikiConfig.core.configVersion > this.core.configVersion.get() ) {
+				// Don't update if the config version is higher than ours. We don't want
+				// to load in the config of a newer version, as it may break things.
+				// Deputy should load in the newer version of the script soon enough,
+				// and the config will be parsed by a version that supports it.
+				console.warn( `Deputy expects wiki configuration version ${
+					this.core.configVersion.get()
+				}, but found ${
+					liveWikiConfig.core.configVersion
+				}. New configuration will not be loaded.` );
 				return;
+			} else if ( liveWikiConfig.core.configVersion < this.core.configVersion.get() ) {
+				// Version change detected.
+				// Do nothing... for now.
+				// HINT: Update configuration
+				console.warn( `Deputy expects wiki configuration version ${
+					this.core.configVersion.get()
+				}, but found ${
+					liveWikiConfig.core.configVersion
+				}. Proceeding anyway...` );
 			}
 
 			const onSuccess = () => {
