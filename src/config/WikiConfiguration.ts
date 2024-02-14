@@ -408,7 +408,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 		// Doesn't need to be from the same config page, since this usually means a new config
 		// page was made, and we need to switch to it.
 		if ( this.core.lastEdited.get() < liveWikiConfig.core.lastEdited ) {
-			if ( liveWikiConfig.core.configVersion > this.core.configVersion.get() ) {
+			if ( liveWikiConfig.core.configVersion > WikiConfiguration.configVersion ) {
 				// Don't update if the config version is higher than ours. We don't want
 				// to load in the config of a newer version, as it may break things.
 				// Deputy should load in the newer version of the script soon enough,
@@ -419,7 +419,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 					liveWikiConfig.core.configVersion
 				}. New configuration will not be loaded.` );
 				return;
-			} else if ( liveWikiConfig.core.configVersion < this.core.configVersion.get() ) {
+			} else if ( liveWikiConfig.core.configVersion < WikiConfiguration.configVersion ) {
 				// Version change detected.
 				// Do nothing... for now.
 				// HINT: Update configuration
