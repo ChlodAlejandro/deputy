@@ -3,7 +3,9 @@
 
 These are changes that may or may not have been deployed to wikis, but are not yet considered as part of any release.
 
-# [v0.5.2](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.5.0) - *unreleased*
+# [v0.6.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.5.0) - *2024-02-14*
+Breaking change due to configuration version upgrade. This version allows Deputy to load rows where only a page is available (like for files and the WikiProject Tropical cyclones case) and includes improved handling of configuration version changes.
+The latter was implemented to support changing the `ia.listingWikitextMatch` configuration field to allow processing for Copyright problems noticeboard listings which have mismatched IDs and links.
 
 ## Modified
 * [[`da8d225`](../../commit/da8d225)] Gracefully handle rows with only a page title available
@@ -11,8 +13,11 @@ These are changes that may or may not have been deployed to wikis, but are not y
 
 ## Bugs
 * [[`c577afa`](../../commit/c577afa)] Fixed banner being inserted in the wrong element for DiscussionTools-using wikis
+* [[`5dd6dc6`](../../commit/5dd6dc6)] Fixed missing listing error when responding to listing with mismatched ID and link
+  * **BREAKING CHANGE!** Wikis must update their `ia.listingWikitextMatch` configuration fields to use
+    the new capture groups.
 
-For a granular list of changes, see [v0.5.1...main](https://github.com/ChlodAlejandro/deputy/compare/v0.5.0...main).
+For a granular list of changes, see [v0.5.1...v0.6.0](https://github.com/ChlodAlejandro/deputy/compare/v0.5.0...main).
 
 # [v0.5.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.5.0) - *2023-12-21*
 
