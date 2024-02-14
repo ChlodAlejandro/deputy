@@ -408,6 +408,14 @@ export default class WikiConfiguration extends ConfigurationBase {
 		// Doesn't need to be from the same config page, since this usually means a new config
 		// page was made, and we need to switch to it.
 		if ( this.core.lastEdited.get() < liveWikiConfig.core.lastEdited ) {
+			// Don't update if the config version is higher than ours. We don't want
+			// to load in the config of a newer version, as it may break things.
+			// Deputy should load in the newer version of the script soon enough,
+			// and the config will be parsed by a version that supports it.
+			if ( liveWikiConfig.core.configVersion > this.core.configVersion.get() ) {
+				return;
+			}
+
 			const onSuccess = () => {
 				// Only mark outdated after saving, so we don't indirectly cause a save operation
 				// to cancel.
@@ -434,7 +442,9 @@ export default class WikiConfiguration extends ConfigurationBase {
 						editable: fromWiki.editable,
 						wt: JSON.stringify( liveWikiConfig )
 					} );
+				// Save to local storage.
 				mw.storage.set( WikiConfiguration.optionKey, rawConfigInfo );
+				// Save to user options (for faster first-load times).
 				await MwApi.action.saveOption(
 					WikiConfiguration.optionKey,
 					rawConfigInfo
