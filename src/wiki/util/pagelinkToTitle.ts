@@ -1,9 +1,9 @@
 /**
- * Extracts a page title from a MediaWiki anchor. If the anchor does not validly link
+ * Extracts a page title from a MediaWiki `<a>`. If the link does not validly point
  * to a MediaWiki page, `false` is returned.
  *
- * The part of the anchor used to determine the page title depends on how trustworthy
- * the data is in telling the correct title. If the anchor does not have an `href`, only
+ * The part of the link used to determine the page title depends on how trustworthy
+ * the data is in telling the correct title. If the link does not have an `href`, only
  * two routes are available: the selflink check and the `title` attribute check.
  *
  * The following methods are used, in order.
@@ -16,7 +16,7 @@
  * @param el
  * @return the page linked to
  */
-export default function anchorToTitle( el: HTMLAnchorElement ): mw.Title | false {
+export default function pagelinkToTitle( el: HTMLAnchorElement ): mw.Title | false {
 	const href = el.getAttribute( 'href' );
 	const articlePathRegex = new RegExp( mw.util.getUrl( '(.*)' ) );
 

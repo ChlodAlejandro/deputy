@@ -1,9 +1,12 @@
 import CopyrightProblemsPage from './CopyrightProblemsPage';
-import CopyrightProblemsListing from './CopyrightProblemsListing';
+import CopyrightProblemsListing, {
+	isFullCopyrightProblemsListing
+} from './CopyrightProblemsListing';
 import ListingActionLink from '../ui/ListingActionLink';
 import equalTitle from '../../../util/equalTitle';
 import swapElements from '../../../util/swapElements';
 import NewCopyrightProblemsListing from '../ui/NewCopyrightProblemsListing';
+import normalizeTitle from '../../../wiki/util/normalizeTitle';
 
 /**
  * A CopyrightProblemsPage that represents a page that currently exists on a document.
@@ -65,18 +68,22 @@ export default class CopyrightProblemsSession extends CopyrightProblemsPage {
 					headingSets[ listingPageTitle ] = {};
 				}
 
-				const prefixedDb = listingData.title.getPrefixedDb();
+				const id = normalizeTitle(
+					isFullCopyrightProblemsListing( listingData ) ?
+						listingData.id :
+						listingData.title
+				).getPrefixedDb();
 				const pageSet = headingSets[ listingPageTitle ];
-				if ( pageSet[ prefixedDb ] != null ) {
-					pageSet[ prefixedDb ]++;
+				if ( pageSet[ id ] != null ) {
+					pageSet[ id ]++;
 				} else {
-					pageSet[ prefixedDb ] = 1;
+					pageSet[ id ] = 1;
 				}
 
 				this.listingMap.set( link, new CopyrightProblemsListing(
 					listingData,
 					this.main ? null : this,
-					pageSet[ prefixedDb ]
+					pageSet[ id ]
 				) );
 				links.push( link );
 			}

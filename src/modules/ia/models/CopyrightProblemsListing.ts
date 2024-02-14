@@ -1,14 +1,19 @@
 import CopyrightProblemsPage from './CopyrightProblemsPage';
 import cloneRegex from '../../../util/cloneRegex';
 import normalizeTitle from '../../../wiki/util/normalizeTitle';
-import anchorToTitle from '../../../wiki/util/anchorToTitle';
+import pagelinkToTitle from '../../../wiki/util/pagelinkToTitle';
 import decorateEditSummary from '../../../wiki/util/decorateEditSummary';
 import MwApi from '../../../MwApi';
 import changeTag from '../../../config/changeTag';
 
+/**
+ * Represents a listing on a CPN page where the listing is substituted from
+ * the `{{article-cv}}` template.
+ */
 interface FullCopyrightProblemsListingData {
 	basic: false;
 	i?: number;
+	id: string;
 	title: mw.Title;
 	listingPage: mw.Title;
 	element: HTMLAnchorElement;
@@ -16,6 +21,9 @@ interface FullCopyrightProblemsListingData {
 	plainlinks: HTMLSpanElement;
 }
 
+/**
+ * Represents a listing on a CPN page where the listing is just a page link.
+ */
 interface BasicCopyrightProblemsListingData {
 	/**
 	 * Whether the listing is basic or not. When listings are detected from the basic
@@ -37,6 +45,18 @@ type CopyrightProblemsListingData =
 	| BasicCopyrightProblemsListingData;
 
 /**
+ * Check if a given copyright problems listing is full.
+ *
+ * @param data
+ * @return `true` if the listing is a {@link FullCopyrightProblemsListingData}
+ */
+export function isFullCopyrightProblemsListing(
+	data: CopyrightProblemsListingData
+): data is FullCopyrightProblemsListingData {
+	return data.basic === false;
+}
+
+/**
  * Represents an <b>existing</b> copyright problems listing. To add or create new
  * listings, use the associated functions in {@link CopyrightProblemsPage}.
  */
@@ -48,10 +68,12 @@ export default class CopyrightProblemsListing {
 	 *
 	 * This regular expression must catch three groups:
 	 * - $1 - The initial `* `, used to keep the correct number of whitespace between parts.
-	 * - $2 - The page title, ONLY IF the page is listed with an `article-cv`-like template
-	 * - $3 - The page title, ONLY IF the page is a bare link to another page and does not use
+	 * - $2 - The page title in the `id="..."`, ONLY IF the page is listed with an
+	 *        `article-cv`-like template.
+	 * - $3 - The page title in the wikilink, ONLY IF the page is listed with an
+	 *        `article-cv`-like template.
+	 * - $4 - The page title, ONLY IF the page is a bare link to another page and does not use
 	 *        `article-cv`.
-	 *
 	 *
 	 * @return A regular expression.
 	 */
@@ -92,7 +114,7 @@ export default class CopyrightProblemsListing {
 		if ( previousPivot.querySelector( '.mw-headline' ) != null ) {
 			// At this point, previousPivot is likely a MediaWiki level 4 heading.
 			const h4Anchor = previousPivot.querySelector( '.mw-headline a' );
-			listingPage = anchorToTitle( h4Anchor as HTMLAnchorElement );
+			listingPage = pagelinkToTitle( h4Anchor as HTMLAnchorElement );
 
 			// Identify if the page is a proper listing page (within the root page's
 			// pagespace)
@@ -119,7 +141,7 @@ export default class CopyrightProblemsListing {
 	 * @param el
 	 * @return Data related to the listing, for use in instantiation; `false` if not a listing.
 	 */
-	static getListing( el: HTMLElement ): CopyrightProblemsListingData | false {
+	static getListing( el: HTMLElement ): FullCopyrightProblemsListingData | false {
 		try {
 			if ( el.tagName !== 'A' || el.getAttribute( 'href' ) === null ) {
 				// Not a valid anchor element.
@@ -135,27 +157,33 @@ export default class CopyrightProblemsListing {
 			// Get the page title based on the anchor, verified by the link.
 			// This ensures we're always using the prefixedDb version of the title (as
 			// provided by the anchor) for stability.
-			const prefixedDb = anchor.getAttribute( 'id' );
-			const title = anchorToTitle( el as HTMLAnchorElement );
+			const id = anchor.getAttribute( 'id' );
+			const title = pagelinkToTitle( el as HTMLAnchorElement );
 
-			if ( title === false || prefixedDb == null ) {
+			if ( title === false || id == null ) {
 				// Not a valid link.
 				return false;
-			} else if ( title.getPrefixedText() !== new mw.Title( prefixedDb ).getPrefixedText() ) {
+			} else if ( title.getPrefixedText() !== new mw.Title( id ).getPrefixedText() ) {
 				// Anchor and link mismatch. Someone tampered with the template?
 				// In this case, rely on the link instead, as the anchor is merely invisible.
 				console.warn(
-					`Anchor and link mismatch for "${title.getPrefixedText()}".`, title, prefixedDb
+					`Anchor and link mismatch for "${title.getPrefixedText()}".`, title, id
 				);
 			}
 
 			// Checks for the <span class="plainlinks"> element.
 			// This ensures that the listing came from {{article-cv}} and isn't just a
 			// link with an anchor.
-			const plainlinks = el.nextElementSibling;
+			const elSiblings = Array.from( el.parentElement.children );
+			const elIndex = elSiblings.indexOf( el );
+			const plainlinks = el.parentElement.querySelector(
+				`:nth-child(${elIndex}) ~ span.plainlinks`
+			);
 			if (
 				plainlinks == null ||
-				( plainlinks.tagName !== 'SPAN' && !plainlinks.classList.contains( 'plainlinks' ) )
+				// `~` never gets an earlier element, so just check if it's more than 2 elements
+				// away.
+				elSiblings.indexOf( plainlinks ) - elIndex > 2
 			) {
 				return false;
 			}
@@ -172,6 +200,7 @@ export default class CopyrightProblemsListing {
 
 			return {
 				basic: false,
+				id,
 				title,
 				listingPage,
 				element: el as HTMLAnchorElement,
@@ -192,7 +221,7 @@ export default class CopyrightProblemsListing {
 	 * @param el
 	 * @return Data related to the listing, for use in instantiation; `false` if not a listing.
 	 */
-	static getBasicListing( el: HTMLElement ): CopyrightProblemsListingData | false {
+	static getBasicListing( el: HTMLElement ): BasicCopyrightProblemsListingData | false {
 		try {
 			if ( el.tagName !== 'A' || el.getAttribute( 'href' ) == null ) {
 				// Not a valid anchor element.
@@ -216,7 +245,7 @@ export default class CopyrightProblemsListing {
 			}
 
 			// Attempt to extract page title.
-			const title = anchorToTitle( el as HTMLAnchorElement );
+			const title = pagelinkToTitle( el as HTMLAnchorElement );
 			if ( !title ) {
 				return false;
 			}
@@ -250,6 +279,7 @@ export default class CopyrightProblemsListing {
 
 	i: number;
 	basic: boolean;
+	id: string;
 	title: mw.Title;
 	element: HTMLAnchorElement;
 	anchor: HTMLSpanElement;
@@ -259,8 +289,8 @@ export default class CopyrightProblemsListing {
 	 * @return an ID representation of this listing. Helps in finding it inside of
 	 * wikitext.
 	 */
-	get id(): string {
-		return this.title.getPrefixedDb() + ( this.i > 1 ? `-${this.i}` : '' );
+	get anchorId(): string {
+		return this.id + ( this.i > 1 ? `-${this.i}` : '' );
 	}
 
 	/**
@@ -283,6 +313,7 @@ export default class CopyrightProblemsListing {
 		this.title = data.title;
 		this.element = data.element;
 		if ( data.basic === false ) {
+			this.id = data.id;
 			this.anchor = data.anchor;
 			this.plainlinks = data.plainlinks;
 		}
@@ -304,6 +335,8 @@ export default class CopyrightProblemsListing {
 		let startLine = null;
 		let endLine = null;
 		let bulletList: boolean;
+		const normalizedId = normalizeTitle( this.id ?? this.title ).getPrefixedText();
+		const idMalformed = normalizedId !== this.title.getPrefixedText();
 		for ( let line = 0; line < lines.length; line++ ) {
 			const lineText = lines[ line ];
 
@@ -324,10 +357,9 @@ export default class CopyrightProblemsListing {
 					.exec( lineText );
 
 				if ( match != null ) {
-					// Check if this is the page we're looking for.
 					if (
-						normalizeTitle( match[ 2 ] || match[ 3 ] ).getPrefixedText() !==
-						this.title.getPrefixedText()
+						normalizeTitle( match[ 2 ] || match[ 4 ] ).getPrefixedText() !==
+						normalizedId
 					) {
 						continue;
 					}
@@ -337,6 +369,16 @@ export default class CopyrightProblemsListing {
 						// Skip if we haven't skipped enough.
 						skipCounter++;
 						continue;
+					}
+
+					if ( idMalformed && match[ 2 ] === match[ 3 ] ) {
+						throw new Error(
+							`Expected malformed listing with ID "${
+								normalizedId
+							}" and title "${
+								this.title.getPrefixedText()
+							}" but got normal listing.`
+						);
 					}
 
 					bulletList = /[*:]/.test( ( match[ 1 ] || '' ).trim() );

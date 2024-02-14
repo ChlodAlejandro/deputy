@@ -1,4 +1,4 @@
-import anchorToTitle from './anchorToTitle';
+import pagelinkToTitle from './pagelinkToTitle';
 import decorateEditSummary from './decorateEditSummary';
 import delink from './delink';
 import errorToOO from './errorToOO';
@@ -23,7 +23,7 @@ import sectionHeadingN from './sectionHeadingN';
 import sectionHeadingName from './sectionHeadingName';
 import toRedirectsObject from './toRedirectsObject';
 export default {
-	anchorToTitle: anchorToTitle,
+	anchorToTitle: pagelinkToTitle,
 	decorateEditSummary: decorateEditSummary,
 	delink: delink,
 	errorToOO: errorToOO,

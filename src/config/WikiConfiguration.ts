@@ -39,7 +39,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 	// Used to avoid circular dependencies.
 	static = WikiConfiguration;
 
-	static readonly configVersion = 1;
+	static readonly configVersion = 2;
 	static readonly optionKey = 'userjs-deputy-wiki';
 	static readonly configLocations = [
 		'MediaWiki:Deputy-config.json',
