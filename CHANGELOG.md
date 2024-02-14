@@ -6,7 +6,8 @@ These are changes that may or may not have been deployed to wikis, but are not y
 # [v0.5.2](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.5.0) - *unreleased*
 
 ## Modified
-* [[`c577afa`](../../commit/c577afa)] Gracefully handle rows with only a page title available
+* [[`da8d225`](../../commit/da8d225)] Gracefully handle rows with only a page title available
+* [[`530d46c`](../../commit/530d46c)] Avoid loading newer configuration versions
 
 ## Bugs
 * [[`c577afa`](../../commit/c577afa)] Fixed banner being inserted in the wrong element for DiscussionTools-using wikis
