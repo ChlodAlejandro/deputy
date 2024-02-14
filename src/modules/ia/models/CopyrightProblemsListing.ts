@@ -214,9 +214,9 @@ export default class CopyrightProblemsListing {
 	}
 
 	/**
-	 * A much more loose version of {@link getListing}, which only checks if a given
-	 * page is a link at the start of a paragraph or `<[uo]l>` list. Metadata is
-	 * unavailable with this method.
+	 * A much more loose version of {@link CopyrightProblemsListing#getListing},
+	 * which only checks if a given page is a link at the start of a paragraph or
+	 * `<[uo]l>` list. Metadata is unavailable with this method.
 	 *
 	 * @param el
 	 * @return Data related to the listing, for use in instantiation; `false` if not a listing.
@@ -387,14 +387,22 @@ export default class CopyrightProblemsListing {
 			}
 		}
 
-		if ( startLine === lines.length - 1 ) {
-			// Last line only.
-			return { start: startLine, end: startLine };
+		// We've reached the end of the document.
+		// `startLine` is only ever set if the IDs match, so we can safely assume
+		// that if `startLine` and `endLine` is set or if `startLine` is the last line
+		// in the page, then we've found the listing (and it is the last listing on the
+		// page, where `endLine` would have been set if it had comments).
+		if (
+			( startLine != null && endLine != null ) ||
+			( startLine != null && startLine === lines.length - 1 )
+		) {
+			return { start: startLine, end: endLine ?? startLine };
 		}
 
 		// Couldn't find an ending. Malformed listing?
+		// It should be nearly impossible to hit this condition.
 		// Gracefully handle this.
-		throw new Error( 'Listing is missing from wikitext or malformed listing' );
+		throw new Error( "Couldn't detect listing from wikitext (edit conflict/is it missing?)" );
 	}
 
 	/**
@@ -409,6 +417,7 @@ export default class CopyrightProblemsListing {
 		const range = await this.getListingWikitextLines();
 
 		if ( indent ) {
+			// This usually isn't needed. {{CPC}} handles the bullet.
 			message = (
 				this.element.parentElement.tagName === 'LI' ?
 					'*:' :
