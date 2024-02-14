@@ -196,10 +196,9 @@ function initBackwardsCopyTemplateRowPage() {
 					placeholder: mw.msg( 'deputy.ante.backwardsCopy.entry.date.placeholder' ),
 					value: rowDate
 				} ),
-				author: new OO.ui.TagMultiselectWidget( {
-					allowArbitrary: true,
+				author: new OO.ui.TextInputWidget( {
 					placeholder: mw.msg( 'deputy.ante.backwardsCopy.entry.author.placeholder' ),
-					selected: authors
+					value: authors[ 0 ] ?? this.backwardsCopyTemplateRow.author
 				} ),
 				url: new OO.ui.TextInputWidget( {
 					placeholder: mw.msg( 'deputy.ante.backwardsCopy.entry.url.placeholder' ),
@@ -257,31 +256,10 @@ function initBackwardsCopyTemplateRowPage() {
 				const field = _field as keyof typeof inputs;
 				const input = inputs[ field ];
 
-				if ( field === 'author' ) {
-					( input as OO.ui.TagMultiselectWidget )
-						.on( 'change', ( value: ( OO.ui.Element & { data: string } )[] ) => {
-							if ( value.length === 0 ) {
-								this.backwardsCopyTemplateRow.author = null;
-								this.backwardsCopyTemplateRow.authorlist = null;
-							} else if ( value.length > 1 ) {
-								this.backwardsCopyTemplateRow.author = null;
-								this.backwardsCopyTemplateRow.authorlist =
-									// TODO: ANTE l10n
-									value.map( ( v ) => v.data ).join( '; ' );
-							} else {
-								this.backwardsCopyTemplateRow.authorlist = null;
-								this.backwardsCopyTemplateRow.author =
-									value[ 0 ].data;
-							}
-							this.backwardsCopyTemplateRow.parent.save();
-						} );
-				} else {
-					// Attach the change listener
-					( input as OO.ui.TextInputWidget ).on( 'change', ( value: string ) => {
-						this.backwardsCopyTemplateRow[ field ] = value;
-						this.backwardsCopyTemplateRow.parent.save();
-					} );
-				}
+				input.on( 'change', ( value: string ) => {
+					this.backwardsCopyTemplateRow[ field ] = value;
+					this.backwardsCopyTemplateRow.parent.save();
+				} );
 
 				if ( input instanceof OO.ui.TextInputWidget ) {
 					// Rechecks the validity of the field.
