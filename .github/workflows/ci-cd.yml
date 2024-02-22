@@ -160,7 +160,7 @@ jobs:
 
       - name: Check if CHANGELOG is formed
         if: ${{ !contains( steps.changelog.outputs.content, 'deputy/compare/' ) }}
-        uses: actions/github-script@v3
+        uses: actions/github-script@v7
         with:
           script: |
             core.setFailed('CHANGELOG.md does not have a comparison link. Are there still parts in Unreleased?')
