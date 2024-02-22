@@ -34,13 +34,13 @@ jobs:
           NODE_ENV: production
 
       - name: Upload transpiled code
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: builds
           path: build/*.js
 
       - name: Upload sourcemaps
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sourcemaps
           path: build/*.js.map
@@ -120,7 +120,7 @@ jobs:
           BROWSER: ${{ matrix.browser.product }}
 
       - name: Upload test artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-artifacts--${{ matrix.os }}-${{ matrix.browser.product }}-${{ matrix.browser.version }}
           path: tests/artifacts/*
