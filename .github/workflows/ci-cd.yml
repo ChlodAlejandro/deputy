@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           cache: 'npm'
 
@@ -93,7 +93,7 @@ jobs:
 
       - name: Setup Node
         if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           cache: 'npm'
 
