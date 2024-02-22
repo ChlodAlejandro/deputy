@@ -75,7 +75,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     if: ${{ !contains(github.event.head_commit.message, '[failing]') }}
     concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
+      group: ${{ github.workflow }}-${{ github.ref }}--${{ matrix.os }}-${{ matrix.browser.product }}-${{ matrix.browser.version }}
       cancel-in-progress: true
     steps:
       - name: Checkout code
