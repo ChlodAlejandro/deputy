@@ -74,6 +74,9 @@ jobs:
             version: latest-esr
     runs-on: ${{ matrix.os }}
     if: ${{ !contains(github.event.head_commit.message, '[failing]') }}
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
