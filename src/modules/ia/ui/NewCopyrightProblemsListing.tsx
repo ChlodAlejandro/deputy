@@ -11,7 +11,6 @@ import { CompletionAction } from '../../shared/CompletionAction';
 import purge from '../../../wiki/util/purge';
 import { blockExit, unblockExit } from '../../../util/blockExit';
 import CCICaseInputWidget from './CCICaseInputWidget';
-import DeputyLanguage from '../../../DeputyLanguage';
 
 /**
  *

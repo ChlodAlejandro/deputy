@@ -639,7 +639,7 @@ function initSinglePageWorkflowDialog() {
 							.cci.rootPage.get().getPrefixedText(),
 						this.data.presumptiveCase
 					] : [ from ] ),
-					this.data.notes
+					this.data.notes ?? ''
 				) ) :
 				this.data.notes ?? '';
 
