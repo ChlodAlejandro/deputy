@@ -5,7 +5,10 @@
  */
 export default function (): void {
 
-	const HtmlEmitter = new ( mw as any ).jqueryMsg.Parser().emitter.constructor;
+	const HtmlEmitter =
+		( mw as any ).jqueryMsg.HtmlEmitter ?? {
+			prototype: Object.getPrototypeOf( new ( mw as any ).jqueryMsg.Parser().emitter )
+		};
 
 	// This applies the {{int:message}} parser function with "MediaWiki:". This
 	// is due to VisualEditor using "MediaWiki:" in message values instead of "int:"
