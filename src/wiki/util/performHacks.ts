@@ -5,10 +5,12 @@
  */
 export default function (): void {
 
+	const HtmlEmitter = new ( mw as any ).jqueryMsg.Parser().emitter.constructor;
+
 	// This applies the {{int:message}} parser function with "MediaWiki:". This
 	// is due to VisualEditor using "MediaWiki:" in message values instead of "int:"
-	( mw as any ).jqueryMsg.HtmlEmitter.prototype.mediawiki =
-		( mw as any ).jqueryMsg.HtmlEmitter.prototype.int;
+	HtmlEmitter.prototype.mediawiki =
+		HtmlEmitter.prototype.int;
 
 	/**
 	 * Performs a simple if check. Works just like the Extension:ParserFunctions
@@ -22,7 +24,7 @@ export default function (): void {
 	 * @param nodes
 	 * @return see function description
 	 */
-	( mw as any ).jqueryMsg.HtmlEmitter.prototype.if = function ( nodes: string[] ) {
+	HtmlEmitter.prototype.if = function ( nodes: string[] ) {
 		return ( nodes[ 0 ].trim() ? ( nodes[ 1 ] ?? '' ) : ( nodes[ 2 ] ?? '' ) );
 	};
 	// "#if" is unsupported due to the parsing done by jqueryMsg.
@@ -32,18 +34,18 @@ export default function (): void {
 	 * prefix before a link.
 	 *
 	 * @param nodes
-	 * @return {{text}}
+	 * @return `{{text}}`
 	 */
-	( mw as any ).jqueryMsg.HtmlEmitter.prototype.template = function ( nodes: string[] ) {
+	HtmlEmitter.prototype.template = function ( nodes: string[] ) {
 		return `{{${nodes.join( '|' )}}}`;
 	};
 	/**
 	 * Allows `{{subst:...}}` to work. Does not actually change anything.
 	 *
 	 * @param nodes
-	 * @return {{text}}
+	 * @return `{{text}}`
 	 */
-	( mw as any ).jqueryMsg.HtmlEmitter.prototype.subst = function ( nodes: string[] ) {
+	HtmlEmitter.prototype.subst = function ( nodes: string[] ) {
 		return `{{subst:${
 			nodes.map( ( v: string | JQuery ) =>
 				typeof v === 'string' ? v : v.text() ).join( '|' )
@@ -56,9 +58,9 @@ export default function (): void {
 	 *
 	 * @see https://www.mediawiki.org/wiki/Help:Magic_words#URL_data
 	 * @param nodes
-	 * @return /wiki/{page}?{query}
+	 * @return `/wiki/{page}?{query}`
 	 */
-	( mw as any ).jqueryMsg.HtmlEmitter.prototype.localurl = function ( nodes: string[] ) {
+	HtmlEmitter.prototype.localurl = function ( nodes: string[] ) {
 		return mw.util.getUrl( nodes[ 0 ] ) + '?' + nodes[ 1 ];
 	};
 }
