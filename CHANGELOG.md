@@ -5,12 +5,16 @@ These are changes that may or may not have been deployed to wikis, but are not y
 
 # [v0.6.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.5.0) - *unreleased*
 
+## Added
+* [[`f911e9e`](../../commit/f911e9e)] Added row collapse-by-default option
+
 ## Modified
-* [[`522f952`](../../commit/522f952)] Changed "Listing is missing from wikitext or malformed listing" message to a more user-friendly error message 
+* [[`522f952`](../../commit/522f952)] Changed "Listing is missing from wikitext or malformed listing" message to a more user-friendly error message
 
 ## Bugs
 * [[`522f952`](../../commit/522f952)] Fixed missing listing error when responding to listing at end of page with comment
 * [[`ba7a779`](../../commit/ba7a779)] Fixed `$2` appearing in place of the comment when a comment wasn't provided when filing a new listing
+* [[`3c78dc3`](../../commit/3c78dc3)] Fixed CCI row collapsing requiring two clicks
 
 For a granular list of changes, see [v0.6.0...main](https://github.com/ChlodAlejandro/deputy/compare/v0.5.0...main).
 
