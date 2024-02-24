@@ -868,7 +868,7 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 				).text()
 			);
 			contentContainer.style.display = show ? 'block' : 'none';
-			contentToggled = !contentToggled;
+			contentToggled = show;
 		};
 		toggleContent( contentToggled );
 		contentToggle.on( 'click', () => {
