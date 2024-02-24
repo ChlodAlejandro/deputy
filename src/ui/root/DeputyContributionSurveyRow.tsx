@@ -845,7 +845,7 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 			framed: false
 		} );
 
-		let contentToggled = window.deputy.prefs.get( 'cci.contentDefault' );
+		let contentToggled = !window.deputy.config.cci.autoCollapseRows.get();
 		/**
 		 * Toggles the content.
 		 *

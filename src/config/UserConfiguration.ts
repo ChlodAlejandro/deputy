@@ -92,6 +92,12 @@ export default class UserConfiguration extends ConfigurationBase {
 				type: 'checkbox'
 			}
 		} ),
+		autoCollapseRows: new Setting<boolean, boolean>( {
+			defaultValue: false,
+			displayOptions: {
+				type: 'checkbox'
+			}
+		} ),
 		autoShowDiff: new Setting<boolean, boolean>( {
 			defaultValue: false,
 			displayOptions: {

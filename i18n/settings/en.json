@@ -53,6 +53,8 @@
     "deputy.setting.user.cci.showCvLink.description": "Show a \"cv\" link next to \"cur\" and \"prev\" on revision rows. This link will only appear if this wiki is configured to use Earwig's Copyvio Detector.",
     "deputy.setting.user.cci.showUsername.name": "Show username",
     "deputy.setting.user.cci.showUsername.description": "Show the username of the user who made the edit on revision rows. This may be redundant for cases which only have one editor.",
+    "deputy.setting.user.cci.autoCollapseRows.name": "Automatically collapse rows",
+    "deputy.setting.user.cci.autoCollapseRows.description": "Automatically collapse rows when the page is loaded. This is useful for cases where each row has many revisions, but may be annoying for cases where each row has few revisions.",
     "deputy.setting.user.cci.autoShowDiff.name": "Automatically show diffs",
     "deputy.setting.user.cci.autoShowDiff.description": "Enabling automatic loading of diffs. Configurable with two additional options to avoid loading too much content.",
     "deputy.setting.user.cci.maxRevisionsToAutoShowDiff.name": "Maximum revisions to automatically show diff",

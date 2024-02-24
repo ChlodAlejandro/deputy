@@ -5,7 +5,6 @@ import DeputySession from './session/DeputySession';
 import DeputyCasePage from './wiki/DeputyCasePage';
 import DeputyDispatch from './api/DeputyDispatch';
 import ContributionSurveyRow from './models/ContributionSurveyRow';
-import { DeputyPreferences } from './DeputyPreferences';
 import performHacks from './wiki/util/performHacks';
 import DeputyCase from './wiki/DeputyCase';
 import unwrapWidget from './util/unwrapWidget';
@@ -43,7 +42,6 @@ class Deputy {
 	readonly DeputyDispatch = DeputyDispatch;
 	readonly DeputyStorage = DeputyStorage;
 	readonly DeputySession = DeputySession;
-	readonly DeputyPreferences = DeputyPreferences;
 	readonly DeputyCommunications = DeputyCommunications;
 	readonly DeputyCase = DeputyCase;
 	readonly DeputyCasePage = DeputyCasePage;
@@ -74,7 +72,6 @@ class Deputy {
 
 	dispatch: DeputyDispatch;
 	storage: DeputyStorage;
-	prefs: DeputyPreferences;
 	comms: DeputyCommunications;
 	session: DeputySession;
 	config: UserConfiguration;
@@ -153,8 +150,6 @@ class Deputy {
 		await this.storage.init();
 		// Initialize the Deputy API interface
 		this.dispatch = new DeputyDispatch();
-		// Initialize the Deputy preferences instance
-		this.prefs = new DeputyPreferences();
 		// Initialize communications
 		this.comms = new DeputyCommunications();
 		this.comms.init();
