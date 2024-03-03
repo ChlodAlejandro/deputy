@@ -15,6 +15,7 @@ These are changes that may or may not have been deployed to wikis, but are not y
 * [[`522f952`](../../commit/522f952)] Fixed missing listing error when responding to listing at end of page with comment
 * [[`ba7a779`](../../commit/ba7a779)] Fixed `$2` appearing in place of the comment when a comment wasn't provided when filing a new listing
 * [[`3c78dc3`](../../commit/3c78dc3)] Fixed CCI row collapsing requiring two clicks
+* [[`742e90c`](../../commit/742e90c)] Fixed section name detection for newer versions of MediaWiki+DiscussionTools
 
 For a granular list of changes, see [v0.6.0...main](https://github.com/ChlodAlejandro/deputy/compare/v0.5.0...main).
 
