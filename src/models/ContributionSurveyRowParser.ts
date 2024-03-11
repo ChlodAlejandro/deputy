@@ -147,11 +147,11 @@ export default class ContributionSurveyRowParser {
 				const diffMatch =
 					// [[Special:Diff/12345|6789]]
 					this.eatExpressionMatch(
-						/(?:'''?)?\[\[Special:Diff\/(\d+)(?:\|([^\]]*))?]](?:'''?)?/g
+						/\s*(?:'''?)?\[\[Special:Diff\/(\d+)(?:\|([^\]]*))?]](?:'''?)?/g
 					) ??
 					// {{dif|12345|6789}}
 					this.eatExpressionMatch(
-						/(?:'''?)?{{dif\|(\d+)\|([^}]+)}}(?:'''?)?/g
+						/\s*(?:'''?)?{{dif\|(\d+)\|([^}]+)}}(?:'''?)?/g
 					);
 				diff = diffMatch?.[ 1 ];
 				if ( diff != null ) {

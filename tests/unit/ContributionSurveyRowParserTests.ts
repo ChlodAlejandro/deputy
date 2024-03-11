@@ -479,6 +479,52 @@ describe( 'ContributionSurveyRowParser line parsing tests', () => {
 		} );
 	} );
 
+	test( 'edge: multiple diffs with spaces', () => {
+		const parser = new ContributionSurveyRowParser(
+			'* [[:Example]] (1 edit, 1 major, +173): [[Special:Diff/123456|(+173)]] ' +
+			'[[Special:Diff/7890|(+22)]]'
+		);
+		expect( parser.parse() ).toEqual( {
+			type: 'detailed',
+			bullet: '* ',
+			creation: false,
+			page: ':Example',
+			extras: ' (1 edit, 1 major, +173): ',
+			diffs: '[[Special:Diff/123456|(+173)]] [[Special:Diff/7890|(+22)]]',
+			comments: null,
+			revids: [ 123456, 7890 ],
+			revidText: {
+				123456: '+173',
+				7890: '+22'
+			},
+			diffTemplate: '[[Special:Diff/$1|($2)]]',
+			diffsTemplate: '$1'
+		} );
+	} );
+
+	test( 'edge: multiple diffs with spaces, comment', () => {
+		const parser = new ContributionSurveyRowParser(
+			'* [[:Example]] (1 edit, 1 major, +173): [[Special:Diff/123456|(+173)]] ' +
+			'[[Special:Diff/7890|(+22)]] extra comment here for some reason'
+		);
+		expect( parser.parse() ).toEqual( {
+			type: 'detailed',
+			bullet: '* ',
+			creation: false,
+			page: ':Example',
+			extras: ' (1 edit, 1 major, +173): ',
+			diffs: '[[Special:Diff/123456|(+173)]] [[Special:Diff/7890|(+22)]]',
+			comments: ' extra comment here for some reason',
+			revids: [ 123456, 7890 ],
+			revidText: {
+				123456: '+173',
+				7890: '+22'
+			},
+			diffTemplate: '[[Special:Diff/$1|($2)]]',
+			diffsTemplate: '$1'
+		} );
+	} );
+
 	test( 'fail: missing bullet', () => {
 		const parser = new ContributionSurveyRowParser(
 			'[[:1852 Atlantic hurricane season]]'
