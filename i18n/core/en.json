@@ -24,7 +24,7 @@
 
     "deputy.session.section.close": "Archive section",
     "deputy.session.section.closeComments": "Archiving comments",
-    "deputy.session.section.closeHelp": "Your signature will automatically be included.",
+    "deputy.session.section.closeCommentsSign": "Include my signature",
     "deputy.session.section.closeError": "Some revisions remain unassessed. You must mark these revisions as assessed before archiving this section.",
     "deputy.session.section.closeWarn": "You have unsaved changes. Close the section without saving?",
 

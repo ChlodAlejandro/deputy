@@ -154,6 +154,10 @@ p.dp-messageWidget-message {
 	padding: 8px;
 }
 
+.dp-cs-section-closing {
+	margin: 1em 1.75em;
+}
+
 .dp-cs-section-progress {
 	margin-top: 8px;
 	max-height: 0;

@@ -48,6 +48,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	rowElements: ( HTMLElement | DeputyContributionSurveyRow )[];
 	closingCheckbox: OO.ui.CheckboxInputWidget;
 	closingComments: OO.ui.TextInputWidget;
+	closingCommentsSign: OO.ui.CheckboxInputWidget;
 	closeButton: OO.ui.ButtonWidget;
 	reviewButton: OO.ui.ButtonWidget;
 	saveButton: OO.ui.ButtonWidget;
@@ -160,15 +161,24 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		}
 
 		if ( this.closed ) {
-			final.splice( 1, 0, msgEval(
-				window.deputy.wikiConfig.cci.collapseTop.get(),
-				( ( this.comments ?? '' ) + ' ~~~~' ).trim()
-			).plain() );
+			if ( this._section.originallyClosed ) {
+				// TODO: Fix when not broken
+			} else {
+				let closingComments = ( this.comments ?? '' ).trim();
+				if ( this.closingCommentsSign.isSelected() ) {
+					closingComments += ' ~~~~';
+				}
 
-			if ( final[ final.length - 1 ].trim().length === 0 ) {
-				final.pop();
+				final.splice( 1, 0, msgEval(
+					window.deputy.wikiConfig.cci.collapseTop.get(),
+					closingComments
+				).plain() );
+
+				if ( final[ final.length - 1 ].trim().length === 0 ) {
+					final.pop();
+				}
+				final.push( window.deputy.wikiConfig.cci.collapseBottom.get() );
 			}
-			final.push( window.deputy.wikiConfig.cci.collapseBottom.get() );
 		}
 
 		return final.join( '\n' );
@@ -456,14 +466,17 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	}
 
 	/**
-	 * Toggles the closing comments input box. This will disable the input box AND
-	 * hide the element from view.
+	 * Toggles the closing comments input box and signature checkbox.
+	 * This will disable the input box AND hide the element from view.
 	 *
 	 * @param show
 	 */
-	toggleClosingComments( show: boolean ) {
+	toggleClosingElements( show: boolean ) {
 		this.closingComments.setDisabled( !show );
 		this.closingComments.toggle( show );
+
+		this.closingCommentsSign.setDisabled( !show );
+		this.closingCommentsSign.toggle( show );
 	}
 
 	/**
@@ -477,6 +490,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		this.saveButton?.setDisabled( disabled );
 		this.closingCheckbox?.setDisabled( disabled );
 		this.closingComments?.setDisabled( disabled );
+		this.closingCommentsSign?.setDisabled( disabled );
 		this.rows?.forEach( ( row ) => row.setDisabled( disabled ) );
 
 		this.disabled = disabled;
@@ -555,6 +569,10 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		this.closingCheckbox = new OO.ui.CheckboxInputWidget();
 		this.closingComments = new OO.ui.TextInputWidget( {
 			placeholder: mw.msg( 'deputy.session.section.closeComments' ),
+			disabled: true
+		} );
+		this.closingCommentsSign = new OO.ui.CheckboxInputWidget( {
+			selected: window.deputy.config.cci.signSectionArchive.get(),
 			disabled: true
 		} );
 		this.closeButton = new OO.ui.ButtonWidget( {
@@ -674,6 +692,8 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			this.setDisabled( false );
 		} );
 
+		// Section closing (archive/ctop) elements
+
 		const closingWarning = DeputyMessageWidget( {
 			classes: [ 'dp-cs-section-unfinishedWarning' ],
 			type: 'error',
@@ -688,23 +708,30 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 
 		const closingCommentsField = new OO.ui.FieldLayout( this.closingComments, {
 			align: 'top',
-			label: 'Closing comments',
+			label: mw.msg( 'deputy.session.section.closeComments' ),
 			invisibleLabel: true,
-			help: mw.msg( 'deputy.session.section.closeHelp' ),
 			helpInline: true,
 			classes: [ 'dp-cs-section-closingCommentsField' ]
 		} );
-		// Hide by default.
-		closingCommentsField.toggle( false );
-		closingCommentsField.on( 'change', ( v: string ) => {
-			this.comments = v;
+
+		const closingCommentsSignField = new OO.ui.FieldLayout( this.closingCommentsSign, {
+			align: 'inline',
+			label: mw.msg( 'deputy.session.section.closeCommentsSign' )
 		} );
 
-		this.toggleClosingComments( false );
+		const closingFields = <div
+			class="dp-cs-section-closing"
+			style={{ display: 'none' }}
+		>
+			{ unwrapWidget( closingCommentsField ) }
+			{ unwrapWidget( closingCommentsSignField ) }
+		</div>;
+
+		this.toggleClosingElements( false );
 		this.closingCheckbox.on( 'change', ( v: boolean ) => {
 			this.closed = v;
-			closingCommentsField.toggle( v );
-			this.toggleClosingComments( v );
+			closingFields.style.display = v ? '' : 'none';
+			this.toggleClosingElements( v );
 
 			if ( v ) {
 				updateClosingWarning();
@@ -734,15 +761,14 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 					<div style={{
 						flex: '1',
 						display: 'flex',
-						flexDirection: 'column',
-						justifyContent: 'center'
+						flexDirection: 'column'
 					}}>
 						{ unwrapWidget( new OO.ui.FieldLayout( this.closingCheckbox, {
 							align: 'inline',
 							label: mw.msg( 'deputy.session.section.close' )
 						} ) ) }
 						{ unwrapWidget( closingWarning ) }
-						{ unwrapWidget( closingCommentsField ) }
+						{ closingFields }
 					</div>
 					<div style={{ display: 'flex', alignItems: 'end' }}>
 						{ unwrapWidget( this.closeButton ) }

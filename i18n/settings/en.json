@@ -70,6 +70,8 @@
     "deputy.setting.user.cci.signingBehavior.alwaysTraceLastOnly": "Always leave a trace, but sign the last row modified",
     "deputy.setting.user.cci.signingBehavior.lastOnly": "Only sign the last row modified (prevents assessor recognition)",
     "deputy.setting.user.cci.signingBehavior.never": "Never sign rows (prevents assessor recognition)",
+    "deputy.setting.user.cci.signSectionArchive.name": "Sign by default when archiving CCI sections",
+    "deputy.setting.user.cci.signSectionArchive.description": "If enabled, Deputy will enable the \"include my signature\" checkbox by default when archiving a CCI section.",
     "deputy.setting.user.cci.openOldOnContinue.name": "Open old versions on continue",
     "deputy.setting.user.cci.openOldOnContinue.description": "If enabled, all previously-open sections of a given case page will also be opened alongside the section where the \"continue CCI session\" link was clicked.",
 

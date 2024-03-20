@@ -141,6 +141,12 @@ export default class UserConfiguration extends ConfigurationBase {
 				ContributionSurveyRowSigningBehavior.Always
 			)
 		),
+		signSectionArchive: new Setting<boolean, boolean>( {
+			defaultValue: true,
+			displayOptions: {
+				type: 'checkbox'
+			}
+		} ),
 		openOldOnContinue: new Setting<boolean, boolean>( {
 			defaultValue: false,
 			displayOptions: {
