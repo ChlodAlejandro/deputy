@@ -890,7 +890,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 						display: 'flex',
 						alignContent: 'end',
 						justifyContent: 'end',
-						flexWrap: 'wrap',
+						flexWrap: dangerMode ? 'wrap' : 'nowrap',
 						maxWidth: '320px'
 					}}>
 						{ unwrapWidget( this.closeButton ) }
