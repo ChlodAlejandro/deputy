@@ -71,6 +71,12 @@ export default class UserConfiguration extends ConfigurationBase {
 		seenAnnouncements: new Setting<string[], string[]>( {
 			defaultValue: [],
 			displayOptions: { hidden: true }
+		} ),
+		dangerMode: new Setting<boolean, boolean>( {
+			defaultValue: false,
+			displayOptions: {
+				type: 'checkbox'
+			}
 		} )
 	};
 	public readonly cci = <const>{

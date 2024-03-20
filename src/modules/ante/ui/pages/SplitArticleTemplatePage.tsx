@@ -9,6 +9,7 @@ import CTEParsoidDocument from '../../models/CTEParsoidDocument';
 import { renderMergePanel, renderPreviewPanel } from '../RowPageShared';
 import yesNo from '../../../../util/yesNo';
 import SmartTitleInputWidget from '../components/SmartTitleInputWidget';
+import dangerModeConfirm from '../../../../util/dangerModeConfirm';
 
 export interface SplitArticleTemplatePageData {
 	/**
@@ -158,7 +159,8 @@ function initSplitArticleTemplatePage() {
 			} );
 			deleteButton.on( 'click', () => {
 				if ( this.splitArticleTemplate.rows.length > 0 ) {
-					OO.ui.confirm(
+					dangerModeConfirm(
+						window.CopiedTemplateEditor.config,
 						mw.message(
 							'deputy.ante.splitArticle.remove.confirm',
 							`${this.splitArticleTemplate.rows.length}`

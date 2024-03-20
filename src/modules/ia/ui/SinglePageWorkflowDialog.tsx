@@ -609,7 +609,8 @@ function initSinglePageWorkflowDialog() {
 									.cci.rootPage.get().getPrefixedText(),
 								this.data.presumptiveCase
 							] : [] )
-						)
+						),
+					window.InfringementAssistant.config
 				)
 			} );
 		}

@@ -458,7 +458,8 @@ export default class CopyrightProblemsListing {
 					'deputy.ia.content.respond',
 					this.listingPage.title.getPrefixedText(),
 					this.title.getPrefixedText()
-				)
+				),
+				window.InfringementAssistant.config
 			)
 		} );
 		await this.listingPage.getWikitext( true );

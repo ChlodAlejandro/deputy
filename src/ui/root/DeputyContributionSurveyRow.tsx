@@ -20,6 +20,7 @@ import {
 import DeputyCCIStatusDropdown from '../shared/DeputyCCIStatusDropdown';
 import { ContributionSurveyRowSort } from '../../models/ContributionSurveyRowSort';
 import last from '../../util/last';
+import dangerModeConfirm from '../../util/dangerModeConfirm';
 
 export enum DeputyContributionSurveyRowState {
 	/*
@@ -553,6 +554,16 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 	}
 
 	/**
+	 * Mark all revisions of this section as finished.
+	 */
+	markAllAsFinished(): void {
+		this.revisions.forEach( ( revision ) => {
+			revision.completed = true;
+		} );
+		this.onUpdate();
+	}
+
+	/**
 	 * Renders the `commentsTextInput` variable (closing comments OOUI TextInputWidget)
 	 *
 	 * @param value
@@ -822,15 +833,13 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 			framed: false
 		} );
 		this.checkAllButton.on( 'click', () => {
-			OO.ui.confirm(
+			dangerModeConfirm(
+				window.deputy.config,
 				mw.msg( 'deputy.session.row.checkAll.confirm' )
 			).done(
 				( confirmed: boolean ) => {
 					if ( confirmed ) {
-						this.revisions.forEach( ( revision ) => {
-							revision.completed = true;
-						} );
-						this.onUpdate();
+						this.markAllAsFinished();
 					}
 				}
 			);

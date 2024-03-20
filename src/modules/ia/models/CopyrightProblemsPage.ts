@@ -224,7 +224,8 @@ export default class CopyrightProblemsPage {
 						'deputy.ia.content.listing',
 					listingPage.getPrefixedText(),
 					page.getPrefixedText()
-				)
+				),
+				window.InfringementAssistant.config
 			)
 		);
 	}
@@ -276,7 +277,8 @@ export default class CopyrightProblemsPage {
 						'deputy.ia.content.batchListing.pd' :
 						'deputy.ia.content.batchListing',
 					listingPage.getPrefixedText(), title
-				)
+				),
+				window.InfringementAssistant.config
 			)
 		);
 	}

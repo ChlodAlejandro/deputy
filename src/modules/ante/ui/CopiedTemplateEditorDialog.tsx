@@ -19,6 +19,7 @@ import normalizeTitle from '../../../wiki/util/normalizeTitle';
 import getPageContent from '../../../wiki/util/getPageContent';
 import openWindow from '../../../wiki/util/openWindow';
 import changeTag from '../../../config/changeTag';
+import dangerModeConfirm from '../../../util/dangerModeConfirm';
 
 interface CopiedTemplateEditorDialogData {
 	main: CopiedTemplateEditor;
@@ -243,7 +244,8 @@ function initCopiedTemplateEditorDialog() {
 					.filter( v => v.length > 1 )
 					.reduce( ( p, n ) => p + n.length, 0 );
 				return noticeCount ?
-					OO.ui.confirm(
+					dangerModeConfirm(
+						window.CopiedTemplateEditor.config,
 						mw.message(
 							'deputy.ante.mergeAll.confirm',
 							`${noticeCount}`
@@ -268,7 +270,8 @@ function initCopiedTemplateEditorDialog() {
 				title: mw.msg( 'deputy.ante.reset' )
 			} );
 			resetButton.on( 'click', () => {
-				return OO.ui.confirm(
+				dangerModeConfirm(
+					window.CopiedTemplateEditor.config,
 					mw.msg( 'deputy.ante.reset.confirm' )
 				).done( ( confirmed: boolean ) => {
 					if ( confirmed ) {
@@ -291,7 +294,8 @@ function initCopiedTemplateEditorDialog() {
 			deleteButton.on( 'click', () => {
 				// Original copied notice count.
 				const notices = this.parsoid.findNotices();
-				return OO.ui.confirm(
+				dangerModeConfirm(
+					window.CopiedTemplateEditor.config,
 					mw.message(
 						'deputy.ante.delete.confirm',
 						`${notices.length}`
@@ -373,7 +377,8 @@ function initCopiedTemplateEditorDialog() {
 
 			if ( this.parsoid.getPage() !== talkPage ) {
 				// Ask for user confirmation.
-				await OO.ui.confirm(
+				dangerModeConfirm(
+					window.CopiedTemplateEditor.config,
 					mw.message(
 						'deputy.ante.loadRedirect.message',
 						talkPage, this.parsoid.getPage()
@@ -493,7 +498,8 @@ function initCopiedTemplateEditorDialog() {
 								this.parsoid.originalCount > 0 ?
 									'deputy.ante.content.modify' :
 									'deputy.ante.content.add'
-							)
+							),
+							window.CopiedTemplateEditor.config
 						)
 					} ).catch( ( e, c ) => {
 						throw errorToOO( e, c );

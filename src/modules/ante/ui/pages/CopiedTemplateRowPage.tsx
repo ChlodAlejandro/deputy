@@ -15,6 +15,7 @@ import equalTitle from '../../../../util/equalTitle';
 import RevisionDateGetButton from '../components/RevisionDateGetButton';
 import SmartTitleInputWidget from '../components/SmartTitleInputWidget';
 import PageLatestRevisionGetButton from '../components/PageLatestRevisionGetButton';
+import dangerModeConfirm from '../../../../util/dangerModeConfirm';
 
 export interface CopiedTemplateRowPageData {
 	/**
@@ -590,7 +591,8 @@ function initCopiedTemplateRowPage() {
 						this.copiedTemplateRow[ rowName ] !== newValue
 					) {
 						confirmProcess.next( async () => {
-							const confirmPromise = OO.ui.confirm(
+							const confirmPromise = dangerModeConfirm(
+								window.CopiedTemplateEditor.config,
 								mw.message(
 									'deputy.ante.copied.diffDeprecate.replace',
 									rowName, this.copiedTemplateRow[ rowName ], newValue

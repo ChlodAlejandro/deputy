@@ -26,16 +26,23 @@
     "deputy.session.section.closeComments": "Archiving comments",
     "deputy.session.section.closeCommentsSign": "Include my signature",
     "deputy.session.section.closeError": "Some revisions remain unassessed. You must mark these revisions as assessed before archiving this section.",
+    "deputy.session.section.closeError.danger": "Some revisions remain unassessed, but Deputy will allow archiving while danger mode is enabled.",
     "deputy.session.section.closeWarn": "You have unsaved changes. Close the section without saving?",
     "deputy.session.section.closed": "This section has been archived. You can edit its contents, but you cannot un-archive it.",
 
     "deputy.session.section.stop": "Stop session",
+    "deputy.session.section.stop.title": "Stop then current session, closing all sections and saving changes for later.",
     "deputy.session.section.saved": "Section saved",
     "deputy.session.section.failed": "Failed to save section",
     "deputy.session.section.missingSection": "The target section is missing from the case page.",
     "deputy.session.section.sectionIncomplete": "The target section still has unreviewed rows.",
     "deputy.session.section.conflict.title": "Edit conflict",
     "deputy.session.section.conflict.help": "Someone else edited the page before you. Deputy will restart to load the new case content. Your changes will be preserved.",
+
+    "deputy.session.section.danger": "Danger mode",
+    "deputy.session.section.markAllFinished": "Mark all revisions in all sections as finished",
+    "deputy.session.section.instantArchive": "Archive",
+    "deputy.session.section.instantArchive.title": "Archive and save this section immediately. Revisions will not be marked as finished.",
 
     "deputy.session.row.status": "Current page status",
     "deputy.session.row.status.unfinished": "Unfinished",

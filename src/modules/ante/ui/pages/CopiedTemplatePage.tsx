@@ -9,6 +9,7 @@ import CopiedTemplateEditorDialog from '../CopiedTemplateEditorDialog';
 import { AttributionNoticePageLayout } from './AttributionNoticePageLayout';
 import { renderMergePanel, renderPreviewPanel } from '../RowPageShared';
 import yesNo from '../../../../util/yesNo';
+import dangerModeConfirm from '../../../../util/dangerModeConfirm';
 
 export interface CopiedTemplatePageData {
 	/**
@@ -183,7 +184,8 @@ function initCopiedTemplatePage() {
 			} );
 			deleteButton.on( 'click', () => {
 				if ( this.copiedTemplate.rows.length > 0 ) {
-					OO.ui.confirm(
+					dangerModeConfirm(
+						window.CopiedTemplateEditor.config,
 						mw.message(
 							'deputy.ante.copied.remove.confirm',
 							`${this.copiedTemplate.rows.length}`

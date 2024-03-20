@@ -22,6 +22,7 @@ import sectionHeadingN from '../../wiki/util/sectionHeadingN';
 import changeTag from '../../config/changeTag';
 import DeputyExtraneousElement from './DeputyExtraneousElement';
 import classMix from '../../util/classMix';
+import dangerModeConfirm from '../../util/dangerModeConfirm';
 
 /**
  * The contribution survey section UI element. This includes a list of revisions
@@ -531,7 +532,12 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		if ( sectionId == null ) {
 			throw new Error( mw.msg( 'deputy.session.section.missingSection' ) );
 		}
-		if ( this.closed && this.rows.some( r => !r.completed ) ) {
+		if (
+			this.closed &&
+			!this._section.originallyClosed &&
+			!window.deputy.config.core.dangerMode.get() &&
+			this.rows.some( r => !r.completed )
+		) {
 			throw new Error( mw.msg( 'deputy.session.section.sectionIncomplete' ) );
 		}
 
@@ -542,7 +548,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			section: sectionId,
 			text: this.wikitext,
 			baserevid: this.revid,
-			summary: decorateEditSummary( this.editSummary )
+			summary: decorateEditSummary( this.editSummary, window.deputy.config )
 		} ).then( function ( data ) {
 			return data;
 		}, ( code, data ) => {
@@ -591,6 +597,8 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	 * @inheritDoc
 	 */
 	render(): HTMLElement {
+		const dangerMode = window.deputy.config.core.dangerMode.get();
+
 		this.closingCheckbox = new OO.ui.CheckboxInputWidget( {
 			selected: this._section.originallyClosed,
 			disabled: this._section.originallyClosed
@@ -605,10 +613,14 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			disabled: true
 		} );
 		this.closeButton = new OO.ui.ButtonWidget( {
-			label: mw.msg( 'deputy.session.section.stop' )
+			label: mw.msg( 'deputy.session.section.stop' ),
+			title: mw.msg( 'deputy.session.section.stop.title' ),
+			...( dangerMode ? { invisibleLabel: true, icon: 'pause' } : {} )
 		} );
 		this.reviewButton = new OO.ui.ButtonWidget( {
-			label: mw.msg( 'deputy.review' )
+			label: mw.msg( 'deputy.review' ),
+			title: mw.msg( 'deputy.review.title' ),
+			...( dangerMode ? { invisibleLabel: true, icon: 'eye' } : {} )
 		} );
 		this.saveButton = new OO.ui.ButtonWidget( {
 			label: mw.msg( 'deputy.save' ),
@@ -623,7 +635,8 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 
 		this.closeButton.on( 'click', async () => {
 			if ( this.wikitext !== ( await this.getSection() ).originalWikitext ) {
-				OO.ui.confirm(
+				dangerModeConfirm(
+					window.deputy.config,
 					mw.msg( 'deputy.session.section.closeWarn' )
 				).done( ( confirmed: boolean ) => {
 					if ( confirmed ) {
@@ -683,6 +696,8 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 						if ( !this.casePage.isContributionSurveyHeading( child ) ) {
 							heading.parentNode.insertBefore( child, insertRef );
 							this.sectionNodes.push( child as HTMLElement );
+							// noinspection JSUnresolvedReference
+							( $( child ).children( '.mw-collapsible' ) as any ).makeCollapsible();
 						}
 					}
 
@@ -703,6 +718,9 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 						}
 						// Run this asynchronously.
 						setTimeout( this.loadData.bind( this ), 0 );
+					} else {
+						this.close();
+						await window.deputy.session.rootSession.closeSection( this );
 					}
 				}
 			}, ( err ) => {
@@ -731,7 +749,14 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		closingWarning.toggle( false );
 		const updateClosingWarning = ( () => {
 			const incomplete = this.rows.some( ( row ) => !row.completed );
-			this.saveButton.setDisabled( incomplete );
+
+			if ( window.deputy.config.core.dangerMode.get() ) {
+				this.saveButton.setDisabled( false );
+				closingWarning.setLabel( mw.msg( 'deputy.session.section.closeError.danger' ) );
+			} else {
+				closingWarning.setLabel( mw.msg( 'deputy.session.section.closeError' ) );
+				this.saveButton.setDisabled( incomplete );
+			}
 			closingWarning.toggle( incomplete );
 		} );
 
@@ -752,6 +777,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			class="dp-cs-section-closing"
 			style={{ display: 'none' }}
 		>
+			{ unwrapWidget( closingWarning ) }
 			{ unwrapWidget( closingCommentsField ) }
 			{ unwrapWidget( closingCommentsSignField ) }
 		</div>;
@@ -786,6 +812,45 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			this.comments = v;
 		} );
 
+		// Danger mode buttons
+		const dangerModeElements = [];
+		if ( dangerMode ) {
+			const markAllFinishedButton = new OO.ui.ButtonWidget( {
+				flags: [ 'destructive' ],
+				icon: 'checkAll',
+				label: mw.msg( 'deputy.session.section.markAllFinished' ),
+				title: mw.msg( 'deputy.session.section.markAllFinished' ),
+				invisibleLabel: true
+			} );
+			markAllFinishedButton.on( 'click', () => {
+				this.rows.forEach( v => v.markAllAsFinished() );
+			} );
+
+			const instantArchiveButton = new OO.ui.ButtonWidget( {
+				flags: [ 'destructive', 'primary' ],
+				label: mw.msg( 'deputy.session.section.instantArchive' ),
+				title: mw.msg( 'deputy.session.section.instantArchive.title' )
+			} );
+			instantArchiveButton.on( 'click', () => {
+				this.closingCheckbox.setSelected( true );
+				this.saveButton.emit( 'click' );
+			} );
+
+			const dangerModeButtons = [
+				unwrapWidget( markAllFinishedButton ),
+				unwrapWidget( instantArchiveButton )
+			];
+			dangerModeElements.push(
+				<div class="dp-cs-section-danger--separator">
+					{mw.msg( 'deputy.session.section.danger' )}
+				</div>,
+				dangerModeButtons
+			);
+
+			// Remove spacing from save button
+			unwrapWidget( this.saveButton ).style.marginRight = '0';
+		}
+
 		// Actual element
 
 		return this.container = <div class={ classMix(
@@ -811,7 +876,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			<div class="dp-cs-section-footer">
 				<div style={{ display: 'flex' }}>
 					<div style={{
-						flex: '1',
+						flex: '1 1 100%',
 						display: 'flex',
 						flexDirection: 'column'
 					}}>
@@ -819,13 +884,19 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 							align: 'inline',
 							label: mw.msg( 'deputy.session.section.close' )
 						} ) ) }
-						{ unwrapWidget( closingWarning ) }
 						{ closingFields }
 					</div>
-					<div style={{ display: 'flex', alignItems: 'end' }}>
+					<div style={{
+						display: 'flex',
+						alignContent: 'end',
+						justifyContent: 'end',
+						flexWrap: 'wrap',
+						maxWidth: '320px'
+					}}>
 						{ unwrapWidget( this.closeButton ) }
 						{ unwrapWidget( this.reviewButton ) }
 						{ unwrapWidget( this.saveButton ) }
+						{ dangerModeElements }
 					</div>
 				</div>
 				{ saveContainer }

@@ -12,6 +12,7 @@ import swapElements from '../../../../util/swapElements';
 import DemoTemplateMessage from './messages/DemoTemplateMessage';
 import removeElement from '../../../../util/removeElement';
 import DeputyMessageWidget from '../../../../ui/shared/DeputyMessageWidget';
+import dangerModeConfirm from '../../../../util/dangerModeConfirm';
 
 export interface BackwardsCopyTemplatePageData {
 	/**
@@ -184,7 +185,8 @@ function initBackwardsCopyTemplatePage() {
 			} );
 			deleteButton.on( 'click', () => {
 				if ( this.backwardsCopyTemplate.rows.length > 0 ) {
-					OO.ui.confirm(
+					dangerModeConfirm(
+						window.CopiedTemplateEditor.config,
 						mw.message(
 							'deputy.ante.copied.remove.confirm',
 							`${this.backwardsCopyTemplate.rows.length}`

@@ -7,6 +7,7 @@ import {
 import { h } from 'tsx-dom';
 import AttributionNotice from '../models/AttributionNotice';
 import RowedAttributionNotice from '../models/RowedAttributionNotice';
+import dangerModeConfirm from '../../../util/dangerModeConfirm';
 
 /**
  * Renders the panel used to merge multiple {{split article}} templates.
@@ -69,7 +70,8 @@ export function renderMergePanel<T extends SupportedAttributionNoticeType>(
 	mergeAllButton.on( 'click', () => {
 		const notices = parentTemplate.parsoid.findNoticeType( type );
 		// Confirm before merging.
-		OO.ui.confirm(
+		dangerModeConfirm(
+			window.CopiedTemplateEditor.config,
 			mw.message(
 				'deputy.ante.merge.all.confirm',
 				`${notices.length - 1}`

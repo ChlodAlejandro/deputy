@@ -44,6 +44,8 @@
     "deputy.setting.user.core.portletNames.full": "Full names (e.g. Attribution Notice Template Editor)",
     "deputy.setting.user.core.portletNames.short": "Shortened names (e.g. Attrib. Template Editor)",
     "deputy.setting.user.core.portletNames.acronym": "Acronyms (e.g. ANTE)",
+    "deputy.setting.user.core.dangerMode.name": "Danger mode",
+    "deputy.setting.user.core.dangerMode.description": "Live on the edge. This disables most confirmations and warnings given by Deputy, only leaving potentially catastrophic actions, such as page edits which break templates. It also adds extra buttons meant for rapid case processing. Intended for clerk use; use with extreme caution.",
 
     "deputy.setting.user.cci": "CCI",
 

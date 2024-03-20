@@ -12,6 +12,7 @@
 
     "deputy.cancel": "Cancel",
     "deputy.review": "Review",
+    "deputy.review.title": "Review a diff of the changes to be made to the page",
     "deputy.save": "Save",
     "deputy.close": "Close",
     "deputy.positiveDiff": "+{{FORMATNUM:$1}}",
