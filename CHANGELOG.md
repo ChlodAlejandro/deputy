@@ -3,11 +3,14 @@
 
 These are changes that may or may not have been deployed to wikis, but are not yet considered as part of any release.
 
-# Unreleased
+# [v0.7.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.7.1) - *unreleased*
 
-For a granular list of changes, see [v0.7.0...main](https://github.com/ChlodAlejandro/deputy/compare/v0.5.0...main).
+## Fixed
+* [[`d8bf408`](../../commit/d8bf408)] Fixed unintentional wrapping in section buttons
 
-# [v0.7.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.5.0) - *2024-03-20*
+For a granular list of changes, see [v0.7.0...main](https://github.com/ChlodAlejandro/deputy/compare/v0.7.0...main).
+
+# [v0.7.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.7.0) - *2024-03-20*
 This version introduces "Danger mode", a way to allow clerks to rapidly process cases. It removes many of Deputy's confirmations and warnings, and also introduces additional (dangerous) buttons. As of now, it does not use an allowlist nor have minimum account requirements.
 
 ## Added
@@ -27,9 +30,9 @@ This version introduces "Danger mode", a way to allow clerks to rapidly process 
 * [[`2f9f1b0`](../../commit/2f9f1b0)] Fixed CCI diff list breaking when a space is between diffs
 * [[`f314105`](../../commit/f314105)] Fixed archived sections being unloadable (again)
 
-For a granular list of changes, see [v0.6.0...v0.7.0](https://github.com/ChlodAlejandro/deputy/compare/v0.5.0...main).
+For a granular list of changes, see [v0.6.0...v0.7.0](https://github.com/ChlodAlejandro/deputy/compare/v0.6.0...v0.7.0).
 
-# [v0.6.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.5.0) - *2024-02-14*
+# [v0.6.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.6.0) - *2024-02-14*
 Breaking change due to configuration version upgrade. This version allows Deputy to load rows where only a page is available (like for files and the WikiProject Tropical cyclones case) and includes improved handling of configuration version changes.
 The latter was implemented to support changing the `ia.listingWikitextMatch` configuration field to allow processing for Copyright problems noticeboard listings which have mismatched IDs and links.
 
@@ -43,9 +46,9 @@ The latter was implemented to support changing the `ia.listingWikitextMatch` con
   * **BREAKING CHANGE!** Wikis must update their `ia.listingWikitextMatch` configuration fields to use
     the new capture groups.
 
-For a granular list of changes, see [v0.5.1...v0.6.0](https://github.com/ChlodAlejandro/deputy/compare/v0.5.0...main).
+For a granular list of changes, see [v0.5.1...v0.6.0](https://github.com/ChlodAlejandro/deputy/compare/v0.5.1...v0.6.0).
 
-# [v0.5.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.5.0) - *2023-12-21*
+# [v0.5.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.5.1) - *2023-12-21*
 
 ## Modified
 * [[`640cc01`](../../commit/640cc01)] Moved User:Chlod/Scripts/Deputy links to Wikipedia:Deputy
