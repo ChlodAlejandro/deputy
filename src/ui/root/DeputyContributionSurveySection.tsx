@@ -21,6 +21,7 @@ import DeputyMessageWidget from '../shared/DeputyMessageWidget';
 import sectionHeadingN from '../../wiki/util/sectionHeadingN';
 import changeTag from '../../config/changeTag';
 import DeputyExtraneousElement from './DeputyExtraneousElement';
+import classMix from '../../util/classMix';
 
 /**
  * The contribution survey section UI element. This includes a list of revisions
@@ -161,9 +162,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		}
 
 		if ( this.closed ) {
-			if ( this._section.originallyClosed ) {
-				// TODO: Fix when not broken
-			} else {
+			if ( !this._section.originallyClosed ) {
 				let closingComments = ( this.comments ?? '' ).trim();
 				if ( this.closingCommentsSign.isSelected() ) {
 					closingComments += ' ~~~~';
@@ -179,6 +178,8 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 				}
 				final.push( window.deputy.wikiConfig.cci.collapseBottom.get() );
 			}
+			// If the section was originally closed, don't allow the archiving
+			// message to be edited.
 		}
 
 		return final.join( '\n' );
@@ -313,14 +314,32 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	 *         `false` if not (invalid section, already closed, etc.)
 	 */
 	async prepare(): Promise<boolean> {
-		const listElements =
+		let targetSectionNodes = this.sectionNodes;
+		let listElements =
 			this.sectionNodes.filter(
 				( el ) => el instanceof HTMLElement && el.tagName === 'UL'
 			) as HTMLUListElement[];
 
 		if ( listElements.length === 0 ) {
-			// Not a valid section! Might be closed already.
-			return false;
+			// No list found ! Is this a valid section?
+			// Check for a collapsible section.
+
+			const collapsible = ( this.sectionNodes.find(
+				( v: HTMLElement ) =>
+					v instanceof HTMLElement && v.querySelector( '.mw-collapsible' )
+			) as HTMLElement | null )?.querySelector( '.mw-collapsible' ) ?? null;
+
+			if ( collapsible ) {
+				// This section has a collapsible. It's possible that it's a closed section.
+				// From here, use a different `sectionNodes` (specifically targeting all nodes
+				// inside that collapsible), and then locate all ULs inside that collapsible.
+				targetSectionNodes = Array.from( collapsible.childNodes );
+				listElements = Array.from( collapsible.querySelectorAll( 'ul' ) );
+			} else {
+				// No collapsible found. Give up.
+				console.warn( 'Could not find valid ULs in CCI section.', targetSectionNodes );
+				return false;
+			}
 		}
 
 		const rowElements: Record<string, HTMLLIElement> = {};
@@ -398,7 +417,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 						// Another node exists next
 						lastNode != null &&
 						// The node is part of this section
-						this.sectionNodes.includes( lastNode ) &&
+						targetSectionNodes.includes( lastNode ) &&
 						(
 							// The node is not an element
 							!( lastNode instanceof HTMLElement ) ||
@@ -409,6 +428,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 						extraneousNodes.push( lastNode );
 						lastNode = lastNode.nextSibling;
 					}
+
 					rowElement = extraneousNodes;
 				} else {
 					rowElement = line;
@@ -421,7 +441,12 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			} else if ( Array.isArray( rowElement ) ) {
 				// Array of Nodes
 				this.wikitextLines.push( line );
-				this.rowElements.push( DeputyExtraneousElement( rowElement ) );
+
+				if ( rowElement.length !== 0 ) {
+					// Only append the row element if it has contents.
+					// Otherwise, there will be a blank blue box.
+					this.rowElements.push( DeputyExtraneousElement( rowElement ) );
+				}
 			} else if ( typeof rowElement === 'string' ) {
 				this.wikitextLines.push( rowElement );
 			}
@@ -566,9 +591,13 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	 * @inheritDoc
 	 */
 	render(): HTMLElement {
-		this.closingCheckbox = new OO.ui.CheckboxInputWidget();
+		this.closingCheckbox = new OO.ui.CheckboxInputWidget( {
+			selected: this._section.originallyClosed,
+			disabled: this._section.originallyClosed
+		} );
 		this.closingComments = new OO.ui.TextInputWidget( {
 			placeholder: mw.msg( 'deputy.session.section.closeComments' ),
+			value: this._section.closingComments,
 			disabled: true
 		} );
 		this.closingCommentsSign = new OO.ui.CheckboxInputWidget( {
@@ -727,9 +756,14 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 			{ unwrapWidget( closingCommentsSignField ) }
 		</div>;
 
-		this.toggleClosingElements( false );
-		this.closingCheckbox.on( 'change', ( v: boolean ) => {
+		const updateClosingFields = ( v: boolean ) => {
 			this.closed = v;
+
+			if ( this._section.originallyClosed ) {
+				// This section was originally closed. Hide everything.
+				v = false;
+			}
+
 			closingFields.style.display = v ? '' : 'none';
 			this.toggleClosingElements( v );
 
@@ -745,12 +779,30 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 					row.removeEventListener( 'update', updateClosingWarning );
 				} );
 			}
-		} );
+		};
+		this.closingCheckbox.on( 'change', updateClosingFields );
+		updateClosingFields( this.closed );
 		this.closingComments.on( 'change', ( v: string ) => {
 			this.comments = v;
 		} );
 
-		return this.container = <div class="deputy dp-cs-section">
+		// Actual element
+
+		return this.container = <div class={ classMix(
+			'deputy',
+			'dp-cs-section',
+			this._section.originallyClosed && 'dp-cs-section-archived'
+		) }>
+			{
+				this._section.originallyClosed && <div class="dp-cs-section-archived-warn">
+					{
+						unwrapWidget( new OO.ui.MessageWidget( {
+							type: 'warning',
+							label: mw.msg( 'deputy.session.section.closed' )
+						} ) )
+					}
+				</div>
+			}
 			<div>
 				{ this.rowElements.map( ( row ) =>
 					row instanceof HTMLElement ? row : row.render()

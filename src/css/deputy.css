@@ -138,6 +138,11 @@ p.dp-messageWidget-message {
 
 ===============================================================================
 */
+
+.dp-cs-section-archived .dp-cs-row-content {
+	background-color: rgba(255, 0, 0, 6%);
+}
+
 .dp-cs-session-notice {
 	margin-top: 8px;
 	position: sticky;
@@ -200,7 +205,7 @@ p.dp-messageWidget-message {
 	margin-bottom: 0 !important;
 }
 
-.dp-cs-row, .dp-cs-extraneous {
+.dp-cs-section-archived-warn, .dp-cs-row, .dp-cs-extraneous {
 	margin-bottom: 8px;
 }
 
