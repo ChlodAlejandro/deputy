@@ -3,10 +3,14 @@
 
 These are changes that may or may not have been deployed to wikis, but are not yet considered as part of any release.
 
-# [v0.6.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.5.0) - *unreleased*
+# [v0.7.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.5.0) - *unreleased*
+This version introduces "Danger mode", a way to allow clerks to rapidly process cases. It removes many of Deputy's confirmations and warnings, and also introduces additional (dangerous) buttons. As of now, it does not use an allowlist nor have minimum account requirements.
 
 ## Added
 * [[`f911e9e`](../../commit/f911e9e)] Added row collapse-by-default option
+* [[`c3aeba3`](../../commit/c3aeba3)] Added option to keep archiving template (`{{collapse top}}`) unsigned
+* [[`c3aeba3`](../../commit/c3aeba3)] Added preference to leave archiving template unsigned by default
+* [[`c8c794b`](../../commit/c8c794b)] Introduced "Danger mode"
 
 ## Modified
 * [[`522f952`](../../commit/522f952)] Changed "Listing is missing from wikitext or malformed listing" message to a more user-friendly error message
@@ -17,6 +21,7 @@ These are changes that may or may not have been deployed to wikis, but are not y
 * [[`3c78dc3`](../../commit/3c78dc3)] Fixed CCI row collapsing requiring two clicks
 * [[`742e90c`](../../commit/742e90c)] Fixed section name detection for newer versions of MediaWiki+DiscussionTools
 * [[`2f9f1b0`](../../commit/2f9f1b0)] Fixed CCI diff list breaking when a space is between diffs
+* [[`f314105`](../../commit/f314105)] Fixed archived sections being unloadable (again)
 
 For a granular list of changes, see [v0.6.0...main](https://github.com/ChlodAlejandro/deputy/compare/v0.5.0...main).
 
