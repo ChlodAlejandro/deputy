@@ -511,7 +511,11 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 
 			const unfinishedWithStatus = this.statusModified && !this.completed;
 			if ( this.unfinishedMessageBox ) {
-				this.unfinishedMessageBox.toggle( unfinishedWithStatus );
+				this.unfinishedMessageBox.toggle(
+					// If using danger mode, this should always be enabled.
+					window.deputy.config.core.dangerMode.get() ||
+					unfinishedWithStatus
+				);
 			}
 			this.statusAutosaveFunction();
 		}
