@@ -513,7 +513,7 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 			if ( this.unfinishedMessageBox ) {
 				this.unfinishedMessageBox.toggle(
 					// If using danger mode, this should always be enabled.
-					window.deputy.config.core.dangerMode.get() ||
+					!window.deputy.config.core.dangerMode.get() &&
 					unfinishedWithStatus
 				);
 			}
