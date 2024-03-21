@@ -561,6 +561,11 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 	 * Mark all revisions of this section as finished.
 	 */
 	markAllAsFinished(): void {
+		if ( !this.revisions ) {
+			// If `renderUnfinished` was never called, this will be undefined.
+			// We want to skip over instead.
+			return;
+		}
 		this.revisions.forEach( ( revision ) => {
 			revision.completed = true;
 		} );
