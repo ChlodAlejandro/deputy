@@ -5,8 +5,16 @@ These are changes that may or may not have been deployed to wikis, but are not y
 
 # [v0.7.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.7.1) - *unreleased*
 
+## Added
+* [[`eab952b`](../../commit/eab952b)] (dev) Added copyright problems listing parse tests
+
+## Modified
+* [[`5f173f0`](../../commit/5f173f0)] Removed unfinished row notice in danger mode
+
 ## Fixed
 * [[`d8bf408`](../../commit/d8bf408)] Fixed unintentional wrapping in section buttons
+* [[`87d5c6f`](../../commit/87d5c6f)] Fixed "Mark all rows in all sections as finished" not working when there are finished rows
+* [[`1524994`](../../commit/1524994)] Fixed definition list comments (`:`) breaking listing parser
 
 For a granular list of changes, see [v0.7.0...main](https://github.com/ChlodAlejandro/deputy/compare/v0.7.0...main).
 
