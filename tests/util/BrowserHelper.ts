@@ -202,10 +202,10 @@ export default class BrowserHelper extends webdriver.WebDriver {
 	 * @param func
 	 * @param {...any} args
 	 */
-	async evaluate<T, U extends ( ...args: any[] ) => T>(
+	async evaluate<T, U extends ( ...args: any[] ) => Promise<T> | T>(
 		func: U,
 		...args: Parameters<U>
-	): Promise<T> {
+	): Promise<Awaited<T>> {
 		const buildPromise = () => this.executeAsyncScript<T>(
 			async function (
 				_func: string,
