@@ -6,6 +6,15 @@ import decorateEditSummary from '../../../wiki/util/decorateEditSummary';
 import MwApi from '../../../MwApi';
 import changeTag from '../../../config/changeTag';
 
+export interface SerializedCopyrightProblemsListingData {
+	basic: boolean;
+	i?: number;
+	id: string;
+	title: { namespace: number, title: string, fragment: null | string };
+	listingPage: { namespace: number, title: string, fragment: null | string };
+	lines: { start: number, end: number };
+}
+
 /**
  * Represents a listing on a CPN page where the listing is substituted from
  * the `{{article-cv}}` template.
@@ -326,6 +335,8 @@ export default class CopyrightProblemsListing {
 	 * the line on which the listing appears, the `end` denotes the last line
 	 * where there is a comment on that specific listing.
 	 *
+	 * Use in conjunction with `listingPage.getWikitext()` to get the lines in wikitext.
+	 *
 	 * @return See documentation body.
 	 */
 	async getListingWikitextLines(): Promise<{ start: number, end: number }> {
@@ -345,7 +356,7 @@ export default class CopyrightProblemsListing {
 			// Does not match: `*`, ``, ` `
 			if ( startLine != null ) {
 				if ( bulletList ?
-					!/^(\*[*:]+)/g.test( lineText ) :
+					!/^(\*[*:]+|:)/g.test( lineText ) :
 					/^[^:*]/.test( lineText )
 				) {
 					return { start: startLine, end: endLine ?? startLine };
@@ -463,6 +474,28 @@ export default class CopyrightProblemsListing {
 			)
 		} );
 		await this.listingPage.getWikitext( true );
+	}
+
+	/**
+	 * Serialize this listing. Used for tests.
+	 */
+	async serialize(): Promise<SerializedCopyrightProblemsListingData> {
+		return {
+			basic: this.basic,
+			i: this.i,
+			id: this.id,
+			title: {
+				namespace: this.title.namespace,
+				title: this.title.title,
+				fragment: this.title.getFragment()
+			},
+			listingPage: {
+				namespace: this.listingPage.title.namespace,
+				title: this.listingPage.title.title,
+				fragment: this.listingPage.title.getFragment()
+			},
+			lines: await this.getListingWikitextLines()
+		};
 	}
 
 }
