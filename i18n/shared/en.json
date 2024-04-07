@@ -18,6 +18,8 @@
     "deputy.positiveDiff": "+{{FORMATNUM:$1}}",
     "deputy.negativeDiff": "-{{FORMATNUM:$1}}",
     "deputy.zeroDiff": "0",
+    "deputy.brokenDiff": "?",
+    "deputy.brokenDiff.explain": "The internal parent revision ID for this diff points to a non-existent revision. [[phab:T186280]] has more information.",
     "deputy.moreInfo": "More information",
     "deputy.dismiss": "Dismiss",
 

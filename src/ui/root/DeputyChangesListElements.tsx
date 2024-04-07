@@ -203,29 +203,33 @@ export function ChangesListDiff(
 	) as keyof JSX.IntrinsicElements;
 
 	return <DiffTag class={ `mw-plusminus-${
-		diffsize === 0 ? 'null' :
+		!diffsize ? 'null' :
 			( diffsize > 0 ? 'pos' : 'neg' )
 	} mw-diff-bytes` } title={
-		mw.message(
-			'deputy.session.revision.byteChange',
-			size.toString()
-		).text()
+		diffsize == null ?
+			mw.msg( 'deputy.brokenDiff.explain' ) :
+			mw.message(
+				'deputy.session.revision.byteChange',
+				size.toString()
+			).text()
 	}>
 		{
-			// Messages that can be used here:
-			// * deputy.negativeDiff
-			// * deputy.positiveDiff
-			// * deputy.zeroDiff
-			mw.message(
-				`deputy.${
-					{
-						'-1': 'negative',
-						1: 'positive',
-						0: 'zero'
-					}[ Math.sign( diffsize ) ]
-				}Diff`,
-				diffsize.toString()
-			).text()
+			diffsize == null ?
+				mw.msg( 'deputy.brokenDiff' ) :
+				// Messages that can be used here:
+				// * deputy.negativeDiff
+				// * deputy.positiveDiff
+				// * deputy.zeroDiff
+				mw.message(
+					`deputy.${
+						{
+							'-1': 'negative',
+							1: 'positive',
+							0: 'zero'
+						}[ Math.sign( diffsize ) ]
+					}Diff`,
+					diffsize.toString()
+				).text()
 		}
 	</DiffTag>;
 }
