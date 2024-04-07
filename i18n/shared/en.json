@@ -17,6 +17,7 @@
     "deputy.close": "Close",
     "deputy.positiveDiff": "+{{FORMATNUM:$1}}",
     "deputy.negativeDiff": "-{{FORMATNUM:$1}}",
+    "deputy.zeroDiff": "0",
     "deputy.moreInfo": "More information",
     "deputy.dismiss": "Dismiss",
 

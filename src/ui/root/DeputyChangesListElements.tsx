@@ -212,9 +212,17 @@ export function ChangesListDiff(
 		).text()
 	}>
 		{
+			// Messages that can be used here:
+			// * deputy.negativeDiff
+			// * deputy.positiveDiff
+			// * deputy.zeroDiff
 			mw.message(
 				`deputy.${
-					diffsize < 0 ? 'negative' : 'positive'
+					{
+						'-1': 'negative',
+						1: 'positive',
+						0: 'zero'
+					}[ Math.sign( diffsize ) ]
 				}Diff`,
 				diffsize.toString()
 			).text()

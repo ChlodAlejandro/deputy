@@ -776,10 +776,17 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 			);
 
 			parts.push(
-				// eslint-disable-next-line mediawiki/msg-doc
+				// Messages that can be used here:
+				// * deputy.negativeDiff
+				// * deputy.positiveDiff
+				// * deputy.zeroDiff
 				mw.message(
 					`deputy.${
-						largestDiff.diffsize < 0 ? 'negative' : 'positive'
+						{
+							'-1': 'negative',
+							1: 'positive',
+							0: 'zero'
+						}[ Math.sign( largestDiff.diffsize ) ]
 					}Diff`,
 					largestDiff.diffsize.toString()
 				).text()
