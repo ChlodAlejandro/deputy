@@ -336,6 +336,10 @@ export default class DeputyContributionSurveyRevision
 			/** Stranger danger! Yes. */
 			dangerouslySetInnerHTML={this.revision.parsedcomment}
 		/>;
+		const tagMessages = ( this.revision.tags ?? [] ).map(
+			// eslint-disable-next-line mediawiki/msg-doc
+			( v ) => [ v, mw.message( `tag-${ v }` ).parse() ] as [string, string]
+		).filter( v => v[ 1 ] !== '-' );
 
 		return <span>
 			{
@@ -355,11 +359,16 @@ export default class DeputyContributionSurveyRevision
 			/> <ChangesListDiff
 				size={ this.revision.size }
 				diffsize={ this.revision.diffsize }
-			/> <span
-				class="mw-changeslist-separator"
-			/> { commentElement } {
-				( this.revision.tags?.length ?? -1 ) > 0 &&
-				<ChangesListTags tags={this.revision.tags} />
+			/> {
+				( this.revision.parsedcomment ||
+				tagMessages.length > 0 ) &&
+				<span class="mw-changeslist-separator" />
+			} {
+				this.revision.parsedcomment &&
+				commentElement
+			} {
+				tagMessages.length > 0 &&
+				<ChangesListTags tags={tagMessages} />
 			}
 		</span> as HTMLElement;
 	}

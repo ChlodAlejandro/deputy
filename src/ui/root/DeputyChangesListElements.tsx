@@ -239,7 +239,7 @@ export function ChangesListDiff(
  * @param root0.tags
  * @return HTML element
  */
-export function ChangesListTags( { tags }: { tags: string[] } ): JSX.Element {
+export function ChangesListTags( { tags }: { tags: [string, string][] } ): JSX.Element {
 	return <span class="mw-tag-markers"><a
 		rel="noopener"
 		href={mw.format(
@@ -252,14 +252,10 @@ export function ChangesListTags( { tags }: { tags: string[] } ): JSX.Element {
 			'deputy.session.revision.tags',
 			tags.length.toString()
 		).text() }</a>{
-		tags.map( ( v ) => {
-			// eslint-disable-next-line mediawiki/msg-doc
-			const tagMessage = mw.message( `tag-${ v }` ).parse();
-			return tagMessage !== '-' && <span
-				class={ `mw-tag-marker mw-tag-marker-${ v }` }
-				dangerouslySetInnerHTML={ tagMessage }
-			/>;
-		} )
+		tags.map( ( v ) => <span
+			class={ `mw-tag-marker mw-tag-marker-${ v[ 0 ] }` }
+			dangerouslySetInnerHTML={ v[ 1 ] }
+		/> )
 	}
 	</span>;
 }
