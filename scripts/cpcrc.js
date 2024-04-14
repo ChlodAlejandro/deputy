@@ -13,7 +13,7 @@ const axios = require( 'axios' );
  *
  * @type {number}
  */
-const cpcVersion = 1171074480;
+const cpcVersion = 1218931021;
 
 ( async () => {
 
@@ -42,97 +42,123 @@ const cpcVersion = 1171074480;
 	console.log("Conducting search of CPC templates...");
 
 	// Tags where there shouldn't be a -1.
-	const nonClosingTags = [ 'deferred', 'OTRS', 'unverified', 'viable' ];
+	const nonClosingTags = [
+		// Removed with [[Special:Diff/1218925424]]
+		// "deferred",
+		"vrt",
+		// Removed with [[Special:Diff/1218925424]]
+		// "unverified",
+		"viable"
+	];
 
 	// 'old text': 'current ID'
 	// Capitalization and punctuation are ignored, but included for .
 	const queries = {
 		// [[Special:PermanentLink/321549245]]
-		'Permission plausible Article relisted under today.': 'relist',
-		'Article cleaned by investigator or others. No remaining infringement.': 'cleaned',
-		'Copyright concerns remain. Article deleted, left CUP notice.': 'deletedcup',
+		// Instances covered by later version ([[Special:PermanentLink/1218925424]])
+		// 'Permission plausible. Article relisted under today': 'relist',
+		'Article cleaned by investigator or others. No remaining infringement': 'cleaned',
+		// Removed with [[Special:Diff/1218925424]]
+		// 'Copyright concerns remain. Article deleted, left CUP notice': 'deletedcup',
 		'No copyright concern. Material PD or appropriately licensed for use': 'no',
-		"User was not notified, relisting under today's entry.": 'user',
-		"OTRS pending but not yet verified, relisting under today's entry.": 'OTRS',
+		"User was not notified, relisting under today's entry": 'user',
+		// Renamed from "OTRS" with [[Special:Diff/1218925424]]
+		"OTRS pending but not yet verified, relisting under today's entry": 'vrt',
 
 		// [[Special:PermanentLink/321549827]]
-		'No vio found, claim cannot be validated. Tag removed from article.': 'where',
+		'No vio found, claim cannot be validated. Tag removed from article': 'where',
 
 		// [[Special:PermanentLink/322101343]]
-		"OTRS Ticket received, article now licensed and compatible with CC-BY-SA.": 'ticket',
+		"OTRS Ticket received, article now licensed and compatible with CC-BY-SA": 'ticket',
 
 		// [[Special:PermanentLink/323442606]]
-		'Article redirected to a non-infringing target.': 'redirect',
-		'Deferred to old issues.': 'deferred',
+		'Article redirected to a non-infringing target': 'redirect',
+		// Removed with [[Special:Diff/1218925424]]
+		// 'Deferred to old issues': 'deferred',
 
 		// [[Special:PermanentLink/401281430]]
 		// Removed with [[Special:Diff/1110556291]]
-		// 'No source found; copy-paste tag removed and cv-unsure tag placed at article talk.': 'unsure',
+		// 'No source found; copy-paste tag removed and cv-unsure tag placed at article talk': 'unsure',
 
 		// [[Special:PermanentLink/403019514]]
-		'Backwardscopy. Tag and explanation placed at talk page.': 'backwards',
+		'Backwardscopy. Tag and explanation placed at talk page': 'backwards',
 
 		// [[Special:PermanentLink/431484027]]
 		'Article cleaned, still needs a history purge to remove original copyvio': 'histpurge',
-		'Purged. Copyright problem removed from history.': 'purged',
+		'Purged. Copyright problem removed from history': 'purged',
 
 		// [[Special:PermanentLink/431659239]]
 		// Removed with [[Special:Diff/1106646781]]
-		// 'Resolved; clerk recommendation implemented.': 'implemented',
-		'Viable rewrite proposed; rewrite on temp page can be used to replace problematic article.': 'viable',
-		'Rewrite requires merge; viable rewrite at temp space requires history merge into article.': 'move',
+		// 'Resolved; clerk recommendation implemented': 'implemented',
+		'Viable rewrite proposed; rewrite on temp page can be used to replace problematic article': 'viable',
+		'Rewrite requires merge; viable rewrite at temp space requires history merge into article': 'move',
 
 		// [[Special:PermanentLink/431662870]]
-		'Permission unverified as of this tagging; article will need to be deleted if that does not change.': 'unverified',
+		// Removed with [[Special:Diff/1218925424]]
+		// 'Permission unverified as of this tagging; article will need to be deleted if that does not change': 'unverified',
 
 		// [[Special:PermanentLink/436665142]]
 		// Instances covered by later version ([[Special:PermanentLink/674253997]])
-		// 'Article deleted. Article deleted for a reason other than copyright concerns.': 'deletedother',
+		// 'Article deleted. Article deleted for a reason other than copyright concerns': 'deletedother',
 
 		// [[Special:PermanentLink/478165583]]
-		'Issue resolved.': 'resolved',
+		'Issue resolved': 'resolved',
 
 		// [[Special:PermanentLink/484775988]]
 		// case-insensitive, also catches [[Special:Diff/528882122]]
-		'Backwardscopy. Attributes Wikipedia.': 'backwardsattributed',
+		'Backwardscopy. Attributes Wikipedia': 'backwardsattributed',
 
 		// [[Special:PermanentLink/533466084]]
-		'Article deleted due to copyright concerns.': 'deletedcv',
+		// Renamed from "deletedcv" with [[Special:Diff/1218925424]]
+		'Article deleted due to copyright concerns': 'deleted',
 
 		// [[Special:PermanentLink/674253997]]
-		'Article deleted for a reason other than copyright concerns.': 'deletedother',
+		'Article deleted for a reason other than copyright concerns': 'deletedother',
 
 		// [[Special:PermanentLink/973160274]]
-		"OTRS Ticket received, article now licensed and compatible with CC BY-SA 3.0.": 'ticket',
+		"OTRS Ticket received, article now licensed and compatible with CC BY-SA 3.0": 'ticket',
 
 		// [[Special:PermanentLink/1058020969]]
-		'VRT Ticket received, article now licensed and compatible with CC BY-SA 3.0.': 'ticket',
-		"VRT pending but not yet verified, relisting under today's entry.": 'OTRS',
+		'VRT Ticket received, article now licensed and compatible with CC BY-SA 3.0': 'ticket',
+		// Renamed from "OTRS" with [[Special:Diff/1218925424]]
+		"VRT pending but not yet verified, relisting under today's entry": 'vrt',
 
 		// [[Special:PermanentLink/1105401498]]
-		'No copyright concern. Material is PD, license compatible, or ineligible for copyright protection.': 'no',
-		'Backwardscopy. Tag placed at talk page.': 'backwards',
+		'No copyright concern. Material is PD, license compatible, or ineligible for copyright protection': 'no',
+		'Backwardscopy. Tag placed at talk page': 'backwards',
 
 		// [[Special:PermanentLink/1105835801]]
-		'Copyright concerns remain. Article deleted, left {{Cup}} notice.': 'deletedcup',
-		'Rewrite merged to article.': 'move',
-		'Viable rewrite proposed; rewrite on temp page can be merged into the article.': 'viable',
+		// Removed with [[Special:Diff/1218925424]]
+		// 'Copyright concerns remain. Article deleted, left {{Cup}} notice': 'deletedcup',
+		'Rewrite merged to article': 'move',
+		'Viable rewrite proposed; rewrite on temp page can be merged into the article': 'viable',
 
 		// [[Special:PermanentLink/1105836248]]
-		'Rewrite moved into place.': 'move',
+		'Rewrite moved into place': 'move',
 
 		// [[Special:PermanentLink/1106449928]]
-		'Article cleaned, revision deletion requested.': 'histpurge',
-		'Revision deletion completed. Copyright problem removed from history.': 'purged',
+		'Article cleaned, revision deletion requested': 'histpurge',
+		// Instances covered by later version ([[Special:PermanentLink/1218925424]])
+		// 'Revision deletion completed. Copyright problem removed from history': 'purged',
 
 		// [[Special:PermanentLink/1106646781]]
-		'Blanked and relisted under today.': 'blanked',
+		// Instances covered by later version ([[Special:PermanentLink/1218925424]])
+		// 'Blanked and relisted under today': 'blanked',
 
 		// [[Special:PermanentLink/1110556291]]
+		// Instances covered by later version ([[Special:PermanentLink/1218925424]])
 		"User was not notified, relisted under today": "user",
 
 		// [[Special:PermanentLink/1171074480]]
-		"Already rewritten. No infringing content remains.": "alreadyrewritten"
+		"Already rewritten. No infringing content remains": "alreadyrewritten",
+
+		// [[Special:PermanentLink/1218925424]]
+		'Blanked and relisted': 'blanked',
+		'Permission unverified, article is unable to be compatibly licensed': 'fail',
+		'Revision deletion completed': 'purged',
+		'Permission plausible. Article relisted': 'relist',
+		'VRT Ticket verified, article now licensed and compatible with CC BY-SA 4.0': 'ticket',
+		'User was not notified, relisted': 'user',
 	};
 
 	// Reverse queries. Overwrite with the latest occurrence.
@@ -184,6 +210,20 @@ const cpcVersion = 1171074480;
 		} );
 	}
 	console.log( JSON.stringify( out, null, 4 ) );
+
+	console.log();
+
+	console.log("Verify the templates above with the following wikitext:");
+	console.log(`{| class="wikitable" \n${
+		out.map( ( { template, label } ) => `|-\n! style="text-align: left" | ${
+			label
+				.replace( /\{\{/g, "<nowiki>{{</nowiki>" )
+				.replace( /}}/g, "<nowiki>}}</nowiki>" )
+		}\n|-\n| ${
+			template
+				.replace( /(\{\{\s*)(subst:\s*)/g, "$1safe$2" )
+		}` ).join( '\n' )
+	}\n|}`);
 
 } )();
 /*!
