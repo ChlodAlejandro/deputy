@@ -13,7 +13,7 @@ const axios = require( 'axios' );
  *
  * @type {number}
  */
-const cpcVersion = 1218931021;
+const cpcVersion = 1218933866;
 
 ( async () => {
 
@@ -160,6 +160,9 @@ const cpcVersion = 1218931021;
 		'VRT ticket verified, article now licensed and compatible with CC BY-SA 4.0': 'ticket',
 		'User was not notified, relisted': 'user',
 		"VRT ticket received, verification pending": 'vrt',
+
+		// [[Special:PermanentLink/1218933643]]
+		"Failed to verify copyright status, VRT permission refused. Content removed with no remaining infringement": 'fail',
 	};
 
 	// Reverse queries. Overwrite with the latest occurrence.
