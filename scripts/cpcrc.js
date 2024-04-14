@@ -154,11 +154,12 @@ const cpcVersion = 1218931021;
 
 		// [[Special:PermanentLink/1218925424]]
 		'Blanked and relisted': 'blanked',
-		'Permission unverified, article is unable to be compatibly licensed': 'fail',
+		'Permission unverified, article is unable to be compatibly licensed. Content removed with no remaining infringement': 'fail',
 		'Revision deletion completed': 'purged',
 		'Permission plausible. Article relisted': 'relist',
-		'VRT Ticket verified, article now licensed and compatible with CC BY-SA 4.0': 'ticket',
+		'VRT ticket verified, article now licensed and compatible with CC BY-SA 4.0': 'ticket',
 		'User was not notified, relisted': 'user',
+		"VRT ticket received, verification pending": 'vrt',
 	};
 
 	// Reverse queries. Overwrite with the latest occurrence.
