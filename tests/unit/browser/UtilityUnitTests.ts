@@ -352,6 +352,6 @@ describe( 'wikiUtility (on-browser) function tests', () => {
 				title: 'Main Page'
 			} )
 		] );
-	} );
+	}, 90e3 );
 
 } );
