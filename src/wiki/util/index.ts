@@ -43,6 +43,7 @@ export default {
 	nsId: nsId,
 	openWindow: openWindow,
 	pagelinkToTitle: pagelinkToTitle,
+	parseDiffUrl: parseDiffUrl,
 	performHacks: performHacks,
 	purge: purge,
 	renderWikitext: renderWikitext,

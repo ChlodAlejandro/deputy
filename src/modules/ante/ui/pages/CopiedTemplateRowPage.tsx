@@ -16,6 +16,7 @@ import RevisionDateGetButton from '../components/RevisionDateGetButton';
 import SmartTitleInputWidget from '../components/SmartTitleInputWidget';
 import PageLatestRevisionGetButton from '../components/PageLatestRevisionGetButton';
 import dangerModeConfirm from '../../../../util/dangerModeConfirm';
+import parseDiffUrl from '../../../../wiki/util/parseDiffUrl';
 
 export interface CopiedTemplateRowPageData {
 	/**
@@ -551,33 +552,12 @@ function initCopiedTemplateRowPage() {
 						return;
 					}
 				}
-				// From the same wiki, accept deprecation
+				// From the same wiki, accept deprecation immediately.
 
-				// Attempt to get values from URL parameters (when using `/w/index.php?action=diff`)
-				let oldid = url.searchParams.get( 'oldid' );
-				let diff = url.searchParams.get( 'diff' );
-				const title = url.searchParams.get( 'title' );
-
-				// Attempt to get values from Special:Diff short-link
-				const diffSpecialPageCheck =
-					// eslint-disable-next-line security/detect-unsafe-regex
-					/\/wiki\/Special:Diff\/(prev|next|\d+)(?:\/(prev|next|\d+))?/.exec( url.pathname );
-				if ( diffSpecialPageCheck != null ) {
-					if (
-						diffSpecialPageCheck[ 1 ] != null &&
-						diffSpecialPageCheck[ 2 ] == null
-					) {
-						// Special:Diff/diff
-						diff = diffSpecialPageCheck[ 1 ];
-					} else if (
-						diffSpecialPageCheck[ 1 ] != null &&
-						diffSpecialPageCheck[ 2 ] != null
-					) {
-						// Special:Diff/oldid/diff
-						oldid = diffSpecialPageCheck[ 1 ];
-						diff = diffSpecialPageCheck[ 2 ];
-					}
-				}
+				// Parse out info from this diff URL
+				const parseInfo = parseDiffUrl( url );
+				let { diff, oldid } = parseInfo;
+				const { title } = parseInfo;
 
 				// If only an oldid was provided, and no diff
 				if ( oldid && !diff ) {
