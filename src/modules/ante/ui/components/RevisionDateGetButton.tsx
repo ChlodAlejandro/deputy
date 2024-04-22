@@ -51,11 +51,22 @@ function initRevisionDateGetButton() {
 		 * `this.revisionInputWidget`.
 		 */
 		async setDateFromRevision(): Promise<void> {
+			const revid = this.revisionInputWidget.getValue();
+
+			if ( isNaN( +revid ) ) {
+				mw.notify(
+					mw.msg( 'deputy.ante.dateAuto.invalid' ),
+					{ type: 'error' }
+				);
+				this.updateButton();
+				return;
+			}
+
 			this
 				.setIcon( 'ellipsis' )
 				.setDisabled( true );
 			this.dateInputWidget.setDisabled( true );
-			const revid = this.revisionInputWidget.getValue();
+
 			await MwApi.action.get( {
 				action: 'query',
 				prop: 'revisions',

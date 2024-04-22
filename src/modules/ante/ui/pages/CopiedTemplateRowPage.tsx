@@ -537,15 +537,19 @@ function initCopiedTemplateRowPage() {
 		 * Converts a raw diff URL on the same wiki as the current to use `to` and `to_oldid`
 		 * (and `to_diff`, if available).
 		 */
-		convertDeprecatedDiff(): void {
+		async convertDeprecatedDiff(): Promise<void> {
 			const value = this.inputs.diff.getValue();
 			try {
 				const url = new URL( value, window.location.href );
 				if ( !value ) {
 					return;
 				}
-				if ( url.host === window.location.host ) {
-					console.warn( 'Attempted to convert a diff URL from another wiki.' );
+				if ( url.host !== window.location.host ) {
+					if ( !( await OO.ui.confirm(
+						mw.msg( 'deputy.ante.copied.diffDeprecate.warnHost' )
+					) ) ) {
+						return;
+					}
 				}
 				// From the same wiki, accept deprecation
 
@@ -556,6 +560,7 @@ function initCopiedTemplateRowPage() {
 
 				// Attempt to get values from Special:Diff short-link
 				const diffSpecialPageCheck =
+					// eslint-disable-next-line security/detect-unsafe-regex
 					/\/wiki\/Special:Diff\/(prev|next|\d+)(?:\/(prev|next|\d+))?/.exec( url.pathname );
 				if ( diffSpecialPageCheck != null ) {
 					if (
@@ -574,7 +579,14 @@ function initCopiedTemplateRowPage() {
 					}
 				}
 
+				// If only an oldid was provided, and no diff
+				if ( oldid && !diff ) {
+					diff = oldid;
+					oldid = undefined;
+				}
+
 				const confirmProcess = new OO.ui.Process();
+				// Looping over the row name and the value that will replace it.
 				for ( const [ _rowName, newValue ] of [
 					[ 'to_oldid', oldid ],
 					[ 'to_diff', diff ],
@@ -601,12 +613,14 @@ function initCopiedTemplateRowPage() {
 							confirmPromise.done( ( confirmed: boolean ) => {
 								if ( confirmed ) {
 									this.inputs[ rowName ].setValue( newValue );
+									this.fieldLayouts[ rowName ].toggle( true );
 								}
 							} );
 							return confirmPromise;
 						} );
 					} else {
 						this.inputs[ rowName ].setValue( newValue );
+						this.fieldLayouts[ rowName ].toggle( true );
 					}
 				}
 				confirmProcess.next( () => {

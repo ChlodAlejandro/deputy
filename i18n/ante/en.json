@@ -47,6 +47,7 @@
     "deputy.ante.templateOptions": "Template options",
 
     "deputy.ante.dateAuto": "Pull the date from the provided revision ID (`$1` parameter)",
+    "deputy.ante.dateAuto.invalid": "Parameter does not appear to be a valid revision ID.",
     "deputy.ante.dateAuto.failed": "Could not pull date from revision: $1",
     "deputy.ante.dateAuto.missing": "The revision $1 could not be found. Its page may have been deleted.",
 
@@ -93,6 +94,7 @@
     "deputy.ante.copied.diff.placeholder": "https://en.wikipedia.org/w/index.php?diff=123456",
     "deputy.ante.copied.diff.label": "Diff URL",
     "deputy.ante.copied.diff.help": "The URL of the diff. Using <code>to_diff</code> and <code>to_oldid</code> is preferred, although supplying this parameter will override both.",
+
     "deputy.ante.copied.merge.label": "Merged?",
     "deputy.ante.copied.merge.help": "Whether the copying was done as a result of merging two pages.",
     "deputy.ante.copied.afd.placeholder": "AfD page (without Wikipedia:Articles for deletion/)",
@@ -103,6 +105,7 @@
     "deputy.ante.copied.advanced": "Advanced",
     "deputy.ante.copied.dateInvalid": "The previous date value, \"$1\", was not a valid date.",
     "deputy.ante.copied.diffDeprecate": "The <code>to_diff</code> and <code>to_oldid</code> parameters are preferred in favor of the <code>diff</code> parameter.",
+    "deputy.ante.copied.diffDeprecate.warnHost": "The URL in this parameter is not the same as the wiki you're currently editing on. Continue?",
     "deputy.ante.copied.diffDeprecate.replace": "The current value of '$1', \"$2\", will be replaced with \"$3\". Continue?",
     "deputy.ante.copied.diffDeprecate.failed": "Cannot convert `diff` parameter to URL. See your browser console for more details.",
 
