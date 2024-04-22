@@ -7,14 +7,23 @@ These are changes that may or may not have been deployed to wikis, but are not y
 
 ## Added
 * [[`eab952b`](../../commit/eab952b)] (dev) Added copyright problems listing parse tests
+* [[`1ec9205`](../../commit/1ec9205)] Added confirmation before converting a diff URL different from the current wiki
+* [[`63bcaf3`](../../commit/63bcaf3)] Added a dedicated diff URL parser, capable of handing multiple permutations of diff URLs
 
 ## Modified
 * [[`5f173f0`](../../commit/5f173f0)] Removed unfinished row notice in danger mode
+* [[`f715e76`](../../commit/f715e76)] (dev) Changed CPC response counter to reflect latest template changes
+* [[`1ec9205`](../../commit/1ec9205)] Forced changed {{copied}} input fields to show if conversion was performed
+* [[`dc02cda`](../../commit/dc02cda)] Updated utility index and utility index generation script
 
 ## Fixed
 * [[`d8bf408`](../../commit/d8bf408)] Fixed unintentional wrapping in section buttons
 * [[`87d5c6f`](../../commit/87d5c6f)] Fixed "Mark all rows in all sections as finished" not working when there are finished rows
 * [[`1524994`](../../commit/1524994)] Fixed definition list comments (`:`) breaking listing parser
+* [[`bfc9469`](../../commit/bfc9469)] Fixed zero diffs appearing with symbols
+* [[`fc0837e`](../../commit/fc0837e)] Fixed display failure for diffs with broken parents ([T186280](https://phabricator.wikimedia.org/T186280))
+* [[`cb532c7`](../../commit/cb532c7)] Fixed intentionally hidden tags causing commas to appear in tag list
+* [[`1ec9205`](../../commit/1ec9205)] Fixed lockup when attempting to get revision date of a non-revision ID
 
 For a granular list of changes, see [v0.7.0...main](https://github.com/ChlodAlejandro/deputy/compare/v0.7.0...main).
 
