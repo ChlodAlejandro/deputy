@@ -508,15 +508,17 @@ export default class DeputyRootSession {
 	 * @param heading
 	 */
 	addSectionOverlay( casePage: DeputyCasePage, heading: ContributionSurveyHeading ): void {
-		const section = casePage.getContributionSurveySection( heading );
+		const normalizedHeading = casePage.normalizeSectionHeading( heading );
+		const section = casePage.getContributionSurveySection( normalizedHeading );
 		const list = section.find(
 			( v ) => v instanceof HTMLElement && v.tagName === 'UL'
 		) as HTMLUListElement;
 
-		const headingTop = window.scrollY + heading.getBoundingClientRect().bottom;
+		const headingTop = window.scrollY +
+			normalizedHeading.getBoundingClientRect().bottom;
 		const sectionBottom = window.scrollY + (
 			findNextSiblingElement( last( section ) )?.getBoundingClientRect()?.top ??
-				heading.parentElement.getBoundingClientRect().bottom
+			normalizedHeading.parentElement.getBoundingClientRect().bottom
 		);
 		const overlayHeight = sectionBottom - headingTop;
 		if ( list != null ) {
