@@ -3,6 +3,8 @@ import sectionHeadingName from './util/sectionHeadingName';
 import getPageTitle from './util/getPageTitle';
 import DeputyCase from './DeputyCase';
 import sectionHeadingId from './util/sectionHeadingId';
+import isWikiHeading from './util/isWikiHeading';
+import getWikiHeadingLevel from './util/getWikiHeadingLevel';
 
 export type ContributionSurveyHeading = HTMLHeadingElement;
 
@@ -147,7 +149,7 @@ export default class DeputyCasePage extends DeputyCase {
 			el :
 			el.querySelector<HTMLElement>( '.mw-headline' );
 		// Handle DiscussionTools case (.mw-heading)
-		return ( el.classList.contains( 'mw-heading' ) || /^H\d$/.test( el.tagName ) ) &&
+		return isWikiHeading( el ) &&
 			headlineElement != null &&
 			/(Page|Article|Local file|File)s? \d+ (to|through) \d+$/.test( headlineElement.innerText );
 	}
@@ -248,11 +250,24 @@ export default class DeputyCasePage extends DeputyCase {
 	getContributionSurveySection( sectionHeading: HTMLElement ): Node[] {
 		// Normalize "sectionHeading" to use the h* element and not the .mw-heading span.
 		sectionHeading = this.normalizeSectionHeading( sectionHeading );
+		const sectionHeadingLevel = getWikiHeadingLevel( sectionHeading );
 
 		const sectionMembers: Node[] = [];
 
 		let nextSibling = sectionHeading.nextSibling;
-		while ( nextSibling != null && !this.isContributionSurveyHeading( nextSibling ) ) {
+		while (
+			// Not the end of rendered page content and
+			nextSibling != null &&
+			// Next node is not...
+			!(
+				// An element
+				nextSibling instanceof Element &&
+				// A heading (of any level)
+				isWikiHeading( nextSibling ) &&
+				// Higher than the current heading level
+				sectionHeadingLevel >= getWikiHeadingLevel( nextSibling )
+			)
+		) {
 			sectionMembers.push( nextSibling );
 			nextSibling = nextSibling.nextSibling as HTMLElement;
 		}

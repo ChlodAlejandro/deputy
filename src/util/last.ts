@@ -1,5 +1,3 @@
-// These don't recognize TypeScript multiple definitions.
-/* eslint-disable jsdoc/require-returns-check */
 /**
  * Returns the last item of a NodeList array.
  *
@@ -14,6 +12,13 @@ function last<T extends Node>( array: NodeListOf<T> ): T;
  * @return The last element of the array
  */
 function last<T>( array: T[] ): T;
+/**
+ * Returns the last character of a string.
+ *
+ * @param string The string to get the last character from
+ * @return The last character of the string
+ */
+function last( string: string ): string;
 /**
  * Returns the last item of an array.
  *
