@@ -4,8 +4,7 @@
 
 [Deputy](https://w.wiki/7NWR) is
 a [contributor copyright investigation](https://en.wikipedia.org/wiki/Wikipedia:Contributor_copyright_investigations) (CCI) and copyright cleanup assistance tool for Wikipedia. Its goal is to streamline the workflow for CCI case pages, making it easier to
-process and go through each case. As of now, it is in an extreme in-development phase, meaning most of the targeted
-features are not yet ready. Progress is done every day to accomplish the goals originally set.
+process and go through each case. For user-specific information, see [Wikipedia:Deputy](https://en.wikipedia.org/wiki/Wikipedia:Deputy).
 
 Deputy exposes a `deputy` variable on the `window` object for public use. The API is documented
 at [chlodalejandro.github.io/deputy](https://chlodalejandro.github.io/deputy/classes/Deputy.html).
