@@ -144,14 +144,16 @@ export default class DeputyCasePage extends DeputyCase {
 		}
 
 		// All headings (h1, h2, h3, h4, h5, h6)
-		// TODO: l10n
 		const headlineElement = this.parsoid ?
 			el :
 			el.querySelector<HTMLElement>( '.mw-headline' );
 		// Handle DiscussionTools case (.mw-heading)
 		return isWikiHeading( el ) &&
 			headlineElement != null &&
-			/(Page|Article|Local file|File)s? \d+ (to|through) \d+$/.test( headlineElement.innerText );
+			// eslint-disable-next-line security/detect-non-literal-regexp
+			new RegExp(
+				window.deputy.wikiConfig.cci.headingMatch.get()
+			).test( headlineElement.innerText );
 	}
 
 	/**

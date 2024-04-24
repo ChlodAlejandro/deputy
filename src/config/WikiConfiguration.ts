@@ -252,6 +252,10 @@ export default class WikiConfiguration extends ConfigurationBase {
 			defaultValue: null,
 			displayOptions: { type: 'page' }
 		} ),
+		headingMatch: new Setting<string, string>( {
+			defaultValue: '(Page|Article|Local file|File)s? \\d+ (to|through) \\d+',
+			displayOptions: { type: 'text' }
+		} ),
 		collapseTop: new Setting<string, string>( {
 			defaultValue: collapseTop,
 			displayOptions: { type: 'code' }
