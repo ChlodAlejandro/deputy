@@ -11,6 +11,8 @@ describe( 'CopyrightProblemsPage tests', () => {
 	let page: BrowserHelper;
 
 	beforeAll( async () => {
+		jest.setTimeout( 60e3 );
+
 		page = await BrowserHelper.build()
 			.then( p => p.loadWikipediaPage(
 				'User:Chlod/Scripts/Deputy/tests/Problems/UnitTests'
