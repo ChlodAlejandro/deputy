@@ -2,13 +2,16 @@
 ``ヾ(•ω•`)o hai!``
 
 These are changes that may or may not have been deployed to wikis, but are not yet considered as part of any release.
+This changelog is automatically parsed when releases are created. Before pushing a version tag, ensure that the latest
+level 1 section heading here is the version being tagged.
 
-# [v0.7.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.7.1) - *unreleased*
+# [v0.7.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.7.1) - *2024-04-24*
 
 ## Added
 * [[`eab952b`](../../commit/eab952b)] (dev) Added copyright problems listing parse tests
 * [[`1ec9205`](../../commit/1ec9205)] Added confirmation before converting a diff URL different from the current wiki
 * [[`63bcaf3`](../../commit/63bcaf3)] Added a dedicated diff URL parser, capable of handing multiple permutations of diff URLs
+* [[`759f1eb`](../../commit/759f1eb)] Added `cci.headingMatch` configuration field in wiki configuration
 
 ## Modified
 * [[`5f173f0`](../../commit/5f173f0)] Removed unfinished row notice in danger mode
@@ -24,8 +27,10 @@ These are changes that may or may not have been deployed to wikis, but are not y
 * [[`fc0837e`](../../commit/fc0837e)] Fixed display failure for diffs with broken parents ([T186280](https://phabricator.wikimedia.org/T186280))
 * [[`cb532c7`](../../commit/cb532c7)] Fixed intentionally hidden tags causing commas to appear in tag list
 * [[`1ec9205`](../../commit/1ec9205)] Fixed lockup when attempting to get revision date of a non-revision ID
+* [[`df82208`](../../commit/df82208)] Fixed CCI section start overlay reaching into other non-survey row sections
+* [[`7ab7b28`](../../commit/7ab7b28)] Fixed CCI section start overlay being slightly taller than correct height 
 
-For a granular list of changes, see [v0.7.0...main](https://github.com/ChlodAlejandro/deputy/compare/v0.7.0...main).
+For a granular list of changes, see [v0.7.0...v0.7.1](https://github.com/ChlodAlejandro/deputy/compare/v0.7.0...v0.7.1).
 
 # [v0.7.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.7.0) - *2024-03-20*
 This version introduces "Danger mode", a way to allow clerks to rapidly process cases. It removes many of Deputy's confirmations and warnings, and also introduces additional (dangerous) buttons. As of now, it does not use an allowlist nor have minimum account requirements.
