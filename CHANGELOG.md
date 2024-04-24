@@ -6,6 +6,8 @@ This changelog is automatically parsed when releases are created. Before pushing
 level 1 section heading here is the version being tagged.
 
 # [v0.7.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.7.1) - *2024-04-24*
+Bugfixes, introduction of better diff URL parser, and significant bugfix for the section start overlay,
+which can cause the overlay to cover other sections that don't start with a contribution survey header.
 
 ## Added
 * [[`eab952b`](../../commit/eab952b)] (dev) Added copyright problems listing parse tests
