@@ -18,6 +18,16 @@ See [Wikipedia:Deputy § Installation](https://en.wikipedia.org/wiki/Wikipedia:D
 
 ## Developing
 
+Please clone with submodules (`--recursive`/`--recurse-submodules`) to ensure that
+[Dispatch types](https://github.com/ChlodAlejandro/deputy-dispatch-types)
+are also cloned alongside the repo.
+
+If you forgot to clone with submodules, just run the following commands to
+initialize the submodule for types:
+```bash
+git submodule update --init --recursive
+```
+
 Run the development server with the following. Be sure to run `npm install` first to download required dependencies.
 
 ```shell
