@@ -16,7 +16,7 @@ export default function applyOverrides(
 	if ( overrides ) {
 		for ( const category of Object.keys( data ) ) {
 			if ( !overrides[ category ] ) {
-				return; // Category does not exist.
+				continue; // Category does not exist.
 			}
 			for (
 				const categoryKey of
@@ -31,6 +31,18 @@ export default function applyOverrides(
 				}
 				data[ category ][ categoryKey ] =
 					overrides[ category ][ categoryKey ];
+			}
+		}
+		for ( const category of Object.keys( overrides ) ) {
+			if ( !data[ category ] ) {
+				data[ category ] = overrides[ category ];
+				if ( logger ) {
+					logger(
+						`${category}`,
+						data[ category ],
+						overrides[ category ]
+					);
+				}
 			}
 		}
 	}
