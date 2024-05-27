@@ -10,7 +10,9 @@ import getRevisionDiffURL from './getRevisionDiffURL';
 import getRevisionURL from './getRevisionURL';
 import getSectionHTML from './getSectionHTML';
 import getSectionId from './getSectionId';
+import getWikiHeadingLevel from './getWikiHeadingLevel';
 import guessAuthor from './guessAuthor';
+import isWikiHeading from './isWikiHeading';
 import msgEval from './msgEval';
 import normalizeTitle from './normalizeTitle';
 import nsId from './nsId';
@@ -37,7 +39,9 @@ export default {
 	getRevisionURL: getRevisionURL,
 	getSectionHTML: getSectionHTML,
 	getSectionId: getSectionId,
+	getWikiHeadingLevel: getWikiHeadingLevel,
 	guessAuthor: guessAuthor,
+	isWikiHeading: isWikiHeading,
 	msgEval: msgEval,
 	normalizeTitle: normalizeTitle,
 	nsId: nsId,
