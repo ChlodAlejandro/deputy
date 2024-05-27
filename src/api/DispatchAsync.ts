@@ -4,7 +4,7 @@ interface DeputyDispatchTaskOptions {
 	/**
 	 * The rate in milliseconds at which new progress requests are made.
 	 *
-	 *  @default 500
+	 *  @default 1000
 	 */
 	refreshRate?: number;
 }
@@ -54,7 +54,7 @@ export class DeputyDispatchTask<T> extends EventTarget implements DeputyDispatch
 		}
 		this.id = id;
 
-		this.refreshRate = options.refreshRate ?? 500;
+		this.refreshRate = options.refreshRate ?? 1000;
 
 		// Execute last.
 		this.promise = this.waitUntilDone();
@@ -125,6 +125,7 @@ export default class DispatchAsync {
 		taskOptions: DeputyDispatchTaskOptions = {}
 	): Promise<DeputyDispatchTask<T>> {
 		const taskInfo = await fetch( endpoint, {
+			method: 'POST',
 			body: JSON.stringify( options ),
 			headers: {
 				'Content-Type': 'application/json',

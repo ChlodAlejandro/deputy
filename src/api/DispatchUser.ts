@@ -1,5 +1,6 @@
 import Dispatch from './Dispatch';
 import DispatchAsync, { DeputyDispatchTask } from './DispatchAsync';
+import { DispatchUserDeletedPagesResponse } from './types/DispatchTypes';
 
 /**
  *
@@ -20,7 +21,8 @@ export default class DispatchUser {
 	 *
 	 * @param user
 	 */
-	async deletedPages( user: string ): Promise<DeputyDispatchTask<any>> {
+	async deletedPages( user: string ):
+		Promise<DeputyDispatchTask<DispatchUserDeletedPagesResponse>> {
 		const endpoint = await Dispatch.i.getEndpoint( 'v1/user/deleted-pages' );
 		return ( await DispatchAsync.makeRequest( endpoint, {
 			user,

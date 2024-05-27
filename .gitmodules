@@ -1,0 +1,3 @@
+[submodule "data/types"]
+	path = data/types
+	url = https://github.com/ChlodAlejandro/deputy-dispatch-types.git
