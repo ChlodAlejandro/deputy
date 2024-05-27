@@ -423,7 +423,8 @@ export default class DeputyRootSession {
 				'oojs-ui.styles.icons-interactions',
 				'oojs-ui.styles.icons-media',
 				'oojs-ui.styles.icons-movement',
-				'ext.discussionTools.init'
+				'ext.discussionTools.init',
+				'jquery.makeCollapsible'
 			], async ( require ) => {
 				// Instantiate the parser
 				const dt = require( 'ext.discussionTools.init' );
