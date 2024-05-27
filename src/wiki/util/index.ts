@@ -4,10 +4,12 @@ import errorToOO from './errorToOO';
 import getApiErrorText from './getApiErrorText';
 import getNativeRange from './getNativeRange';
 import getPageContent from './getPageContent';
+import getPageExists from './getPageExists';
 import getPageTitle from './getPageTitle';
 import getRevisionContent from './getRevisionContent';
 import getRevisionDiffURL from './getRevisionDiffURL';
 import getRevisionURL from './getRevisionURL';
+import getSectionElements from './getSectionElements';
 import getSectionHTML from './getSectionHTML';
 import getSectionId from './getSectionId';
 import getWikiHeadingLevel from './getWikiHeadingLevel';
@@ -33,10 +35,12 @@ export default {
 	getApiErrorText: getApiErrorText,
 	getNativeRange: getNativeRange,
 	getPageContent: getPageContent,
+	getPageExists: getPageExists,
 	getPageTitle: getPageTitle,
 	getRevisionContent: getRevisionContent,
 	getRevisionDiffURL: getRevisionDiffURL,
 	getRevisionURL: getRevisionURL,
+	getSectionElements: getSectionElements,
 	getSectionHTML: getSectionHTML,
 	getSectionId: getSectionId,
 	getWikiHeadingLevel: getWikiHeadingLevel,

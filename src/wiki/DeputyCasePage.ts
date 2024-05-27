@@ -5,6 +5,7 @@ import DeputyCase from './DeputyCase';
 import sectionHeadingId from './util/sectionHeadingId';
 import isWikiHeading from './util/isWikiHeading';
 import getWikiHeadingLevel from './util/getWikiHeadingLevel';
+import getSectionElements from './util/getSectionElements';
 
 export type ContributionSurveyHeading = HTMLHeadingElement;
 
@@ -254,27 +255,12 @@ export default class DeputyCasePage extends DeputyCase {
 		sectionHeading = this.normalizeSectionHeading( sectionHeading );
 		const sectionHeadingLevel = getWikiHeadingLevel( sectionHeading );
 
-		const sectionMembers: Node[] = [];
-
-		let nextSibling = sectionHeading.nextSibling;
-		while (
-			// Not the end of rendered page content and
-			nextSibling != null &&
-			// Next node is not...
-			!(
-				// An element
-				nextSibling instanceof Element &&
-				// A heading (of any level)
-				isWikiHeading( nextSibling ) &&
-				// Higher than the current heading level
-				sectionHeadingLevel >= getWikiHeadingLevel( nextSibling )
-			)
-		) {
-			sectionMembers.push( nextSibling );
-			nextSibling = nextSibling.nextSibling as HTMLElement;
-		}
-
-		return sectionMembers;
+		return getSectionElements(
+			this.normalizeSectionHeading( sectionHeading ),
+			( el ) =>
+				isWikiHeading( el ) &&
+				sectionHeadingLevel >= getWikiHeadingLevel( el )
+		);
 	}
 
 	/**
