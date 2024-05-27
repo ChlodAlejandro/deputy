@@ -23,7 +23,11 @@ export function ChangesListLinks(
 		getRevisionDiffURL( _parentid, _revid );
 
 	let cv;
-	if ( window.deputy.config.cci.showCvLink && window.deputy.wikiConfig.cci.earwigRoot ) {
+	if (
+		window.deputy &&
+		window.deputy.config.cci.showCvLink &&
+		window.deputy.wikiConfig.cci.earwigRoot
+	) {
 		cv = new URL( '', window.deputy.wikiConfig.cci.earwigRoot.get() );
 		const selfUrl = new URL( window.location.href );
 		const urlSplit = selfUrl.hostname.split( '.' ).reverse();
@@ -117,7 +121,7 @@ export function ChangesListDate(
 	const formattedTime = time.toLocaleTimeString( window.deputyLang, {
 		hourCycle: 'h24',
 		timeStyle: mw.user.options.get( 'date' ) === 'ISO 8601' ? 'long' : 'short',
-		timeZone: window.deputy.config.cci.forceUtc.get() ? 'UTC' : undefined
+		timeZone: window.deputy?.config.cci.forceUtc.get() ? 'UTC' : undefined
 	} );
 	const formattedDate = now.locale( window.deputyLang ).format( {
 		dmy: 'D MMMM YYYY',
