@@ -13,6 +13,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 const production = process.env.NODE_ENV === 'production';
+const development = process.env.NODE_ENV === 'development' ||
+	/dev(:|$)/.test( process.env.npm_lifecycle_event );
 
 // UTILS
 
@@ -46,6 +48,8 @@ function blockCommentIfy( text ) {
  * @return {string} A fully-decorated banner
  */
 function loadBanner( ...bannerPath ) {
+	// development script, limited impact
+	// eslint-disable-next-line security/detect-non-literal-fs-filename
 	return blockCommentIfy( fs.readFileSync( path.join( __dirname, ...bannerPath ) ) );
 }
 
@@ -91,7 +95,7 @@ function getPlugins() {
 		!production && sourcemaps(),
 		// Remove development-only code branches
 		jscc( {
-			values: { _DEV: process.env.NODE_ENV === 'development' },
+			values: { _DEV: development },
 			asloader: false
 		} ),
 		// Makes Common.js imports possible
