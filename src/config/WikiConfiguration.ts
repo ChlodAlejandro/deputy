@@ -11,10 +11,13 @@ import {
 	batchListingPageWikitext,
 	batchListingWikitext,
 	collapseBottom,
-	collapseTop, copyvioBottom, copyvioTop,
+	collapseTop,
+	copyvioBottom,
+	copyvioTop,
 	listingWikitext
 } from '../wiki/TemplatePolyfills';
 import ConfigurationReloadBanner from '../ui/config/ConfigurationReloadBanner';
+import WikiConfigurationLocations from './WikiConfigurationLocations';
 import changeTag from './changeTag';
 import applyOverrides from '../util/applyOverrides';
 import log from '../util/log';
@@ -45,12 +48,7 @@ export default class WikiConfiguration extends ConfigurationBase {
 
 	static readonly configVersion = 2;
 	static readonly optionKey = 'userjs-deputy-wiki';
-	static readonly configLocations = [
-		'MediaWiki:Deputy-config.json',
-		// Prioritize interface protected page over Project namespace
-		'User:Chlod/Scripts/Deputy/configuration.json',
-		'Project:Deputy/configuration.json'
-	];
+	static readonly configLocations = WikiConfigurationLocations;
 
 	/**
 	 * Loads the configuration from a set of possible sources.
