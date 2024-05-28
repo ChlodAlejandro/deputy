@@ -1,7 +1,7 @@
 import '../../../src/types';
 import 'types-mediawiki';
-import { ContributionSurveyRowStatus } from '../../../src/models/ContributionSurveyRow';
 import BrowserHelper from '../../util/BrowserHelper';
+import { ContributionSurveyRowStatus } from '../../../src/models/ContributionSurveyRowStatus';
 
 describe( 'ContributionSurveyRow static unit tests', () => {
 

@@ -1,8 +1,8 @@
 import 'broadcastchannel-polyfill';
-import { ContributionSurveyRowStatus } from './models/ContributionSurveyRow';
 import generateId from './util/generateId';
 import { WikiPageConfiguration } from './config/WikiConfiguration';
 import log from './util/log';
+import { ContributionSurveyRowStatus } from './models/ContributionSurveyRowStatus';
 
 /**
  * Generic message used to acknowledge an action. This is usually required by

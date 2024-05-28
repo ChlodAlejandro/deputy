@@ -1,9 +1,7 @@
 import { ComponentChild, h } from 'tsx-dom';
 import DeputyContributionSurveySection from './DeputyContributionSurveySection';
 import { DeputyUIElement } from '../DeputyUIElement';
-import ContributionSurveyRow, {
-	ContributionSurveyRowStatus
-} from '../../models/ContributionSurveyRow';
+import ContributionSurveyRow from '../../models/ContributionSurveyRow';
 import swapElements from '../../util/swapElements';
 import unwrapWidget from '../../util/unwrapWidget';
 import DeputyLoadingDots from './DeputyLoadingDots';
@@ -22,6 +20,7 @@ import { ContributionSurveyRowSort } from '../../models/ContributionSurveyRowSor
 import last from '../../util/last';
 import warn from '../../util/warn';
 import error from '../../util/error';
+import { ContributionSurveyRowStatus } from '../../models/ContributionSurveyRowStatus';
 import dangerModeConfirm from '../../util/dangerModeConfirm';
 
 export enum DeputyContributionSurveyRowState {
