@@ -11,6 +11,7 @@ on:
       - src/**
       - tests/**
       - i18n/**
+      - data/types
       - .github/workflows/ci-cd.yml
       - package.json
       - package-lock.json
@@ -24,6 +25,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Setup Node
         uses: actions/setup-node@v4
