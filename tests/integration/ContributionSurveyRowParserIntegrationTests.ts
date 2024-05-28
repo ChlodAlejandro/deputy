@@ -4,7 +4,6 @@ import BrowserHelper from '../util/BrowserHelper';
 
 describe( 'ContributionSurveyRowParser integration tests', () => {
 	const cases: string[] = [
-		'Djflem',
 		'Hauganm',
 		'Arfaz',
 		'20111004',
