@@ -8,6 +8,7 @@ import deputyVersion, {
 	gitVersion
 } from '../../DeputyVersion';
 import type WikiConfiguration from '../../config/WikiConfiguration';
+import unwrapJQ from '../../util/unwrapJQ';
 
 interface ConfigurationGroupTabPanelOptions extends OO.ui.TabPanelLayout.ConfigOptions {
 
@@ -81,27 +82,23 @@ function initConfigurationGroupTabPanel() {
 						} ) )
 					}</a>
 				</div>
-				<p dangerouslySetInnerHTML={ mw.msg( 'deputy.about.credit' ) }/>
-				<p dangerouslySetInnerHTML={ mw.msg( 'deputy.about.license',
+				{unwrapJQ( <p/>, mw.message( 'deputy.about.credit' ).parseDom() )}
+				{unwrapJQ( <p/>, mw.message( 'deputy.about.license',
 					'https://www.apache.org/licenses/LICENSE-2.0',
 					'https://github.com/ChlodAlejandro/deputy'
-				) }/>
-				<p dangerouslySetInnerHTML={ mw.msg( 'deputy.about.thirdParty',
+				).parseDom() ) }
+				{unwrapJQ( <p/>, mw.message( 'deputy.about.thirdParty',
 					'https://github.com/ChlodAlejandro/deputy#licensing'
-				) }/>
-				<p
-					style={{ fontSize: '0.9em', color: 'darkgray' }}
-					dangerouslySetInnerHTML={ mw.msg(
-						'deputy.about.buildInfo',
-						gitVersion as string,
-						gitBranch as string,
-						new Date( gitDate as string ).toLocaleString()
-					) }
-				/>
-				<p
-					style={{ fontSize: '0.9em', color: 'darkgray' }}
-					dangerouslySetInnerHTML={ mw.msg( 'deputy.about.footer' ) }
-				/>
+				).parseDom() )}
+				{unwrapJQ( <p style={{ fontSize: '0.9em', color: 'darkgray' }} />, mw.message(
+					'deputy.about.buildInfo',
+					gitVersion as string,
+					gitBranch as string,
+					new Date( gitDate as string ).toLocaleString()
+				).parseDom() )}
+				{ unwrapJQ( <p style={{ fontSize: '0.9em', color: 'darkgray' }} />, mw.message(
+					'deputy.about.footer'
+				).parseDom() ) }
 			</div> );
 		}
 

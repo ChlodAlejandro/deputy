@@ -75,8 +75,8 @@
     "deputy.ia.listing.re.unverified": "Permission unverified as of this tagging; article will need to be deleted if that does not change.",
     "deputy.ia.listing.re.viable": "Viable rewrite proposed; rewrite on temp page can be merged into the article.",
 
-    "deputy.ia.report.intro": "You are reporting to <b>{{wikilink:$1}}</b>",
-    "deputy.ia.report.page": "Currently reporting <b>{{wikilink:$1}}</b>",
+    "deputy.ia.report.intro": "You are reporting to <b>[[$1]]</b>",
+    "deputy.ia.report.page": "Currently reporting <b>[[$1]]</b>",
     "deputy.ia.report.lead": "Lead section",
     "deputy.ia.report.end": "End of page",
     "deputy.ia.report.section": "$1: $2",

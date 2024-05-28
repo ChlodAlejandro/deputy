@@ -1,10 +1,10 @@
 import '../../types';
-import { h } from 'tsx-dom';
 import getRevisionURL from '../../wiki/util/getRevisionURL';
 import getRevisionDiffURL from '../../wiki/util/getRevisionDiffURL';
 import nsId from '../../wiki/util/nsId';
 import type { ExpandedRevisionData } from '../../api/ExpandedRevisionData';
-import { ContributionSurveyRevision } from '../../models/ContributionSurveyRevision';
+import { h } from 'tsx-dom';
+import unwrapJQ from '../../util/unwrapJQ';
 import { USER_LOCALE } from '../../wiki/Locale';
 
 /**
@@ -262,10 +262,19 @@ export function ChangesListTags( { tags }: { tags: [string, string][] } ): JSX.E
 			'deputy.revision.tags',
 			tags.length.toString()
 		).text() }</a>{
-		tags.map( ( v ) => <span
-			class={ `mw-tag-marker mw-tag-marker-${ v[ 0 ] }` }
-			dangerouslySetInnerHTML={ v[ 1 ] }
-		/> )
+		tags.map( ( v ) => {
+			// eslint-disable-next-line mediawiki/msg-doc
+			const tagMessage = mw.message( `tag-${ v }` ).parseDom();
+			return [
+				' ',
+				tagMessage.text() !== '-' && unwrapJQ(
+					<span
+						class={ `mw-tag-marker mw-tag-marker-${ v }` }
+					/>,
+					tagMessage
+				)
+			];
+		} )
 	}
 	</span>;
 }

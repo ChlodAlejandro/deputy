@@ -22,6 +22,7 @@ import Requester from './Requester';
 import sleep from './sleep';
 import swapElements from './swapElements';
 import unwrapElement from './unwrapElement';
+import unwrapJQ from './unwrapJQ';
 import unwrapWidget from './unwrapWidget';
 import warn from './warn';
 import yesNo from './yesNo';
@@ -50,6 +51,7 @@ export default {
 	sleep: sleep,
 	swapElements: swapElements,
 	unwrapElement: unwrapElement,
+	unwrapJQ: unwrapJQ,
 	unwrapWidget: unwrapWidget,
 	warn: warn,
 	yesNo: yesNo

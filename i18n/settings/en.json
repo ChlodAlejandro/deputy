@@ -5,8 +5,8 @@
     "deputy.about.openSource": "Source",
     "deputy.about.contact": "Contact",
     "deputy.about.credit": "Deputy was made with the help of the English Wikipedia Copyright Cleanup WikiProject and the Wikimedia Foundation.",
-    "deputy.about.license": "Deputy is licensed under the <a href=\"$1\">Apache License 2.0</a>. The source code for Deputy is available on <a href=\"$2\">GitHub</a>, and is free for everyone to view and suggest changes.",
-    "deputy.about.thirdParty": "Deputy is bundled with third party libraries to make development easier. All libraries have been vetted for user security and license compatibility. For more information, see the <a href=\"$1\">\"Licensing\"</a> section on Deputy's README.",
+    "deputy.about.license": "Deputy is licensed under the [$1 Apache License 2.0]. The source code for Deputy is available on [$2 GitHub], and is free for everyone to view and suggest changes.",
+    "deputy.about.thirdParty": "Deputy is bundled with third party libraries to make development easier. All libraries have been vetted for user security and license compatibility. For more information, see the [$1 Licensing] section on Deputy's README.",
     "deputy.about.buildInfo": "Deputy v$1 ($2), committed $3.",
     "deputy.about.footer": "Made with love, coffee, and the tears of copyright editors.",
 
@@ -15,7 +15,7 @@
 
     "deputy.settings.wikiEditIntro.title": "This is a Deputy configuration page",
     "deputy.settings.wikiEditIntro.current": "Deputy's active configuration comes from this page. Changing this page will affect the settings of all Deputy users on this wiki. Edit responsibly, and avoid making significant changes without prior discussion.",
-    "deputy.settings.wikiEditIntro.other": "This is a valid Deputy configuration page, but the configuration is currently being loaded from {{wikilink:$1}}. If this becomes the active configuration page, changing it will affect the settings of all Deputy users on this wiki. Edit responsibly, and avoid making significant changes without prior discussion.",
+    "deputy.settings.wikiEditIntro.other": "This is a valid Deputy configuration page, but the configuration is currently being loaded from [[$1]]. If this becomes the active configuration page, changing it will affect the settings of all Deputy users on this wiki. Edit responsibly, and avoid making significant changes without prior discussion.",
     "deputy.settings.wikiEditIntro.edit.current": "Modify configuration",
     "deputy.settings.wikiEditIntro.edit.other": "Modify this configuration",
     "deputy.settings.wikiEditIntro.edit.otherCurrent": "Modify the active configuration",
