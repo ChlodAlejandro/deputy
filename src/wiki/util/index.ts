@@ -1,6 +1,7 @@
 import decorateEditSummary from './decorateEditSummary';
 import delink from './delink';
 import errorToOO from './errorToOO';
+import findSectionHeading from './findSectionHeading';
 import getApiErrorText from './getApiErrorText';
 import getNativeRange from './getNativeRange';
 import getPageContent from './getPageContent';
@@ -32,6 +33,7 @@ export default {
 	decorateEditSummary: decorateEditSummary,
 	delink: delink,
 	errorToOO: errorToOO,
+	findSectionHeading: findSectionHeading,
 	getApiErrorText: getApiErrorText,
 	getNativeRange: getNativeRange,
 	getPageContent: getPageContent,
