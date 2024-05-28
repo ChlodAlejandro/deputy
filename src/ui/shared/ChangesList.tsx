@@ -5,6 +5,7 @@ import getRevisionDiffURL from '../../wiki/util/getRevisionDiffURL';
 import nsId from '../../wiki/util/nsId';
 import type { ExpandedRevisionData } from '../../api/ExpandedRevisionData';
 import { ContributionSurveyRevision } from '../../models/ContributionSurveyRevision';
+import { USER_LOCALE } from '../../wiki/Locale';
 
 /**
  * @param root0
@@ -94,7 +95,7 @@ export function ChangesListTime(
 	{ timestamp }: { timestamp: string }
 ): JSX.Element {
 	const time = new Date( timestamp );
-	const formattedTime = time.toLocaleTimeString( window.deputyLang, {
+	const formattedTime = time.toLocaleTimeString( USER_LOCALE, {
 		hourCycle: 'h24',
 		timeStyle: mw.user.options.get( 'date' ) === 'ISO 8601' ? 'long' : 'short'
 	} );
@@ -118,12 +119,12 @@ export function ChangesListDate(
 	if ( window.deputy.config.cci.forceUtc.get() ) {
 		now = now.utc();
 	}
-	const formattedTime = time.toLocaleTimeString( window.deputyLang, {
+	const formattedTime = time.toLocaleTimeString( USER_LOCALE, {
 		hourCycle: 'h24',
 		timeStyle: mw.user.options.get( 'date' ) === 'ISO 8601' ? 'long' : 'short',
 		timeZone: window.deputy?.config.cci.forceUtc.get() ? 'UTC' : undefined
 	} );
-	const formattedDate = now.locale( window.deputyLang ).format( {
+	const formattedDate = now.locale( USER_LOCALE ).format( {
 		dmy: 'D MMMM YYYY',
 		mdy: 'MMMM D, Y',
 		ymd: 'YYYY MMMM D',
