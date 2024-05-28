@@ -1,0 +1,64 @@
+{
+    "deputy.ccrf.start": "File a new case request",
+
+    "deputy.ccrf.caseRequestFilingDialog.title": "CCI Case Request Filer",
+
+    "deputy.ccrf.previous": "Previous",
+    "deputy.ccrf.next": "Next",
+
+    "deputy.ccrf.intro.heading": "Hello!",
+    "deputy.ccrf.intro.newbies": "If you're new here, please read the introduction below.",
+    "deputy.ccrf.intro.explain1": "Welcome to the CCI Case Request Filer. This wizard will help you with spot-checking a user for possible copyright violations and, if needed, file a case request at this wiki's [[$1|contributor copyright investigations]] (CCI) board.",
+    "deputy.ccrf.intro.explain2": "First and foremost, however, it is important to note that the wizard itself is not able to properly identify copyright investigations, but it will try its best to help you find possible violations. When spot-checking a user, it is important that you perform a thorough check at the data provided by the wizard to ensure that you're filing an accurate request. And as always, please assume good faith when performing spot-checks.",
+
+    "deputy.ccrf.step1.heading": "Select a user",
+    "deputy.ccrf.step1.details": "Type the name of the user you want to investigate in the box below. You can also paste a URL of that user's userpage, talk page, or contributions page.",
+    "deputy.ccrf.step1.details2": "Once you've selected a user, we'll run a few background checks for you. You'll still have to interpret these checks on your own.",
+    "deputy.ccrf.step1.placeholder": "Username",
+    "deputy.ccrf.step1.error.invalid": "It looks like this username is invalid. Check your input and try again.",
+    "deputy.ccrf.step1.error.notfound": "It looks like this user doesn't exist on this wiki. Check your spelling and try again.",
+
+    "deputy.ccrf.step2.heading": "Perform background checks",
+    "deputy.ccrf.step2.details": "We're running a few background checks for you. Some of these checks may contain false positives and false negatives; it's important that you double check the data here before including them in your request. These background checks determine if:",
+    "deputy.ccrf.step2.details.page": "$1 created pages that were deleted for copyright violations",
+    "deputy.ccrf.step2.details.revisions": "$1 has revisions hidden due to copyright violations",
+    "deputy.ccrf.step2.details.revisions.note": "Note that $1's revisions may have been collateral damage from another user's copyright violation. We've placed notes on revisions where this is the likely case.",
+    "deputy.ccrf.step2.details.warnings": "$1 has received copyright-related warnings in the past",
+    "deputy.ccrf.step2.details2": "These checks may take a while. Some of these checks have progress indicators to help you gauge how long they'll take. Grab a cup of coffee or stare at [[Special:RecentChanges|recent changes]] while you wait.",
+    "deputy.ccrf.step2.noUser": "You haven't selected a user yet. Please go back to the previous step and select a user.",
+    "deputy.ccrf.step2.error": "An error occurred while attempting to perform background checks: $1",
+
+    "deputy.ccrf.step2.fallback": "Prior to writing a case on $1, check if this user has a history of copyright violations. This can help you determine if this user is a repeat offender, and you can include this information as required in your report. You can start off by checking the following places:",
+    "deputy.ccrf.step2.fallback.link1": "[[Special:PageHistory/User talk:$1|$1's talk page history]] (to look for past warnings)",
+    "deputy.ccrf.step2.fallback.link2": "[[Special:Log/create|Page creation log]] (to look for pages by the user that have since been deleted for copyright reasons)",
+    "deputy.ccrf.step2.fallback2": "Once you're done, take note of what you've found to include them in the your request.",
+
+    "deputy.ccrf.check.page.load": "Checking user's deleted pages...",
+    "deputy.ccrf.check.page.match": "Found $1 pages that were likely copyright violations",
+    "deputy.ccrf.check.page.clear": "Found no pages that were likely copyright violations",
+    "deputy.ccrf.check.page.none": "Deputy was unable to find any pages that were deleted for copyright violations.",
+    "deputy.ccrf.check.revision.load": "Checking user's hidden revisions...",
+    "deputy.ccrf.check.revision.match": "Found $1 revisions that may have copyright violations, none likely",
+    "deputy.ccrf.check.revision.match.close": "Found $1 revisions that may have copyright violations, $2 likely",
+    "deputy.ccrf.check.revision.clear": "Found no revisions that were deleted for copyright violations",
+    "deputy.ccrf.check.revision.none": "Deputy was unable to find any revisions by this user that were deleted or hidden for copyright violations.",
+    "deputy.ccrf.check.warnings.load": "Checking user's warnings...",
+    "deputy.ccrf.check.warnings.match": "Found $1 copyright violation warnings",
+    "deputy.ccrf.check.warnings.clear": "Found no copyright violation warnings",
+    "deputy.ccrf.check.toggle": "Toggle details",
+
+    "deputy.ccrf.page.links.parenthesis": "(",
+    "deputy.ccrf.page.links.separator": " | ",
+    "deputy.ccrf.page.links.history": "history",
+    "deputy.ccrf.page.links.edit": "edit",
+    "deputy.ccrf.page.links.end": ")",
+
+    "deputy.ccrf.page.details.separator": "•",
+    "deputy.ccrf.page.details.created": "created $1",
+    "deputy.ccrf.page.deleted": "Deleted on [[$1|$2]] by [[$3|$4]] with reason \"<i>$5</i>\"",
+    "deputy.ccrf.page.deleted.userhidden": "Deleted on [[$1|$2]] with reason \"<i>$3</i>\"",
+
+    "deputy.ccrf.revision.deleted": "Deleted on [[$1|$2]] by [[$3|$4]] with reason \"<i>$5</i>\"",
+    "deputy.ccrf.revision.deleted.userhidden": "Deleted on [[$1|$2]] with reason \"<i>$3</i>\"",
+    "deputy.ccrf.revision.likely": "Likely cause of deletion"
+}

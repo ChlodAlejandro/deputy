@@ -10,6 +10,12 @@
     "deputy.ante.short": "Attrib. Template Editor",
     "deputy.ante.acronym": "Deputy: ANTE",
 
+    "deputy.ccrf": "CCI Case Request Filer",
+    "deputy.ccrf.short": "Case Request Filer",
+    "deputy.ccrf.acronym": "Deputy: CCRF",
+
+    "deputy.module.loadFailure": "The requested module couldn't be loaded ($1).",
+
     "deputy.cancel": "Cancel",
     "deputy.review": "Review",
     "deputy.review.title": "Review a diff of the changes to be made to the page",
@@ -34,6 +40,8 @@
     "deputy.revision.tags": "{{PLURAL:$1|Tag|Tags}}:",
     "deputy.revision.new": "N",
     "deputy.revision.new.tooltip": "This edit created a new page.",
+    "deputy.revision.removed.user": "Username or IP removed",
+    "deputy.revision.removed.comment": "edit summary removed",
 
     "deputy.comma-separator": ", ",
 

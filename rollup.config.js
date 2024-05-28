@@ -220,5 +220,37 @@ export default [
 		},
 		plugins: getPlugins(),
 		watch: getWatch()
+	} ),
+
+	// Standalone CCI Case Request Filer
+	auto( 'ccrf', {
+		...globals,
+		input: 'src/modules/ccrf/CCICaseRequestFilerStandalone.ts',
+		output: {
+			sourcemap: true,
+			file: 'build/deputy-ccrf.js',
+			format: 'iife',
+			banner: loadBanner( 'src', 'modules', 'ccrf', 'BANNER.txt' ) +
+				'\n// <nowiki>',
+			footer: '// </nowiki>\n// <3'
+		},
+		plugins: getPlugins(),
+		watch: getWatch()
+	} ),
+
+	// Standalone CCI Case Request Filer Loader
+	auto( 'ccrf-loader', {
+		...globals,
+		input: 'src/modules/ccrf/CCICaseRequestFilerLoader.ts',
+		output: {
+			sourcemap: true,
+			file: 'build/deputy-ccrf-loader.js',
+			format: 'iife',
+			banner: loadBanner( 'src', 'modules', 'ccrf', 'BANNER.txt' ) +
+				'\n// <nowiki>',
+			footer: '// </nowiki>\n// <3'
+		},
+		plugins: getPlugins(),
+		watch: getWatch()
 	} )
 ].filter( ( v ) => !!v );
