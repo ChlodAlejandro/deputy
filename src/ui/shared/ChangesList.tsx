@@ -3,8 +3,10 @@ import getRevisionURL from '../../wiki/util/getRevisionURL';
 import getRevisionDiffURL from '../../wiki/util/getRevisionDiffURL';
 import nsId from '../../wiki/util/nsId';
 import type { ExpandedRevisionData } from '../../api/ExpandedRevisionData';
-import { h } from 'tsx-dom';
+import { ComponentChild, h } from 'tsx-dom';
 import unwrapJQ from '../../util/unwrapJQ';
+import msgEval from '../../wiki/util/msgEval';
+import classMix from '../../util/classMix';
 import { USER_LOCALE } from '../../wiki/Locale';
 
 /**
@@ -111,12 +113,18 @@ export function ChangesListTime(
  */
 export function ChangesListDate(
 	{ revision, link }: { revision: ExpandedRevisionData, link?: boolean } |
-		{ revision: { timestamp: string }, link: false }
+		{ revision: { timestamp: string, texthidden?: true }, link: false }
 ): JSX.Element {
+	// `texthidden` would be indeterminate if the `{timestamp}` type was used
+	if ( revision.texthidden ) {
+		// Don't give out a link if the revision was deleted
+		link = false;
+	}
+
 	const time = new Date( revision.timestamp );
 	let now = window.moment( time );
 
-	if ( window.deputy.config.cci.forceUtc.get() ) {
+	if ( window.deputy && window.deputy.config.cci.forceUtc.get() ) {
 		now = now.utc();
 	}
 	const formattedTime = time.toLocaleTimeString( USER_LOCALE, {
@@ -137,15 +145,30 @@ export function ChangesListDate(
 		<a class="mw-changeslist-date" href={
 			getRevisionURL( revision.revid, revision.page.title )
 		}>{ formattedTime }{ comma }{ formattedDate }</a> :
-		<span>{ formattedTime }{ comma }{ formattedDate }</span>;
+		<span
+			class={classMix(
+				'mw-changeslist-date',
+				revision.texthidden && 'history-deleted'
+			)}
+		>{ formattedTime }{ comma }{ formattedDate }</span>;
 }
 
 /**
  * @param root0
- * @param root0.user
+ * @param root0.revision
  * @return HTML element
  */
-export function ChangesListUser( { user }: { user: string } ) {
+export function ChangesListUser( { revision }: { revision: ExpandedRevisionData } ) {
+	const { user, userhidden } = revision;
+
+	if ( userhidden ) {
+		return <span class="history-user">
+			<span class="history-deleted mw-userlink">{
+				mw.msg( 'deputy.revision.removed.user' )
+			}</span>
+		</span>;
+	}
+
 	const userPage = new mw.Title( user, nsId( 'user' ) );
 	const userTalkPage = new mw.Title( user, nsId( 'user_talk' ) );
 	const userContribsPage = new mw.Title( 'Special:Contributions/' + user );
@@ -246,10 +269,30 @@ export function ChangesListDiff(
 
 /**
  * @param root0
+ * @param root0.page
+ * @param root0.page.title
+ * @param root0.page.ns
+ * @return HTML element
+ */
+export function ChangesListPage(
+	{ page }: { page: { title: string, ns: number } }
+): JSX.Element {
+	const pageTitle =
+		new mw.Title( page.title, page.ns ).getPrefixedText();
+
+	return <a
+		class="mw-contributions-title"
+		href={mw.util.getUrl( pageTitle )}
+		title={pageTitle}
+	>{pageTitle}</a>;
+}
+
+/**
+ * @param root0
  * @param root0.tags
  * @return HTML element
  */
-export function ChangesListTags( { tags }: { tags: [string, string][] } ): JSX.Element {
+export function ChangesListTags( { tags }: { tags: string[] } ): JSX.Element {
 	return <span class="mw-tag-markers"><a
 		rel="noopener"
 		href={mw.format(
@@ -276,5 +319,95 @@ export function ChangesListTags( { tags }: { tags: [string, string][] } ): JSX.E
 			];
 		} )
 	}
+	</span>;
+}
+
+/**
+ *
+ * @param root0
+ * @param root0.revision
+ */
+export function ChangesListMissingRow(
+	{ revision }: {
+		revision: ExpandedRevisionData
+	}
+): JSX.Element {
+	return <span>
+		<ChangesListLinks
+			revid={ revision.revid }
+			parentid={ revision.parentid }
+			missing={true}
+		/>{' '}<i dangerouslySetInnerHTML={mw.message(
+			'deputy.session.revision.missing',
+			revision.revid
+		).parse()}/>
+	</span>;
+}
+
+/**
+ * @param root0
+ * @param root0.revision
+ * @param root0.format
+ * @return A changes list row.
+ */
+export function ChangesListRow(
+	{ revision, format }: {
+		revision: ExpandedRevisionData,
+		format?: 'history' | 'contribs'
+	}
+): JSX.Element {
+	if ( !format ) {
+		format = 'history';
+	}
+
+	let commentElement: ComponentChild = '';
+	if ( revision.commenthidden ) {
+		commentElement = <span class="history-deleted comment">{
+			mw.msg( 'deputy.revision.removed.comment' )
+		}</span>;
+	} else if ( revision.parsedcomment ) {
+		commentElement = <span
+			class="comment comment--without-parentheses"
+			/** Stranger danger! Yes. */
+			dangerouslySetInnerHTML={ revision.parsedcomment }
+		/>;
+	} else if ( revision.comment ) {
+		const comment = revision.comment
+			// Insert Word-Joiner to avoid parsing "templates".
+			.replace( /{/g, '{\u2060' )
+			.replace( /}/g, '\u2060}' );
+
+		commentElement = unwrapJQ( <span
+			class="comment comment--without-parentheses"
+		/>, msgEval( comment ).parseDom() );
+	}
+
+	return <span>
+		<ChangesListLinks
+			revid={ revision.revid }
+			parentid={ revision.parentid }
+		/> {
+			!revision.parentid && <NewPageIndicator />
+		}<ChangesListTime
+			timestamp={ revision.timestamp }
+		/><ChangesListDate
+			revision={ revision }
+		/> { format === 'history' && <ChangesListUser
+			revision={ revision }
+		/> } <span
+			class="mw-changeslist-separator"
+		/> { format === 'history' && <ChangesListBytes
+			size={ revision.size }
+		/> } <ChangesListDiff
+			size={ revision.size }
+			diffsize={ revision.diffsize }
+		/> <span
+			class="mw-changeslist-separator"
+		/> { format === 'contribs' && <ChangesListPage
+			page={ revision.page }
+		/>} { commentElement } {
+			( revision.tags?.length ?? -1 ) > 0 &&
+			<ChangesListTags tags={revision.tags} />
+		}
 	</span>;
 }
