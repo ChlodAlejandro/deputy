@@ -5,6 +5,38 @@ These are changes that may or may not have been deployed to wikis, but are not y
 This changelog is automatically parsed when releases are created. Before pushing a version tag, ensure that the latest
 level 1 section heading here is the version being tagged.
 
+# [v0.8.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.8.0) - *2024-05-28*
+A lot of under-the-hood fixes, imported from work on a CCI case request wizard which hasn't been completed yet. Because the extra work on that feature has greatly diverged from the current Deputy code, compatibility is not guaranteed. For this reason, this exists as a minor version bump than a patch.
+
+This version should have no visible changes, but there may be some select bug regressions. If you encounter any, please report them.
+
+## Added
+* [[`530a76a`](../../commit/530a76a)] Added a central logging system (all console logs are now prefixed with "[Deputy]")
+* [[`51ecb8e`](../../commit/51ecb8e)] Added additional logo styles (namely a rounded and on-white logo version)
+* [[`37d981f`](../../commit/37d981f)] Added support for user's current interface language
+  * [[`404fb7a`](../../commit/404fb7a)] Added support for user's current interface language in changes list
+* [[`f25a44d`](../../commit/f25a44d)] (dev) Added better flexibility for setting development configuration settings
+* [[`f25a44d`](../../commit/f25a44d)] (dev) Added transpilation preprocessor
+* [[`aaf9c78`](../../commit/aaf9c78)] (dev) Added API types and [associated submodule](https://github.com/ChlodAlejandro/deputy-dispatch-types)
+* [[`ca9058d`](../../commit/ca9058d)] (dev) Added .tsx to test transpilation pattern
+* [[`dbd2a08`](../../commit/dbd2a08)] (dev) Added automatic development mode sensing when using `dev:` scripts
+* [[`8a2fc4b`](../../commit/8a2fc4b)] (dev) Added util for finding MediaWiki section headings on the current page
+
+## Modified
+* [[`3f89b9a`](../../commit/3f89b9a)] (dev) Refactored backend API classes to fully support new Dispatch API specification
+* [[`73ba073`](../../commit/73ba073)] (dev) Transferred select changes list UI elements to shared space
+  * [[`198e33a`](../../commit/198e33a)] (dev) Improved compatibility with standalone modules
+  * [[`26890f7`](../../commit/26890f7)] (dev) Transferred all changes list UI elements to shared space
+* [[`d7d95d1`](../../commit/d7d95d1)] (dev) Converted jQuery → innerHTML assignments to direct node manipulation
+* [[`fda9b30`](../../commit/fda9b30)] (dev) Split wiki configuration locations to dedicated constant file
+* [[`b08ad16`](../../commit/b08ad16)] (dev) Split contribution survey row statuses to dedicated constant file 
+
+## Fixed
+* [[`f1c04a5`](../../commit/f1c04a5)] Fixed collapsible elements in just-saved sections not working
+* [[`076ce3c`](../../commit/076ce3c)] (dev) Fixed CI leaving submodules uninitialized
+
+For a granular list of changes, see [v0.7.1...v0.8.0](https://github.com/ChlodAlejandro/deputy/compare/v0.7.1...v0.8.0).
+
 # [v0.7.1](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.7.1) - *2024-04-24*
 Bugfixes, introduction of better diff URL parser, and significant bugfix for the section start overlay,
 which can cause the overlay to cover other sections that don't start with a contribution survey header.
