@@ -6,6 +6,7 @@ import decorateEditSummary from '../../../wiki/util/decorateEditSummary';
 import MwApi from '../../../MwApi';
 import changeTag from '../../../config/changeTag';
 import warn from '../../../util/warn';
+import normalizeWikiHeading from '../../../wiki/util/normalizeWikiHeading';
 
 export interface SerializedCopyrightProblemsListingData {
 	basic: boolean;
@@ -113,7 +114,14 @@ export default class CopyrightProblemsListing {
 			el.parentElement.tagName === 'LI' ? el.parentElement.parentElement : el.parentElement
 		).previousElementSibling;
 
-		while ( previousPivot != null && previousPivot.tagName !== 'H4' ) {
+		let heading;
+		// Search for a level 4 heading backwards.
+		while (
+			previousPivot != null &&
+			// Set the ceiling to be immediately above for efficiency.
+			( heading = normalizeWikiHeading( previousPivot, previousPivot.parentElement ) )
+				?.level !== 4
+		) {
 			previousPivot = previousPivot.previousElementSibling;
 		}
 
@@ -121,9 +129,9 @@ export default class CopyrightProblemsListing {
 			return false;
 		}
 
-		if ( previousPivot.querySelector( '.mw-headline' ) != null ) {
-			// At this point, previousPivot is likely a MediaWiki level 4 heading.
-			const h4Anchor = previousPivot.querySelector( '.mw-headline a' );
+		// At this point, previousPivot is likely a MediaWiki level 4 heading.
+		const h4Anchor = heading.h.querySelector( 'a' );
+		if ( h4Anchor ) {
 			listingPage = pagelinkToTitle( h4Anchor as HTMLAnchorElement );
 
 			// Identify if the page is a proper listing page (within the root page's

@@ -1,11 +1,8 @@
 import DeputyCasePageWikitext from './DeputyCasePageWikitext';
-import sectionHeadingName from './util/sectionHeadingName';
 import getPageTitle from './util/getPageTitle';
 import DeputyCase from './DeputyCase';
-import sectionHeadingId from './util/sectionHeadingId';
-import isWikiHeading from './util/isWikiHeading';
-import getWikiHeadingLevel from './util/getWikiHeadingLevel';
 import getSectionElements from './util/getSectionElements';
+import normalizeWikiHeading from './util/normalizeWikiHeading';
 
 export type ContributionSurveyHeading = HTMLHeadingElement;
 
@@ -144,17 +141,13 @@ export default class DeputyCasePage extends DeputyCase {
 			return false;
 		}
 
-		// All headings (h1, h2, h3, h4, h5, h6)
-		const headlineElement = this.parsoid ?
-			el :
-			el.querySelector<HTMLElement>( '.mw-headline' );
-		// Handle DiscussionTools case (.mw-heading)
-		return isWikiHeading( el ) &&
-			headlineElement != null &&
+		const heading = normalizeWikiHeading( el );
+		return heading != null &&
+			el === heading.h &&
 			// eslint-disable-next-line security/detect-non-literal-regexp
 			new RegExp(
 				window.deputy.wikiConfig.cci.headingMatch.get()
-			).test( headlineElement.innerText );
+			).test( heading.title );
 	}
 
 	/**
@@ -163,7 +156,7 @@ export default class DeputyCasePage extends DeputyCase {
 	 *
 	 * @return The <h*> element of the heading.
 	 */
-	findFirstContributionSurveyHeading(): ContributionSurveyHeading {
+	findFirstContributionSurveyHeadingElement(): ContributionSurveyHeading {
 		return this.findContributionSurveyHeadings()[ 0 ];
 	}
 
@@ -179,14 +172,12 @@ export default class DeputyCasePage extends DeputyCase {
 		sectionIdentifier: string,
 		useId = false
 	): ContributionSurveyHeading {
-		// No need to perform .mw-headline existence check here, already
-		// done by `findContributionSurveyHeadings`
 		return this.findContributionSurveyHeadings()
 			.find(
 				( v ) =>
-					useId ?
-						sectionHeadingId( v ) === sectionIdentifier :
-						sectionHeadingName( v ) === sectionIdentifier
+					normalizeWikiHeading( v )[
+						useId ? 'id' : 'title'
+					] === sectionIdentifier
 			);
 	}
 
@@ -212,30 +203,6 @@ export default class DeputyCasePage extends DeputyCase {
 	}
 
 	/**
-	 * Normalizes a section heading. On some pages, DiscussionTools wraps the heading
-	 * around in a div, which breaks some assumptions with the DOM tree (e.g. that the
-	 * heading is immediately followed by section elements).
-	 *
-	 * This returns the element at the "root" level, i.e. the wrapping <div> when
-	 * DiscussionTools is active, or the <h2> when it is not.
-	 * @param heading
-	 */
-	normalizeSectionHeading( heading: HTMLElement ): ContributionSurveyHeading {
-		if ( !this.isContributionSurveyHeading( heading ) ) {
-			if ( !this.isContributionSurveyHeading( heading.parentElement ) ) {
-				throw new Error( 'Provided section heading is not a valid section heading.' );
-			} else {
-				heading = heading.parentElement;
-			}
-		}
-		// When DiscussionTools is being used, the header is wrapped in a div.
-		if ( heading.parentElement.classList.contains( 'mw-heading' ) ) {
-			heading = heading.parentElement;
-		}
-		return heading as ContributionSurveyHeading;
-	}
-
-	/**
 	 * Gets all elements that are part of a contribution survey "section", that is
 	 * a set of elements including the section heading and all elements succeeding
 	 * the heading until (and exclusive of) the heading of the next section.
@@ -251,15 +218,13 @@ export default class DeputyCasePage extends DeputyCase {
 	 * @return An array of all HTMLElements covered by the section
 	 */
 	getContributionSurveySection( sectionHeading: HTMLElement ): Node[] {
-		// Normalize "sectionHeading" to use the h* element and not the .mw-heading span.
-		sectionHeading = this.normalizeSectionHeading( sectionHeading );
-		const sectionHeadingLevel = getWikiHeadingLevel( sectionHeading );
+		const heading = normalizeWikiHeading( sectionHeading );
+		const ceiling = heading.root.parentElement;
 
 		return getSectionElements(
-			this.normalizeSectionHeading( sectionHeading ),
+			heading.root as HTMLElement,
 			( el ) =>
-				isWikiHeading( el ) &&
-				sectionHeadingLevel >= getWikiHeadingLevel( el )
+				heading.level >= ( normalizeWikiHeading( el, ceiling )?.level ?? Infinity )
 		);
 	}
 

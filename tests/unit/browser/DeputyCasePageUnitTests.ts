@@ -224,7 +224,7 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 		await expect(
 			page.evaluate(
 				async () => ( await window.deputy.DeputyCasePage.build() )
-					.findFirstContributionSurveyHeading()
+					.findFirstContributionSurveyHeadingElement()
 					.getAttribute( 'data-deputy-test' )
 			)
 		).resolves.toBe( _targetId );

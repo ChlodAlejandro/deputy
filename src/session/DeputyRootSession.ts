@@ -2,7 +2,6 @@ import DeputyCasePage, { ContributionSurveyHeading } from '../wiki/DeputyCasePag
 import DeputyCCISessionStartLink from '../ui/root/DeputyCCISessionStartLink';
 import removeElement from '../util/removeElement';
 import unwrapWidget from '../util/unwrapWidget';
-import sectionHeadingName from '../wiki/util/sectionHeadingName';
 import {
 	DeputyMessageEvent,
 	DeputySessionRequestMessage,
@@ -13,9 +12,9 @@ import DeputyContributionSurveySection from '../ui/root/DeputyContributionSurvey
 import { SessionInformation } from './DeputySession';
 import { ArrayOrNot } from '../types';
 import DeputyMessageWidget from '../ui/shared/DeputyMessageWidget';
-import sectionHeadingId from '../wiki/util/sectionHeadingId';
 import last from '../util/last';
 import findNextSiblingElement from '../util/findNextSiblingElement';
+import normalizeWikiHeading from '../wiki/util/normalizeWikiHeading';
 
 /**
  * The DeputyRootSession. Instantiated only when:
@@ -43,9 +42,10 @@ export default class DeputyRootSession {
 
 		casePage.findContributionSurveyHeadings()
 			.forEach( ( heading: ContributionSurveyHeading ) => {
-				const link = DeputyCCISessionStartLink( heading, casePage );
+				const normalizedHeading = normalizeWikiHeading( heading );
+				const link = DeputyCCISessionStartLink( normalizedHeading, casePage );
 				startLink.push( link as HTMLElement );
-				heading.appendChild( link );
+				normalizedHeading.root.appendChild( link );
 			} );
 
 		window.deputy.comms.addEventListener( 'sessionStarted', () => {
@@ -68,7 +68,7 @@ export default class DeputyRootSession {
 		await mw.loader.using(
 			[ 'oojs-ui-core', 'oojs-ui.styles.icons-content' ],
 			() => {
-				const firstHeading = casePage.findFirstContributionSurveyHeading();
+				const firstHeading = casePage.findFirstContributionSurveyHeadingElement();
 				if ( firstHeading ) {
 					const stopButton = new OO.ui.ButtonWidget( {
 						label: mw.msg( 'deputy.session.otherActive.button' ),
@@ -108,9 +108,9 @@ export default class DeputyRootSession {
 						window.deputy.session.init();
 					} );
 
-					casePage.normalizeSectionHeading(
+					normalizeWikiHeading(
 						firstHeading
-					).insertAdjacentElement(
+					).root.insertAdjacentElement(
 						'beforebegin',
 						unwrapWidget( messageBox )
 					);
@@ -136,8 +136,8 @@ export default class DeputyRootSession {
 					const lastActiveSection =
 						DeputyRootSession.findFirstLastActiveSection( casePage );
 					const firstSection =
-						casePage.normalizeSectionHeading(
-							casePage.findFirstContributionSurveyHeading()
+						normalizeWikiHeading(
+							casePage.findFirstContributionSurveyHeadingElement()
 						);
 
 					// Insert element directly into widget (not as text, or else event
@@ -165,10 +165,10 @@ export default class DeputyRootSession {
 								'deputy.session.continue.help' :
 								'deputy.session.continue.help.fromStart',
 							lastActiveSection ?
-								sectionHeadingName( lastActiveSection ) :
+								normalizeWikiHeading( lastActiveSection ).title :
 								casePage.lastActiveSections[ 0 ]
 									.replace( /_/g, ' ' ),
-							sectionHeadingName( firstSection )
+							firstSection.title
 						),
 						actions: [ continueButton ],
 						closable: true
@@ -183,7 +183,7 @@ export default class DeputyRootSession {
 							DeputyRootSession.continueSession( casePage );
 						} else {
 							DeputyRootSession.continueSession( casePage, [
-								sectionHeadingId( firstSection )
+								firstSection.id
 							] );
 						}
 						window.deputy.comms.removeEventListener(
@@ -192,7 +192,7 @@ export default class DeputyRootSession {
 						);
 					} );
 
-					firstSection.insertAdjacentElement(
+					firstSection.root.insertAdjacentElement(
 						'beforebegin',
 						unwrapWidget( messageBox )
 					);
@@ -221,7 +221,7 @@ export default class DeputyRootSession {
 			[ 'oojs-ui-core', 'oojs-ui.styles.icons-content' ],
 			() => {
 				const firstHeading =
-					casePage.findFirstContributionSurveyHeading();
+					casePage.findFirstContributionSurveyHeadingElement();
 				if ( firstHeading ) {
 					const messageBox = DeputyMessageWidget( {
 						classes: [
@@ -232,9 +232,9 @@ export default class DeputyRootSession {
 						message: mw.msg( 'deputy.session.tabActive.help' ),
 						closable: true
 					} );
-					casePage.normalizeSectionHeading(
+					normalizeWikiHeading(
 						firstHeading
-					).insertAdjacentElement(
+					).root.insertAdjacentElement(
 						'beforebegin',
 						unwrapWidget( messageBox )
 					);
@@ -264,7 +264,7 @@ export default class DeputyRootSession {
 		const csHeadings = casePage.findContributionSurveyHeadings();
 		for ( const lastActiveSection of casePage.lastActiveSections ) {
 			for ( const heading of csHeadings ) {
-				if ( sectionHeadingId( heading ) === lastActiveSection ) {
+				if ( normalizeWikiHeading( heading ).id === lastActiveSection ) {
 					return heading;
 				}
 			}
@@ -284,7 +284,7 @@ export default class DeputyRootSession {
 		_casePage?: DeputyCasePage
 	): Promise<void> {
 		const sectionIds = ( Array.isArray( section ) ? section : [ section ] ).map(
-			( _section ) => sectionHeadingId( _section )
+			( _section ) => normalizeWikiHeading( _section ).id
 		);
 		// Save session to storage
 		const casePage = _casePage ?? await DeputyCasePage.build();
@@ -438,7 +438,7 @@ export default class DeputyRootSession {
 
 				const activeSectionPromises = [];
 				for ( const heading of this.casePage.findContributionSurveyHeadings() ) {
-					const headingId = sectionHeadingId( heading );
+					const headingId = normalizeWikiHeading( heading ).id;
 
 					if ( this.session.caseSections.indexOf( headingId ) !== -1 ) {
 						activeSectionPromises.push(
@@ -509,8 +509,8 @@ export default class DeputyRootSession {
 	 * @param heading
 	 */
 	addSectionOverlay( casePage: DeputyCasePage, heading: ContributionSurveyHeading ): void {
-		const normalizedHeading = casePage.normalizeSectionHeading( heading );
-		const section = casePage.getContributionSurveySection( normalizedHeading );
+		const normalizedHeading = normalizeWikiHeading( heading ).root;
+		const section = casePage.getContributionSurveySection( normalizedHeading as HTMLElement );
 		const list = section.find(
 			( v ) => v instanceof HTMLElement && v.tagName === 'UL'
 		) as HTMLUListElement;
@@ -582,7 +582,7 @@ export default class DeputyRootSession {
 			return false;
 		}
 
-		const sectionId = sectionHeadingId( heading );
+		const sectionId = normalizeWikiHeading( heading ).id;
 		this.sections.push( el );
 		const lastActiveSession = this.session.caseSections.indexOf( sectionId );
 		if ( lastActiveSession === -1 ) {
@@ -591,11 +591,7 @@ export default class DeputyRootSession {
 		}
 		await casePage.addActiveSection( sectionId );
 
-		if ( heading.parentElement.classList.contains( 'mw-heading' ) ) {
-			heading.parentElement.insertAdjacentElement( 'afterend', el.render() );
-		} else {
-			heading.insertAdjacentElement( 'afterend', el.render() );
-		}
+		normalizeWikiHeading( heading ).root.insertAdjacentElement( 'afterend', el.render() );
 		await el.loadData();
 		mw.hook( 'deputy.load.cci.session' ).fire();
 
@@ -628,9 +624,9 @@ export default class DeputyRootSession {
 		const casePage = e0 instanceof DeputyContributionSurveySection ?
 			e0.casePage : e0;
 		const heading = e0 instanceof DeputyContributionSurveySection ?
-			e0.heading : e1;
+			e0.heading : normalizeWikiHeading( e1 );
 
-		const sectionId = sectionHeadingId( heading );
+		const sectionId = heading.id;
 		const sectionListIndex = this.sections.indexOf( el );
 		if ( el != null && sectionListIndex !== -1 ) {
 			this.sections.splice( sectionListIndex, 1 );
@@ -647,7 +643,7 @@ export default class DeputyRootSession {
 			} else {
 				await DeputyRootSession.setSession( this.session );
 				await casePage.removeActiveSection( sectionId );
-				this.addSectionOverlay( casePage, heading );
+				this.addSectionOverlay( casePage, heading.h );
 			}
 		}
 	}

@@ -1,6 +1,6 @@
 import last from '../../util/last';
-import sectionHeadingId from './sectionHeadingId';
 import error from '../../util/error';
+import { WikiHeading } from './normalizeWikiHeading';
 
 /**
  * Checks the n of a given element, that is to say the `n`th occurrence of a section
@@ -19,18 +19,17 @@ import error from '../../util/error';
  *   - Otherwise, the n is the last number on the ID if the ID than the heading name.
  *
  * @param heading The heading to check
- * @param headingName The name of the heading to check
  * @return The n, a number
  */
-export default function ( heading: HTMLHeadingElement, headingName: string ): number {
+export default function sectionHeadingN( heading: WikiHeading ): number {
 	try {
 
 		const headingNameEndPattern = /(?:\s|_)(\d+)/g;
 		const headingIdEndPattern = /_(\d+)/g;
 
-		const headingId = sectionHeadingId( heading );
+		const headingId = heading.id;
 		const headingIdMatches = headingId.match( headingIdEndPattern );
-		const headingNameMatches = headingName.match( headingNameEndPattern );
+		const headingNameMatches = heading.title.match( headingNameEndPattern );
 
 		if ( headingIdMatches == null ) {
 			return 1;

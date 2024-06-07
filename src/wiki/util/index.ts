@@ -13,11 +13,11 @@ import getRevisionURL from './getRevisionURL';
 import getSectionElements from './getSectionElements';
 import getSectionHTML from './getSectionHTML';
 import getSectionId from './getSectionId';
-import getWikiHeadingLevel from './getWikiHeadingLevel';
 import guessAuthor from './guessAuthor';
 import isWikiHeading from './isWikiHeading';
 import msgEval from './msgEval';
 import normalizeTitle from './normalizeTitle';
+import normalizeWikiHeading from './normalizeWikiHeading';
 import nsId from './nsId';
 import openWindow from './openWindow';
 import pagelinkToTitle from './pagelinkToTitle';
@@ -25,9 +25,7 @@ import parseDiffUrl from './parseDiffUrl';
 import performHacks from './performHacks';
 import purge from './purge';
 import renderWikitext from './renderWikitext';
-import sectionHeadingId from './sectionHeadingId';
 import sectionHeadingN from './sectionHeadingN';
-import sectionHeadingName from './sectionHeadingName';
 import toRedirectsObject from './toRedirectsObject';
 export default {
 	decorateEditSummary: decorateEditSummary,
@@ -45,11 +43,11 @@ export default {
 	getSectionElements: getSectionElements,
 	getSectionHTML: getSectionHTML,
 	getSectionId: getSectionId,
-	getWikiHeadingLevel: getWikiHeadingLevel,
 	guessAuthor: guessAuthor,
 	isWikiHeading: isWikiHeading,
 	msgEval: msgEval,
 	normalizeTitle: normalizeTitle,
+	normalizeWikiHeading: normalizeWikiHeading,
 	nsId: nsId,
 	openWindow: openWindow,
 	pagelinkToTitle: pagelinkToTitle,
@@ -57,8 +55,6 @@ export default {
 	performHacks: performHacks,
 	purge: purge,
 	renderWikitext: renderWikitext,
-	sectionHeadingId: sectionHeadingId,
 	sectionHeadingN: sectionHeadingN,
-	sectionHeadingName: sectionHeadingName,
 	toRedirectsObject: toRedirectsObject
 };

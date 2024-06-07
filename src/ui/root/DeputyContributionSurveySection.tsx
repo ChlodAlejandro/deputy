@@ -6,7 +6,6 @@ import DeputyContributionSurveyRow from './DeputyContributionSurveyRow';
 import ContributionSurveyRow from '../../models/ContributionSurveyRow';
 import ContributionSurveySection from '../../models/ContributionSurveySection';
 import DeputyReviewDialog from './DeputyReviewDialog';
-import sectionHeadingName from '../../wiki/util/sectionHeadingName';
 import getSectionId from '../../wiki/util/getSectionId';
 import getSectionHTML from '../../wiki/util/getSectionHTML';
 import removeElement from '../../util/removeElement';
@@ -25,6 +24,7 @@ import error from '../../util/error';
 import DeputyExtraneousElement from './DeputyExtraneousElement';
 import classMix from '../../util/classMix';
 import dangerModeConfirm from '../../util/dangerModeConfirm';
+import normalizeWikiHeading, { WikiHeading } from '../../wiki/util/normalizeWikiHeading';
 
 /**
  * The contribution survey section UI element. This includes a list of revisions
@@ -38,7 +38,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 
 	casePage: DeputyCasePage;
 	private _section: ContributionSurveySection;
-	heading: HTMLHeadingElement;
+	heading: WikiHeading;
 	sectionNodes: Node[];
 	originalList: HTMLElement;
 	/**
@@ -261,14 +261,14 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	 * @return the name of the section heading.
 	 */
 	get headingName(): string {
-		return sectionHeadingName( this.heading );
+		return this.heading.title;
 	}
 
 	/**
 	 * @return the `n` of the section heading, if applicable.
 	 */
 	get headingN(): number {
-		return sectionHeadingN( this.heading, this.headingName );
+		return sectionHeadingN( this.heading );
 	}
 
 	/**
@@ -279,7 +279,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	 */
 	constructor( casePage: DeputyCasePage, heading: ContributionSurveyHeading ) {
 		this.casePage = casePage;
-		this.heading = casePage.normalizeSectionHeading( heading );
+		this.heading = normalizeWikiHeading( heading );
 		this.sectionNodes = casePage.getContributionSurveySection( heading );
 	}
 
@@ -467,10 +467,10 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	 * @param toggle
 	 */
 	toggleSectionElements( toggle: boolean ) {
-		const bottom: Node = this.heading.nextSibling ?? null;
+		const bottom: Node = this.heading.root.nextSibling ?? null;
 		for ( const sectionElement of this.sectionNodes ) {
 			if ( toggle ) {
-				this.heading.parentNode.insertBefore( sectionElement, bottom );
+				this.heading.root.parentNode.insertBefore( sectionElement, bottom );
 			} else {
 				removeElement( sectionElement );
 			}
@@ -686,13 +686,15 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 					// Remove whatever section elements are still there.
 					// They may have been greatly modified by the save.
 					const sectionElements =
-						this.casePage.getContributionSurveySection( this.heading );
+						this.casePage.getContributionSurveySection(
+							this.heading.root as HTMLElement
+						);
 					sectionElements.forEach( ( el ) => removeElement( el ) );
 
 					// Clear out section elements and re-append new ones to the DOM.
 					this.sectionNodes = [];
 					// Heading is preserved to avoid messing with IDs.
-					const heading = this.heading;
+					const heading = this.heading.root;
 					const insertRef = heading.nextSibling ?? null;
 					for ( const child of Array.from( element.childNodes ) ) {
 						if ( !this.casePage.isContributionSurveyHeading( child ) ) {
@@ -707,17 +709,9 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 						this._section = null;
 						await this.getSection( Object.assign( wikitext, { revid } ) );
 						await this.prepare();
-						if ( heading.parentElement.classList.contains( 'mw-heading' ) ) {
-							// Intentional recursive call
-							heading.parentElement.insertAdjacentElement(
-								'afterend', this.render()
-							);
-						} else {
-							// Intentional recursive call
-							heading.insertAdjacentElement(
-								'afterend', this.render()
-							);
-						}
+						heading.insertAdjacentElement(
+							'afterend', this.render()
+						);
 						// Run this asynchronously.
 						setTimeout( this.loadData.bind( this ), 0 );
 					} else {

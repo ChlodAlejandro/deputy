@@ -11,7 +11,13 @@ export default function findSectionHeading(
 ): HTMLElement | null {
 	let currentN = 1;
 
-	const headlines = Array.from( document.querySelectorAll( 'h2 > .mw-headline' ) );
+	const headlines = Array.from( document.querySelectorAll(
+		// Old style headings
+		[ 1, 2, 3, 4, 5, 6 ].map( v => `h${v} > .mw-headline` ).join( ',' ) +
+			',' +
+			// New style headings
+			[ 1, 2, 3, 4, 5, 6 ].map( v => `mw-heading > h${v}` ).join( ',' )
+	) );
 	for ( const el of headlines ) {
 		if ( el instanceof HTMLElement && el.innerText === sectionHeadingName ) {
 			if ( currentN >= n ) {

@@ -7,6 +7,7 @@ import equalTitle from '../../../util/equalTitle';
 import swapElements from '../../../util/swapElements';
 import NewCopyrightProblemsListing from '../ui/NewCopyrightProblemsListing';
 import normalizeTitle from '../../../wiki/util/normalizeTitle';
+import normalizeWikiHeading from '../../../wiki/util/normalizeWikiHeading';
 
 /**
  * A CopyrightProblemsPage that represents a page that currently exists on a document.
@@ -116,11 +117,14 @@ export default class CopyrightProblemsSession extends CopyrightProblemsPage {
 	}
 
 	/**
-	 *
+	 * Adds a panel containing the "new listing" buttons (single and multiple)
+	 * and the panel container (when filing a multiple-page listing) to the proper
+	 * location: either at the end of the copyright problems section or replacing
+	 * the redlink to the blank copyright problems page.
 	 */
 	addNewListingsPanel(): void {
 		document.querySelectorAll(
-			'.mw-headline > a, a.external, a.redlink'
+			'.mw-headline a, .mw-heading a, a.external, a.redlink'
 		).forEach( ( el ) => {
 			const href = el.getAttribute( 'href' );
 			const url = new URL( href, window.location.href );
@@ -133,61 +137,54 @@ export default class CopyrightProblemsSession extends CopyrightProblemsPage {
 					CopyrightProblemsPage.getCurrentListingPage().getPrefixedText()
 				)
 			) {
-				// Crawl backwards, avoiding common inline elements, to see if this is a standalone
-				// line within the rendered text.
-				let currentPivot: Element = el.parentElement;
-
-				while (
-					currentPivot !== null &&
-					[ 'I', 'B', 'SPAN', 'EM', 'STRONG' ].indexOf( currentPivot.tagName ) !== -1
-				) {
-					currentPivot = currentPivot.parentElement;
-				}
-
-				// By this point, current pivot will be a <div>, <p>, or other usable element.
-				if (
-					!el.parentElement.classList.contains( 'mw-headline' ) &&
-					( currentPivot == null ||
-						currentPivot.children.length > 1 )
-				) {
-					return;
-				} else if ( el.parentElement.classList.contains( 'mw-headline' ) ) {
-					// "Edit source" button of an existing section heading.
-					let headingBottom = el.parentElement.parentElement.nextElementSibling;
-					let pos: InsertPosition = 'beforebegin';
+				if ( el.classList.contains( 'external' ) || el.classList.contains( 'redlink' ) ) {
+					// Keep crawling up and find the parent of this element that is directly
+					// below the parser root or the current section.
+					let currentPivot = el;
 					while (
-						headingBottom != null &&
-						!/^H[123456]$/.test( headingBottom.tagName )
+						currentPivot != null &&
+						!currentPivot.classList.contains( 'mw-parser-output' ) &&
+						[ 'A', 'I', 'B', 'SPAN', 'EM', 'STRONG' ]
+							.indexOf( currentPivot.tagName ) !== -1
 					) {
-						headingBottom = headingBottom.nextElementSibling;
+						currentPivot = currentPivot.parentElement;
 					}
 
-					if ( headingBottom == null ) {
-						headingBottom = el.parentElement.parentElement.parentElement;
-						pos = 'beforeend';
+					// We're now at the <p> or <div> or whatever.
+					// Check if it only has one child (the tree that contains this element)
+					// and if so, replace the links.
+
+					if ( currentPivot.children.length > 1 ) {
+						return;
 					}
 
-					// Add below today's section header.
 					mw.loader.using( [
 						'oojs-ui-core',
 						'oojs-ui.styles.icons-interactions',
 						'mediawiki.widgets',
 						'mediawiki.widgets.TitlesMultiselectWidget'
 					], () => {
-						// H4
-						headingBottom.insertAdjacentElement(
-							pos,
-							NewCopyrightProblemsListing()
-						);
+						swapElements( currentPivot, NewCopyrightProblemsListing() );
 					} );
 				} else {
+					// This is in a heading. Let's place it after the section heading.
+					const heading = normalizeWikiHeading( el );
+
+					if ( heading.root.classList.contains( 'dp-ia-upgraded' ) ) {
+						return;
+					}
+					heading.root.classList.add( 'dp-ia-upgraded' );
+
 					mw.loader.using( [
 						'oojs-ui-core',
 						'oojs-ui.styles.icons-interactions',
 						'mediawiki.widgets',
 						'mediawiki.widgets.TitlesMultiselectWidget'
 					], () => {
-						swapElements( el, NewCopyrightProblemsListing() );
+						heading.root.insertAdjacentElement(
+							'afterend',
+							NewCopyrightProblemsListing()
+						);
 					} );
 				}
 			}

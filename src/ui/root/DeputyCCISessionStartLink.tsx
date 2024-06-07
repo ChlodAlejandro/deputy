@@ -1,6 +1,6 @@
 import { h } from 'tsx-dom';
-import DeputyCasePage, { ContributionSurveyHeading } from '../../wiki/DeputyCasePage';
-import sectionHeadingId from '../../wiki/util/sectionHeadingId';
+import DeputyCasePage from '../../wiki/DeputyCasePage';
+import { WikiHeading } from '../../wiki/util/normalizeWikiHeading';
 
 /**
  * The CCI session start link. Starts a CCI session when pressed.
@@ -10,14 +10,14 @@ import sectionHeadingId from '../../wiki/util/sectionHeadingId';
  * @return The link element to be displayed
  */
 export default function (
-	heading: ContributionSurveyHeading,
+	heading: WikiHeading,
 	casePage?: DeputyCasePage
 ): JSX.Element {
 	return <span class="deputy dp-sessionStarter">
 		<span class="dp-sessionStarter-bracket">[</span>
 		<a onClick={ async () => {
 			if ( casePage && casePage.lastActiveSections.length > 0 ) {
-				const headingId = sectionHeadingId( heading );
+				const headingId = heading.id;
 				if ( window.deputy.config.cci.openOldOnContinue.get() ) {
 					if ( casePage.lastActiveSections.indexOf( headingId ) === -1 ) {
 						await casePage.addActiveSection( headingId );
@@ -29,7 +29,7 @@ export default function (
 					);
 				}
 			} else {
-				await window.deputy.session.DeputyRootSession.startSession( heading );
+				await window.deputy.session.DeputyRootSession.startSession( heading.h );
 			}
 		} }>{
 				mw.message(
