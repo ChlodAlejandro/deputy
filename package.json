@@ -69,10 +69,10 @@
         "shx": "^0.3.4",
         "ts-jest": "^29.1.1",
         "tslib": "^2.6.2",
-        "typedoc": "^0.24.8",
+        "typedoc": "^0.25.13",
         "typedoc-plugin-mdn-links": "^3.1.16",
-        "typedoc-plugin-missing-exports": "^2.2.0",
-        "typedoc-plugin-rename-defaults": "^0.6.5",
+        "typedoc-plugin-missing-exports": "^2.3.0",
+        "typedoc-plugin-rename-defaults": "^0.7.0",
         "types-mediawiki": "github:wikimedia-gadgets/types-mediawiki",
         "typescript": "^4.7.4"
     },
