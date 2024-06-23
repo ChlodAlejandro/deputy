@@ -5,6 +5,14 @@ These are changes that may or may not have been deployed to wikis, but are not y
 This changelog is automatically parsed when releases are created. Before pushing a version tag, ensure that the latest
 level 1 section heading here is the version being tagged.
 
+## Fixed
+* [[`e8c29ed`](../../commit/e8c29ed)] Fixed CCI revision sorting being wrong sometimes
+* [[`42e1878`](../../commit/42e1878)] Fixed CCI section start overlay appearing on subsections which are also valid CCI sections
+
+
+For a granular list of changes, see [v0.8.0...main](https://github.com/ChlodAlejandro/deputy/compare/v0.8.0...main).
+
+
 # [v0.8.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.8.0) - *2024-05-28*
 A lot of under-the-hood fixes, imported from work on a CCI case request wizard which hasn't been completed yet. Because the extra work on that feature has greatly diverged from the current Deputy code, compatibility is not guaranteed. For this reason, this exists as a minor version bump than a patch.
 
