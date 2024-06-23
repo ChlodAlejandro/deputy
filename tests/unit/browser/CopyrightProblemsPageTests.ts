@@ -1,8 +1,7 @@
 import '../../../src/types';
 import 'types-mediawiki';
 import BrowserHelper from '../../util/BrowserHelper';
-import WikiConfiguration from '../../../src/config/WikiConfiguration';
-import CopyrightProblemsListing, {
+import {
 	SerializedCopyrightProblemsListingData
 } from '../../../src/modules/ia/models/CopyrightProblemsListing';
 
