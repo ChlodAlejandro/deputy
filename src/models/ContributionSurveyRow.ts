@@ -66,31 +66,49 @@ export default class ContributionSurveyRow {
 		diffs: Iterable<ContributionSurveyRevision>
 	): ContributionSurveyRowSort {
 		let last: ContributionSurveyRevision = null;
+
 		let dateScore = 1;
 		let dateReverseScore = 1;
 		let byteScore = 1;
+		let dateStreak = 0;
+		let dateReverseStreak = 0;
+		let byteStreak = 0;
+
 		for ( const diff of diffs ) {
 			if ( last == null ) {
 				last = diff;
 			} else {
 				const diffTimestamp = new Date( diff.timestamp ).getTime();
 				const lastTimestamp = new Date( last.timestamp ).getTime();
+
+				// The use of the OR operator here has a specific purpose:
+				// * On the first iteration, we want all streak values to be 1
+				// * On any other iteration, we want it to increment the streak by 1 if a streak
+				//   exists, or set it to 1 if a streak was broken.
+				dateStreak =
+					diffTimestamp > lastTimestamp ? dateStreak + 1 : 0;
+				dateReverseStreak =
+					diffTimestamp < lastTimestamp ? dateReverseStreak + 1 : 0;
+				byteStreak =
+					diff.diffsize <= last.diffsize ? byteStreak + 1 : 0;
+
 				dateScore = ( dateScore + (
-					diffTimestamp > lastTimestamp ? 1 : 0
+					( diffTimestamp > lastTimestamp ? 1 : 0 ) * ( 1 + dateStreak * 0.3 )
 				) ) / 2;
 				dateReverseScore = ( dateReverseScore + (
-					diffTimestamp < lastTimestamp ? 1 : 0
+					( diffTimestamp < lastTimestamp ? 1 : 0 ) * ( 1 + dateReverseStreak * 0.3 )
 				) ) / 2;
 				byteScore = ( byteScore + (
-					diff.diffsize < last.diffsize ? 1 : 0
+					( diff.diffsize <= last.diffsize ? 1 : 0 ) * ( 1 + byteStreak * 0.3 )
 				) ) / 2;
+
 				last = diff;
 			}
 		}
 
 		// Multiply by weights to remove ties
-		dateScore *= 1.1;
-		dateReverseScore *= 1.05;
+		dateScore *= 1.05;
+		dateReverseScore *= 1.025;
 
 		switch ( Math.max( dateScore, dateReverseScore, byteScore ) ) {
 			case byteScore:
