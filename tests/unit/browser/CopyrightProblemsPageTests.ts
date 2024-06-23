@@ -6,13 +6,12 @@ import CopyrightProblemsListing, {
 	SerializedCopyrightProblemsListingData
 } from '../../../src/modules/ia/models/CopyrightProblemsListing';
 
+jest.setTimeout( 60e3 );
 describe( 'CopyrightProblemsPage tests', () => {
 
 	let page: BrowserHelper;
 
 	beforeAll( async () => {
-		jest.setTimeout( 60e3 );
-
 		page = await BrowserHelper.build()
 			.then( p => p.loadWikipediaPage(
 				'User:Chlod/Scripts/Deputy/tests/Problems/UnitTests'
@@ -35,7 +34,7 @@ describe( 'CopyrightProblemsPage tests', () => {
 				),
 				30e3
 			), p ] )[ 1 ] );
-	}, 60e3 );
+	} );
 
 	afterAll( async () => {
 		await page.close();
