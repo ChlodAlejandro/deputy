@@ -143,6 +143,9 @@ export default class DeputyCasePage extends DeputyCase {
 
 		const heading = normalizeWikiHeading( el );
 		return heading != null &&
+			// Require that this heading is already normalized.
+			// TODO: Remove at some point.
+			//       This shouldn't be required if double-normalization wasn't a thing.
 			el === heading.h &&
 			// eslint-disable-next-line security/detect-non-literal-regexp
 			new RegExp(
@@ -223,8 +226,12 @@ export default class DeputyCasePage extends DeputyCase {
 
 		return getSectionElements(
 			heading.root as HTMLElement,
-			( el ) =>
-				heading.level >= ( normalizeWikiHeading( el, ceiling )?.level ?? Infinity )
+			( el ) => {
+				// TODO: Avoid double normalization
+				const norm = normalizeWikiHeading( el, ceiling );
+				return ( heading.level >= ( norm?.level ?? Infinity ) ) ||
+					this.isContributionSurveyHeading( norm?.h ?? el );
+			}
 		);
 	}
 

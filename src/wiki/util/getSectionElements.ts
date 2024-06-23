@@ -4,7 +4,7 @@ import isWikiHeading from './isWikiHeading';
  * Finds section elements from a given section heading (and optionally a predicate)
  *
  * @param sectionHeading
- * @param sectionHeadingPredicate
+ * @param sectionHeadingPredicate A function which returns `true` if the section should stop here
  * @return Section headings.
  */
 export default function getSectionElements(
