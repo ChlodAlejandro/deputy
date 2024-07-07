@@ -357,11 +357,15 @@ export default class ContributionSurveyRow {
 			}
 		);
 
-		const sortOrder = ContributionSurveyRow.guessSortOrder( revisionData.values() );
-		// Sort from most bytes to least.
-		return this.diffs = new Map( [ ...revisionData.entries() ].sort(
-			ContributionSurveyRow.getSorterFunction( sortOrder, 'value' )
-		) );
+		// Sort the rows (if rearranging is enabled)
+		if ( window.deputy.wikiConfig.cci.resortRows.get() ) {
+			const sortOrder = ContributionSurveyRow.guessSortOrder( revisionData.values() );
+			return this.diffs = new Map( [ ...revisionData.entries() ].sort(
+				ContributionSurveyRow.getSorterFunction( sortOrder, 'value' )
+			) );
+		} else {
+			return this.diffs = new Map( [ ...revisionData.entries() ] );
+		}
 	}
 
 	/**

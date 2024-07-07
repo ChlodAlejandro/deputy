@@ -272,6 +272,10 @@ export default class WikiConfiguration extends ConfigurationBase {
 			defaultValue: new URL( 'https://copyvios.toolforge.org/' ),
 			displayOptions: { type: 'text' },
 			alwaysSave: true
+		} ),
+		resortRows: new Setting<boolean, boolean>( {
+			defaultValue: true,
+			displayOptions: { type: 'checkbox' }
 		} )
 	};
 
