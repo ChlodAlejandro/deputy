@@ -152,11 +152,15 @@ export default function normalizeWikiHeading( node: Node, ceiling?: Element ): W
 	// Otherwise, we're either inside or outside a mw-heading.
 	// To determine if we are inside or outside, we keep climbing up until
 	// we either hit an <hN> or a given stop point.
-	// The stop point is, by default, `.mw-parser-output`, which exists both in a
-	// Parsoid document and in standard parser output. If such an element doesn't
+	// The default stop point differs on Parsoid and standard parser:
+	// - On Parsoid, `<body>` will be `.mw-body-content.mw-parser-output`.
+	// - On standard parser, we want `div.mw-body-content > div.mw-parser.output`.
+	// If such an element doesn't
 	// exist in this document, we just stop at the root element.
 	ceiling = ceiling ??
-		elementNode.ownerDocument.querySelector( '.mw-parser-output' ) ??
+		elementNode.ownerDocument.querySelector(
+			'.mw-body-content > .mw-parser-output, .mw-body-content.mw-parser-output'
+		) ??
 		elementNode.ownerDocument.documentElement;
 
 	// While we haven't hit a heading, keep going up.
