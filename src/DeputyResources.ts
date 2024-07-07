@@ -47,7 +47,7 @@ export class DeputyResources {
 	 */
 	static readonly root: ResourceRoot = {
 		type: 'url',
-		url: new URL( 'https://zoomiebot.toolforge.org/deputy/' )
+		url: new URL( 'https://tools-static.wmflabs.org/deputy/' )
 	};
 
 	/**
