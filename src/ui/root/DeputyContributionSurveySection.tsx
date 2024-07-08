@@ -25,6 +25,7 @@ import DeputyExtraneousElement from './DeputyExtraneousElement';
 import classMix from '../../util/classMix';
 import dangerModeConfirm from '../../util/dangerModeConfirm';
 import normalizeWikiHeading, { WikiHeading } from '../../wiki/util/normalizeWikiHeading';
+import parseDiffUrl from '../../wiki/util/parseDiffUrl';
 
 /**
  * The contribution survey section UI element. This includes a list of revisions
@@ -356,8 +357,15 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 				const anchor: HTMLElement = li.querySelector( 'a:first-of-type' );
 				// Avoid enlisting if the anchor can't be found (invalid row).
 				if ( anchor ) {
-					rowElements[ new mw.Title( anchor.innerText ).getPrefixedText() ] =
-						li as HTMLLIElement;
+					const anchorLinkTarget = parseDiffUrl(
+						new URL( anchor.getAttribute( 'href' ), window.location.href )
+					).title;
+					if ( !anchorLinkTarget ) {
+						warn( 'Could not parse target of anchor', anchor );
+					} else {
+						rowElements[ new mw.Title( anchorLinkTarget ).getPrefixedText() ] =
+							li as HTMLLIElement;
+					}
 				}
 			}
 		}
@@ -384,6 +392,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 					);
 				} else {
 					// Element somehow not in list. Just keep line as-is.
+					warn( `Could not find row element for "${csr.title.getPrefixedText()}"` );
 					rowElement = line;
 				}
 			} catch ( e ) {

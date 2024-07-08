@@ -11,6 +11,8 @@ interface DiffInfo {
  * or `oldid` from a URL. This is useful for converting diff URLs into actual
  * diff information, and especially useful for {{copied}} templates.
  *
+ * If diff parameters were not found (no `diff` or `oldid`), they will be `null`.
+ *
  * @param url The URL to parse
  * @return Parsed info: `diff` or `oldid` revision IDs, and/or the page title.
  */
@@ -66,7 +68,7 @@ export default function parseDiffUrl( url: URL | string ): DiffInfo {
 		const articlePathRegex = new RegExp( mw.util.getUrl( '(.*)' ) )
 			.exec( url.pathname );
 		if ( articlePathRegex != null ) {
-			title = articlePathRegex[ 1 ];
+			title = decodeURIComponent( articlePathRegex[ 1 ] );
 			break tryConvert;
 		}
 	}
