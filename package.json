@@ -88,7 +88,7 @@
     "dependencies": {
         "@chlodalejandro/parsoid": "^2.0.1-37ea110",
         "broadcastchannel-polyfill": "^1.0.1",
-        "idb": "^7.1.0",
+        "idb": "^8.0.0",
         "tsx-dom": "^1.4.0"
     }
 }
