@@ -50,7 +50,7 @@ function blockCommentIfy( text ) {
 function loadBanner( ...bannerPath ) {
 	// development script, limited impact
 	// eslint-disable-next-line security/detect-non-literal-fs-filename
-	return blockCommentIfy( fs.readFileSync( path.join( __dirname, ...bannerPath ) ) );
+	return blockCommentIfy( fs.readFileSync( path.join( import.meta.dirname, ...bannerPath ) ) );
 }
 
 // TRANSFORMS
@@ -102,7 +102,7 @@ function getPlugins() {
 		commonjs(),
 		// Handles Node-like resolution
 		nodeResolve( { browser: false } ),
-		gitInfo( {
+		gitInfo.default( {
 			updateVersion: false,
 			versionFormat: '[version]+g[abbrevHash]'
 		} ),
