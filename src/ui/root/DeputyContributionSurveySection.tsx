@@ -473,6 +473,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	/**
 	 * Toggle section elements. Removes the section elements (but preservers them in
 	 * `this.sectionElements`) if `false`, re-appends them to the DOM if `true`.
+	 *
 	 * @param toggle
 	 */
 	toggleSectionElements( toggle: boolean ) {
@@ -706,7 +707,15 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 					const heading = this.heading.root;
 					const insertRef = heading.nextSibling ?? null;
 					for ( const child of Array.from( element.childNodes ) ) {
-						if ( !this.casePage.isContributionSurveyHeading( child ) ) {
+						if ( !this.casePage.isContributionSurveyHeading(
+							normalizeWikiHeading(
+								child,
+								// We're using elements that aren't currently appended to the
+								// DOM, so we have to manually set the ceiling. Otherwise, we'll
+								// get the wrong element and ceiling checks will always be false.
+								element
+							)?.h,
+						) ) {
 							heading.parentNode.insertBefore( child, insertRef );
 							this.sectionNodes.push( child as HTMLElement );
 							// noinspection JSUnresolvedReference
