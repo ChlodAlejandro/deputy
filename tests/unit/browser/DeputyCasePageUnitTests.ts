@@ -155,7 +155,7 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 
 	test( 'isContributionSurveyHeading', async () => {
 		await Promise.all( [
-			// Actual headings
+			// Heading DIVs
 			...( [
 				'testHeading1', 'testHeading2', 'testHeading3',
 				'testHeading4', 'testHeading5', 'testHeading6',
@@ -168,6 +168,21 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 						document.getElementById( id ).nextElementSibling as HTMLElement
 					);
 				}, _id )
+			).resolves.toBe( false ) ) ),
+			// Heading elements
+			...( [
+				'testHeading1', 'testHeading2', 'testHeading3',
+				'testHeading4', 'testHeading5', 'testHeading6',
+				'testHeading7', 'testHeading8', 'testHeading9'
+			].map( ( _id ) => expect(
+				page.evaluate( async ( id ) => {
+					console.log( id, document.getElementById( id ) );
+					const currentPage = await window.deputy.DeputyCasePage.build();
+					return currentPage.isContributionSurveyHeading(
+						document.getElementById( id ).nextElementSibling
+							.querySelector( 'h1,h2,h3,h4,h5,h6' ) as HTMLElement
+					);
+				}, _id )
 			).resolves.toBe( true ) ) ),
 			// Heading spans (should be false)
 			...( [
@@ -178,7 +193,7 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 				page.evaluate( async ( id ) => {
 					const currentPage = await window.deputy.DeputyCasePage.build();
 					return currentPage.isContributionSurveyHeading(
-						( document.getElementById( id ).nextElementSibling as HTMLElement )
+						document.getElementById( id ).nextElementSibling
 							.querySelector( '.mw-headline' ) as HTMLElement
 					);
 				}, _id )
@@ -215,6 +230,7 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 
 		await page.evaluate( ( targetId ) => {
 			( document.getElementById( 'testHeading1' ).nextElementSibling as HTMLElement )
+				.querySelector( 'h1,h2,h3,h4,h5,h6' )
 				.setAttribute(
 					'data-deputy-test',
 					targetId
