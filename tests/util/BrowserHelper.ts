@@ -23,16 +23,17 @@ export default class BrowserHelper extends webdriver.WebDriver {
 		const browser = ( process.env.BROWSER || 'chrome' ).toLowerCase();
 		const size = { width: 1280, height: 768 };
 
-		const chromeOpts = new chrome.Options()
-			.windowSize( size );
-		const firefoxOpts = new firefox.Options()
-			.windowSize( size );
+		const chromeOpts = new chrome.Options();
+		const firefoxOpts = new firefox.Options();
+
+		chromeOpts.windowSize( size );
+		firefoxOpts.windowSize( size );
 
 		if ( ![ '0', 'false', 'no', '' ].includes( process.env.HEADLESS?.toLowerCase() ) ) {
-			chromeOpts.headless();
+			chromeOpts.addArguments( '--headless=new' );
 
 			if ( browser === 'firefox' ) {
-				firefoxOpts.headless();
+				firefoxOpts.addArguments( '--headless' );
 			}
 		}
 
@@ -75,7 +76,6 @@ export default class BrowserHelper extends webdriver.WebDriver {
 	private readonly logStreams: Record<string, WriteStream>;
 
 	/**
-	 *
 	 * @param session
 	 * @param executor
 	 * @param logStreams
@@ -198,7 +198,6 @@ export default class BrowserHelper extends webdriver.WebDriver {
 	}
 
 	/**
-	 *
 	 * @param func
 	 * @param {...any} args
 	 */
