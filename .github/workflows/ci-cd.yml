@@ -31,6 +31,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
+          node-version: ^20.11
           cache: 'npm'
 
       - name: Install dependencies
@@ -106,6 +107,7 @@ jobs:
         if: matrix.browser.product != 'firefox' || matrix.os != 'windows-latest'
         uses: actions/setup-node@v4
         with:
+          node-version: ^20.11
           cache: 'npm'
 
       - name: Install dependencies
