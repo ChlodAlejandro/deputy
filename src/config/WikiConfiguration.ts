@@ -347,6 +347,10 @@ export default class WikiConfiguration extends ConfigurationBase {
 			defaultValue: copyvioBottom,
 			displayOptions: { type: 'code' }
 		} ),
+		entirePageAppendBottom: new Setting<boolean, boolean>( {
+			defaultValue: true,
+			displayOptions: { type: 'checkbox' }
+		} ),
 		responses: new Setting<CopyrightProblemsResponse[], CopyrightProblemsResponse[]>( {
 			...Setting.basicSerializers,
 			defaultValue: null,
@@ -367,7 +371,6 @@ export default class WikiConfiguration extends ConfigurationBase {
 	public outdated = false;
 
 	/**
-	 *
 	 * @param sourcePage
 	 * @param serializedData
 	 * @param editable Whether the configuration is editable by the current user or not.

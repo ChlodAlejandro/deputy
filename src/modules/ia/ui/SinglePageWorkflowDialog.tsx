@@ -559,6 +559,9 @@ function initSinglePageWorkflowDialog() {
 
 			if ( this.data.entirePage ) {
 				finalPageContent = copyvioWikitext + '\n' + this.wikitext;
+				if ( wikiConfig.entirePageAppendBottom.get() ) {
+					finalPageContent += '\n' + wikiConfig.hideTemplateBottom.get();
+				}
 			} else {
 				finalPageContent =
 					this.wikitext.slice( 0, this.data.startOffset ) +

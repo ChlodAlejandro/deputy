@@ -167,6 +167,8 @@
     "deputy.setting.wiki.ia.hideTemplate.description": "Wikitext to hide offending content with. On the English Wikipedia, this is a usage of {{Template:copyvio}}. Other wikis may have an equivalent template. This should go hand in hand with \"{{int:deputy.setting.wiki.ia.hideTemplateBottom.name}}\", as they are used as a pair.",
     "deputy.setting.wiki.ia.hideTemplateBottom.name": "Content hiding wikitext (bottom)",
     "deputy.setting.wiki.ia.hideTemplateBottom.description": "Placed at the end of hidden content to hide only part of a page. On the English Wikipedia, this is {{Template:copyvio/bottom}}. Other wikis may have an equivalent template.",
+    "deputy.setting.wiki.ia.entirePageAppendBottom.name": "Append content hiding wikitext (bottom) when hiding an entire page",
+    "deputy.setting.wiki.ia.entirePageAppendBottom.description": "If enabled, the content hiding wikitext (bottom) will be appended to the end of the page when hiding the entire page. This avoids the \"missing end tag\" lint error, if the template is properly formatted.",
     "deputy.setting.wiki.ia.responses.name": "Responses",
     "deputy.setting.wiki.ia.responses.description": "Quick responses for copyright problems listings. Used by clerks to resolve specific listings or provide more information about the progress of a given listing."
 }
