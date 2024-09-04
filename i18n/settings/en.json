@@ -127,12 +127,16 @@
     "deputy.setting.wiki.cci.enabled.description": "Enables the CCI workflow assistant. This allows Deputy to replace the contribution survey found on CCI case pages with a graphical interface which works with other tabs to make the CCI workflow easier.",
     "deputy.setting.wiki.cci.rootPage.name": "Root page",
     "deputy.setting.wiki.cci.rootPage.description": "The main page that holds all subpages containing valid contribution copyright investigation cases.",
+    "deputy.setting.wiki.cci.headingMatch.name": "Heading title regular expression",
+    "deputy.setting.wiki.cci.headingMatch.description": "A regular expression that will be used to detect valid contribution surveyor heading. Since its usage is rather technical, this value should be edited by someone with technical knowledge of regular expressions.",
     "deputy.setting.wiki.cci.collapseTop.name": "Collapsible wikitext (top)",
     "deputy.setting.wiki.cci.collapseTop.description": "Placed just below a section heading when closing a contributor survey section. Use \"$1\" to denote user comments and signature. On the English Wikipedia, this is {{Template:collapse top}}. Other wikis may have an equivalent template. This should go hand in hand with \"{{int:deputy.setting.wiki.cci.collapseBottom.name}}\", as they are used as a pair.",
     "deputy.setting.wiki.cci.collapseBottom.name": "Collapsible wikitext (bottom)",
     "deputy.setting.wiki.cci.collapseBottom.description": "Placed at the end of a section when closing a contributor survey section. On the English Wikipedia, this is {{Template:collapse bottom}}. Other wikis may have an equivalent template.",
     "deputy.setting.wiki.cci.earwigRoot.name": "Earwig's Copyvio Detector root URL",
     "deputy.setting.wiki.cci.earwigRoot.description": "The URL to an instance of Earwig's Copyvio Detector that can handle this wiki. The official copyvio detector (copyvios.toolforge.org) can only handle Wikimedia wikis — you may change this behavior by specifying a custom instance that can process this wiki here.",
+    "deputy.setting.wiki.cci.resortRows.name": "Resort rows",
+    "deputy.setting.wiki.cci.resortRows.description": "Resort rows when saving the page. This is useful for cases where rows are added out of order, or when rows are added in a different order than they should be displayed.",
 
     "deputy.setting.wiki.ante": "ANTE",
 
