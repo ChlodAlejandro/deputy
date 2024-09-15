@@ -40,7 +40,6 @@ export default class DeputyPageSession {
 	readonly sessionCloseHandler = this.onSessionClosed.bind( this );
 
 	/**
-	 *
 	 * @param data
 	 */
 	init( data: DeputyPageStatusResponseMessage ) {

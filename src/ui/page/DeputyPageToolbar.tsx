@@ -18,6 +18,8 @@ import DeputyPageMenu, { DeputyPageMenuOption } from './DeputyPageMenu';
 import deputyPageAnalysisOptions from './DeputyPageAnalysisOptions';
 import deputyPageTools from './DeputyPageTools';
 import error from '../../util/error';
+import { DeputyPageToolbarState } from './DeputyPageToolbarState';
+import log from '../../util/log';
 
 export interface DeputyPageToolbarOptions extends Omit<DeputyPageStatusResponseMessage, 'type'> {
 	/**
@@ -59,6 +61,8 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 	 */
 	revision?: number;
 
+	state = DeputyPageToolbarState.Open;
+
 	readonly instanceId = generateId();
 	readonly revisionStatusUpdateListener = this.onRevisionStatusUpdate.bind( this );
 
@@ -73,6 +77,7 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 			this.revision = options.revision ?? mw.config.get( 'wgRevisionId' );
 		}
 
+		this.state = window.deputy.config.cci.toolbarInitialState.get();
 		this.runAsyncJobs();
 	}
 
@@ -390,16 +395,79 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 	}
 
 	/**
+	 * Rends the page toolbar actions and main section, if the dropdown is open.
+	 */
+	renderOpen(): JSX.Element[] {
+		return [
+			<div class="dp-pageToolbar-actions">
+				<div
+					class="dp-pageToolbar-close"
+					role="button"
+					title={ mw.msg( 'deputy.session.page.close' ) }
+					onClick={ () => this.setState( DeputyPageToolbarState.Hidden ) }
+				/>
+				<div
+					class="dp-pageToolbar-collapse"
+					role="button"
+					title={ mw.msg( 'deputy.session.page.collapse' ) }
+					onClick={ () => this.setState( DeputyPageToolbarState.Collapsed ) }
+				/>
+			</div>,
+			<div class="dp-pageToolbar-main">
+				{ this.renderStatusDropdown() }
+				{ this.renderCaseInfo() }
+				{ this.renderRevisionInfo() }
+				{ this.revisionNavigationSection =
+					this.renderRevisionNavigationButtons() as HTMLElement }
+				{ this.renderMenus() }
+			</div>
+		];
+	}
+
+	/**
+	 * Renders the collapsed toolbar button.
+	 *
+	 * @return The render button, to be included in the main toolbar.
+	 */
+	renderCollapsed(): JSX.Element {
+		return <div
+			class="dp-pageToolbar-collapsed"
+			role="button"
+			title={ mw.msg( 'deputy.session.page.expand' ) }
+			onClick={ () => this.setState( DeputyPageToolbarState.Open ) }
+		/>;
+	}
+
+	/**
 	 * @inheritDoc
 	 */
 	render(): HTMLElement {
+		console.log( this.state );
+		if ( this.state === DeputyPageToolbarState.Hidden ) {
+			const portletLink = mw.util.addPortletLink(
+				'p-tb',
+				'#',
+				mw.msg( 'deputy.session.page.open' ),
+				'pt-dp-pt',
+				mw.msg( 'deputy.session.page.open.tooltip' )
+			);
+			portletLink.querySelector( 'a' ).addEventListener( 'click', ( event ) => {
+				event.preventDefault();
+				this.setState( DeputyPageToolbarState.Open );
+				return false;
+			} );
+			// Placeholder element
+			return this.element = <div class="deputy" /> as HTMLElement;
+		} else {
+			const toolbar = document.getElementById( 'pt-dp-pt' );
+			if ( toolbar ) {
+				removeElement( toolbar );
+			}
+		}
+
 		return this.element = <div class="deputy dp-pageToolbar">
-			{ this.renderStatusDropdown() }
-			{ this.renderCaseInfo() }
-			{ this.renderRevisionInfo() }
-			{ this.revisionNavigationSection =
-				this.renderRevisionNavigationButtons() as HTMLElement }
-			{ this.renderMenus() }
+			{ this.state === DeputyPageToolbarState.Open && this.renderOpen() }
+			{ this.state === DeputyPageToolbarState.Collapsed && this.renderCollapsed() }
 		</div> as HTMLElement;
 	}
 
@@ -413,6 +481,20 @@ export default class DeputyPageToolbar implements DeputyUIElement {
 		this.revisionCheckbox?.setDisabled( disabled );
 		this.previousRevisionButton?.setDisabled( disabled );
 		this.nextRevisionButton?.setDisabled( disabled );
+	}
+
+	/**
+	 * Sets the display state of the toolbar. This will also set the
+	 * initial state configuration option for the user.
+	 *
+	 * @param state
+	 */
+	setState( state: DeputyPageToolbarState ) {
+		this.state = state;
+		window.deputy.config.cci.toolbarInitialState.set( state );
+		window.deputy.config.save();
+
+		swapElements( this.element, this.render() );
 	}
 
 	/**

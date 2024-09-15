@@ -1,7 +1,11 @@
 import Setting from './Setting';
 import MwApi from '../MwApi';
 import { CopyrightProblemsResponseSet } from '../modules/ia/models/CopyrightProblemsResponse';
-import { generateEnumConfigurationProperties, PortletNameView } from './types';
+import {
+	generateEnumConfigurationProperties,
+	generateEnumSerializers,
+	PortletNameView
+} from './types';
 import { CompletionAction, TripleCompletionAction } from '../modules/shared/CompletionAction';
 import { EnumValue } from '../types';
 import DeputyVersion from '../DeputyVersion';
@@ -9,6 +13,7 @@ import ConfigurationBase from './ConfigurationBase';
 import {
 	ContributionSurveyRowSigningBehavior
 } from '../models/ContributionSurveyRowSigningBehavior';
+import { DeputyPageToolbarState } from '../ui/page/DeputyPageToolbarState';
 import error from '../util/error';
 
 /**
@@ -159,6 +164,14 @@ export default class UserConfiguration extends ConfigurationBase {
 			displayOptions: {
 				type: 'checkbox'
 			}
+		} ),
+		toolbarInitialState: new Setting<
+			EnumValue<typeof DeputyPageToolbarState>,
+			DeputyPageToolbarState
+		>( {
+			...generateEnumSerializers( DeputyPageToolbarState, DeputyPageToolbarState.Open ),
+			defaultValue: DeputyPageToolbarState.Open,
+			displayOptions: { hidden: true }
 		} )
 	};
 	public readonly ante = <const>{

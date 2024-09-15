@@ -400,13 +400,76 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
 	left: 8px;
 	z-index: 100;
 
-	padding: 8px;
 	background-color: #fff;
 	border: 1px solid gray;
 	font-size: 0.9rem;
 
 	display: flex;
+}
+
+.dp-pageToolbar .dp-pageToolbar-main {
+	padding: 8px;
+	display: flex;
 	align-items: center;
+}
+
+.dp-pageToolbar-actions {
+	width: 12px;
+	display: flex;
+	flex-direction: column;
+	font-size: 12px;
+	line-height: 1em;
+}
+
+.dp-pageToolbar-close {
+	cursor: pointer;
+	height: 12px;
+	text-align: center;
+	background-color: rgba(0, 0, 0, 0.25);
+}
+
+.dp-pageToolbar-close:hover {
+	transition: background-color 0.1s ease-in-out;
+	background-color: rgba(0, 0, 0, 0.4);
+}
+
+.dp-pageToolbar-close::before {
+	content: '×';
+	vertical-align: middle;
+	position: relative;
+	right: 1px;
+}
+
+.dp-pageToolbar-collapse {
+	cursor: pointer;
+	flex: 1;
+	background-color: rgba(0, 0, 0, 0.125);
+	text-align: center;
+	writing-mode: vertical-rl;
+	position: relative;
+}
+
+.dp-pageToolbar-collapse:hover {
+	transition: background-color 0.1s ease-in-out;
+	background-color: rgba(0, 0, 0, 0.25);
+}
+
+.dp-pageToolbar-collapse::before {
+	content: '»';
+	position: absolute;
+	vertical-align: middle;
+	width: 12px;
+	left: 0;
+	bottom: 2px;
+}
+
+.dp-pageToolbar-collapsed {
+	cursor: pointer;
+	width: 32px;
+	height: 32px;
+	/* logo-white.svg */
+	background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDgwIDEwODAiIHdpZHRoPSIxMDgwIiBoZWlnaHQ9IjEwODAiPjxkZWZzPjxzdHlsZT4uY2xzLTF7ZmlsbDojMDI5N2IxO308L3N0eWxlPjwvZGVmcz48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik04NzcuNTQsNDM4LjY5YTQzNy41NCw0MzcuNTQsMCwwLDEtODQuMzgsMjU4Ljc4bDI2Ny4wNiwyNjcuMjJhNjcuNTYsNjcuNTYsMCwxLDEtOTUuNTYsOTUuNTRMNjk3LjYsNzkzYTQzNi4yNyw0MzYuMjcsMCwwLDEtMjU4LjgzLDg0LjM2QzE5Ni4zOSw4NzcuMzcsMCw2ODEsMCw0MzguNjlTMTk2LjM5LDAsNDM4Ljc3LDAsODc3LjU0LDE5Ni4zNSw4NzcuNTQsNDM4LjY5Wk00MzguNzcsNzQyLjM5YzE2Ny43LDAsMzAzLjc3LTEzNiwzMDMuNzctMzAzLjdTNjA2LjQ3LDEzNSw0MzguNzcsMTM1LDEzNSwyNzEsMTM1LDQzOC42OSwyNzEuMDcsNzQyLjM5LDQzOC43Nyw3NDIuMzlaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNNTI0LjgzLDUxNS4yOGExMDQuODUsMTA0Ljg1LDAsMCwxLTE0OS40MSwwYy00MS41LTQxLjg3LTQxLjUtMTEwLDAtMTUxLjk1YTEwNC45MiwxMDQuOTIsMCwwLDEsMTQ5LjUxLjA4QTUwLjc2LDUwLjc2LDAsMCwwLDU5NywyOTEuOWEyMDYuNDQsMjA2LjQ0LDAsMCwwLTI5My41NSwwYy04MC41Nyw4MS4yNy04MC41NywyMTMuNTMsMCwyOTQuODNBMjA1LjI1LDIwNS4yNSwwLDAsMCw0NTAuMTgsNjQ4aDBBMjA1LjMsMjA1LjMsMCwwLDAsNTk3LDU4Ni43MWE1MC43Nyw1MC43NywwLDAsMC03Mi4xNi03MS40M1oiLz48L3N2Zz4=') no-repeat center;
+	background-size: 24px;
 }
 
 @media only screen and (max-width: 768px) {
