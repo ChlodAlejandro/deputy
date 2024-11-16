@@ -77,6 +77,7 @@ export default class DeputyContributionSurveyRevision
 
 	/**
 	 * The <div> of this element.
+	 *
 	 * @private
 	 */
 	private element: HTMLElement;
@@ -88,12 +89,14 @@ export default class DeputyContributionSurveyRevision
 	private completedCheckbox: OO.ui.CheckboxInputWidget;
 	/**
 	 * The toggle button to show and hide a diff view of the given revision.
+	 *
 	 * @private
 	 */
 	private diffToggle: OO.ui.ToggleButtonWidget;
 	/**
 	 * The diff view of the given revision. May also be "loading" text, or
 	 * null if the diff view has not yet been set.
+	 *
 	 * @private
 	 */
 	private diff: HTMLElement | null = null;
@@ -281,8 +284,7 @@ export default class DeputyContributionSurveyRevision
 								return;
 							}
 							// Delete all no-change rows (gray rows)
-							// !(.diff-markers with a marker) = no change for row
-							if ( !tr.querySelector( 'td.diff-marker[data-marker]' ) ) {
+							if ( tr.querySelector( 'td.diff-context' ) ) {
 								removeElement( tr );
 							}
 						} );
