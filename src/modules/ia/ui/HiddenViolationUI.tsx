@@ -10,7 +10,6 @@ export default class HiddenViolationUI {
 	private vioElement: HTMLElement;
 
 	/**
-	 *
 	 * @param el
 	 */
 	constructor( el: HTMLElement ) {
@@ -27,7 +26,7 @@ export default class HiddenViolationUI {
 		this.vioElement.insertAdjacentElement(
 			'beforebegin',
 			<div class="deputy dp-hiddenVio">
-				<div>{ this.renderMessage() }</div>
+				<div class="dp-hiddenVio-message">{ this.renderMessage() }</div>
 				<div class="dp-hiddenVio-actions">{ this.renderButton() }</div>
 			</div>
 		);

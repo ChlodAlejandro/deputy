@@ -148,6 +148,10 @@ body.rtl .ia-listing-action--bracket:last-child {
 	margin: 1em 0;
 }
 
+.dp-hiddenVio-message {
+	flex: 1;
+}
+
 .dp-hiddenVio-actions {
 	flex: 0;
 	margin-left: 1em;
