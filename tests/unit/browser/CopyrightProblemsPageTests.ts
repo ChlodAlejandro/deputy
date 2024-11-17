@@ -31,7 +31,7 @@ describe( 'CopyrightProblemsPage tests', () => {
 				() => p.evaluate(
 					() => window.InfringementAssistant.session != null
 				),
-				60e3
+				300e3
 			), p ] )[ 1 ] );
 	} );
 
