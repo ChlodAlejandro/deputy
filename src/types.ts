@@ -1,7 +1,11 @@
+// noinspection ES6UnusedImports
+
 import { Deputy } from './Deputy';
 import moment from 'moment';
-import 'types-mediawiki/mw';
-import 'types-mediawiki/jquery';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import type * as mw from '../node_modules/types-mediawiki/mw/index.d';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import type * as jq from '../node_modules/types-mediawiki/jquery/index.d';
 
 export type PromiseOrNot<T> = Promise<T> | T;
 export type JQueryPromiseOrPromise<T> = JQuery.Promise<T> | Promise<T>;
