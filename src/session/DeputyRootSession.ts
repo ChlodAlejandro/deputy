@@ -217,7 +217,7 @@ export default class DeputyRootSession {
 	static async initTabActiveInterface( _casePage?: DeputyCasePage ): Promise<void> {
 		const casePage = _casePage ?? await DeputyCasePage.build();
 
-		return mw.loader.using(
+		await mw.loader.using(
 			[ 'oojs-ui-core', 'oojs-ui.styles.icons-content' ],
 			() => {
 				const firstHeading =

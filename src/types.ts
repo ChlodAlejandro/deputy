@@ -1,6 +1,7 @@
 import { Deputy } from './Deputy';
 import moment from 'moment';
-import 'types-mediawiki';
+import 'types-mediawiki/mw';
+import 'types-mediawiki/jquery';
 
 export type PromiseOrNot<T> = Promise<T> | T;
 export type JQueryPromiseOrPromise<T> = JQuery.Promise<T> | Promise<T>;
@@ -13,6 +14,13 @@ declare global {
 		deputyLang?: string;
 		deputyWikiConfigOverride: Record<string, any>;
 		moment: moment.Moment;
+	}
+
+	// eslint-disable-next-line @typescript-eslint/no-namespace
+	namespace mw {
+
+		const widgets: any;
+
 	}
 }
 

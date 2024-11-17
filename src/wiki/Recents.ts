@@ -18,8 +18,8 @@ export default class Recents {
 		const page = normalizeTitle();
 
 		if (
-			page.namespace === nsId( 'special' ) ||
-			page.namespace === nsId( 'media' )
+			page.getNamespaceId() === nsId( 'special' ) ||
+			page.getNamespaceId() === nsId( 'media' )
 		) {
 			// Don't save virtual namespaces.
 			return;

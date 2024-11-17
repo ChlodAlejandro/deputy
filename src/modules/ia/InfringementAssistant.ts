@@ -96,9 +96,10 @@ export default class InfringementAssistant extends DeputyModule {
 
 		// Query parameter-based autostart disable (i.e. don't start if param exists)
 		if ( !/[?&]ia-autostart(=(0|no|false|off)?(&|$)|$)/.test( window.location.search ) ) {
-			return mw.loader.using( InfringementAssistant.dependencies, async () => {
+			await mw.loader.using( InfringementAssistant.dependencies, async () => {
 				await this.init();
 			} );
+			return true;
 		}
 		return true;
 	}
@@ -116,7 +117,7 @@ export default class InfringementAssistant extends DeputyModule {
 		) {
 			await DeputyLanguage.loadMomentLocale();
 			this.session = new CopyrightProblemsSession();
-			mw.hook( 'wikipage.content' ).add( ( el: Element[] ) => {
+			mw.hook( 'wikipage.content' ).add( ( el ) => {
 				if ( el[ 0 ].classList.contains( 'ia-upgraded' ) ) {
 					return;
 				}
@@ -145,16 +146,16 @@ export default class InfringementAssistant extends DeputyModule {
 	}
 
 	/**
-	 *
+	 * Opens the workflow dialog.
 	 */
 	async openWorkflowDialog(): Promise<void> {
-		return mw.loader.using( InfringementAssistant.dependencies, async () => {
+		await mw.loader.using( InfringementAssistant.dependencies, async () => {
 			await DeputyLanguage.loadMomentLocale();
 			if ( !this.dialog ) {
 				await DeputyLanguage.loadMomentLocale();
 				this.dialog = SinglePageWorkflowDialog( {
-					page: new mw.Title( mw.config.get( 'wgPageName' ) ),
-					revid: mw.config.get( 'wgCurRevisionId' )
+					page: new mw.Title( <string> mw.config.get<string>( 'wgPageName' ) ),
+					revid: mw.config.get( 'wgCurRevisionId' ) as number
 				} );
 				this.windowManager.addWindows( [ this.dialog ] );
 			}

@@ -26,3 +26,11 @@
    during the build process. To view the original source code, visit
 
        https://github.com/ChlodAlejandro/deputy
+
+   ------------------------------------------------------------------------
+
+   This script compiles with the following dependencies:
+    * [https://github.com/Microsoft/tslib tslib] - 0BSD, Microsoft
+    * [https://github.com/jakearchibald/idb idb] - ISC, Jake Archibald
+    * [https://github.com/JSmith01/broadcastchannel-polyfill broadcastchannel-polyfill] - Unlicense, Joshua Bell
+    * [https://github.com/Lusito/tsx-dom tsx-dom] - MIT, Santo Pfingsten

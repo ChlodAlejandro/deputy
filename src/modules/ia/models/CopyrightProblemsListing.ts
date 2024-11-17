@@ -494,13 +494,13 @@ export default class CopyrightProblemsListing {
 			i: this.i,
 			id: this.id,
 			title: {
-				namespace: this.title.namespace,
-				title: this.title.title,
+				namespace: this.title.getNamespaceId(),
+				title: this.title.getMainText(),
 				fragment: this.title.getFragment()
 			},
 			listingPage: {
-				namespace: this.listingPage.title.namespace,
-				title: this.listingPage.title.title,
+				namespace: this.listingPage.title.getNamespaceId(),
+				title: this.listingPage.title.getMainText(),
 				fragment: this.listingPage.title.getFragment()
 			},
 			lines: await this.getListingWikitextLines()

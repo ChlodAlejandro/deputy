@@ -71,10 +71,10 @@ export default class DiffPage {
 
 		// Forgetting JQuery ban for now. Backwards-compat reasons.
 		mw.hook( 'wikipage.content' ).fire(
-			$( newContentText )
+			$( newContentText as HTMLElement )
 		);
 		mw.hook( 'wikipage.diff' ).fire(
-			$( document.querySelector( 'body > table.diff' ) )
+			$( document.querySelector( 'body > table.diff' ) as HTMLTableElement )
 		);
 
 		history.pushState( {}, null, diffUrl );

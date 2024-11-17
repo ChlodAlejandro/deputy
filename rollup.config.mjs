@@ -6,11 +6,13 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import gitInfo from 'rollup-plugin-git-info';
-import license from 'rollup-plugin-node-license';
 import { createFilter } from 'rollup-pluginutils';
 import serve from 'rollup-plugin-serve';
 import * as fs from 'fs';
 import * as path from 'path';
+
+const LIB_PARSOID_VERSION = JSON.parse( fs.readFileSync( 'package-lock.json' ).toString() )
+	.packages[ 'node_modules/@chlodalejandro/parsoid' ].version;
 
 const production = process.env.NODE_ENV === 'production';
 const development = process.env.NODE_ENV === 'development' ||
@@ -89,13 +91,14 @@ function cssString( options = { minify: true } ) {
  */
 function getPlugins() {
 	return [
-		// Appends license information
-		license(),
 		// Inserts sourcemaps
 		!production && sourcemaps(),
 		// Remove development-only code branches
 		jscc( {
-			values: { _DEV: development },
+			values: {
+				_DEV: development,
+				_LIB_PARSOID_VERSION: LIB_PARSOID_VERSION
+			},
 			asloader: false
 		} ),
 		// Makes Common.js imports possible
@@ -107,7 +110,9 @@ function getPlugins() {
 			versionFormat: '[version]+g[abbrevHash]'
 		} ),
 		// Transpiles TypeScript
-		typescript(),
+		typescript( {
+			tsconfig: './tsconfig.json'
+		} ),
 		// Allows JSON imports (i18n files)
 		json( {
 			preferConst: true,
@@ -169,7 +174,7 @@ function auto( key, options ) {
 
 // GLOBALS
 const globals = {
-	external: [ 'types-mediawiki' ]
+	external: [ 'types-mediawiki/mw', 'types-mediawiki/jquery' ]
 };
 
 /**

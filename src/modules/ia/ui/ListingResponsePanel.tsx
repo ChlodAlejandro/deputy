@@ -20,7 +20,6 @@ export default class ListingResponsePanel extends EventTarget {
 	}
 
 	/**
-	 *
 	 * @param response
 	 * @param locale
 	 * @return The given response for the given locale
@@ -52,7 +51,6 @@ export default class ListingResponsePanel extends EventTarget {
 	readonly reloadPreviewThrottled = ( mw.util as any ).throttle( this.reloadPreview, 500 );
 
 	/**
-	 *
 	 * @param originLink
 	 * @param listing
 	 */
@@ -276,7 +274,11 @@ export default class ListingResponsePanel extends EventTarget {
 		}
 
 		return this.prefill ?
-			mw.format( this.prefill.template, this.listing.title, this.comments ?? '' ) :
+			mw.format(
+				this.prefill.template,
+				this.listing.title.getPrefixedText(),
+				this.comments ?? ''
+			) :
 			this.comments;
 	}
 

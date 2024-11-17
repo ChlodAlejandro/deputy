@@ -22,5 +22,4 @@ export {
 	version as default
 } from '../package.json';
 
-import { dependencies } from '../package-lock.json';
-export const parsoidVersion = dependencies[ '@chlodalejandro/parsoid' ].version;
+export const parsoidVersion = '$_LIB_PARSOID_VERSION';
