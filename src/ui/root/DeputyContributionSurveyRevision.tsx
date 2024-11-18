@@ -225,11 +225,16 @@ export default class DeputyContributionSurveyRevision
 		let loaded = false;
 		const handleDiffToggle = ( active: boolean ) => {
 			this.diffToggle.setIndicator( active ? 'up' : 'down' );
-			if ( active && this.diff.classList.contains( 'dp-cs-rev-diff--errored' ) ) {
-				// Remake diff panel
+			if ( !active ) {
+				this.diff.classList.toggle( 'dp-cs-rev-diff--hidden', true );
+				return;
+			}
+
+			if ( this.diff.classList.contains( 'dp-cs-rev-diff--errored' ) ) {
+				// Error occurred previously, remake diff panel
 				this.diff = swapElements( this.diff, <div class="dp-cs-rev-diff"/> as HTMLElement );
 			} else if ( loaded ) {
-				this.diff.classList.toggle( 'dp-cs-rev-diff--hidden', !active );
+				this.diff.classList.toggle( 'dp-cs-rev-diff--hidden', false );
 			}
 
 			if ( active && !loaded ) {
