@@ -615,7 +615,10 @@ function initCopiedTemplateRowPage() {
 				confirmProcess.execute();
 			} catch ( e ) {
 				error( 'Cannot convert `diff` parameter to URL.', e );
-				OO.ui.alert( mw.msg( 'deputy.ante.copied.diffDeprecate.failed' ) );
+				window.CopiedTemplateEditor.windowManager.openWindow( 'message', {
+					message: mw.msg( 'deputy.ante.copied.diffDeprecate.failed' ),
+					actions: [ OO.ui.MessageDialog.static.actions[ 0 ] ]
+				} );
 			}
 		}
 

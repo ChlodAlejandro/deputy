@@ -259,7 +259,10 @@ function initCopiedTemplateEditorDialog() {
 							TemplateMerger.merge( noticeSet );
 						}
 					} ) :
-					OO.ui.alert( 'There are no templates to merge.' );
+					window.CopiedTemplateEditor.windowManager.openWindow( 'message', {
+						message: 'There are no templates to merge.',
+						actions: [ OO.ui.MessageDialog.static.actions[ 0 ] ]
+					} );
 			} );
 
 			const resetButton = new OO.ui.ButtonWidget( {
@@ -478,9 +481,11 @@ function initCopiedTemplateEditorDialog() {
 					unwrapWidget( this.layout )
 						.querySelector( '.oo-ui-flaggedElement-invalid' ) != null
 				) {
-					return new OO.ui.Process( () => {
-						OO.ui.alert( mw.msg( 'deputy.ante.invalid' ) );
+					window.CopiedTemplateEditor.windowManager.openWindow( 'message', {
+						message: mw.msg( 'deputy.ante.invalid' ),
+						actions: [ OO.ui.MessageDialog.static.actions[ 0 ] ]
 					} );
+					return process;
 				}
 
 				// Saves the page.
