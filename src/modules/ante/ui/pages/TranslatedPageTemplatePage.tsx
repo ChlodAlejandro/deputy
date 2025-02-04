@@ -236,12 +236,12 @@ function initTranslatedPageTemplatePage() {
 				version: new OO.ui.TextInputWidget( {
 					value: this.translatedPageTemplate.version,
 					placeholder: mw.msg( 'deputy.ante.translatedPage.version.placeholder' ),
-					validate: /^\d+$/gi
+					validate: /^\d*$/gi
 				} ),
 				insertversion: new OO.ui.TextInputWidget( {
 					value: this.translatedPageTemplate.insertversion,
 					placeholder: mw.msg( 'deputy.ante.translatedPage.insertversion.placeholder' ),
-					validate: /^[\d/]+$/gi
+					validate: /^[\d/]*$/gi
 				} ),
 				section: new OO.ui.TextInputWidget( {
 					value: this.translatedPageTemplate.section,
