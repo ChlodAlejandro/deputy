@@ -259,10 +259,8 @@ function initCopiedTemplateEditorDialog() {
 							TemplateMerger.merge( noticeSet );
 						}
 					} ) :
-					window.CopiedTemplateEditor.windowManager.openWindow( 'message', {
-						message: 'There are no templates to merge.',
-						actions: [ OO.ui.MessageDialog.static.actions[ 0 ] ]
-					} );
+					// TODO: i18n
+					OO.ui.alert( 'There are no templates to merge.' );
 			} );
 
 			const resetButton = new OO.ui.ButtonWidget( {
@@ -481,10 +479,7 @@ function initCopiedTemplateEditorDialog() {
 					unwrapWidget( this.layout )
 						.querySelector( '.oo-ui-flaggedElement-invalid' ) != null
 				) {
-					window.CopiedTemplateEditor.windowManager.openWindow( 'message', {
-						message: mw.msg( 'deputy.ante.invalid' ),
-						actions: [ OO.ui.MessageDialog.static.actions[ 0 ] ]
-					} );
+					OO.ui.alert( mw.msg( 'deputy.ante.invalid' ) );
 					return process;
 				}
 
