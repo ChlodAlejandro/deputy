@@ -5,15 +5,31 @@ These are changes that may or may not have been deployed to wikis, but are not y
 This changelog is automatically parsed when releases are created. Before pushing a version tag, ensure that the latest
 level 1 section heading here is the version being tagged.
 
+For a granular list of changes, see [v0.9.0...main](https://github.com/ChlodAlejandro/deputy/compare/v0.9.0...main).
+
+# [v0.8.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.8.0) - *2024-05-28*
 ## Added
 * [[`9c8334c`](../../commit/9c8334c)] Added a collapse/hide button for the CCI page toolbar
+* [[`2777919`](../../commit/2777919)] Added option to reset database and preferences
+
+## Modified
+* [[`d7e185d`](../../commit/d7e185d)] Made {{translated page}} revision IDs optional
+* [[`ac7ed21`](../../commit/ac7ed21)] (dev) Updated and organized Rollup and dependencies
+* [[`82f13a4`](../../commit/82f13a4)] (dev) Increased integration test timeout
+* [[`d787eeb`](../../commit/d787eeb)] (dev) Disabled copyright problems noticeboard page tests.
 
 ## Fixed
 * [[`e8c29ed`](../../commit/e8c29ed)] Fixed CCI revision sorting being wrong sometimes
 * [[`42e1878`](../../commit/42e1878)] Fixed CCI section start overlay appearing on subsections which are also valid CCI sections
+* [[`a50d3cc`](../../commit/a50d3cc)] Fixed CCI revision diff previews not working after changes to diff renderer
+* [[`ad9ca74`](../../commit/ad9ca74)] Fixed IA hidden violation message not taking up the full width
+* [[`b1dd0f4`](../../commit/b1dd0f4)] Fixed Deputy not displaying deleted diffs properly
+* [[`ac322c1`](../../commit/ac322c1)] Fixed alerts not appearing when another window is open
+* [[`a64b0ee`](../../commit/a64b0ee)] Fixed CCI fields sharing page status if the same page appears twice in a case
+* [[`df01545`](../../commit/df01545)] (dev) Changed target for CCI integration tests
 
 
-For a granular list of changes, see [v0.8.0...main](https://github.com/ChlodAlejandro/deputy/compare/v0.8.0...main).
+For a granular list of changes, see [v0.8.0...v0.9.0](https://github.com/ChlodAlejandro/deputy/compare/v0.8.0...v0.9.0).
 
 # [v0.8.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.8.0) - *2024-05-28*
 A lot of under-the-hood fixes, imported from work on a CCI case request wizard which hasn't been completed yet. Because the extra work on that feature has greatly diverged from the current Deputy code, compatibility is not guaranteed. For this reason, this exists as a minor version bump than a patch.
