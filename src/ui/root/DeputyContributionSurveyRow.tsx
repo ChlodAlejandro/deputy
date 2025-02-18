@@ -345,6 +345,10 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 	get autosaveHash(): string {
 		return `CASE--${
 			this.row.casePage.title.getPrefixedDb()
+		}+H--${
+			this.section.headingName
+		}-${
+			this.section.headingN
 		}+PAGE--${
 			this.row.title.getPrefixedDb()
 		}`;
@@ -542,7 +546,13 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 	 * closing comments.
 	 */
 	async getSavedStatus(): Promise<DeputyPageStatus> {
-		return await window.deputy.storage.db.get( 'pageStatus', this.autosaveHash );
+		return await window.deputy.storage.db.get( 'pageStatus', this.autosaveHash ) ??
+			// Old hash (< v0.9.0)
+			await window.deputy.storage.db.get( 'pageStatus', `CASE--${
+				this.row.casePage.title.getPrefixedDb()
+			}+PAGE--${
+				this.row.title.getPrefixedDb()
+			}` );
 	}
 
 	/**
