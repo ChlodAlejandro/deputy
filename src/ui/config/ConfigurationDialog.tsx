@@ -53,7 +53,6 @@ function initConfigurationDialog() {
 		config: Configuration;
 
 		/**
-		 *
 		 * @param data
 		 */
 		constructor( data: ConfigurationDialogData ) {
@@ -92,6 +91,7 @@ function initConfigurationDialog() {
 		generateGroupLayouts(): OO.ui.TabPanelLayout[] {
 			return Object.keys( this.config.all ).map(
 				( group: keyof ConfigurationBase['all'] ) => ConfigurationGroupTabPanel( {
+					$overlay: this.$overlay,
 					config: this.config,
 					group
 				} )
@@ -99,7 +99,6 @@ function initConfigurationDialog() {
 		}
 
 		/**
-		 *
 		 * @param action
 		 * @return An OOUI Process.
 		 */

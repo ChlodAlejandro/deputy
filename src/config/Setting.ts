@@ -38,7 +38,7 @@ export interface VisibleDisplayOptions extends DisplayOptionsBase {
 	 * The type of UI element to display.
 	 */
 	type: 'text' | 'number' | 'checkbox' | 'select' | 'radio' | 'checkboxes'
-		| 'page' | 'code' | 'unimplemented';
+		| 'page' | 'code' | 'button' | 'unimplemented';
 	/**
 	 * Whether an option should be hidden or not. If an option is hidden, it will not
 	 * show up in the settings interface at all.
@@ -163,7 +163,6 @@ export default class Setting<SerializedType, DeserializedType> {
 	readonly isHidden: ( config?: UserConfiguration ) => string | boolean;
 
 	/**
-	 *
 	 * @param options
 	 * @param options.serialize Serialization function. See {@link Setting#serialize}
 	 * @param options.deserialize Deserialization function. See {@link Setting#deserialize}

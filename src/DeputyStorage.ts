@@ -99,6 +99,7 @@ export default class DeputyStorage {
 			'us-deputy', 1, {
 				upgrade( db, oldVersion, newVersion ) {
 					let currentVersion = oldVersion;
+					// Adding new stores? Make sure to also add it in `reset()`!
 					const upgrader: Record<string, () => void> = {
 						0: () => {
 							db.createObjectStore( 'keyval', {
@@ -193,6 +194,18 @@ export default class DeputyStorage {
 				mw.messages.set( key, value );
 			}
 		}
+	}
+
+	/**
+	 * Reset the Deputy database. Very dangerous!
+	 */
+	async reset(): Promise<void> {
+		await this.db.clear( 'keyval' );
+		await this.db.clear( 'casePageCache' );
+		await this.db.clear( 'diffCache' );
+		await this.db.clear( 'diffStatus' );
+		await this.db.clear( 'pageStatus' );
+		await this.db.clear( 'tagCache' );
 	}
 
 }

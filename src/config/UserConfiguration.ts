@@ -15,6 +15,8 @@ import {
 } from '../models/ContributionSurveyRowSigningBehavior';
 import { DeputyPageToolbarState } from '../ui/page/DeputyPageToolbarState';
 import error from '../util/error';
+import { Action } from './Action';
+import DeputyStorage from '../DeputyStorage';
 
 /**
  * A configuration. Defines settings and setting groups.
@@ -82,6 +84,21 @@ export default class UserConfiguration extends ConfigurationBase {
 			defaultValue: false,
 			displayOptions: {
 				type: 'checkbox'
+			}
+		} ),
+		resetDatabase: new Action( async () => {
+			await window.deputy.storage.reset();
+		}, {
+			disabled: () => !window.deputy,
+			extraOptions: {
+				flags: [ 'destructive' ]
+			}
+		} ),
+		resetPreferences: new Action( async () => {
+			await MwApi.action.saveOption( UserConfiguration.optionKey, null );
+		}, {
+			extraOptions: {
+				flags: [ 'destructive' ]
 			}
 		} )
 	};

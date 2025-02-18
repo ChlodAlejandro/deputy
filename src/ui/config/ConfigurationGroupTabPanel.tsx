@@ -5,8 +5,12 @@ import { h } from 'tsx-dom';
 import unwrapWidget from '../../util/unwrapWidget';
 import ConfigurationBase from '../../config/ConfigurationBase';
 import UserConfiguration from '../../config/UserConfiguration';
+import { Action } from '../../config/Action';
+import { windowManager } from '../../wiki/util/openWindow';
+import msg = OO.ui.msg;
 
 export interface ConfigurationGroupTabPanelData {
+	$overlay: JQuery;
 	config: ConfigurationBase;
 	group: keyof ConfigurationBase['all'];
 }
@@ -95,6 +99,13 @@ function initConfigurationGroupTabPanel() {
 						this.$element.append( this.newCodeField(
 							settingKey,
 							setting,
+							( setting.displayOptions as VisibleDisplayOptions ).extraOptions
+						) );
+						break;
+					case 'button':
+						this.$element.append( this.newButtonField(
+							settingKey,
+							setting as Action,
 							( setting.displayOptions as VisibleDisplayOptions ).extraOptions
 						) );
 						break;
@@ -456,6 +467,62 @@ function initConfigurationGroupTabPanel() {
 				setting,
 				extraFieldOptions
 			);
+		}
+
+		/**
+		 * Creates a new button setting field.
+		 *
+		 * @param settingKey
+		 * @param setting
+		 * @param extraFieldOptions
+		 * @return An HTMLElement of the given setting's field.
+		 */
+		newButtonField(
+			settingKey: string,
+			setting: Action,
+			extraFieldOptions?: Record<string, any>
+		): Element {
+			const isDisabled = setting.isDisabled( this.config.config as any );
+			const msgPrefix = `deputy.setting.${this.mode}.${this.config.group}.${settingKey}`;
+
+			const desc = mw.message(
+				`${msgPrefix}.description`
+			);
+
+			const field = new OO.ui.ButtonWidget( {
+				label: this.getSettingMsg( settingKey, 'name' ),
+				disabled: isDisabled !== undefined && isDisabled !== false,
+				...extraFieldOptions
+			} );
+			const layout = new OO.ui.FieldLayout( field, {
+				align: 'top',
+				label: this.getSettingMsg( settingKey, 'name' ),
+				help: typeof isDisabled === 'string' ?
+					this.getSettingMsg( settingKey, isDisabled ) :
+					desc.exists() ? desc.text() : undefined,
+				helpInline: true
+			} );
+
+			field.on( 'click', async () => {
+				try {
+					if ( await OO.ui.confirm(
+						mw.msg(
+							`${msgPrefix}.confirm`
+						)
+					) ) {
+						await setting.onClick();
+						OO.ui.alert( mw.msg(
+							`${msgPrefix}.success`
+						) );
+					}
+				} catch ( e ) {
+					OO.ui.alert( mw.msg(
+						`${msgPrefix}.failed`
+					) );
+				}
+			} );
+
+			return <div class="deputy-setting">{ unwrapWidget( layout ) }</div>;
 		}
 
 	};

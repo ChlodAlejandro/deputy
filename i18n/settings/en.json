@@ -46,6 +46,16 @@
     "deputy.setting.user.core.portletNames.acronym": "Acronyms (e.g. ANTE)",
     "deputy.setting.user.core.dangerMode.name": "Danger mode",
     "deputy.setting.user.core.dangerMode.description": "Live on the edge. This disables most confirmations and warnings given by Deputy, only leaving potentially catastrophic actions, such as page edits which break templates. It also adds extra buttons meant for rapid case processing. Intended for clerk use; use with extreme caution.",
+    "deputy.setting.user.core.resetDatabase.name": "Reset database",
+    "deputy.setting.user.core.resetDatabase.description": "Resets the Deputy internal database. This clears all cached data, including saved page and revision statuses that haven't been saved on-wiki. This does not clear your Deputy preferences.",
+    "deputy.setting.user.core.resetDatabase.confirm": "Are you sure you want to reset the Deputy database? This action cannot be undone.",
+    "deputy.setting.user.core.resetDatabase.success": "Database reset successfully. Please refresh the page to see changes.",
+    "deputy.setting.user.core.resetDatabase.failed": "Could not reset the database. If this error persists, please contact the Deputy maintainers.",
+    "deputy.setting.user.core.resetPreferences.name": "Reset preferences",
+    "deputy.setting.user.core.resetPreferences.description": "Resets your Deputy preferences. This clears all settings you have saved in Deputy across all browsers.",
+    "deputy.setting.user.core.resetPreferences.confirm": "Are you sure you want to reset your Deputy preferences? This action cannot be undone.",
+    "deputy.setting.user.core.resetPreferences.success": "Preferences reset successfully. Please refresh the page to see changes.",
+    "deputy.setting.user.core.resetPreferences.failed": "Could not reset preferences. If this error persists, please contact the Deputy maintainers.",
 
     "deputy.setting.user.cci": "CCI",
 
