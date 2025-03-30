@@ -36,7 +36,7 @@
     },
     "homepage": "https://github.com/ChlodAlejandro/deputy#readme",
     "devDependencies": {
-        "@rollup/plugin-commonjs": "^26.0.1",
+        "@rollup/plugin-commonjs": "^28.0.1",
         "@rollup/plugin-json": "^6.1.0",
         "@rollup/plugin-node-resolve": "^15.2.3",
         "@types/jest": "^29.5.12",
@@ -55,7 +55,7 @@
         "jest": "^29.7.0",
         "moment": "^2.29.4",
         "oojs-ui": "^0.50.3",
-        "rollup": "^4.21.2",
+        "rollup": "^4.28.0",
         "rollup-plugin-git-info": "^1.0.0",
         "rollup-plugin-jscc": "^2.0.0",
         "rollup-plugin-serve": "^3.0.0",
