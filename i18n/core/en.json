@@ -31,7 +31,7 @@
     "deputy.session.section.closed": "This section has been archived. You can edit its contents, but you cannot un-archive it.",
 
     "deputy.session.section.stop": "Stop session",
-    "deputy.session.section.stop.title": "Stop then current session, closing all sections and saving changes for later.",
+    "deputy.session.section.stop.title": "Stop the current session, closing all sections and saving changes for later.",
     "deputy.session.section.saved": "Section saved",
     "deputy.session.section.failed": "Failed to save section",
     "deputy.session.section.missingSection": "The target section is missing from the case page.",
