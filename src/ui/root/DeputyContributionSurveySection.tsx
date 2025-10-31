@@ -26,6 +26,7 @@ import classMix from '../../util/classMix';
 import dangerModeConfirm from '../../util/dangerModeConfirm';
 import normalizeWikiHeading, { WikiHeading } from '../../wiki/util/normalizeWikiHeading';
 import parseDiffUrl from '../../wiki/util/parseDiffUrl';
+import { ContributionSurveyRowStatus } from '../../models/ContributionSurveyRowStatus';
 
 /**
  * The contribution survey section UI element. This includes a list of revisions
@@ -846,6 +847,10 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 				title: mw.msg( 'deputy.session.section.instantArchive.title' )
 			} );
 			instantArchiveButton.on( 'click', () => {
+				this.rows.forEach( v =>
+					// Just completely wipe it
+					v.revisions = []
+				);
 				this.closingCheckbox.setSelected( true );
 				this.saveButton.emit( 'click' );
 			} );
