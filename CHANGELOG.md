@@ -5,9 +5,18 @@ These are changes that may or may not have been deployed to wikis, but are not y
 This changelog is automatically parsed when releases are created. Before pushing a version tag, ensure that the latest
 level 1 section heading here is the version being tagged.
 
-For a granular list of changes, see [v0.9.0...main](https://github.com/ChlodAlejandro/deputy/compare/v0.9.0...main).
+For a granular list of changes, see [v0.9.1...main](https://github.com/ChlodAlejandro/deputy/compare/v0.9.1...main).
 
-# [v0.8.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.8.0) - *2024-05-28*
+# [v0.9.1] - *2025-10-31*
+## Added
+* [[`edca2202`](../../commit/edca2202)] Added option to mass blank pages from a copyright problems batch listing
+
+## Modified
+* [[`ee90361c`](../../commit/ee90361c)] Made CCI revisions disappear when instant archiving
+
+For a granular list of changes, see [v0.9.0...v0.9.1](https://github.com/ChlodAlejandro/deputy/compare/v0.9.0...v0.9.1).
+
+# [v0.9.0](https://github.com/ChlodAlejandro/deputy/releases/tag/v0.8.0) - *2025-02-19*
 ## Added
 * [[`9c8334c`](../../commit/9c8334c)] Added a collapse/hide button for the CCI page toolbar
 * [[`2777919`](../../commit/2777919)] Added option to reset database and preferences
