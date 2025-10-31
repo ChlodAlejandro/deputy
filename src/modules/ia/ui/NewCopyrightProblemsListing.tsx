@@ -11,9 +11,12 @@ import { CompletionAction } from '../../shared/CompletionAction';
 import purge from '../../../wiki/util/purge';
 import { blockExit, unblockExit } from '../../../util/blockExit';
 import CCICaseInputWidget from './CCICaseInputWidget';
+import msgEval from '../../../wiki/util/msgEval';
+import MwApi from '../../../MwApi';
+import decorateEditSummary from '../../../wiki/util/decorateEditSummary';
+import changeTag from '../../../config/changeTag';
 
 /**
- *
  * @param props
  * @param props.button
  * @return A panel for opening a single page workflow dialog
@@ -75,7 +78,6 @@ function NewCopyrightProblemsListingPanel( props: {
 }
 
 /**
- *
  * @param props
  * @param props.button
  * @return A panel for reporting multiple pages
@@ -118,6 +120,9 @@ function NewCopyrightProblemsBatchListingPanel( props: {
 		} ),
 		comments: new OO.ui.TextInputWidget( {
 			placeholder: mw.msg( 'deputy.ia.listing.new.comments.placeholder' )
+		} ),
+		massBlank: new OO.ui.CheckboxInputWidget( {
+			selected: true
 		} )
 	};
 	const field = {
@@ -156,6 +161,15 @@ function NewCopyrightProblemsBatchListingPanel( props: {
 				align: 'top',
 				label: mw.msg( 'deputy.ia.listing.new.presumptiveCase.label' ),
 				help: mw.msg( 'deputy.ia.listing.new.presumptiveCase.help' )
+			}
+		),
+		massBlank: new OO.ui.FieldLayout(
+			inputs.massBlank,
+			{
+				align: 'inline',
+				label: mw.msg( 'deputy.ia.listing.new.massBlank.label' ),
+				help: mw.msg( 'deputy.ia.listing.new.massBlank.help' ),
+				helpInline: true
 			}
 		)
 	};
@@ -251,6 +265,7 @@ function NewCopyrightProblemsBatchListingPanel( props: {
 		{ unwrapWidget( field.titleSearch ) }
 		{ unwrapWidget( field.title ) }
 		{ unwrapWidget( field.comments ) }
+		{ unwrapWidget( field.massBlank ) }
 		{ previewPanel }
 		<div class="ia-batchListing-new--buttons">
 			{ unwrapWidget( cancelButton ) }
@@ -282,6 +297,59 @@ function NewCopyrightProblemsBatchListingPanel( props: {
 				inputs.title.getValue(),
 				inputs.comments.getValue()
 			).then( async () => {
+				if ( !inputs.massBlank.isSelected() ) {
+					return;
+				}
+				const wikiConfig = window.InfringementAssistant.wikiConfig.ia;
+				const copyvioTop = msgEval(
+					wikiConfig.hideTemplate.get(),
+					{
+						presumptive: 'false'
+					},
+					'', // force no source
+					'true' // full page
+				).text() + '\n';
+
+				let copyvioBottom = '';
+				if ( wikiConfig.entirePageAppendBottom.get() ) {
+					copyvioBottom = '\n' + wikiConfig.hideTemplateBottom.get();
+				}
+
+				for ( const index in inputs.titleMultiselect.items ) {
+					const titleItem = inputs.titleMultiselect.items[ index ];
+					const title = new mw.Title( titleItem.data );
+					mw.notify( mw.msg(
+						'deputy.ia.listing.new.blanking',
+						title.getPrefixedText(),
+						( +index ) + 1,
+						inputs.titleMultiselect.items.length
+					) );
+					await MwApi.action.postWithEditToken( {
+						...changeTag( await window.InfringementAssistant.getWikiConfig() ),
+						action: 'edit',
+						title: title.getPrefixedText(),
+						prependtext: copyvioTop,
+						appendtext: copyvioBottom,
+						summary: decorateEditSummary(
+							mw.msg(
+								'deputy.ia.content.batchBlanking',
+								currentListingPage.title.getPrefixedText(),
+								inputs.title.getValue()
+							),
+							window.InfringementAssistant.config
+						)
+					} ).catch( ( e ) => {
+						mw.notify( mw.message(
+							'deputy.ia.listing.new.blanking.failed',
+							title.getPrefixedText(),
+							e.message
+						).parseDom(), {
+							type: 'error'
+						} );
+					} );
+				}
+
+			} ).then( async () => {
 				await purge( currentListingPage.title ).catch( () => { /* ignored */ } );
 				mw.notify( mw.msg( 'deputy.ia.listing.new.batchListed' ), {
 					type: 'success'
