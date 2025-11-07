@@ -5,6 +5,7 @@
     "deputy.ia.content.batchListing": "Adding batch listing: \"[[$1#$2|$2]]\"",
     "deputy.ia.content.batchBlanking": "Hiding page content due to a suspected or complicated copyright issue; see [[$1#$2]]",
     "deputy.ia.content.listingComment": "from $1. $2",
+    "deputy.ia.content.batchListingComment": "From $1. $2",
     "deputy.ia.content.hideAll": "Hiding page content due to a suspected or complicated copyright issue",
     "deputy.ia.content.hide": "Hiding sections [[$1#$2|$3]] to [[$1#$4|$5]] for suspected or complicated copyright issues",
     "deputy.ia.content.listing.pd": "Adding listing for [[$1#$2|$2]] (presumptive deletion)",

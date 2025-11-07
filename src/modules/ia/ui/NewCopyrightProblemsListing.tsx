@@ -15,6 +15,8 @@ import msgEval from '../../../wiki/util/msgEval';
 import MwApi from '../../../MwApi';
 import decorateEditSummary from '../../../wiki/util/decorateEditSummary';
 import changeTag from '../../../config/changeTag';
+import CheckboxInputWidget = OO.ui.CheckboxInputWidget;
+import log from '../../../util/log';
 
 /**
  * @param props
@@ -118,6 +120,21 @@ function NewCopyrightProblemsBatchListingPanel( props: {
 			validateTitle: true,
 			excludeDynamicNamespaces: true
 		} ),
+		fromUrls: new OO.ui.CheckboxInputWidget( {
+			selected: window.InfringementAssistant.config.ia.defaultFromUrls.get()
+		} ),
+		sourceUrls: new OO.ui.TagMultiselectWidget( {
+			allowArbitrary: true,
+			inputPosition: 'outline',
+			indicator: 'required',
+			placeholder: mw.msg( 'deputy.ia.report.sourceUrls.placeholder' )
+		} ),
+		sourceText: new OO.ui.MultilineTextInputWidget( {
+			autosize: true,
+			maxRows: 2,
+			indicator: 'required',
+			placeholder: mw.msg( 'deputy.ia.report.sourceText.placeholder' )
+		} ),
 		comments: new OO.ui.TextInputWidget( {
 			placeholder: mw.msg( 'deputy.ia.listing.new.comments.placeholder' )
 		} ),
@@ -125,6 +142,17 @@ function NewCopyrightProblemsBatchListingPanel( props: {
 			selected: true
 		} )
 	};
+	inputs.presumptiveCase.setValidation(
+		( value: string ) =>
+			!inputs.presumptive.isSelected() ||
+			value.trim().length > 0
+	);
+	inputs.sourceText.setValidation(
+		( value: string ) =>
+			inputs.presumptive.isSelected() ||
+			inputs.fromUrls.isSelected() ||
+			value.trim().length > 0
+	);
 	const field = {
 		title: new OO.ui.FieldLayout(
 			inputs.title,
@@ -163,6 +191,28 @@ function NewCopyrightProblemsBatchListingPanel( props: {
 				help: mw.msg( 'deputy.ia.listing.new.presumptiveCase.help' )
 			}
 		),
+		fromUrls: new OO.ui.FieldLayout(
+			inputs.fromUrls,
+			{
+				align: 'inline',
+				label: mw.msg( 'deputy.ia.report.fromUrls.label' ),
+				help: mw.msg( 'deputy.ia.report.fromUrls.help' )
+			}
+		),
+		sourceUrls: new OO.ui.FieldLayout(
+			inputs.sourceUrls,
+			{
+				align: 'top',
+				label: mw.msg( 'deputy.ia.report.source.label' )
+			}
+		),
+		sourceText: new OO.ui.FieldLayout(
+			inputs.sourceText,
+			{
+				align: 'top',
+				label: mw.msg( 'deputy.ia.report.source.label' )
+			}
+		),
 		massBlank: new OO.ui.FieldLayout(
 			inputs.massBlank,
 			{
@@ -174,6 +224,34 @@ function NewCopyrightProblemsBatchListingPanel( props: {
 		)
 	};
 
+	/**
+	 *
+	 */
+	function getComment() {
+		const sourceUrls = inputs.sourceUrls.getValue();
+		return inputs.presumptive.isSelected() ?
+			mw.msg(
+				'deputy.ia.content.batchListingComment.pd',
+				window.InfringementAssistant.wikiConfig
+					.cci.rootPage.get().getPrefixedText(),
+				inputs.presumptiveCase.getValue(),
+				inputs.comments.getValue()
+			) :
+			mw.msg(
+				'deputy.ia.content.batchListingComment',
+				inputs.fromUrls.isSelected() ?
+					sourceUrls
+						.map( ( v ) => `[${v}]` )
+						.join(
+							sourceUrls.length > 2 ?
+								mw.msg( 'deputy.comma-separator' ) :
+								' '
+						) :
+					inputs.sourceText.getValue(),
+				inputs.comments.getValue()
+			);
+	}
+
 	const getData = ( listingPage: CopyrightProblemsPage ) => {
 		return {
 			wikitext: listingPage.getBatchListingWikitext(
@@ -181,15 +259,7 @@ function NewCopyrightProblemsBatchListingPanel( props: {
 					( v : {data: string} ) => new mw.Title( v.data )
 				),
 				inputs.title.getValue(),
-				inputs.presumptive.getValue() ?
-					mw.msg(
-						'deputy.ia.content.batchListingComment.pd',
-						window.InfringementAssistant.wikiConfig
-							.cci.rootPage.get().getPrefixedText(),
-						inputs.presumptiveCase.getValue(),
-						inputs.comments.getValue()
-					) :
-					inputs.comments.getValue()
+				getComment()
 			),
 			summary: mw.msg(
 				inputs.presumptive.getValue() ?
@@ -264,6 +334,11 @@ function NewCopyrightProblemsBatchListingPanel( props: {
 	const el = <div class="ia-batchListing-new">
 		{ unwrapWidget( field.titleSearch ) }
 		{ unwrapWidget( field.title ) }
+		{ unwrapWidget( field.presumptive ) }
+		{ unwrapWidget( field.presumptiveCase ) }
+		{ unwrapWidget( field.fromUrls ) }
+		{ unwrapWidget( field.sourceUrls ) }
+		{ unwrapWidget( field.sourceText ) }
 		{ unwrapWidget( field.comments ) }
 		{ unwrapWidget( field.massBlank ) }
 		{ previewPanel }
@@ -280,22 +355,89 @@ function NewCopyrightProblemsBatchListingPanel( props: {
 		inputs.title.setDisabled( _disabled );
 		inputs.titleMultiselect.setDisabled( _disabled );
 		inputs.comments.setDisabled( _disabled );
+		inputs.presumptive.setDisabled( _disabled );
+		inputs.presumptiveCase.setDisabled( _disabled );
+		inputs.fromUrls.setDisabled( _disabled );
+		inputs.sourceUrls.setDisabled( _disabled );
+		inputs.sourceText.setDisabled( _disabled );
+		inputs.massBlank.setDisabled( _disabled );
 		disabled = _disabled;
 	};
 
+	/**
+	 * @param selected
+	 */
+	function handlePresumptive( selected: boolean ) {
+		field.presumptiveCase.toggle( selected );
+		field.fromUrls.toggle( !selected );
+		if ( inputs.fromUrls.isSelected() ) {
+			field.sourceUrls.toggle( !selected );
+			field.sourceText.toggle( false );
+		} else {
+			field.sourceUrls.toggle( false );
+			field.sourceText.toggle( !selected );
+		}
+	}
+
+	/**
+	 * @param selected
+	 */
+	function handleFromUrls( selected: boolean ) {
+		if ( inputs.presumptive.isSelected() ) {
+			// Ignore if presumptive is selected
+			return;
+		}
+		field.sourceUrls.toggle( selected );
+		field.sourceText.toggle( !selected );
+	}
+
+	inputs.presumptive.on( 'change', handlePresumptive );
+	inputs.fromUrls.on( 'change', handleFromUrls );
+	handlePresumptive( inputs.presumptive.isSelected() );
+	handleFromUrls( inputs.fromUrls.isSelected() );
+
+	const urlsValid = () => {
+		const values = inputs.sourceUrls.getValue();
+		return values.length > 0 &&
+			values.every( v => typeof v === 'string' && v.trim().length > 0 );
+	};
+
+	/**
+	 * Validate input fields
+	 */
+	function validateInputs() {
+		inputs.presumptiveCase.setValidityFlag();
+		inputs.sourceText.setValidityFlag();
+		inputs.sourceUrls.toggleValid(
+			inputs.presumptive.isSelected() ||
+			!inputs.fromUrls.isSelected() ||
+			urlsValid()
+		);
+	}
+
+	inputs.presumptive.on( 'change', validateInputs );
+	inputs.presumptiveCase.on( 'change', validateInputs );
+	inputs.fromUrls.on( 'change', validateInputs );
+	inputs.sourceUrls.on( 'change', validateInputs );
+	inputs.sourceText.on( 'change', validateInputs );
+
 	openButton.on( 'click', async () => {
+		validateInputs();
 		setDisabled( true );
 		await reloadPreview();
 		if (
 			inputs.titleMultiselect.items.length > 0 &&
-			( inputs.title.getValue() as string || '' ).trim().length > 0
+			( inputs.title.getValue() as string || '' ).trim().length > 0 &&
+			inputs.presumptiveCase.getValidity() &&
+			inputs.sourceUrls.checkValidity() &&
+			inputs.sourceText.getValidity()
 		) {
 			await currentListingPage.postListings(
 				inputs.titleMultiselect.items.map(
 					( v : {data: string} ) => new mw.Title( v.data )
 				),
 				inputs.title.getValue(),
-				inputs.comments.getValue()
+				getComment()
 			).then( async () => {
 				if ( !inputs.massBlank.isSelected() ) {
 					return;
@@ -304,10 +446,23 @@ function NewCopyrightProblemsBatchListingPanel( props: {
 				const copyvioTop = msgEval(
 					wikiConfig.hideTemplate.get(),
 					{
-						presumptive: 'false'
+						presumptive: inputs.presumptive.isSelected() ? 'true' : '',
+						presumptiveCase: inputs.presumptiveCase.getValue() ? 'true' : '',
+						fromUrls: inputs.fromUrls.isSelected() ? 'true' : '',
+						sourceUrls: urlsValid() ? 'true' : '',
+						sourceText: inputs.sourceText.getValue() ? 'true' : '',
+						entirePage: 'true'
 					},
-					'', // force no source
-					'true' // full page
+					inputs.presumptive.isSelected() ?
+						`[[${
+							window.InfringementAssistant.wikiConfig.cci
+								.rootPage.get().getPrefixedText()
+						}/${inputs.presumptiveCase.getValue()}]]` : (
+							inputs.fromUrls.isSelected() ?
+								inputs.sourceUrls.getValue().join( ' ' ) :
+								inputs.sourceText.getValue()
+						),
+					'true'
 				).text() + '\n';
 
 				let copyvioBottom = '';
@@ -373,6 +528,8 @@ function NewCopyrightProblemsBatchListingPanel( props: {
 				} );
 				setDisabled( false );
 			} );
+		} else {
+			setDisabled( false );
 		}
 	} );
 
