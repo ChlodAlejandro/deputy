@@ -506,7 +506,7 @@ function initSinglePageWorkflowDialog() {
 						window.deputy.wikiConfig.cci.rootPage.get().getPrefixedText()
 					}/${this.data.presumptiveCase}]]` : (
 						this.data.fromUrls ?
-							( this.data.sourceUrls ?? [] )[ 0 ] ?? '' :
+							this.data.sourceUrls.join( ' ' ) ?? '' :
 							this.data.sourceText
 					),
 				this.data.entirePage ? 'true' : 'false'
