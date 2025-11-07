@@ -7,7 +7,7 @@ level 1 section heading here is the version being tagged.
 
 For a granular list of changes, see [v0.9.1...main](https://github.com/ChlodAlejandro/deputy/compare/v0.9.1...main).
 
-# [v0.9.1] - *2025-10-31*
+# [v0.9.1] - *2025-11-07*
 ## Added
 * [[`edca220`](../../commit/edca220)] Added option to mass blank pages from a copyright problems batch listing
 * [[`554ea7a`](../../commit/554ea7a)] Added structured source fields for copyright problems batch listings
