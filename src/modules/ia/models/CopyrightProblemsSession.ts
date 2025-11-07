@@ -29,7 +29,6 @@ export default class CopyrightProblemsSession extends CopyrightProblemsPage {
 	listingMap: Map<HTMLElement, CopyrightProblemsListing> = new Map();
 
 	/**
-	 *
 	 * @param document
 	 */
 	constructor( document: Document = window.document ) {
@@ -152,9 +151,11 @@ export default class CopyrightProblemsSession extends CopyrightProblemsPage {
 
 					// We're now at the <p> or <div> or whatever.
 					// Check if it only has one child (the tree that contains this element)
-					// and if so, replace the links.
+					// and if so, replace the links. Ignore <br/> elements.
 
-					if ( currentPivot.children.length > 1 ) {
+					const children = Array.from( currentPivot.children )
+						.filter( child => child.tagName !== 'BR' );
+					if ( children.length > 1 ) {
 						return;
 					}
 
