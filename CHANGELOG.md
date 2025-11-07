@@ -9,10 +9,15 @@ For a granular list of changes, see [v0.9.1...main](https://github.com/ChlodAlej
 
 # [v0.9.1] - *2025-10-31*
 ## Added
-* [[`edca2202`](../../commit/edca2202)] Added option to mass blank pages from a copyright problems batch listing
+* [[`edca220`](../../commit/edca220)] Added option to mass blank pages from a copyright problems batch listing
+* [[`554ea7a`](../../commit/554ea7a)] Added structured source fields for copyright problems batch listings
 
 ## Modified
-* [[`ee90361c`](../../commit/ee90361c)] Made CCI revisions disappear when instant archiving
+* [[`ee90361`](../../commit/ee90361)] Made CCI revisions disappear when instant archiving
+
+## Fixed
+* [[`2b8160f`](../../commit/2b8160f)] Fixed Infringement Assistant new listing/batch listing buttons being missing when the current listing page is a redlink
+* [[`631ee9a`](../../commit/631ee9a)] Fixed broken parser integration tests due to closed cases (congrats!)
 
 For a granular list of changes, see [v0.9.0...v0.9.1](https://github.com/ChlodAlejandro/deputy/compare/v0.9.0...v0.9.1).
 
