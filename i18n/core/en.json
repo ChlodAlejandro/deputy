@@ -30,6 +30,9 @@
     "deputy.session.section.closeWarn": "You have unsaved changes. Close the section without saving?",
     "deputy.session.section.closed": "This section has been archived. You can edit its contents, but you cannot un-archive it.",
 
+    "deputy.session.section.random": "Random",
+    "deputy.session.section.random.title": "Open a random revision to review",
+
     "deputy.session.section.stop": "Stop session",
     "deputy.session.section.stop.title": "Stop the current session, closing all sections and saving changes for later.",
     "deputy.session.section.saved": "Section saved",

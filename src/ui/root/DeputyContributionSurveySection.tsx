@@ -55,6 +55,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	closingCheckbox: OO.ui.CheckboxInputWidget;
 	closingComments: OO.ui.TextInputWidget;
 	closingCommentsSign: OO.ui.CheckboxInputWidget;
+	randomButton: OO.ui.ButtonWidget;
 	closeButton: OO.ui.ButtonWidget;
 	reviewButton: OO.ui.ButtonWidget;
 	saveButton: OO.ui.ButtonWidget;
@@ -451,6 +452,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 				this.rows.push( rowElement );
 				this.rowElements.push( rowElement );
 				this.wikitextLines.push( rowElement );
+				rowElement.addEventListener( 'load', this.recheckRandomButton.bind( this ) );
 			} else if ( Array.isArray( rowElement ) ) {
 				// Array of Nodes
 				this.wikitextLines.push( line );
@@ -524,6 +526,11 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	 * @param disabled
 	 */
 	setDisabled( disabled: boolean ) {
+		if ( disabled ) {
+			this.randomButton?.setDisabled( disabled );
+		} else {
+			this.recheckRandomButton();
+		}
 		this.closeButton?.setDisabled( disabled );
 		this.reviewButton?.setDisabled( disabled );
 		this.saveButton?.setDisabled( disabled );
@@ -607,6 +614,35 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	}
 
 	/**
+	 * Gets all available (non-broken, non-empty) surveyor rows.
+	 *
+	 * @return
+	 */
+	getAvailableRows() {
+		console.log(
+			this.rows
+				.filter( v => !v.broken )
+				.filter( v => v.revisions?.length > 0 )
+		);
+		return this.rows
+			.filter( v => !v.broken )
+			.filter( v => v.revisions?.length > 0 );
+	}
+
+	/**
+	 * Recalculate the display of the "random" button.
+	 */
+	recheckRandomButton() {
+		if ( this.getAvailableRows().length === 0 ) {
+			this.randomButton.toggle( false );
+			this.randomButton.setDisabled( true );
+		} else {
+			this.randomButton.toggle( true );
+			this.randomButton.setDisabled( false );
+		}
+	}
+
+	/**
 	 * @inheritDoc
 	 */
 	render(): HTMLElement {
@@ -624,6 +660,12 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		this.closingCommentsSign = new OO.ui.CheckboxInputWidget( {
 			selected: window.deputy.config.cci.signSectionArchive.get(),
 			disabled: true
+		} );
+		this.randomButton = new OO.ui.ButtonWidget( {
+			invisibleLabel: true,
+			label: mw.msg( 'deputy.session.section.random' ),
+			title: mw.msg( 'deputy.session.section.random.title' ),
+			icon: 'die'
 		} );
 		this.closeButton = new OO.ui.ButtonWidget( {
 			label: mw.msg( 'deputy.session.section.stop' ),
@@ -645,7 +687,22 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 				progress: false
 			} ) ) }
 		</div>;
-
+		this.randomButton.setDisabled( true );
+		this.randomButton.on( 'click', async () => {
+			const availableRows = this.getAvailableRows();
+			const randomPage = availableRows[
+				Math.round( Math.random() * availableRows.length )
+			];
+			const randomRevision = randomPage.revisions[
+				Math.round( Math.random() * randomPage.revisions.length )
+			];
+			window.open(
+				mw.util.getUrl(
+					randomPage.row.title.getPrefixedText(),
+					{ diff: randomRevision.revision.revid }
+				)
+			);
+		} );
 		this.closeButton.on( 'click', async () => {
 			if ( this.wikitext !== ( await this.getSection() ).originalWikitext ) {
 				dangerModeConfirm(
@@ -912,6 +969,7 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 						flexWrap: dangerMode ? 'wrap' : 'nowrap',
 						maxWidth: '320px'
 					}}>
+						{ unwrapWidget( this.randomButton )}
 						{ unwrapWidget( this.closeButton ) }
 						{ unwrapWidget( this.reviewButton ) }
 						{ unwrapWidget( this.saveButton ) }

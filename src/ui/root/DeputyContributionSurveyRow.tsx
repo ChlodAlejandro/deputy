@@ -493,6 +493,9 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 			) );
 			this.setDisabled( true );
 		}
+
+		// Emit "update" event
+		this.dispatchEvent( new CustomEvent( 'load' ) );
 	}
 
 	/**
