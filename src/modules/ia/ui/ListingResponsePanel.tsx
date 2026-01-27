@@ -95,6 +95,7 @@ export default class ListingResponsePanel extends EventTarget {
 		}
 
 		this.dropdown = new OO.ui.DropdownInputWidget( {
+			$overlay: true,
 			options,
 			dropdown: {
 				label: mw.msg( 'deputy.ia.listing.re.label' ),

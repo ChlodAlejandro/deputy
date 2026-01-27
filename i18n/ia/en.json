@@ -12,7 +12,7 @@
     "deputy.ia.content.batchListing.pd": "Adding batch listing: \"[[$1#$2|$2]]\" (presumptive deletion)",
     "deputy.ia.content.listingComment.pd": "presumptive deletion from [[$1/$2|$2]]. $3",
     "deputy.ia.content.batchListingComment.pd": "Presumptive deletion from [[$1/$2|$2]]. $3",
-    "deputy.ia.content.hideAll.pd": "Hiding page content for presumptive deletion; see [[$1/$2]]",
+    "deputy.ia.content.hideAll.pd": "Hiding page content for presumptive deletion; see [[$1#$2]]",
     "deputy.ia.content.hide.pd": "Hiding sections [[$1#$2|$3]] to [[$1#$4|$5]] for presumptive deletion; see [[$6/$7]]",
     "deputy.ia.content.copyvio": "⛔ Content on this page has been temporarily hidden due to a suspected copyright violation",
     "deputy.ia.content.copyvio.help": "Please see this wiki's noticeboard for copyright problems for more information.",

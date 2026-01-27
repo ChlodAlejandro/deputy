@@ -546,7 +546,7 @@ function initSinglePageWorkflowDialog() {
 						) :
 						mw.msg(
 							this.data.presumptive ?
-								'deputy.ia.content.hideAll.pd' :
+								'deputy.ia.content.hide.pd' :
 								'deputy.ia.content.hide',
 							this.page.getPrefixedText(),
 							this.data.startSection?.anchor,
