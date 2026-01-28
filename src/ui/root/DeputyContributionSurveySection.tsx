@@ -689,17 +689,18 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 		</div>;
 		this.randomButton.setDisabled( true );
 		this.randomButton.on( 'click', async () => {
-			const availableRows = this.getAvailableRows();
+			const availableRows = this.getAvailableRows()
+				.filter( v =>
+					v.status === ContributionSurveyRowStatus.Unfinished );
 			const randomPage = availableRows[
 				Math.round( Math.random() * availableRows.length )
 			];
-			const randomRevision = randomPage.revisions[
-				Math.round( Math.random() * randomPage.revisions.length )
-			];
+			const firstIncompleteRevision = [ ...randomPage.revisions ]
+				.find( v => !v.completed );
 			window.open(
 				mw.util.getUrl(
 					randomPage.row.title.getPrefixedText(),
-					{ diff: randomRevision.revision.revid }
+					{ diff: firstIncompleteRevision.revision.revid }
 				)
 			);
 		} );
