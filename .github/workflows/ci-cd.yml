@@ -219,10 +219,10 @@ jobs:
         id: edit-summary
         run: | 
           if [ $GITHUB_REF == refs/tags/v* ]; then
-            echo "message=$(git show -s --format="[%h] %s" $GITHUB_REF)" >> $GITHUB_OUTPUT
-          else
-            TAG=$(echo $GITHUB_REF | sed -E 's/^refs\/tags\/(.*)\/.*/\1/')
+            TAG=$(echo $GITHUB_REF | sed -E 's/^refs\/tags\/(.*)/\1/')
             echo "message=$TAG; https://github.com/ChlodAlejandro/deputy/releases/tag/$TAG " >> $GITHUB_OUTPUT
+          else
+            echo "message=$(git show -s --format="[%h] %s" $GITHUB_REF)" >> $GITHUB_OUTPUT
           fi
 
       - name: Deploy to Wikipedia
