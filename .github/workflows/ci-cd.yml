@@ -234,4 +234,4 @@ jobs:
             deputy-ia.js User:Chlod/Scripts/Deputy/InfringementAssistant.js
           apiUrl: 'https://en.wikipedia.org/w/api.php'
           oauth2Token: ${{ secrets.OAUTH_ACCESS_TOKEN }}
-          editSummary: '${{ steps.edit-summary.output.message }} (bot/CD)'
+          editSummary: '${{ steps.edit-summary.outputs.message }} (bot/CD)'
