@@ -619,11 +619,6 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 	 * @return
 	 */
 	getAvailableRows() {
-		console.log(
-			this.rows
-				.filter( v => !v.broken )
-				.filter( v => v.revisions?.length > 0 )
-		);
 		return this.rows
 			.filter( v => !v.broken )
 			.filter( v => v.revisions?.length > 0 );
