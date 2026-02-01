@@ -95,7 +95,6 @@ export default class ContributionSurveyRowParser {
 	private current: string;
 
 	/**
-	 *
 	 * @param wikitext
 	 */
 	constructor( readonly wikitext: string ) {
@@ -138,7 +137,7 @@ export default class ContributionSurveyRowParser {
 		const revids: number[] = [];
 		const revidText: Record<number, string> = {};
 		let diffs: string = null,
-			comments: string,
+			comments: string | null,
 			diffTemplate = '[[Special:Diff/$1|($2)]]';
 		if ( extras ) {
 			const starting = this.current;
@@ -198,6 +197,11 @@ export default class ContributionSurveyRowParser {
 			}
 
 			comments = this.getCurrentLength() > 0 ? this.eatRemaining() : null;
+		}
+
+		if ( comments?.trim()?.length === 0 ) {
+			// Comments are just spaces. Let's just drop comments altogether.
+			comments = null;
 		}
 
 		// "{bullet}{creation}[[{page}]]{extras}{diffs}{comments}"
