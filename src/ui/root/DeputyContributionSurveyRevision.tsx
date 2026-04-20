@@ -100,6 +100,11 @@ export default class DeputyContributionSurveyRevision
 	 * @private
 	 */
 	private diff: HTMLElement | null = null;
+	/**
+	 * Whether the diff has been loaded. Used to determine whether the diff view needs to be
+	 * reloaded in case of an error.
+	 */
+	private diffLoaded: boolean = false;
 
 	/**
 	 * @param revision
@@ -222,109 +227,113 @@ export default class DeputyContributionSurveyRevision
 
 		this.diff = <div class="dp-cs-rev-diff"/> as HTMLElement;
 
-		let loaded = false;
-		const handleDiffToggle = ( active: boolean ) => {
-			this.diffToggle.setIndicator( active ? 'up' : 'down' );
-			if ( !active ) {
-				this.diff.classList.toggle( 'dp-cs-rev-diff--hidden', true );
-				return;
-			}
-
-			if ( this.diff.classList.contains( 'dp-cs-rev-diff--errored' ) ) {
-				// Error occurred previously, remake diff panel
-				this.diff = swapElements( this.diff, <div class="dp-cs-rev-diff"/> as HTMLElement );
-			} else if ( loaded ) {
-				this.diff.classList.toggle( 'dp-cs-rev-diff--hidden', false );
-			}
-
-			if ( active && !loaded ) {
-				// Going active, clear the element out
-				Array.from( this.diff.children ).forEach(
-					( child ) => this.diff.removeChild( child )
-				);
-				this.diff.setAttribute( 'class', 'dp-cs-rev-diff' );
-				this.diff.appendChild( <DeputyLoadingDots/> );
-
-				const comparePromise = MwApi.action.get( {
-					action: 'compare',
-					fromrev: this.revision.revid,
-					torelative: 'prev',
-					prop: 'diff'
-				} );
-				const stylePromise = mw.loader.using( 'mediawiki.diff.styles' );
-
-				// Promise.all not used here since we need to use JQuery.Promise#then
-				// if we want to access the underlying error response.
-				$.when( [ comparePromise, stylePromise ] )
-					.then( ( results ) => results[ 0 ] )
-					.then( ( data ) => {
-						unwrapWidget( this.diffToggle ).classList.add(
-							'dp-cs-rev-toggleDiff--loaded'
-						);
-						// Clear element out again
-						Array.from( this.diff.children ).forEach(
-							( child ) => this.diff.removeChild( child )
-						);
-
-						// https://youtrack.jetbrains.com/issue/WEB-61047
-						// noinspection JSXDomNesting
-						const diffTable = <table class={ classMix(
-							'diff',
-							`diff-editfont-${ mw.user.options.get( 'editfont' ) }`
-						) }>
-							<colgroup>
-								<col class="diff-marker" />
-								<col class="diff-content" />
-								<col class="diff-marker" />
-								<col class="diff-content" />
-							</colgroup>
-						</table>;
-						// Trusted .innerHTML (data always comes from MediaWiki Action API)
-						diffTable.innerHTML += data.compare.body;
-
-						diffTable.querySelectorAll( 'tr' ).forEach( ( tr ) => {
-						// Delete all header rows
-							if ( tr.querySelector( '.diff-lineno' ) ) {
-								removeElement( tr );
-								return;
-							}
-							// Delete all no-change rows (gray rows)
-							if ( tr.querySelector( 'td.diff-context' ) ) {
-								removeElement( tr );
-							}
-						} );
-
-						this.diff.classList.toggle( 'dp-cs-rev-diff--loaded', true );
-						this.diff.classList.toggle( 'dp-cs-rev-diff--errored', false );
-						this.diff.appendChild( diffTable );
-						loaded = true;
-					}, ( _error, errorData ) => {
-						// Clear element out again
-						Array.from( this.diff.children ).map(
-							( child ) => this.diff.removeChild( child )
-						);
-
-						this.diff.classList.toggle( 'dp-cs-rev-diff--loaded', true );
-						this.diff.classList.toggle( 'dp-cs-rev-diff--errored', true );
-						this.diff.appendChild( unwrapWidget( DeputyMessageWidget( {
-							type: 'error',
-							message: mw.msg(
-								'deputy.session.revision.diff.error',
-								errorData ?
-									getApiErrorText( errorData ) :
-									( _error as Error ).message
-							)
-						} ) ) );
-					} );
-			}
-		};
-
 		this.diffToggle.on( 'change', ( checked: boolean ) => {
-			handleDiffToggle( checked );
+			this.handleDiffToggle( checked );
 		} );
 
 		if ( this.autoExpanded ) {
-			handleDiffToggle( true );
+			// Ignoring the `await` here; the diff should load asynchronously.
+			// noinspection ES6MissingAwait
+			this.handleDiffToggle( true );
+		}
+	}
+
+	/**
+	 * @param active
+	 */
+	async handleDiffToggle( active: boolean ) {
+		this.diffToggle.setIndicator( active ? 'up' : 'down' );
+		if ( !active ) {
+			this.diff.classList.toggle( 'dp-cs-rev-diff--hidden', true );
+			return;
+		}
+
+		if ( this.diff.classList.contains( 'dp-cs-rev-diff--errored' ) ) {
+			// Error occurred previously, remake diff panel
+			this.diff = swapElements( this.diff, <div class="dp-cs-rev-diff"/> as HTMLElement );
+		} else if ( this.diffLoaded ) {
+			this.diff.classList.toggle( 'dp-cs-rev-diff--hidden', false );
+		}
+
+		if ( active && !this.diffLoaded ) {
+			// Going active, clear the element out
+			Array.from( this.diff.children ).forEach(
+				( child ) => this.diff.removeChild( child )
+			);
+			this.diff.setAttribute( 'class', 'dp-cs-rev-diff' );
+			this.diff.appendChild( <DeputyLoadingDots/> );
+
+			const comparePromise = MwApi.action.get( {
+				action: 'compare',
+				fromrev: this.revision.revid,
+				torelative: 'prev',
+				prop: 'diff'
+			} );
+			const stylePromise = mw.loader.using( 'mediawiki.diff.styles' );
+
+			// Promise.all not used here since we need to use JQuery.Promise#then
+			// if we want to access the underlying error response.
+			await $.when( [ comparePromise, stylePromise ] )
+				.then( ( results ) => results[ 0 ] )
+				.then( ( data ) => {
+					unwrapWidget( this.diffToggle ).classList.add(
+						'dp-cs-rev-toggleDiff--loaded'
+					);
+					// Clear element out again
+					Array.from( this.diff.children ).forEach(
+						( child ) => this.diff.removeChild( child )
+					);
+
+					// https://youtrack.jetbrains.com/issue/WEB-61047
+					// noinspection JSXDomNesting
+					const diffTable = <table class={ classMix(
+						'diff',
+						`diff-editfont-${ mw.user.options.get( 'editfont' ) }`
+					) }>
+						<colgroup>
+							<col class="diff-marker" />
+							<col class="diff-content" />
+							<col class="diff-marker" />
+							<col class="diff-content" />
+						</colgroup>
+					</table>;
+					// Trusted .innerHTML (data always comes from MediaWiki Action API)
+					diffTable.innerHTML += data.compare.body;
+
+					diffTable.querySelectorAll( 'tr' ).forEach( ( tr ) => {
+						// Delete all header rows
+						if ( tr.querySelector( '.diff-lineno' ) ) {
+							removeElement( tr );
+							return;
+						}
+						// Delete all no-change rows (gray rows)
+						if ( tr.querySelector( 'td.diff-context' ) ) {
+							removeElement( tr );
+						}
+					} );
+
+					this.diff.classList.toggle( 'dp-cs-rev-diff--loaded', true );
+					this.diff.classList.toggle( 'dp-cs-rev-diff--errored', false );
+					this.diff.appendChild( diffTable );
+					this.diffLoaded = true;
+				}, ( _error, errorData ) => {
+					// Clear element out again
+					Array.from( this.diff.children ).map(
+						( child ) => this.diff.removeChild( child )
+					);
+
+					this.diff.classList.toggle( 'dp-cs-rev-diff--loaded', true );
+					this.diff.classList.toggle( 'dp-cs-rev-diff--errored', true );
+					this.diff.appendChild( unwrapWidget( DeputyMessageWidget( {
+						type: 'error',
+						message: mw.msg(
+							'deputy.session.revision.diff.error',
+							errorData ?
+								getApiErrorText( errorData ) :
+								( _error as Error ).message
+						)
+					} ) ) );
+				} );
 		}
 	}
 
