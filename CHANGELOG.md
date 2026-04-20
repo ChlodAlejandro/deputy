@@ -5,7 +5,21 @@ These are changes that may or may not have been deployed to wikis, but are not y
 This changelog is automatically parsed when releases are created. Before pushing a version tag, ensure that the latest
 level 1 section heading here is the version being tagged.
 
-For a granular list of changes, see [v0.9.1...main](https://github.com/ChlodAlejandro/deputy/compare/v0.9.1...main).
+For a granular list of changes, see [v0.9.2...main](https://github.com/ChlodAlejandro/deputy/compare/v0.9.1...main).
+
+# [v0.9.2] - *2026-04-21*
+## Added
+* [[`9f4c8ce`](../../commit/9f4c8ce)] Added randomize button for CCI sections
+* [[`4b8f1c2`](../../commit/4b8f1c2)] Added "expand all diffs" button for CCI rows
+
+## Fixed
+* [[`9540ee3`](../../commit/9540ee3)] Fixed broken edit summaries when blanking under presumptive deletion
+* [[`e24b88c`](../../commit/e24b88c)] Fixed extra whitespace appearing at the end of rows
+* [[`8d606c2`](../../commit/8d606c2)] Fixed deleted revision data not having proper messages
+* [[`ef7f07f`](../../commit/ef7f07f)] Fixed CCI row links appearing closer than normal
+* [[`434a53c`](../../commit/434a53c)] (dev) Fixed edit summaries for automatic userscript updates not appearing properly
+
+For a granular list of changes, see [v0.9.1...v0.9.2](https://github.com/ChlodAlejandro/deputy/compare/v0.9.1...v0.9.2).
 
 # [v0.9.1] - *2025-11-07*
 ## Added
