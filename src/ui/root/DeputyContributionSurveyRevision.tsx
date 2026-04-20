@@ -14,6 +14,7 @@ import DeputyMessageWidget from '../shared/DeputyMessageWidget';
 import swapElements from '../../util/swapElements';
 import getApiErrorText from '../../wiki/util/getApiErrorText';
 import removeElement from '../../util/removeElement';
+import error from '../../util/error';
 
 export interface DeputyContributionSurveyRevisionOptions {
 	expanded?: boolean;
@@ -321,6 +322,8 @@ export default class DeputyContributionSurveyRevision
 					Array.from( this.diff.children ).map(
 						( child ) => this.diff.removeChild( child )
 					);
+
+					error( 'Failed to load diff', _error, errorData );
 
 					this.diff.classList.toggle( 'dp-cs-rev-diff--loaded', true );
 					this.diff.classList.toggle( 'dp-cs-rev-diff--errored', true );
