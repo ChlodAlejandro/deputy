@@ -22,6 +22,7 @@ import warn from '../../util/warn';
 import error from '../../util/error';
 import { ContributionSurveyRowStatus } from '../../models/ContributionSurveyRowStatus';
 import dangerModeConfirm from '../../util/dangerModeConfirm';
+import any = jasmine.any;
 
 export enum DeputyContributionSurveyRowState {
 	/*
@@ -38,6 +39,31 @@ export enum DeputyContributionSurveyRowState {
 	// Closed by `close()`.
 	Closed
 }
+
+enum DiffExpandStateType {
+	/**
+	 * Diffs are not expanded.
+	 */
+	Unexpanded,
+	/**
+	 * Diffs are actively expanding.
+	 */
+	Expanding,
+	/**
+	 * Diffs are completely expanded.
+	 */
+	Expanded,
+	/**
+	 * The expansion was cancelled, but loaded diffs remain open.
+	 * The next click will unexpand diffs, which can then lead them to being expanded again.
+	 * Since the diff HTML is saved and cached, we don't have to worry about re-loading diffs.
+	 */
+	Cancelled
+}
+
+type DiffExpandState =
+	| { type: Exclude<DiffExpandStateType, DiffExpandStateType.Expanding> }
+	| { type: DiffExpandStateType.Expanding, progress: [number, number] }
 
 /**
  * A UI element used for denoting the following aspects of a page in the contribution
@@ -116,6 +142,14 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 	 */
 	checkAllButton: OO.ui.ButtonWidget;
 	/**
+	 * Button that opens all diff previews for this row
+	 */
+	expandAllButton: OO.ui.ButtonWidget;
+	/**
+	 * Progress bar for diff preview expansion. Only shown when diffs are actively expanding.
+	 */
+	expandAllProgress: OO.ui.ProgressBarWidget;
+	/**
 	 * Message box displayed when a user has set a status but not yet cleared all diffs.
 	 */
 	unfinishedMessageBox: OO.ui.MessageWidget;
@@ -128,6 +162,7 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 	 * finished.
 	 */
 	finishedRow: DeputyFinishedContributionSurveyRow;
+	private diffExpandState: DiffExpandState;
 
 	/**
 	 * OOUI DropdownWidget for the current row status
@@ -664,15 +699,18 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 				<i>{ mw.msg( 'deputy.session.row.pageonly' ) }</i>
 			</div> );
 		} else {
+			let anyExpanded = false;
 			const cciConfig = window.deputy.config.cci;
 			const maxSize = cciConfig.maxSizeToAutoShowDiff.get();
 			for ( const revision of diffs.values() ) {
+				const expanded = cciConfig.autoShowDiff.get() &&
+					diffs.size < cciConfig.maxRevisionsToAutoShowDiff.get() &&
+					( maxSize === -1 || Math.abs( revision.diffsize ) < maxSize );
+				if ( expanded ) {
+					anyExpanded = true;
+				}
 				const revisionUIEl = new DeputyContributionSurveyRevision(
-					revision, this, {
-						expanded: cciConfig.autoShowDiff.get() &&
-							diffs.size < cciConfig.maxRevisionsToAutoShowDiff.get() &&
-							( maxSize === -1 || Math.abs( revision.diffsize ) < maxSize )
-					}
+					revision, this, { expanded }
 				);
 
 				revisionUIEl.addEventListener(
@@ -687,6 +725,11 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 				revisionList.appendChild( revisionUIEl.render() );
 				this.revisions.push( revisionUIEl );
 			}
+			this.diffExpandState = {
+				type: anyExpanded ?
+					DiffExpandStateType.Expanded : DiffExpandStateType.Unexpanded
+			};
+			this.updateDiffExpandButton();
 		}
 
 		return revisionList;
@@ -697,8 +740,8 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 	 *
 	 * @return An HTML element
 	 */
-	renderLinks(): JSX.Element {
-		return <span class="dp-cs-row-links">
+	renderLinks(): JSX.Element[] {
+		return [
 			<a
 				class="dp-cs-row-link dp-cs-row-edit"
 				target="_blank"
@@ -714,7 +757,7 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 					icon: 'edit',
 					framed: false
 				} ) ) }
-			</a>
+			</a>,
 			<a
 				class="dp-cs-row-link dp-cs-row-talk"
 				target="_blank"
@@ -729,7 +772,7 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 					icon: 'speechBubbles',
 					framed: false
 				} ) ) }
-			</a>
+			</a>,
 			<a
 				class="dp-cs-row-link dp-cs-row-history"
 				target="_blank"
@@ -746,7 +789,7 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 					framed: false
 				} ) ) }
 			</a>
-		</span>;
+		];
 	}
 
 	/**
@@ -875,6 +918,27 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 			);
 		} );
 
+		// Build expand all button
+		this.expandAllButton = new OO.ui.ButtonWidget( {
+			icon: 'viewDetails',
+			label: mw.msg( 'deputy.session.row.expandAll' ),
+			title: mw.msg( 'deputy.session.row.expandAll' ),
+			invisibleLabel: true,
+			framed: false
+		} );
+		this.expandAllButton.on( 'click', async () => {
+			await this.handleDiffExpansion();
+		} );
+		// TODO: @types/oojs-ui limitation
+		// https://github.com/DefinitelyTyped/DefinitelyTyped/pull/74902
+		this.expandAllProgress = new ( OO.ui.ProgressBarWidget as any )( {
+			progress: false,
+			inline: true
+		} );
+		this.expandAllButton.$element.append( this.expandAllProgress.$element );
+
+		this.updateDiffExpandButton();
+
 		// Build content toggler
 		const contentToggle = new OO.ui.ButtonWidget( {
 			classes: [ 'dp-cs-row-toggle' ],
@@ -927,8 +991,13 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 				{ this.row.title.getPrefixedText() }
 			</a>
 			{ diffs && this.renderDetails( diffs ) }
-			{ this.renderLinks() }
-			{ !this.wasFinished && diffs && diffs.size > 0 && unwrapWidget( this.checkAllButton ) }
+			<span class="dp-cs-row-buttons">
+				{ this.renderLinks() }
+				{ !this.wasFinished && diffs && diffs.size > 0 && [
+					unwrapWidget( this.checkAllButton ),
+					unwrapWidget( this.expandAllButton )
+				] }
+			</span>
 			{ !contentContainer.classList.contains( 'dp-cs-row-content-empty' ) &&
 				unwrapWidget( contentToggle ) }
 		</div>;
@@ -1103,6 +1172,104 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 					revid: ( exactRevision ?? firstRevision )?.revision?.revid ?? null
 				} );
 			}
+		}
+	}
+
+	/**
+	 * Updates the expand all button based on the current state of diff expansion.
+	 */
+	updateDiffExpandButton() {
+		if ( !this.expandAllButton || !this.diffExpandState || !this.expandAllProgress ) {
+			return;
+		}
+		const state = this.diffExpandState;
+		const type = state.type;
+		switch ( type ) {
+			case DiffExpandStateType.Unexpanded:
+				this.expandAllButton.setTitle( mw.msg( 'deputy.session.row.expandAll' ) );
+				this.expandAllButton.setLabel( mw.msg( 'deputy.session.row.expandAll' ) );
+				this.expandAllButton.setIcon( 'viewDetails' );
+				this.expandAllButton.clearFlags();
+				this.expandAllProgress.toggle( false );
+				break;
+			case DiffExpandStateType.Expanding:
+				this.expandAllButton.setTitle( mw.msg( 'deputy.session.row.expandAll.cancel' ) );
+				this.expandAllButton.setLabel( mw.msg( 'deputy.session.row.expandAll.cancel' ) );
+				this.expandAllButton.setIcon( 'cancel' );
+				this.expandAllButton.setFlags( [ 'destructive' ] );
+				this.expandAllProgress.toggle( true );
+				this.expandAllProgress.setProgress(
+					( state.progress[ 0 ] / state.progress[ 1 ] ) * 100
+				);
+				unwrapWidget( this.expandAllProgress ).classList
+					.toggle( 'dp-progress-failed', false );
+				break;
+			case DiffExpandStateType.Expanded:
+			case DiffExpandStateType.Cancelled:
+				this.expandAllButton.setTitle( mw.msg( 'deputy.session.row.expandAll.close' ) );
+				this.expandAllButton.setLabel( mw.msg( 'deputy.session.row.expandAll.close' ) );
+				this.expandAllButton.setIcon( {
+					[ DiffExpandStateType.Expanded ]: 'menu',
+					[ DiffExpandStateType.Cancelled ]: 'reload'
+				}[ type ] );
+				this.expandAllButton.clearFlags();
+				this.expandAllProgress.toggle( type === DiffExpandStateType.Cancelled );
+				this.expandAllProgress.setProgress( 100 );
+				unwrapWidget( this.expandAllProgress ).classList
+					.toggle( 'dp-progress-failed', type === DiffExpandStateType.Cancelled );
+				break;
+		}
+	}
+
+	/**
+	 * Handle the diff expansion process.
+	 */
+	async handleDiffExpansion() {
+		if ( !this.expandAllButton || !this.diffExpandState ) {
+			return;
+		}
+		const status = this.diffExpandState.type;
+		switch ( status ) {
+			case DiffExpandStateType.Unexpanded:
+				if ( this.revisions ) {
+					this.diffExpandState = {
+						type: DiffExpandStateType.Expanding,
+						progress: [ 0, this.revisions.length ]
+					};
+					for ( const i in this.revisions ) {
+						this.updateDiffExpandButton();
+						const revision = this.revisions[ i ];
+						await revision.handleDiffToggle( true );
+						// @ts-expect-error `this.diffExpandState` can change values in the middle
+						// of this loop, because the user can press the button and change the state
+						// mid-execution.
+						if ( this.diffExpandState.type === DiffExpandStateType.Cancelled ) {
+							// User cancelled the expansion. Stop expanding more diffs now.
+							return;
+						}
+						this.diffExpandState = {
+							type: DiffExpandStateType.Expanding,
+							progress: [ +i + 1, this.revisions.length ]
+						};
+					}
+					this.diffExpandState = {
+						type: DiffExpandStateType.Expanded
+					};
+					this.updateDiffExpandButton();
+				}
+				break;
+			case DiffExpandStateType.Expanding:
+				this.diffExpandState = { type: DiffExpandStateType.Cancelled };
+				this.updateDiffExpandButton();
+				break;
+			case DiffExpandStateType.Expanded:
+			case DiffExpandStateType.Cancelled:
+				for ( const revision of this.revisions ) {
+					await revision.handleDiffToggle( false );
+				}
+				this.diffExpandState = { type: DiffExpandStateType.Unexpanded };
+				this.updateDiffExpandButton();
+				break;
 		}
 	}
 

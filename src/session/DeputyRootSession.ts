@@ -423,6 +423,7 @@ export default class DeputyRootSession {
 				'oojs-ui.styles.icons-interactions',
 				'oojs-ui.styles.icons-media',
 				'oojs-ui.styles.icons-movement',
+				'oojs-ui.styles.icons-layout',
 				'ext.discussionTools.init',
 				'jquery.makeCollapsible'
 			], async ( require ) => {

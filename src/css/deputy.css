@@ -66,6 +66,11 @@ p.dp-messageWidget-message {
 	background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2220%22 height=%2220%22 viewBox=%220 0 20 20%22%3E%3Ctitle%3E check all %3C/title%3E%3Cpath fill=%22%23d73333%22 d=%22m.29 12.71 1.42-1.42 2.22 2.22 8.3-10.14 1.54 1.26-9.7 11.86zM12 10h5v2h-5zm-3 4h5v2H9zm6-8h5v2h-5z%22/%3E%3C/svg%3E");
 }
 
+.oo-ui-progressBarWidget.oo-ui-widget-enabled.dp-progress-failed .oo-ui-progressBarWidget-bar {
+	/*noinspection CssUnresolvedCustomProperty*/
+	background-color: var(--background-color-destructive, #d73333);
+}
+
 /*
 ===============================================================================
 
@@ -283,6 +288,10 @@ body.mediawiki.rtl .dp-cs-row-head > :not(:first-child):not(:last-child) {
 
 .dp-cs-row-links > :not(:last-child) {
 	margin-right: 8px !important;
+}
+
+.dp-cs-row-buttons .oo-ui-buttonWidget {
+	margin-right: 0;
 }
 
 .dp-cs-row-title {
