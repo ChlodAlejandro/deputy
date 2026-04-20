@@ -742,53 +742,44 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 	 */
 	renderLinks(): JSX.Element[] {
 		return [
-			<a
-				class="dp-cs-row-link dp-cs-row-edit"
-				target="_blank"
-				rel="noopener" href={ mw.util.getUrl(
+			unwrapWidget( new OO.ui.ButtonWidget( {
+				invisibleLabel: true,
+				label: mw.msg( 'deputy.session.row.edit' ),
+				title: mw.msg( 'deputy.session.row.edit' ),
+				icon: 'edit',
+				framed: false,
+				href: mw.util.getUrl(
 					this.row.title.getPrefixedDb(),
 					{ action: 'edit' }
-				) }
-			>
-				{ unwrapWidget( new OO.ui.ButtonWidget( {
-					invisibleLabel: true,
-					label: mw.msg( 'deputy.session.row.edit' ),
-					title: mw.msg( 'deputy.session.row.edit' ),
-					icon: 'edit',
-					framed: false
-				} ) ) }
-			</a>,
-			<a
-				class="dp-cs-row-link dp-cs-row-talk"
-				target="_blank"
-				rel="noopener" href={ mw.util.getUrl(
+				),
+				target: '_blank',
+				rel: 'noopener'
+			} ) ),
+			unwrapWidget( new OO.ui.ButtonWidget( {
+				invisibleLabel: true,
+				label: mw.msg( 'deputy.session.row.talk' ),
+				title: mw.msg( 'deputy.session.row.talk' ),
+				icon: 'speechBubbles',
+				framed: false,
+				href: mw.util.getUrl(
 					this.row.title.getTalkPage().getPrefixedDb()
-				) }
-			>
-				{ unwrapWidget( new OO.ui.ButtonWidget( {
-					invisibleLabel: true,
-					label: mw.msg( 'deputy.session.row.talk' ),
-					title: mw.msg( 'deputy.session.row.talk' ),
-					icon: 'speechBubbles',
-					framed: false
-				} ) ) }
-			</a>,
-			<a
-				class="dp-cs-row-link dp-cs-row-history"
-				target="_blank"
-				rel="noopener" href={ mw.util.getUrl(
+				),
+				target: '_blank',
+				rel: 'noopener'
+			} ) ),
+			unwrapWidget( new OO.ui.ButtonWidget( {
+				invisibleLabel: true,
+				label: mw.msg( 'deputy.session.row.history' ),
+				title: mw.msg( 'deputy.session.row.history' ),
+				icon: 'history',
+				framed: false,
+				href: mw.util.getUrl(
 					this.row.title.getPrefixedDb(),
 					{ action: 'history' }
-				) }
-			>
-				{ unwrapWidget( new OO.ui.ButtonWidget( {
-					invisibleLabel: true,
-					label: mw.msg( 'deputy.session.row.history' ),
-					title: mw.msg( 'deputy.session.row.history' ),
-					icon: 'history',
-					framed: false
-				} ) ) }
-			</a>
+				),
+				target: '_blank',
+				rel: 'noopener'
+			} ) )
 		];
 	}
 
