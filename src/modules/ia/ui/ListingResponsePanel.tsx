@@ -172,7 +172,7 @@ export default class ListingResponsePanel extends EventTarget {
 					.forEach( ( v : HTMLElement ) => removeElement( v ) );
 
 				// Try to insert at an existing list for better spacing.
-				if ( this.element.previousElementSibling.tagName === 'DL' ) {
+				if ( this.element.previousElementSibling?.tagName === 'DL' ) {
 					this.element.previousElementSibling.appendChild( dd );
 				} else {
 					this.element.insertAdjacentElement(
