@@ -976,7 +976,7 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 				target="_blank"
 				rel="noopener" href={ mw.format(
 					mw.config.get( 'wgArticlePath' ),
-					this.row.title.getPrefixedDb()
+					encodeURIComponent( this.row.title.getPrefixedDb() )
 				) }
 			>
 				{ this.row.title.getPrefixedText() }
