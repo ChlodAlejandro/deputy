@@ -254,7 +254,12 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 				this.headingName,
 				finished
 			);
-			return summary + m[ 0 ].toUpperCase() + m.slice( 1 );
+			if ( nowClosed && assessed === 0 && reworked === 0 ) {
+				// Use a simpler summary format for uneventful section closures.
+				return summary;
+			} else {
+				return summary + m[ 0 ].toUpperCase() + m.slice( 1 );
+			}
 		} else {
 			return mw.msg( 'deputy.content.reformat' );
 		}
