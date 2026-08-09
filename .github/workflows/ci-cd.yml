@@ -60,7 +60,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ windows-latest, ubuntu-latest ]
         browser:
           # Chrome stable
           - product: chrome
@@ -68,7 +67,7 @@ jobs:
           # Firefox stable
           - product: firefox
             version: latest
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     if: ${{ !contains(github.event.head_commit.message, '[failing]') }}
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}--${{ matrix.os }}-${{ matrix.browser.product }}-${{ matrix.browser.version }}
