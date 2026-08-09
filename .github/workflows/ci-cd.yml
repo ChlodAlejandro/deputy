@@ -65,19 +65,9 @@ jobs:
           # Chrome stable
           - product: chrome
             version: stable
-          # Chrome Canary
-          - product: chrome
-            version: canary
-
           # Firefox stable
           - product: firefox
             version: latest
-          # Firefox beta
-          - product: firefox
-            version: latest-beta
-          # Firefox ESR
-          - product: firefox
-            version: latest-esr
     runs-on: ${{ matrix.os }}
     if: ${{ !contains(github.event.head_commit.message, '[failing]') }}
     concurrency:
