@@ -22,7 +22,6 @@ import warn from '../../util/warn';
 import error from '../../util/error';
 import { ContributionSurveyRowStatus } from '../../models/ContributionSurveyRowStatus';
 import dangerModeConfirm from '../../util/dangerModeConfirm';
-import any = jasmine.any;
 
 export enum DeputyContributionSurveyRowState {
 	/*
@@ -364,8 +363,10 @@ export default class DeputyContributionSurveyRow extends EventTarget implements 
 			if ( this.statusModified ) {
 				// Modified. Use user data.
 				useUserData();
-			} else if ( this.wasFinished ?? false ) {
-				// No changes. Just append original closure comments.
+			} else if ( ( this.wasFinished ?? false ) || this.row.comment ) {
+				// No changes or someone marked a bunch of diffs as assessed but this row had
+				// already been assessed before by a user who didn't remove diffs from the row.
+				// Just append original closure comments.
 				result += this.row.comment;
 			}
 			// Otherwise, leave this row unchanged.
