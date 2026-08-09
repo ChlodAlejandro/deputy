@@ -165,7 +165,7 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 					console.log( id, document.getElementById( id ) );
 					const currentPage = await window.deputy.DeputyCasePage.build();
 					return currentPage.isContributionSurveyHeading(
-						document.getElementById( id ).nextElementSibling as HTMLElement
+						document.getElementById( id ).previousElementSibling as HTMLElement
 					);
 				}, _id )
 			).resolves.toBe( false ) ) ),
@@ -179,7 +179,7 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 					console.log( id, document.getElementById( id ) );
 					const currentPage = await window.deputy.DeputyCasePage.build();
 					return currentPage.isContributionSurveyHeading(
-						document.getElementById( id ).nextElementSibling
+						document.getElementById( id ).previousElementSibling
 							.querySelector( 'h1,h2,h3,h4,h5,h6' ) as HTMLElement
 					);
 				}, _id )
@@ -193,7 +193,7 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 				page.evaluate( async ( id ) => {
 					const currentPage = await window.deputy.DeputyCasePage.build();
 					return currentPage.isContributionSurveyHeading(
-						document.getElementById( id ).nextElementSibling
+						document.getElementById( id ).previousElementSibling
 							.querySelector( '.mw-headline' ) as HTMLElement
 					);
 				}, _id )
@@ -205,7 +205,7 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 				page.evaluate( async ( id ) => {
 					const currentPage = await window.deputy.DeputyCasePage.build();
 					return currentPage.isContributionSurveyHeading(
-						document.getElementById( id ).nextElementSibling as HTMLElement
+						document.getElementById( id ).previousElementSibling as HTMLElement
 					);
 				}, _id )
 			).resolves.toBe( false ) ) ),
@@ -229,7 +229,7 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 		const _targetId = `i-${Math.random().toFixed( 8 ).slice( 2 )}`;
 
 		await page.evaluate( ( targetId ) => {
-			( document.getElementById( 'testHeading1' ).nextElementSibling as HTMLElement )
+			( document.getElementById( 'testHeading1' ).previousElementSibling as HTMLElement )
 				.querySelector( 'h1,h2,h3,h4,h5,h6' )
 				.setAttribute(
 					'data-deputy-test',
@@ -265,7 +265,7 @@ describe( 'DeputyCasePage implementation unit tests', () => {
 			page.evaluate( async ( id ) => {
 				const currentPage = await window.deputy.DeputyCasePage.build();
 				return currentPage.getContributionSurveySection(
-					document.getElementById( id ).nextElementSibling as HTMLElement
+					document.getElementById( id ).previousElementSibling as HTMLElement
 				).filter( ( v ) => v instanceof HTMLElement && v.tagName === 'UL' ).length;
 			}, _id )
 		).resolves.toBe( 1 ) ) );
