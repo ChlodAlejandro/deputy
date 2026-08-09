@@ -245,19 +245,23 @@ export default class DeputyContributionSurveySection implements DeputyUIElement 
 				return mw.msg( 'deputy.content.reformat' );
 			}
 
-			const summary = mw.msg(
-				nowClosed ?
-					'deputy.content.summary.sectionClosed' :
-					( finished === 0 && assessed > 0 ?
-						'deputy.content.summary.partial' :
-						'deputy.content.summary' ),
-				this.headingName,
-				finished
-			);
 			if ( nowClosed && assessed === 0 && reworked === 0 ) {
 				// Use a simpler summary format for uneventful section closures.
-				return summary;
+				return mw.msg(
+					'deputy.content.summary.sectionClosedShort',
+					this.headingName,
+					finished
+				);
 			} else {
+				const summary = mw.msg(
+					nowClosed ?
+						'deputy.content.summary.sectionClosed' :
+						( finished === 0 && assessed > 0 ?
+							'deputy.content.summary.partial' :
+							'deputy.content.summary' ),
+					this.headingName,
+					finished
+				);
 				return summary + m[ 0 ].toUpperCase() + m.slice( 1 );
 			}
 		} else {
