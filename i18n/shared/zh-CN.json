@@ -1,0 +1,47 @@
+{
+    "deputy.name": "Deputy",
+    "deputy.description": "维基百科侵权内容清理与案件处理工具。",
+
+    "deputy.ia": "Infringement Assistant",
+    "deputy.ia.short": "I. Assistant",
+    "deputy.ia.acronym": "Deputy: IA",
+
+    "deputy.ante": "Attribution Notice Template Editor",
+    "deputy.ante.short": "Attrib. Template Editor",
+    "deputy.ante.acronym": "Deputy: ANTE",
+
+    "deputy.cancel": "取消",
+    "deputy.review": "复核您的更改",
+    "deputy.review.title": "显示您对页面作出的更改",
+    "deputy.save": "保存",
+    "deputy.close": "关闭",
+    "deputy.positiveDiff": "+{{FORMATNUM:$1}}",
+    "deputy.negativeDiff": "-{{FORMATNUM:$1}}",
+    "deputy.zeroDiff": "0",
+    "deputy.brokenDiff": "?",
+    "deputy.brokenDiff.explain": "此差异的内部母修订版本指向一个不存在的版本。[[phab:T186280]]中存在更多信息。",
+    "deputy.moreInfo": "更多信息",
+    "deputy.dismiss": "关闭",
+
+    "deputy.revision.cur": "当前",
+    "deputy.revision.prev": "先前",
+    "deputy.revision.cur.tooltip": "与最新修订的差异",
+    "deputy.revision.prev.tooltip": "与上个修订的差异",
+    "deputy.revision.talk": "留言",
+    "deputy.revision.contribs": "贡献",
+    "deputy.revision.bytes": "{{FORMATNUM:$1}}字节",
+    "deputy.revision.byteChange": "更改后有{{FORMATNUM:$1}}字节",
+    "deputy.revision.tags": "标签：",
+    "deputy.revision.new": "新",
+    "deputy.revision.new.tooltip": "该编辑创建了新页面",
+
+    "deputy.comma-separator": "，",
+
+    "deputy.diff": "复核您的更改",
+    "deputy.diff.load": "读取更改中...",
+    "deputy.diff.no-changes": "没有更改",
+    "deputy.diff.error": "获取更改时遇到错误。",
+
+    "deputy.loadError.userConfig": "由于遇到错误，你的 Deputy 配置已被重置。",
+    "deputy.loadError.wikiConfig": "读取此维基的 Deputy 配置时遇到错误。请与本维基的 Deputy 维护者反馈。"
+}
