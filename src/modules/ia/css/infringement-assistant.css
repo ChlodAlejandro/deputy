@@ -121,8 +121,13 @@ body.rtl .ia-listing-action--bracket:last-child {
 	font-size: 0.8rem;
 	padding-bottom: 12px;
 	border-bottom: 1px solid gray;
-	margin: 12px 0;
+	margin-bottom: 12px;
 }
+
+.ia-report-intro:not(:first-child) {
+	margin-top: 12px;
+}
+
 .ia-report-intro b {
 	display: block;
 	font-size: 1rem;
@@ -132,6 +137,10 @@ body.rtl .ia-listing-action--bracket:last-child {
 	padding-top: 12px;
 	display: flex;
 	justify-content: flex-end;
+}
+
+.ia-report-hideContentWarning {
+	margin-bottom: 12px;
 }
 /**
  * COPYVIO PREVIEWS

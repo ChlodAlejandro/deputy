@@ -56,6 +56,7 @@ function initSinglePageWorkflowDialog() {
 		};
 
 		fieldsetLayout: OO.ui.FieldsetLayout;
+		messageContainer: HTMLElement;
 		$body: JQuery;
 		data: Partial<SinglePageWorkflowDialogResponseData>;
 
@@ -133,6 +134,7 @@ function initSinglePageWorkflowDialog() {
 			this.fieldsetLayout = new OO.ui.FieldsetLayout( {
 				items: this.renderFields()
 			} );
+			this.messageContainer = <div/> as HTMLElement;
 
 			this.$body.append( new OO.ui.PanelLayout( {
 				expanded: false,
@@ -142,6 +144,7 @@ function initSinglePageWorkflowDialog() {
 					selfReportWarning,
 					equalTitle( null, this.page ) && !selfReportWarning ? '' : page,
 					intro,
+					this.messageContainer,
 					this.fieldsetLayout,
 					this.renderSubmitButton()
 				]
@@ -310,7 +313,7 @@ function initSinglePageWorkflowDialog() {
 				if ( selected ) {
 					this.setHideContentWarning( this.wikitext );
 				} else {
-					this.inputs.hideContent.setWarnings( [] );
+					this.fields.hideContent.setWarnings( [] );
 				}
 			} );
 			// Hide the section selection if entire page is selected.
@@ -498,20 +501,46 @@ function initSinglePageWorkflowDialog() {
 		 * @param wikitext
 		 */
 		setHideContentWarning( wikitext: string ) {
-			if ( !this.data.hideContent ) {
-				// No need to check for a hide template if content is not being hidden.
-				return;
-			}
 			// eslint-disable-next-line security/detect-non-literal-regexp
 			const hideTemplateMatch = new RegExp(
 				window.InfringementAssistant.wikiConfig.ia.hideTemplateMatch.get(), 'gi'
 			);
-			if ( hideTemplateMatch.test( wikitext ) ) {
-				this.fields.hideContent.setWarnings( [
-					mw.msg( 'deputy.ia.report.hideContent.hideTemplateFound' )
-				] );
-			} else {
-				this.fields.hideContent.setWarnings( [] );
+			const hasHiddenContent = hideTemplateMatch.test( wikitext );
+
+			this.fields.hideContent.setWarnings(
+				hasHiddenContent ?
+					[ mw.msg( 'deputy.ia.report.hideContent.hideTemplateFound' ) ] :
+					[]
+			);
+			Array.from( this.messageContainer.children )
+				.find( ( el ) => el.classList.contains( 'ia-report-hideContentWarning' ) )
+				?.remove();
+			if ( hasHiddenContent ) {
+				const warningLabel = unwrapJQ( <span />, mw.message(
+					'deputy.ia.report.hideContent.hideTemplateFound'
+				).parseDom() );
+				if ( !this.shadowOptional ) {
+					warningLabel.append( ' ' );
+					warningLabel.appendChild(
+						unwrapJQ(
+							<span />,
+							mw.message(
+								'deputy.ia.report.hideContent.reportOnly',
+								CopyrightProblemsPage.getCurrentListingPage().getPrefixedText()
+							).parseDom()
+						)
+					);
+				}
+				this.messageContainer.appendChild(
+					<div class="ia-report-hideContentWarning">{
+						unwrapWidget(
+							DeputyMessageWidget( {
+								type: 'warning',
+								label: $( warningLabel )
+							} )
+						)
+					}</div>
+				);
 			}
 		}
 

@@ -90,6 +90,7 @@
     "deputy.ia.report.transcludedSection": "This section is transcluded from another page, \"$1\".",
     "deputy.ia.report.hideContent.label": "Hide content",
     "deputy.ia.report.hideContent.hideTemplateFound": "Some or all content on this page is already hidden. A new template will be added to the page, but the content may not be hidden as expected.",
+    "deputy.ia.report.hideContent.reportOnly": "To report this page without hiding any content, go to the [[$1|copyright problems noticeboard]] instead.",
     "deputy.ia.report.entirePage.label": "Hide the entire page",
     "deputy.ia.report.entirePage.noSections": "This page has no sections. The entire page will be hidden.",
     "deputy.ia.report.startSection.placeholder": "Select starting section to hide",
