@@ -5,7 +5,33 @@ These are changes that may or may not have been deployed to wikis, but are not y
 This changelog is automatically parsed when releases are created. Before pushing a version tag, ensure that the latest
 level 1 section heading here is the version being tagged.
 
-For a granular list of changes, see [v0.9.2...main](https://github.com/ChlodAlejandro/deputy/compare/v0.9.1...main).
+For a granular list of changes, see [main...main](https://github.com/ChlodAlejandro/deputy/compare/v0.10.0...main).
+
+# [v0.10.0] - *2026-09-22*
+## Added
+* [[`75ccccc`](../../commit/75ccccc)] Added option to blank page when reporting via CPN
+* [[`7d4b78d`](../../commit/7d4b78d)] Added preference for blanking page by default when reporting via CPN
+* [[`3ea63e1`](../../commit/3ea63e1)] Added error handling for safely removing missed diffs in CCI cases
+* [[`a07a1a2`](../../commit/a07a1a2)] Added warning when attempting to hide page content where content is already hidden
+* [[`85749bd`](../../commit/85749bd)] Added warning when reporting a CPN page/subpage to CPN
+* [[`4e84bf7`](../../commit/4e84bf7)] (dev) Added extra error debugging for diff load failures
+
+## Modified
+* [[`5c17bde`](../../commit/5c17bde)] Shortened summary text for uneventful case closures
+* [[`89e5c45`](../../commit/89e5c45)] (dev) Removed Windows CI tests
+* [[`a5cc7c0`](../../commit/a5cc7c0)] (dev) Removed browser testing for non-current Chrome/Firefox versions
+
+## Fixed
+* [[`075e3e6`](../../commit/075e3e6)] Fixed missing message references in message evaluation
+* [[`7448cf4`](../../commit/7448cf4)] Fixed unescaped URL appearing on CSR header
+* [[`038806d`](../../commit/038806d)] Fixed extra text appearing for short summary text on uneventful closures
+* [[`3334d16`](../../commit/3334d16)] Fixed hard error when parsing malformed CPN listings
+* [[`3ea63e1`](../../commit/3ea63e1)] Fixed double signing upon marking assessed a pre-assessed row by another user
+* [[`3cfdd27`](../../commit/3cfdd27)] Fixed Infringement Assistant dialog submitting when the Escape key is pressed
+* [[`6a6d3d6`](../../commit/6a6d3d6)] (dev) Fixed failing tests due to Parsoid changes in DeputyCasePageUnitTests
+* [[`b3f4f01`](../../commit/b3f4f01)] (dev) Fixed missing ContributionSurveyRowParserIntegrationTests targets
+
+For a granular list of changes, see [v0.9.2...v0.10.0](https://github.com/ChlodAlejandro/deputy/compare/v0.9.2...v0.10.0).
 
 # [v0.9.2] - *2026-04-21*
 ## Added
