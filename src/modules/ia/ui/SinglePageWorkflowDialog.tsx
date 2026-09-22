@@ -661,6 +661,10 @@ function initSinglePageWorkflowDialog() {
 		 * @return An OOUI Process
 		 */
 		getActionProcess( action: string ): OO.ui.Process {
+			// Handle `Esc`
+			if ( action === '' ) {
+				action = 'close';
+			}
 			const process = super.getActionProcess.call( this, action );
 
 			const isPostingListing = action === 'submit';
