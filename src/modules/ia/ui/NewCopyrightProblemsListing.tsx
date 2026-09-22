@@ -64,7 +64,7 @@ function NewCopyrightProblemsListingPanel( props: {
 				removeElement( el as HTMLElement );
 				const spwd = SinglePageWorkflowDialog( {
 					page: titleSearch.getMWTitle(),
-					shadow: false
+					shadowOptional: true
 				} );
 				await openWindow( spwd );
 			} );

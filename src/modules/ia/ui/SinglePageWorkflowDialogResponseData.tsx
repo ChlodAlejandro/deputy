@@ -19,8 +19,9 @@ export interface Section {
 }
 
 export interface SinglePageWorkflowDialogResponseData {
-	entirePage: boolean;
+	hideContent: boolean;
 
+	entirePage: boolean;
 	startSection?: Section;
 	endSection?: Section;
 	startOffset?: number;

@@ -26,7 +26,7 @@ export interface SinglePageWorkflowDialogData {
 	 *
 	 * @default true
 	 */
-	shadow?: boolean;
+	shadowOptional?: boolean;
 }
 
 let InternalSinglePageWorkflowDialog: any;
@@ -61,6 +61,7 @@ function initSinglePageWorkflowDialog() {
 		page: mw.Title;
 		revid: number;
 		inputs: Record<string, any>;
+		fields: Record<string, any>;
 		/** The wikitext */
 		wikitext: string;
 		/** External links in this revision */
@@ -68,11 +69,12 @@ function initSinglePageWorkflowDialog() {
 		/** Sections in this revision */
 		sections: Section[];
 		/**
-		 * If `false`, no shadowing options will be provided (hide content only, etc.)
+		 * If `true`, shadowing options will be optional and the "hide content only" button will
+		 * be hidden.
 		 *
 		 * @default true
 		 */
-		shadow: boolean;
+		shadowOptional: boolean;
 
 		/**
 		 * @param config Configuration to be passed to the element.
@@ -82,10 +84,11 @@ function initSinglePageWorkflowDialog() {
 
 			this.page = normalizeTitle( config.page );
 			this.revid = config.revid;
-			this.shadow = config.shadow ?? true;
+			this.shadowOptional = config.shadowOptional ?? false;
 
 			const userConfig = window.InfringementAssistant.config;
 			this.data = {
+				hideContent: true,
 				entirePage: userConfig.ia.defaultEntirePage.get(),
 				fromUrls: userConfig.ia.defaultFromUrls.get()
 			};
@@ -160,7 +163,7 @@ function initSinglePageWorkflowDialog() {
 			} );
 
 			return <div class="ia-report-submit">
-				{ this.shadow && unwrapWidget( hideButton ) }
+				{ !this.shadowOptional && unwrapWidget( hideButton ) }
 				{ unwrapWidget( submitButton ) }
 			</div>;
 		}
@@ -174,6 +177,9 @@ function initSinglePageWorkflowDialog() {
 			const entirePageByDefault = this.data.entirePage;
 
 			this.inputs = {
+				hideContent: new OO.ui.CheckboxInputWidget( {
+					selected: this.data.hideContent
+				} ),
 				entirePage: new OO.ui.CheckboxInputWidget( {
 					selected: entirePageByDefault
 				} ),
@@ -220,6 +226,10 @@ function initSinglePageWorkflowDialog() {
 			} as const;
 
 			const fields = {
+				hideContent: new OO.ui.FieldLayout( this.inputs.hideContent, {
+					align: 'inline',
+					label: mw.msg( 'deputy.ia.report.hideContent.label' )
+				} ),
 				entirePage: new OO.ui.FieldLayout( this.inputs.entirePage, {
 					align: 'inline',
 					label: mw.msg( 'deputy.ia.report.entirePage.label' )
@@ -262,7 +272,21 @@ function initSinglePageWorkflowDialog() {
 					label: mw.msg( 'deputy.ia.report.additionalNotes.label' )
 				} )
 			} as const;
+			this.fields = fields;
 
+			// Hide the content hiding options if content is not being hidden.
+			this.inputs.hideContent.on( 'change', ( selected: boolean ) => {
+				if ( selected === undefined ) {
+					// Bad firing.
+					return;
+				}
+				this.data.hideContent = selected;
+
+				fields.entirePage.toggle( selected );
+				fields.startSection.toggle( selected );
+				fields.endSection.toggle( selected );
+			} );
+			// Hide the section selection if entire page is selected.
 			this.inputs.entirePage.on( 'change', ( selected: boolean ) => {
 				if ( selected === undefined ) {
 					// Bad firing.
@@ -274,6 +298,8 @@ function initSinglePageWorkflowDialog() {
 				this.inputs.endSection.setDisabled( selected );
 			} );
 
+			// Automatically select the entire page if the start and end sections are the first and
+			// last sections.
 			const entirePageHiddenCheck = () => {
 				if (
 					this.inputs.startSection.getValue() === '-1' &&
@@ -397,11 +423,9 @@ function initSinglePageWorkflowDialog() {
 				this.data.notes = text;
 			} );
 
-			return this.shadow ? getObjectValues( fields ) : [
-				fields.presumptive, fields.presumptiveCase,
-				fields.fromUrls, fields.sourceUrls, fields.sourceText,
-				fields.additionalNotes
-			];
+			return this.shadowOptional ?
+				getObjectValues( fields ) :
+				getObjectValues( fields ).filter( ( field ) => field !== fields.hideContent );
 		}
 
 		/**
@@ -433,6 +457,9 @@ function initSinglePageWorkflowDialog() {
 				} );
 			} else {
 				this.inputs.entirePage.setDisabled( true );
+				this.fields.entirePage.setNotices( [
+					mw.msg( 'deputy.ia.report.entirePage.noSections' )
+				] );
 			}
 			return options;
 		}
@@ -506,7 +533,7 @@ function initSinglePageWorkflowDialog() {
 						window.deputy.wikiConfig.cci.rootPage.get().getPrefixedText()
 					}/${this.data.presumptiveCase}]]` : (
 						this.data.fromUrls ?
-							this.data.sourceUrls.join( ' ' ) ?? '' :
+							this.data.sourceUrls?.join( ' ' ) ?? '' :
 							this.data.sourceText
 					),
 				this.data.entirePage ? 'true' : 'false'
@@ -604,26 +631,44 @@ function initSinglePageWorkflowDialog() {
 		getActionProcess( action: string ): OO.ui.Process {
 			const process = super.getActionProcess.call( this, action );
 
-			if ( action === 'submit' ) {
+			const isPostingListing = action === 'submit';
+			const isHidingOnly = action === 'hide';
+			if ( isHidingOnly && !this.data.hideContent ) {
+				// Implicitly force content hiding if the "Hide content only" button is clicked,
+				// even if the checkbox is not checked. In reality, this button will not be present
+				// when `this.data.hideContent` is false, because this checkbox is only toggleable
+				// if `shadowOptional` is `true`.
+				this.data.hideContent = true;
+				this.data.entirePage = this.data.entirePage ?? true;
+			}
+			const willHideContent = action !== 'close' && this.data.hideContent;
+
+			if ( isPostingListing ) {
 				process.next( this.postListing() );
 			}
-			if ( action === 'submit' || action === 'hide' ) {
-				if ( this.shadow ) {
-					process.next( this.hideContent() );
-				}
+			if ( willHideContent ) {
+				process.next( this.hideContent() );
+			}
+			if ( isPostingListing || willHideContent ) {
 				process.next( () => {
 					mw.notify(
-						!this.shadow ?
-							mw.msg( 'deputy.ia.report.success.report' ) :
-							( action === 'hide' ?
+						isPostingListing && willHideContent ?
+							mw.msg( 'deputy.ia.report.success' ) :
+							// Either hiding or posting, but not both.
+							( isHidingOnly ?
 								mw.msg( 'deputy.ia.report.success.hide' ) :
-								mw.msg( 'deputy.ia.report.success' ) ),
+								mw.msg( 'deputy.ia.report.success.report' ) ),
 						{ type: 'success' }
 					);
 				} );
-				switch ( window.InfringementAssistant.config.ia[ 'on' + (
-					action === 'hide' ? 'Hide' : 'Submit'
-				) as 'onHide' | 'onSubmit' ].get() ) {
+			}
+			if ( action !== 'close' ) {
+				// Post-submit actions to perform
+				switch ( window.InfringementAssistant.config.ia[
+					action === 'hide' ?
+						'onHide' :
+						'onSubmit'
+				].get() ) {
 					case TripleCompletionAction.Reload:
 						process.next( () => {
 							unblockExit( 'ia-spwd' );
@@ -647,7 +692,6 @@ function initSinglePageWorkflowDialog() {
 
 			return process;
 		}
-
 	};
 
 }
