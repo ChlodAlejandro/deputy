@@ -224,6 +224,12 @@ export default class UserConfiguration extends ConfigurationBase {
 				disabled: 'unimplemented'
 			}
 		} ),
+		defaultHideContent: new Setting<boolean, boolean>( {
+			defaultValue: true,
+			displayOptions: {
+				type: 'checkbox'
+			}
+		} ),
 		defaultEntirePage: new Setting<boolean, boolean>( {
 			defaultValue: true,
 			displayOptions: {

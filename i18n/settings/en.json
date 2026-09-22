@@ -104,6 +104,8 @@
     "deputy.setting.user.ia.enablePageToolbar.name": "Enable page toolbar",
     "deputy.setting.user.ia.enablePageToolbar.description": "If enabled, the page toolbar will be shown when dealing with CP cases. The IA page toolbar works slightly differently from the CCI page toolbar. Namely, it shows a button for responding instead of a status dropdown.",
     "deputy.setting.user.ia.enablePageToolbar.unimplemented": "This feature has not yet been implemented.",
+    "deputy.setting.user.ia.defaultHideContent.name": "Hide page content when reporting from noticeboard",
+    "deputy.setting.user.ia.defaultHideContent.description": "By default, new individual reports from the copyright problems noticeboard will hide content on the article unless explicitly disabled. If your workflow involves hiding page content first and then reporting from the noticeboard, you may want to disable this setting to reverse that behavior.",
     "deputy.setting.user.ia.defaultEntirePage.name": "Hide entire page by default",
     "deputy.setting.user.ia.defaultEntirePage.description": "If enabled, the Infringement Assistant reporting window will hide the entire page by default.",
     "deputy.setting.user.ia.defaultFromUrls.name": "Use URLs by default",

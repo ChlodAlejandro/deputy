@@ -88,7 +88,7 @@ function initSinglePageWorkflowDialog() {
 
 			const userConfig = window.InfringementAssistant.config;
 			this.data = {
-				hideContent: true,
+				hideContent: this.shadowOptional ? userConfig.ia.defaultHideContent.get() : true,
 				entirePage: userConfig.ia.defaultEntirePage.get(),
 				fromUrls: userConfig.ia.defaultFromUrls.get()
 			};
@@ -285,6 +285,12 @@ function initSinglePageWorkflowDialog() {
 				fields.entirePage.toggle( selected );
 				fields.startSection.toggle( selected );
 				fields.endSection.toggle( selected );
+
+				if ( selected ) {
+					this.setHideContentWarning( this.wikitext );
+				} else {
+					this.inputs.hideContent.setWarnings( [] );
+				}
 			} );
 			// Hide the section selection if entire page is selected.
 			this.inputs.entirePage.on( 'change', ( selected: boolean ) => {
@@ -471,6 +477,10 @@ function initSinglePageWorkflowDialog() {
 		 * @param wikitext
 		 */
 		setHideContentWarning( wikitext: string ) {
+			if ( !this.data.hideContent ) {
+				// No need to check for a hide template if content is not being hidden.
+				return;
+			}
 			// eslint-disable-next-line security/detect-non-literal-regexp
 			const hideTemplateMatch = new RegExp(
 				window.InfringementAssistant.wikiConfig.ia.hideTemplateMatch.get(), 'gi'
