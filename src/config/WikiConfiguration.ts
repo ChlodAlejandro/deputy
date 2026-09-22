@@ -339,6 +339,10 @@ export default class WikiConfiguration extends ConfigurationBase {
 			defaultValue: '(\\*\\s*)?\\[\\[([^\\]]+)\\]\\]',
 			displayOptions: { type: 'code' }
 		} ),
+		hideTemplateMatch: new Setting<string, string>( {
+			defaultValue: '<(?:div|span)[^>]+class="copyvio"',
+			displayOptions: { type: 'code' }
+		} ),
 		hideTemplate: new Setting<string, string>( {
 			defaultValue: copyvioTop,
 			displayOptions: { type: 'code' }

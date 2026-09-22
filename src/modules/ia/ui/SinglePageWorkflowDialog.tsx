@@ -465,6 +465,26 @@ function initSinglePageWorkflowDialog() {
 		}
 
 		/**
+		 * Sets the warning of the "hide content" checkbox based on whether a hide template was
+		 * found in the page wikitext.
+		 *
+		 * @param wikitext
+		 */
+		setHideContentWarning( wikitext: string ) {
+			// eslint-disable-next-line security/detect-non-literal-regexp
+			const hideTemplateMatch = new RegExp(
+				window.InfringementAssistant.wikiConfig.ia.hideTemplateMatch.get(), 'gi'
+			);
+			if ( hideTemplateMatch.test( wikitext ) ) {
+				this.fields.hideContent.setWarnings( [
+					mw.msg( 'deputy.ia.report.hideContent.hideTemplateFound' )
+				] );
+			} else {
+				this.fields.hideContent.setWarnings( [] );
+			}
+		}
+
+		/**
 		 * @param data
 		 * @return An OOUI Process
 		 */
@@ -476,11 +496,13 @@ function initSinglePageWorkflowDialog() {
 				...( this.revid ? { oldid: this.revid } : { page: this.page.getPrefixedText() } ),
 				prop: 'externallinks|sections|wikitext'
 			} ).then( ( res ) => {
+				this.wikitext = res.parse.wikitext;
+				this.setHideContentWarning( this.wikitext );
+
 				this.externalLinks = res.parse.externallinks ?? [];
 				this.sections = res.parse.sections?.map(
 					( v: Section, k: number ) => Object.assign( v, { i: k } )
 				) ?? [];
-				this.wikitext = res.parse.wikitext;
 
 				if ( this.sections.length === 0 ) {
 					// No sections. Automatically use full page.
