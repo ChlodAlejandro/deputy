@@ -35,9 +35,16 @@ export default function msgEval( string: string, ...parameters: any[] ): mw.Mess
 	if ( typeof parameters[ 0 ] === 'object' ) {
 		named = parameters.shift();
 	}
+
 	const m = new mw.Map();
 
+	// Guess all required messages and add them to the map. Needed when a custom Map is used.
+	for ( const match of string.matchAll( /{{(?:mediawiki|int):(.+?)[|}]/gi ) ) {
+		m.set( match[ 1 ], mw.messages.get( match[ 1 ] ) );
+	}
+
 	for ( const [ from, to ] of Object.entries( named ) ) {
+		// eslint-disable-next-line security/detect-non-literal-regexp
 		string = string.replace( new RegExp( `\\$${from}`, 'g' ), to );
 	}
 
