@@ -26,8 +26,8 @@ function initDeputyReviewDialog() {
 				{
 					flags: [ 'safe', 'close' ],
 					icon: 'close',
-					label: mw.msg( 'deputy.ante.close' ),
-					title: mw.msg( 'deputy.ante.close' ),
+					label: mw.msg( 'deputy.close' ),
+					title: mw.msg( 'deputy.close' ),
 					invisibleLabel: true,
 					action: 'close'
 				}
@@ -41,7 +41,6 @@ function initDeputyReviewDialog() {
 		data: any;
 
 		/**
-		 *
 		 * @param config
 		 */
 		constructor( config: DeputyReviewDialogData & { size: string } ) {
@@ -58,7 +57,6 @@ function initDeputyReviewDialog() {
 		}
 
 		/**
-		 *
 		 * @param {...any} args
 		 */
 		initialize( ...args: any[] ) {

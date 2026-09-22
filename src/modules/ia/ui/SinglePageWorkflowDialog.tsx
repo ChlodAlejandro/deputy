@@ -47,8 +47,8 @@ function initSinglePageWorkflowDialog() {
 				{
 					flags: [ 'safe', 'close' ],
 					icon: 'close',
-					label: mw.msg( 'deputy.ante.close' ),
-					title: mw.msg( 'deputy.ante.close' ),
+					label: mw.msg( 'deputy.close' ),
+					title: mw.msg( 'deputy.close' ),
 					invisibleLabel: true,
 					action: 'close'
 				}
