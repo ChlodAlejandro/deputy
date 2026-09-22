@@ -17,6 +17,7 @@ import {
 	Section,
 	SinglePageWorkflowDialogResponseData
 } from './SinglePageWorkflowDialogResponseData';
+import DeputyMessageWidget from '../../../ui/shared/DeputyMessageWidget';
 
 export interface SinglePageWorkflowDialogData {
 	page: TitleLike;
@@ -107,6 +108,16 @@ function initSinglePageWorkflowDialog() {
 		initialize() {
 			super.initialize();
 
+			const selfReportWarning =
+				CopyrightProblemsPage.isListingPage( this.page.getPrefixedText() ) ?
+					unwrapWidget(
+						DeputyMessageWidget( {
+							type: 'warning',
+							label: mw.message( 'deputy.ia.report.reportingNoticeboard' ).parseDom()
+						} )
+					) :
+					null;
+
 			const intro = unwrapJQ( <div class="ia-report-intro" />, mw.message(
 				'deputy.ia.report.intro',
 				CopyrightProblemsPage.getCurrentListingPage().getPrefixedText()
@@ -128,7 +139,8 @@ function initSinglePageWorkflowDialog() {
 				framed: false,
 				padded: true,
 				content: [
-					equalTitle( null, this.page ) ? '' : page,
+					selfReportWarning,
+					equalTitle( null, this.page ) && !selfReportWarning ? '' : page,
 					intro,
 					this.fieldsetLayout,
 					this.renderSubmitButton()
@@ -142,10 +154,16 @@ function initSinglePageWorkflowDialog() {
 		 * @return A JSX.Element
 		 */
 		renderSubmitButton(): JSX.Element {
+			const isListingPage = CopyrightProblemsPage.isListingPage(
+				this.page.getPrefixedText()
+			);
+
 			const hideButton = new OO.ui.ButtonWidget( {
 				label: mw.msg( 'deputy.ia.report.hide' ),
 				title: mw.msg( 'deputy.ia.report.hide' ),
-				flags: [ 'progressive' ]
+				flags: [
+					isListingPage ? 'destructive' : 'progressive'
+				]
 			} );
 
 			hideButton.on( 'click', () => {
@@ -155,7 +173,10 @@ function initSinglePageWorkflowDialog() {
 			const submitButton = new OO.ui.ButtonWidget( {
 				label: mw.msg( 'deputy.ia.report.submit' ),
 				title: mw.msg( 'deputy.ia.report.submit' ),
-				flags: [ 'primary', 'progressive' ]
+				flags: [
+					'primary',
+					isListingPage ? 'destructive' : 'progressive'
+				]
 			} );
 
 			submitButton.on( 'click', () => {

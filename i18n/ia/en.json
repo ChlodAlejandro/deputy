@@ -81,6 +81,7 @@
     "deputy.ia.listing.re.unverified": "Permission unverified as of this tagging; article will need to be deleted if that does not change.",
     "deputy.ia.listing.re.viable": "Viable rewrite proposed; rewrite on temp page can be merged into the article.",
 
+    "deputy.ia.report.reportingNoticeboard": "<b>You are currently reporting a noticeboard page.</b> This is probably not what you wanted to do. If you want to report a page for copyright issues, use the \"New listing\" button on the noticeboard page instead.",
     "deputy.ia.report.intro": "You are reporting to <b>[[$1]]</b>",
     "deputy.ia.report.page": "Currently reporting <b>[[$1]]</b>",
     "deputy.ia.report.lead": "Lead section",

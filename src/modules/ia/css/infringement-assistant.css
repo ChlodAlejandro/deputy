@@ -121,7 +121,7 @@ body.rtl .ia-listing-action--bracket:last-child {
 	font-size: 0.8rem;
 	padding-bottom: 12px;
 	border-bottom: 1px solid gray;
-	margin-bottom: 12px;
+	margin: 12px 0;
 }
 .ia-report-intro b {
 	display: block;
