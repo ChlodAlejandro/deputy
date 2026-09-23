@@ -22,7 +22,7 @@
     "deputy.settings.wikiEditIntro.edit.protected": "This page's protection settings do not allow you to edit the page.",
 
     "deputy.settings.wikiOutdated": "Outdated configuration",
-    "deputy.settings.wikiOutdated.help": "Deputy has detected a change in this wiki's configuration for all Deputy users. We've automatically downloaded the changes for you, but you have to reload to apply the changes.",
+    "deputy.settings.wikiOutdated.help": "[[Project:Deputy|Deputy]] has detected a change in this wiki's configuration for all Deputy users. We've automatically downloaded the changes for you, but you have to reload to apply the changes.",
     "deputy.settings.wikiOutdated.reload": "Reload",
 
     "deputy.settings.dialog.title": "Deputy Preferences",

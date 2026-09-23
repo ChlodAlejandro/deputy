@@ -1,6 +1,8 @@
 import '../../types';
 import unwrapWidget from '../../util/unwrapWidget';
 import DeputyMessageWidget from '../shared/DeputyMessageWidget';
+import unwrapJQ from '../../util/unwrapJQ';
+import { h } from 'tsx-dom';
 
 /**
  * @return A MessageWidget for reloading a page with an outdated configuration.
@@ -16,8 +18,12 @@ export default function ConfigurationReloadBanner(): JSX.Element {
 		],
 		type: 'notice',
 		title: mw.msg( 'deputy.settings.wikiOutdated' ),
-		message: mw.msg( 'deputy.settings.wikiOutdated.help' ),
-		actions: [ reloadButton ]
+		message: unwrapJQ(
+			<span/>,
+			mw.message( 'deputy.settings.wikiOutdated.help' ).parseDom()
+		),
+		actions: [ reloadButton ],
+		closable: true
 	} );
 
 	reloadButton.on( 'click', async () => {
